@@ -1,15 +1,51 @@
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { BarChart3, Clock, Target, TrendingUp, Award, Calendar, ArrowRight } from 'lucide-react';
+import { Link, Navigate } from 'react-router-dom';
+import { BarChart3, Clock, Target, TrendingUp, Award, Calendar, ArrowRight, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { useExam } from '@/contexts/ExamContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { categories } from '@/data/mockData';
 
 export default function ProgressPage() {
   const { examResults, exams } = useExam();
+  const { user, isLoading } = useAuth();
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  // Redirect if not authenticated
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="pt-24 pb-12">
+          <div className="container mx-auto px-4">
+            <div className="max-w-md mx-auto text-center p-8 rounded-2xl bg-card border border-border">
+              <Lock className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <h2 className="text-2xl font-bold text-foreground mb-2">Acesso Restrito</h2>
+              <p className="text-muted-foreground mb-6">
+                Faça login para ver seu progresso e histórico de simulados.
+              </p>
+              <Button asChild>
+                <Link to="/auth">Fazer Login</Link>
+              </Button>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   const userResults = examResults;
 
   // Calculate stats

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Plus,
   Upload,
@@ -12,12 +12,11 @@ import {
   ImageIcon,
   BookOpen,
   Brain,
-  Languages,
-  Users,
   Settings,
   BarChart3,
   Plane,
   ArrowLeft,
+  Shield,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,11 +25,14 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useAuth } from '@/contexts/AuthContext';
 import { useExam } from '@/contexts/ExamContext';
 import { categories } from '@/data/mockData';
 
 export default function AdminPage() {
+  const { user, isAdmin, isLoading } = useAuth();
   const { questions, exams, addQuestion } = useExam();
+  const navigate = useNavigate();
   const [isAddingQuestion, setIsAddingQuestion] = useState(false);
   const [newQuestion, setNewQuestion] = useState<{
     category: string;
@@ -53,6 +55,54 @@ export default function AdminPage() {
     audioUrl: '',
     imageUrl: '',
   });
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4" />
+          <p className="text-muted-foreground">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Check if user is authenticated and is admin
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center p-8 rounded-2xl bg-card border border-border max-w-md">
+          <Shield className="w-16 h-16 text-destructive mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-foreground mb-2">Acesso Restrito</h2>
+          <p className="text-muted-foreground mb-6">
+            Você precisa fazer login para acessar esta página.
+          </p>
+          <Button asChild>
+            <Link to="/auth">Fazer Login</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center p-8 rounded-2xl bg-card border border-border max-w-md">
+          <Shield className="w-16 h-16 text-destructive mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-foreground mb-2">Acesso Negado</h2>
+          <p className="text-muted-foreground mb-6">
+            Você não tem permissão para acessar o painel administrativo.
+            Esta área é restrita a administradores.
+          </p>
+          <Button asChild>
+            <Link to="/">Voltar ao Início</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   const handleAddQuestion = () => {
     if (!newQuestion.text || newQuestion.options.some((o) => !o)) {
@@ -100,6 +150,9 @@ export default function AdminPage() {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">
+                Olá, {user.email}
+              </span>
               <Button variant="outline" size="sm" asChild>
                 <Link to="/simulados">Ver Simulados</Link>
               </Button>
@@ -338,19 +391,6 @@ export default function AdminPage() {
                       <p className="text-sm text-muted-foreground">
                         Arraste um arquivo MP3 ou clique para fazer upload
                       </p>
-                      <Input
-                        type="file"
-                        accept="audio/*"
-                        className="hidden"
-                        onChange={(e) => {
-                          // Handle audio upload
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            // In production, upload to storage
-                            setNewQuestion({ ...newQuestion, audioUrl: URL.createObjectURL(file) });
-                          }
-                        }}
-                      />
                     </div>
                   </div>
 

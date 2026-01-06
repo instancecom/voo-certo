@@ -1,13 +1,28 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Plane, Menu, X, User, Crown } from 'lucide-react';
+import { Plane, Menu, X, User, Crown, LogOut, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, profile, isAdmin, signOut } = useAuth();
   const isHome = location.pathname === '/';
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
 
   return (
     <motion.header
@@ -49,34 +64,85 @@ export function Header() {
             >
               Categorias
             </Link>
-            <Link
-              to="/meu-progresso"
-              className={`text-sm font-medium transition-colors hover:text-accent ${
-                isHome ? 'text-primary-foreground/80' : 'text-muted-foreground'
-              }`}
-            >
-              Meu Progresso
-            </Link>
+            {user && (
+              <Link
+                to="/meu-progresso"
+                className={`text-sm font-medium transition-colors hover:text-accent ${
+                  isHome ? 'text-primary-foreground/80' : 'text-muted-foreground'
+                }`}
+              >
+                Meu Progresso
+              </Link>
+            )}
           </nav>
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center gap-3">
-            <Button
-              variant={isHome ? 'glass' : 'ghost'}
-              size="sm"
-              asChild
-            >
-              <Link to="/admin" className="flex items-center gap-2">
-                <User className="w-4 h-4" />
-                Admin
-              </Link>
-            </Button>
-            <Button variant="hero" size="sm" asChild>
-              <Link to="/premium" className="flex items-center gap-2">
-                <Crown className="w-4 h-4" />
-                Premium
-              </Link>
-            </Button>
+            {user ? (
+              <>
+                {isAdmin && (
+                  <Button
+                    variant={isHome ? 'glass' : 'ghost'}
+                    size="sm"
+                    asChild
+                  >
+                    <Link to="/admin" className="flex items-center gap-2">
+                      <Settings className="w-4 h-4" />
+                      Admin
+                    </Link>
+                  </Button>
+                )}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant={isHome ? 'glass' : 'outline'}
+                      size="sm"
+                      className="flex items-center gap-2"
+                    >
+                      <User className="w-4 h-4" />
+                      {profile?.full_name || user.email?.split('@')[0]}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem asChild>
+                      <Link to="/meu-progresso" className="flex items-center gap-2">
+                        <User className="w-4 h-4" />
+                        Meu Progresso
+                      </Link>
+                    </DropdownMenuItem>
+                    {!profile?.is_premium && (
+                      <DropdownMenuItem asChild>
+                        <Link to="/premium" className="flex items-center gap-2 text-accent">
+                          <Crown className="w-4 h-4" />
+                          Seja Premium
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleSignOut} className="flex items-center gap-2 text-destructive">
+                      <LogOut className="w-4 h-4" />
+                      Sair
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant={isHome ? 'glass' : 'ghost'}
+                  size="sm"
+                  asChild
+                >
+                  <Link to="/auth">Entrar</Link>
+                </Button>
+                <Button variant="hero" size="sm" asChild>
+                  <Link to="/auth" className="flex items-center gap-2">
+                    <Crown className="w-4 h-4" />
+                    Começar Grátis
+                  </Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -116,23 +182,46 @@ export function Header() {
             >
               Categorias
             </Link>
-            <Link
-              to="/meu-progresso"
-              onClick={() => setIsMenuOpen(false)}
-              className="text-foreground font-medium py-2"
-            >
-              Meu Progresso
-            </Link>
+            {user && (
+              <Link
+                to="/meu-progresso"
+                onClick={() => setIsMenuOpen(false)}
+                className="text-foreground font-medium py-2"
+              >
+                Meu Progresso
+              </Link>
+            )}
             <div className="flex flex-col gap-2 pt-2 border-t border-border">
-              <Button variant="outline" asChild>
-                <Link to="/admin">Admin</Link>
-              </Button>
-              <Button variant="hero" asChild>
-                <Link to="/premium">
-                  <Crown className="w-4 h-4 mr-2" />
-                  Premium
-                </Link>
-              </Button>
+              {user ? (
+                <>
+                  {isAdmin && (
+                    <Button variant="outline" asChild>
+                      <Link to="/admin" onClick={() => setIsMenuOpen(false)}>
+                        <Settings className="w-4 h-4 mr-2" />
+                        Admin
+                      </Link>
+                    </Button>
+                  )}
+                  <Button variant="destructive" onClick={handleSignOut}>
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sair
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="outline" asChild>
+                    <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
+                      Entrar
+                    </Link>
+                  </Button>
+                  <Button variant="hero" asChild>
+                    <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
+                      <Crown className="w-4 h-4 mr-2" />
+                      Começar Grátis
+                    </Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </motion.div>
