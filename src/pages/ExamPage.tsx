@@ -1,68 +1,150 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Clock, ChevronLeft, ChevronRight, Flag, Volume2, VolumeX, Pause, Play, AlertTriangle } from 'lucide-react';
+import { Clock, ChevronLeft, ChevronRight, Flag, Volume2, VolumeX, Pause, Play, AlertTriangle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { useExam } from '@/contexts/ExamContext';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { useExamWithQuestions, useSubmitResult, DbQuestion } from '@/hooks/useExams';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
+
+interface ExamState {
+  currentQuestionIndex: number;
+  answers: Record<string, number>;
+  timeRemaining: number;
+  isActive: boolean;
+  isPaused: boolean;
+}
 
 export default function ExamPage() {
   const { examId } = useParams<{ examId: string }>();
   const navigate = useNavigate();
-  const {
-    exams,
-    questions,
-    examState,
-    startExam,
-    submitAnswer,
-    nextQuestion,
-    prevQuestion,
-    goToQuestion,
-    finishExam,
-    updateTimeRemaining,
-    pauseExam,
-    resumeExam,
-  } = useExam();
+  const { user } = useAuth();
+  const { data, isLoading, error } = useExamWithQuestions(examId || '');
+  const submitResult = useSubmitResult();
 
+  const [examState, setExamState] = useState<ExamState>({
+    currentQuestionIndex: 0,
+    answers: {},
+    timeRemaining: 0,
+    isActive: false,
+    isPaused: false,
+  });
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const [showFinishDialog, setShowFinishDialog] = useState(false);
   const [showTimeWarning, setShowTimeWarning] = useState(false);
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
 
-  // Start exam on mount
+  // Initialize exam when data loads
   useEffect(() => {
-    if (examId && !examState.isActive) {
-      startExam(examId);
+    if (data?.exam && !examState.isActive) {
+      setExamState({
+        currentQuestionIndex: 0,
+        answers: {},
+        timeRemaining: data.exam.duration * 60,
+        isActive: true,
+        isPaused: false,
+      });
     }
-  }, [examId, examState.isActive, startExam]);
+  }, [data?.exam]);
 
   // Timer
   useEffect(() => {
     if (!examState.isActive || examState.isPaused) return;
 
     const interval = setInterval(() => {
-      updateTimeRemaining(examState.timeRemaining - 1);
-
-      // Show warning at 5 minutes
-      if (examState.timeRemaining === 300) {
-        setShowTimeWarning(true);
-      }
-
-      // Auto-finish at 0
-      if (examState.timeRemaining <= 0) {
-        handleFinishExam();
-      }
+      setExamState(prev => {
+        const newTime = prev.timeRemaining - 1;
+        
+        if (newTime === 300) {
+          setShowTimeWarning(true);
+        }
+        
+        if (newTime <= 0) {
+          handleFinishExam();
+          return prev;
+        }
+        
+        return { ...prev, timeRemaining: newTime };
+      });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [examState.isActive, examState.isPaused, examState.timeRemaining, updateTimeRemaining]);
+  }, [examState.isActive, examState.isPaused]);
 
-  const handleFinishExam = useCallback(() => {
-    const result = finishExam();
-    if (result) {
-      navigate(`/resultado/${result.id}`);
+  const handleFinishExam = useCallback(async () => {
+    if (!data?.exam || !data?.questions) return;
+
+    if (!user) {
+      setShowAuthDialog(true);
+      return;
     }
-  }, [finishExam, navigate]);
+
+    const questions = data.questions;
+    let correctCount = 0;
+    const answerDetails = questions.map((question) => {
+      const selectedAnswer = examState.answers[question.id] ?? -1;
+      const isCorrect = selectedAnswer === question.correct_answer;
+      if (isCorrect) correctCount++;
+      return {
+        questionId: question.id,
+        selectedAnswer,
+        isCorrect,
+      };
+    });
+
+    const resultData = {
+      exam_id: data.exam.id,
+      score: Math.round((correctCount / questions.length) * 100),
+      total_questions: questions.length,
+      correct_answers: correctCount,
+      time_spent: data.exam.duration * 60 - examState.timeRemaining,
+      answers: answerDetails,
+    };
+
+    try {
+      const result = await submitResult.mutateAsync(resultData);
+      navigate(`/resultado/${result.id}`);
+    } catch (err) {
+      toast.error('Erro ao salvar resultado');
+      console.error(err);
+    }
+  }, [data, examState.answers, examState.timeRemaining, user, submitResult, navigate]);
+
+  const submitAnswer = (questionId: string, answer: number) => {
+    setExamState(prev => ({
+      ...prev,
+      answers: { ...prev.answers, [questionId]: answer },
+    }));
+  };
+
+  const nextQuestion = () => {
+    if (!data?.questions) return;
+    setExamState(prev => ({
+      ...prev,
+      currentQuestionIndex: Math.min(prev.currentQuestionIndex + 1, data.questions.length - 1),
+    }));
+  };
+
+  const prevQuestion = () => {
+    setExamState(prev => ({
+      ...prev,
+      currentQuestionIndex: Math.max(prev.currentQuestionIndex - 1, 0),
+    }));
+  };
+
+  const goToQuestion = (index: number) => {
+    setExamState(prev => ({ ...prev, currentQuestionIndex: index }));
+  };
+
+  const pauseExam = () => {
+    setExamState(prev => ({ ...prev, isPaused: true }));
+  };
+
+  const resumeExam = () => {
+    setExamState(prev => ({ ...prev, isPaused: false }));
+  };
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -70,21 +152,32 @@ export default function ExamPage() {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  if (!examState.currentExam) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4" />
+          <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
           <p className="text-muted-foreground">Carregando simulado...</p>
         </div>
       </div>
     );
   }
 
-  const currentQuestionId = examState.currentExam.questions[examState.currentQuestionIndex];
-  const currentQuestion = questions.find((q) => q.id === currentQuestionId);
-  const selectedAnswer = examState.answers[currentQuestionId];
-  const progress = ((examState.currentQuestionIndex + 1) / examState.currentExam.questions.length) * 100;
+  if (error || !data?.exam || !data?.questions) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-destructive mb-4">Erro ao carregar simulado</p>
+          <Button onClick={() => navigate('/simulados')}>Voltar</Button>
+        </div>
+      </div>
+    );
+  }
+
+  const { exam, questions } = data;
+  const currentQuestion = questions[examState.currentQuestionIndex];
+  const selectedAnswer = examState.answers[currentQuestion?.id];
+  const progress = ((examState.currentQuestionIndex + 1) / questions.length) * 100;
   const isTimeWarning = examState.timeRemaining <= 300;
 
   return (
@@ -93,14 +186,12 @@ export default function ExamPage() {
       <header className="fixed top-0 left-0 right-0 z-50 bg-card border-b border-border">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            {/* Exam Title */}
             <div className="flex items-center gap-4">
               <h1 className="text-lg font-semibold text-foreground truncate max-w-[200px] md:max-w-none">
-                {examState.currentExam.title}
+                {exam.title}
               </h1>
             </div>
 
-            {/* Timer */}
             <div className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
               isTimeWarning ? 'bg-destructive/10 text-destructive' : 'bg-muted'
             }`}>
@@ -110,7 +201,6 @@ export default function ExamPage() {
               </span>
             </div>
 
-            {/* Actions */}
             <div className="flex items-center gap-2">
               <Button
                 variant="ghost"
@@ -134,11 +224,10 @@ export default function ExamPage() {
             </div>
           </div>
 
-          {/* Progress */}
           <div className="pb-2">
             <Progress value={progress} className="h-1" />
             <div className="flex justify-between text-xs text-muted-foreground mt-1">
-              <span>Questão {examState.currentQuestionIndex + 1} de {examState.currentExam.questions.length}</span>
+              <span>Questão {examState.currentQuestionIndex + 1} de {questions.length}</span>
               <span>{Math.round(progress)}% completo</span>
             </div>
           </div>
@@ -173,8 +262,7 @@ export default function ExamPage() {
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3 }}
               >
-                {/* Audio Player */}
-                {currentQuestion.audioUrl && (
+                {currentQuestion.audio_url && (
                   <div className="mb-6 p-4 rounded-xl bg-primary/5 border border-primary/20">
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Ouça o áudio para responder:</span>
@@ -196,7 +284,6 @@ export default function ExamPage() {
                         )}
                       </Button>
                     </div>
-                    {/* Audio waveform placeholder */}
                     <div className="mt-3 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
                       <div className="flex gap-1">
                         {[...Array(20)].map((_, i) => (
@@ -218,18 +305,16 @@ export default function ExamPage() {
                   </div>
                 )}
 
-                {/* Question Image */}
-                {currentQuestion.imageUrl && (
+                {currentQuestion.image_url && (
                   <div className="mb-6">
                     <img
-                      src={currentQuestion.imageUrl}
+                      src={currentQuestion.image_url}
                       alt="Imagem da questão"
                       className="rounded-xl max-h-64 object-contain mx-auto"
                     />
                   </div>
                 )}
 
-                {/* Question Text */}
                 <div className="mb-8">
                   <span className="text-sm text-accent font-medium mb-2 block">
                     Questão {examState.currentQuestionIndex + 1}
@@ -239,11 +324,10 @@ export default function ExamPage() {
                   </h2>
                 </div>
 
-                {/* Options */}
                 <div className="space-y-3">
                   {currentQuestion.options.map((option, index) => {
                     const isSelected = selectedAnswer === index;
-                    const optionLetter = String.fromCharCode(65 + index); // A, B, C, D
+                    const optionLetter = String.fromCharCode(65 + index);
 
                     return (
                       <motion.button
@@ -296,15 +380,14 @@ export default function ExamPage() {
               Anterior
             </Button>
 
-            {/* Question Navigator */}
             <div className="hidden md:flex gap-1 overflow-x-auto max-w-md">
-              {examState.currentExam.questions.map((qId, index) => {
-                const isAnswered = examState.answers[qId] !== undefined;
+              {questions.map((q, index) => {
+                const isAnswered = examState.answers[q.id] !== undefined;
                 const isCurrent = index === examState.currentQuestionIndex;
 
                 return (
                   <button
-                    key={qId}
+                    key={q.id}
                     onClick={() => goToQuestion(index)}
                     className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
                       isCurrent
@@ -320,7 +403,7 @@ export default function ExamPage() {
               })}
             </div>
 
-            {examState.currentQuestionIndex === examState.currentExam.questions.length - 1 ? (
+            {examState.currentQuestionIndex === questions.length - 1 ? (
               <Button variant="hero" onClick={() => setShowFinishDialog(true)}>
                 Finalizar
                 <Flag className="w-4 h-4 ml-2" />
@@ -341,11 +424,11 @@ export default function ExamPage() {
           <DialogHeader>
             <DialogTitle>Finalizar Simulado?</DialogTitle>
             <DialogDescription>
-              {Object.keys(examState.answers).length < examState.currentExam.questions.length ? (
+              {Object.keys(examState.answers).length < questions.length ? (
                 <>
                   Você ainda tem{' '}
                   <span className="font-semibold text-destructive">
-                    {examState.currentExam.questions.length - Object.keys(examState.answers).length}
+                    {questions.length - Object.keys(examState.answers).length}
                   </span>{' '}
                   questões não respondidas. Deseja finalizar mesmo assim?
                 </>
@@ -358,8 +441,29 @@ export default function ExamPage() {
             <Button variant="outline" onClick={() => setShowFinishDialog(false)}>
               Continuar Respondendo
             </Button>
-            <Button variant="destructive" onClick={handleFinishExam}>
+            <Button variant="destructive" onClick={handleFinishExam} disabled={submitResult.isPending}>
+              {submitResult.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
               Finalizar Agora
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Auth Required Dialog */}
+      <Dialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Faça login para salvar seu resultado</DialogTitle>
+            <DialogDescription>
+              Para salvar seu progresso e ver seu histórico de simulados, você precisa estar logado.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAuthDialog(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={() => navigate('/auth')}>
+              Fazer Login
             </Button>
           </DialogFooter>
         </DialogContent>

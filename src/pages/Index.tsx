@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Plane, BookOpen, Brain, Users, Clock, Award, ArrowRight, Crown, CheckCircle2 } from 'lucide-react';
+import { Plane, BookOpen, Brain, Users, Clock, Award, ArrowRight, Crown, CheckCircle2, Loader2 } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { categories } from '@/data/mockData';
+import { useCategories, useSubcategories } from '@/hooks/useExams';
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Plane,
@@ -14,6 +14,17 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 };
 
 export default function Index() {
+  const { data: categories, isLoading: loadingCategories } = useCategories();
+  const { data: subcategories, isLoading: loadingSubcategories } = useSubcategories();
+
+  const isLoading = loadingCategories || loadingSubcategories;
+
+  // Build categories with subcategories
+  const categoriesWithSubs = categories?.map(cat => ({
+    ...cat,
+    subcategories: subcategories?.filter(s => s.category_id === cat.id) || [],
+  })) || [];
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -102,8 +113,8 @@ export default function Index() {
               className="flex flex-wrap justify-center gap-8 mt-16"
             >
               {[
-                { value: '500+', label: 'Questões' },
-                { value: '15+', label: 'Simulados' },
+                { value: '30+', label: 'Questões' },
+                { value: '5+', label: 'Simulados' },
                 { value: '95%', label: 'Aprovação' },
                 { value: '24/7', label: 'Acesso' },
               ].map((stat, index) => (
@@ -149,62 +160,68 @@ export default function Index() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {categories.map((category, index) => {
-              const Icon = iconMap[category.icon] || Plane;
-              const isComingSoon = category.subcategories.length === 0;
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {categoriesWithSubs.map((category, index) => {
+                const Icon = iconMap[category.icon || 'Plane'] || Plane;
+                const isComingSoon = category.subcategories.length === 0;
 
-              return (
-                <motion.div
-                  key={category.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <Link
-                    to={isComingSoon ? '#' : `/simulados/${category.slug}`}
-                    className={`block p-6 rounded-2xl border border-border bg-card hover:shadow-card-hover transition-all duration-300 ${
-                      isComingSoon ? 'opacity-60 cursor-not-allowed' : 'hover:border-accent/50'
-                    }`}
+                return (
+                  <motion.div
+                    key={category.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
                   >
-                    <div className="flex items-start gap-4">
-                      <div className="p-3 rounded-xl bg-primary/10">
-                        <Icon className="w-8 h-8 text-primary" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <h3 className="text-xl font-bold text-foreground">{category.name}</h3>
-                          {isComingSoon && (
-                            <span className="px-2 py-1 text-xs bg-muted rounded-full text-muted-foreground">
-                              Em breve
-                            </span>
+                    <Link
+                      to={isComingSoon ? '#' : `/simulados`}
+                      className={`block p-6 rounded-2xl border border-border bg-card hover:shadow-card-hover transition-all duration-300 ${
+                        isComingSoon ? 'opacity-60 cursor-not-allowed' : 'hover:border-accent/50'
+                      }`}
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="p-3 rounded-xl bg-primary/10">
+                          <Icon className="w-8 h-8 text-primary" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <h3 className="text-xl font-bold text-foreground">{category.name}</h3>
+                            {isComingSoon && (
+                              <span className="px-2 py-1 text-xs bg-muted rounded-full text-muted-foreground">
+                                Em breve
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-muted-foreground text-sm mb-4">{category.description}</p>
+                          
+                          {category.subcategories.length > 0 && (
+                            <div className="flex flex-wrap gap-2">
+                              {category.subcategories.map((sub) => (
+                                <span
+                                  key={sub.id}
+                                  className="px-3 py-1 text-xs bg-secondary rounded-full text-secondary-foreground"
+                                >
+                                  {sub.name}
+                                </span>
+                              ))}
+                            </div>
                           )}
                         </div>
-                        <p className="text-muted-foreground text-sm mb-4">{category.description}</p>
-                        
-                        {category.subcategories.length > 0 && (
-                          <div className="flex flex-wrap gap-2">
-                            {category.subcategories.map((sub) => (
-                              <span
-                                key={sub.id}
-                                className="px-3 py-1 text-xs bg-secondary rounded-full text-secondary-foreground"
-                              >
-                                {sub.name}
-                              </span>
-                            ))}
-                          </div>
+                        {!isComingSoon && (
+                          <ArrowRight className="w-5 h-5 text-muted-foreground" />
                         )}
                       </div>
-                      {!isComingSoon && (
-                        <ArrowRight className="w-5 h-5 text-muted-foreground" />
-                      )}
-                    </div>
-                  </Link>
-                </motion.div>
-              );
-            })}
-          </div>
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
 
