@@ -1,32 +1,16 @@
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CheckCircle2, XCircle, Clock, BarChart3, ArrowRight, RotateCcw, Home, ChevronDown, ChevronUp } from 'lucide-react';
+import { CheckCircle2, XCircle, Clock, BarChart3, ArrowRight, RotateCcw, Home, ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useExam } from '@/contexts/ExamContext';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { useState } from 'react';
+import { useExamResult } from '@/hooks/useExams';
 
 export default function ResultPage() {
   const { resultId } = useParams<{ resultId: string }>();
-  const { examResults, exams, questions } = useExam();
+  const { data, isLoading, error } = useExamResult(resultId || '');
   const [expandedQuestions, setExpandedQuestions] = useState<Set<string>>(new Set());
-
-  const result = examResults.find((r) => r.id === resultId);
-  const exam = result ? exams.find((e) => e.id === result.examId) : null;
-
-  if (!result || !exam) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-foreground mb-4">Resultado não encontrado</h2>
-          <Button asChild>
-            <Link to="/simulados">Voltar aos Simulados</Link>
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   const toggleQuestion = (questionId: string) => {
     const newExpanded = new Set(expandedQuestions);
@@ -56,6 +40,32 @@ export default function ResultPage() {
     if (score >= 60) return 'Bom progresso. Revise os erros.';
     return 'Precisa estudar mais. Não desista!';
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-muted-foreground">Carregando resultado...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !data?.result || !data?.exam) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-foreground mb-4">Resultado não encontrado</h2>
+          <Button asChild>
+            <Link to="/simulados">Voltar aos Simulados</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  const { result, exam, questions } = data;
 
   return (
     <div className="min-h-screen bg-background">
@@ -121,24 +131,24 @@ export default function ResultPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="p-4 rounded-xl bg-success/10 text-center">
                 <CheckCircle2 className="w-6 h-6 text-success mx-auto mb-2" />
-                <div className="text-2xl font-bold text-success">{result.correctAnswers}</div>
+                <div className="text-2xl font-bold text-success">{result.correct_answers}</div>
                 <div className="text-sm text-muted-foreground">Acertos</div>
               </div>
               <div className="p-4 rounded-xl bg-destructive/10 text-center">
                 <XCircle className="w-6 h-6 text-destructive mx-auto mb-2" />
                 <div className="text-2xl font-bold text-destructive">
-                  {result.totalQuestions - result.correctAnswers}
+                  {result.total_questions - result.correct_answers}
                 </div>
                 <div className="text-sm text-muted-foreground">Erros</div>
               </div>
               <div className="p-4 rounded-xl bg-primary/10 text-center">
                 <BarChart3 className="w-6 h-6 text-primary mx-auto mb-2" />
-                <div className="text-2xl font-bold text-primary">{result.totalQuestions}</div>
+                <div className="text-2xl font-bold text-primary">{result.total_questions}</div>
                 <div className="text-sm text-muted-foreground">Questões</div>
               </div>
               <div className="p-4 rounded-xl bg-accent/10 text-center">
                 <Clock className="w-6 h-6 text-accent mx-auto mb-2" />
-                <div className="text-2xl font-bold text-accent">{formatTime(result.timeSpent)}</div>
+                <div className="text-2xl font-bold text-accent">{formatTime(result.time_spent)}</div>
                 <div className="text-sm text-muted-foreground">Tempo</div>
               </div>
             </div>
@@ -225,7 +235,7 @@ export default function ResultPage() {
                       >
                         <div className="space-y-2">
                           {question.options.map((option, optIndex) => {
-                            const isCorrect = optIndex === question.correctAnswer;
+                            const isCorrect = optIndex === question.correct_answer;
                             const isSelected = optIndex === answer.selectedAnswer;
                             const optionLetter = String.fromCharCode(65 + optIndex);
 
@@ -249,10 +259,12 @@ export default function ResultPage() {
                           })}
                         </div>
 
-                        <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
-                          <p className="text-sm font-medium text-primary mb-1">Explicação:</p>
-                          <p className="text-sm text-muted-foreground">{question.explanation}</p>
-                        </div>
+                        {question.explanation && (
+                          <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
+                            <p className="text-sm font-medium text-primary mb-1">Explicação:</p>
+                            <p className="text-sm text-muted-foreground">{question.explanation}</p>
+                          </div>
+                        )}
                       </motion.div>
                     )}
                   </div>
