@@ -13,6 +13,7 @@ export interface DbQuestion {
   audio_url: string | null;
   image_url: string | null;
   difficulty: 'easy' | 'medium' | 'hard' | null;
+  block_number: number | null;
   created_at: string;
 }
 

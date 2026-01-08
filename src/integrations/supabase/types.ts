@@ -83,9 +83,11 @@ export type Database = {
       exam_results: {
         Row: {
           answers: Json
+          block_results: Json | null
           completed_at: string
           correct_answers: number
           exam_id: string
+          exam_mode: string | null
           id: string
           score: number
           time_spent: number
@@ -94,9 +96,11 @@ export type Database = {
         }
         Insert: {
           answers?: Json
+          block_results?: Json | null
           completed_at?: string
           correct_answers: number
           exam_id: string
+          exam_mode?: string | null
           id?: string
           score: number
           time_spent: number
@@ -105,9 +109,11 @@ export type Database = {
         }
         Update: {
           answers?: Json
+          block_results?: Json | null
           completed_at?: string
           correct_answers?: number
           exam_id?: string
+          exam_mode?: string | null
           id?: string
           score?: number
           time_spent?: number
@@ -229,6 +235,7 @@ export type Database = {
       questions: {
         Row: {
           audio_url: string | null
+          block_number: number | null
           category_id: string
           correct_answer: number
           created_at: string
@@ -244,6 +251,7 @@ export type Database = {
         }
         Insert: {
           audio_url?: string | null
+          block_number?: number | null
           category_id: string
           correct_answer: number
           created_at?: string
@@ -259,6 +267,7 @@ export type Database = {
         }
         Update: {
           audio_url?: string | null
+          block_number?: number | null
           category_id?: string
           correct_answer?: number
           created_at?: string

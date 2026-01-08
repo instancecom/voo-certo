@@ -49,6 +49,7 @@ export default function AdminPage() {
     correct_answer: 0,
     explanation: '',
     difficulty: 'medium' as 'easy' | 'medium' | 'hard',
+    block_number: '' as '' | '1' | '2' | '3' | '4',
     audio_url: '',
     image_url: '',
   });
@@ -119,6 +120,7 @@ export default function AdminPage() {
         correct_answer: newQuestion.correct_answer,
         explanation: newQuestion.explanation || null,
         difficulty: newQuestion.difficulty,
+        block_number: newQuestion.block_number ? parseInt(newQuestion.block_number) : null,
         audio_url: newQuestion.audio_url || null,
         image_url: newQuestion.image_url || null,
       });
@@ -136,6 +138,7 @@ export default function AdminPage() {
         correct_answer: 0,
         explanation: '',
         difficulty: 'medium',
+        block_number: '',
         audio_url: '',
         image_url: '',
       });
@@ -319,6 +322,27 @@ export default function AdminPage() {
                                 {sub.name}
                               </SelectItem>
                             ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Bloco ANAC</Label>
+                        <Select
+                          value={newQuestion.block_number}
+                          onValueChange={(value) =>
+                            setNewQuestion({ ...newQuestion, block_number: value as '' | '1' | '2' | '3' | '4' })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Opcional" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="">Nenhum</SelectItem>
+                            <SelectItem value="1">Bloco 1 - Regulamentação</SelectItem>
+                            <SelectItem value="2">Bloco 2 - Segurança</SelectItem>
+                            <SelectItem value="3">Bloco 3 - Conhecimentos Técnicos</SelectItem>
+                            <SelectItem value="4">Bloco 4 - CRM/Fatores Humanos</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
