@@ -1,40 +1,66 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { Plane, Clock, Brain, Languages, MessageCircle, BookOpen, Users, Crown, ArrowRight, Headphones, Loader2 } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { Plane, Clock, Brain, BookOpen, Crown, ArrowRight, Loader2, Play, FileQuestion, Timer, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { useExams, useCategories, useSubcategories } from '@/hooks/useExams';
+import { Badge } from '@/components/ui/badge';
+import { supabase } from '@/integrations/supabase/client';
 
-const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  Plane,
-  Clock,
-  Brain,
-  Languages,
-  MessageCircle,
-  BookOpen,
-  Users,
-  Headphones,
-};
+interface CategoryWithQuestions {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  icon: string | null;
+  is_active: boolean | null;
+  active_modes: string[] | null;
+  question_count: number;
+}
 
 export default function SimuladosPage() {
-  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
-  
-  const { data: categories, isLoading: loadingCategories } = useCategories();
-  const { data: subcategories, isLoading: loadingSubcategories } = useSubcategories();
-  const { data: exams, isLoading: loadingExams } = useExams();
+  const navigate = useNavigate();
 
-  const anacCategory = categories?.find((c) => c.slug === 'anac');
-  const anacSubcategories = subcategories?.filter(s => s.category_id === anacCategory?.id) || [];
-  
-  const filteredExams = exams?.filter((e) => {
-    if (e.category_id !== anacCategory?.id) return false;
-    if (selectedSubcategory && e.subcategory_id !== selectedSubcategory) return false;
-    return true;
-  }) || [];
+  // Fetch categories with question counts
+  const { data: categories, isLoading } = useQuery({
+    queryKey: ['categories-with-questions'],
+    queryFn: async () => {
+      const { data: cats, error } = await supabase
+        .from('categories')
+        .select('*')
+        .eq('is_active', true)
+        .order('name');
 
-  const isLoading = loadingCategories || loadingSubcategories || loadingExams;
+      if (error) throw error;
+
+      // Get question counts per category
+      const { data: counts, error: countError } = await supabase
+        .from('questions')
+        .select('category_id');
+
+      if (countError) throw countError;
+
+      const countMap = (counts || []).reduce((acc, q) => {
+        acc[q.category_id] = (acc[q.category_id] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>);
+
+      // Only return categories with at least 1 question
+      return (cats || [])
+        .map(cat => ({
+          ...cat,
+          question_count: countMap[cat.id] || 0,
+        }))
+        .filter(cat => cat.question_count > 0) as CategoryWithQuestions[];
+    },
+  });
+
+  const handleStartSimulado = (categoryId: string, mode: string) => {
+    // Navigate to exam with category and mode params
+    navigate(`/simulado-categoria/${categoryId}?modo=${mode}`);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -50,108 +76,137 @@ export default function SimuladosPage() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary mb-4">
               <Plane className="w-4 h-4" />
-              <span className="text-sm font-medium">Simulados ANAC</span>
+              <span className="text-sm font-medium">Simulados Voo Certo</span>
             </div>
             <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-              Simulados para Comissário de Bordo
+              Escolha sua Área de Estudo
             </h1>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Prepare-se com simulados realistas e cronometrados. Cada área de conhecimento
-              com questões baseadas nas provas anteriores da ANAC.
+              Pratique com simulados nas diferentes áreas de conhecimento.
+              Escolha entre o modo cronometrado (Banca ANAC) ou modo livre para estudar no seu ritmo.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Subcategories Filter */}
-      <section className="py-8 border-b border-border sticky top-16 md:top-20 bg-background/95 backdrop-blur-sm z-40">
+      {/* Featured: Simulado ANAC */}
+      <section className="py-8 border-b border-border">
         <div className="container mx-auto px-4">
-          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-            <Button 
-              variant={selectedSubcategory === null ? "default" : "secondary"} 
-              size="sm"
-              onClick={() => setSelectedSubcategory(null)}
-            >
-              Todos
-            </Button>
-            {anacSubcategories.map((sub) => (
-              <Button 
-                key={sub.id} 
-                variant={selectedSubcategory === sub.id ? "default" : "secondary"} 
-                size="sm"
-                onClick={() => setSelectedSubcategory(sub.id)}
-              >
-                {sub.name}
-              </Button>
-            ))}
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            <Link to="/simulado-anac" className="block">
+              <div className="p-6 md:p-8 rounded-2xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground hover:shadow-xl transition-all duration-300">
+                <div className="flex flex-col md:flex-row items-center gap-6">
+                  <div className="flex-shrink-0 p-4 rounded-2xl bg-white/10">
+                    <Plane className="w-10 h-10" />
+                  </div>
+                  <div className="flex-1 text-center md:text-left">
+                    <h2 className="text-2xl md:text-3xl font-bold mb-2">
+                      Simulado ANAC Oficial
+                    </h2>
+                    <p className="text-primary-foreground/80 mb-4">
+                      80 questões divididas em 4 blocos cronometrados. Formato oficial da prova ANAC para Comissário de Bordo.
+                    </p>
+                    <div className="flex flex-wrap items-center gap-4 justify-center md:justify-start">
+                      <Badge className="bg-white/20 text-primary-foreground">
+                        <Timer className="w-3 h-3 mr-1" />
+                        2 horas
+                      </Badge>
+                      <Badge className="bg-white/20 text-primary-foreground">
+                        <FileQuestion className="w-3 h-3 mr-1" />
+                        80 questões
+                      </Badge>
+                      <Badge className="bg-white/20 text-primary-foreground">
+                        <Brain className="w-3 h-3 mr-1" />
+                        4 blocos
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="flex-shrink-0">
+                    <Button variant="secondary" size="lg" className="group">
+                      <Play className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
+                      Iniciar
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          </motion.div>
         </div>
       </section>
 
-      {/* Exams Grid */}
+      {/* Categories Grid */}
       <section className="py-12">
         <div className="container mx-auto px-4">
+          <h2 className="text-2xl font-bold text-foreground mb-8">Categorias Disponíveis</h2>
+          
           {isLoading ? (
             <div className="flex items-center justify-center py-20">
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
-          ) : filteredExams.length === 0 ? (
+          ) : categories?.length === 0 ? (
             <div className="text-center py-20">
-              <p className="text-muted-foreground">Nenhum simulado encontrado.</p>
+              <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">Nenhuma categoria disponível no momento.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredExams.map((exam, index) => {
-                const Icon = iconMap[exam.icon || 'BookOpen'] || BookOpen;
+              {categories?.map((category, index) => (
+                <motion.div
+                  key={category.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                >
+                  <div className="p-6 rounded-2xl bg-card border border-border hover:shadow-card-hover hover:border-accent/50 transition-all duration-300 h-full flex flex-col">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="text-4xl">{category.icon || '📚'}</div>
+                      <Badge variant="outline">
+                        {category.question_count} questões
+                      </Badge>
+                    </div>
 
-                return (
-                  <motion.div
-                    key={exam.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    <div className="p-6 rounded-2xl bg-card border border-border hover:shadow-card-hover hover:border-accent/50 transition-all duration-300 h-full flex flex-col">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="p-3 rounded-xl bg-primary/10">
-                          <Icon className="w-6 h-6 text-primary" />
-                        </div>
-                        {exam.is_premium && (
-                          <span className="flex items-center gap-1 px-2 py-1 bg-accent/10 rounded-full text-accent text-xs font-medium">
-                            <Crown className="w-3 h-3" />
-                            Premium
-                          </span>
+                    <h3 className="text-lg font-bold text-foreground mb-2">{category.name}</h3>
+                    <p className="text-sm text-muted-foreground mb-4 flex-1">
+                      {category.description || 'Pratique suas habilidades nesta categoria.'}
+                    </p>
+
+                    {/* Available Modes */}
+                    <div className="space-y-2">
+                      <p className="text-xs text-muted-foreground font-medium">Modos disponíveis:</p>
+                      <div className="flex flex-col gap-2">
+                        {category.active_modes?.includes('banca_anac') && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full justify-start"
+                            onClick={() => handleStartSimulado(category.id, 'banca_anac')}
+                          >
+                            <Timer className="w-4 h-4 mr-2 text-primary" />
+                            Modo Banca ANAC
+                            <ArrowRight className="w-4 h-4 ml-auto" />
+                          </Button>
+                        )}
+                        {category.active_modes?.includes('livre') && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full justify-start"
+                            onClick={() => handleStartSimulado(category.id, 'livre')}
+                          >
+                            <Zap className="w-4 h-4 mr-2 text-accent" />
+                            Modo Livre
+                            <ArrowRight className="w-4 h-4 ml-auto" />
+                          </Button>
                         )}
                       </div>
-
-                      <h3 className="text-lg font-bold text-foreground mb-2">{exam.title}</h3>
-                      <p className="text-sm text-muted-foreground mb-4 flex-1">{exam.description}</p>
-
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-4 h-4" />
-                          {exam.duration} min
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <BookOpen className="w-4 h-4" />
-                          {exam.question_count} questões
-                        </span>
-                      </div>
-
-                      <Button
-                        variant={exam.is_premium ? 'accent' : 'default'}
-                        className="w-full"
-                        asChild
-                      >
-                        <Link to={`/simulado/${exam.id}`}>
-                          {exam.is_premium ? 'Desbloquear' : 'Iniciar Simulado'}
-                          <ArrowRight className="w-4 h-4 ml-2" />
-                        </Link>
-                      </Button>
                     </div>
-                  </motion.div>
-                );
-              })}
+                  </div>
+                </motion.div>
+              ))}
             </div>
           )}
         </div>
@@ -173,7 +228,7 @@ export default function SimuladosPage() {
               </div>
               <h3 className="text-2xl font-bold mb-2">Acesso ilimitado a todos os simulados</h3>
               <p className="text-primary-foreground/70">
-                Desbloqueie questões exclusivas, relatórios avançados e áudio de anúncios reais.
+                Desbloqueie questões exclusivas, relatórios avançados e muito mais.
               </p>
             </div>
             <Button variant="hero" size="lg" asChild>
