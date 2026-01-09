@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       categories: {
         Row: {
+          active_modes: string[] | null
           created_at: string
           description: string | null
           icon: string | null
@@ -25,6 +26,7 @@ export type Database = {
           slug: string
         }
         Insert: {
+          active_modes?: string[] | null
           created_at?: string
           description?: string | null
           icon?: string | null
@@ -34,6 +36,7 @@ export type Database = {
           slug: string
         }
         Update: {
+          active_modes?: string[] | null
           created_at?: string
           description?: string | null
           icon?: string | null
