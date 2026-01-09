@@ -60,6 +60,15 @@ export interface DbExamResult {
   time_spent: number;
   answers: { questionId: string; selectedAnswer: number; isCorrect: boolean }[];
   completed_at: string;
+  exam_mode?: string;
+  block_results?: {
+    blockNumber: number;
+    totalQuestions: number;
+    correctAnswers: number;
+    percentage: number;
+    passed: boolean;
+    timeSpent?: number;
+  }[];
 }
 
 // Fetch categories
@@ -266,6 +275,8 @@ export function useSubmitResult() {
           correct_answers: result.correct_answers,
           time_spent: result.time_spent,
           answers: result.answers,
+          exam_mode: result.exam_mode || 'standard',
+          block_results: result.block_results || [],
         })
         .select()
         .single();
