@@ -19,31 +19,37 @@ export type Database = {
           active_modes: string[] | null
           created_at: string
           description: string | null
+          display_order: number | null
           icon: string | null
           id: string
           is_active: boolean | null
           name: string
           slug: string
+          total_time: number | null
         }
         Insert: {
           active_modes?: string[] | null
           created_at?: string
           description?: string | null
+          display_order?: number | null
           icon?: string | null
           id?: string
           is_active?: boolean | null
           name: string
           slug: string
+          total_time?: number | null
         }
         Update: {
           active_modes?: string[] | null
           created_at?: string
           description?: string | null
+          display_order?: number | null
           icon?: string | null
           id?: string
           is_active?: boolean | null
           name?: string
           slug?: string
+          total_time?: number | null
         }
         Relationships: []
       }
@@ -306,28 +312,37 @@ export type Database = {
           category_id: string
           created_at: string
           description: string | null
+          display_order: number | null
           icon: string | null
           id: string
           name: string
+          num_questions_expected: number | null
           slug: string
+          time_limit: number | null
         }
         Insert: {
           category_id: string
           created_at?: string
           description?: string | null
+          display_order?: number | null
           icon?: string | null
           id?: string
           name: string
+          num_questions_expected?: number | null
           slug: string
+          time_limit?: number | null
         }
         Update: {
           category_id?: string
           created_at?: string
           description?: string | null
+          display_order?: number | null
           icon?: string | null
           id?: string
           name?: string
+          num_questions_expected?: number | null
           slug?: string
+          time_limit?: number | null
         }
         Relationships: [
           {
