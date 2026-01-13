@@ -12,6 +12,7 @@ import ANACExamPage from "./pages/ANACExamPage";
 import ResultPage from "./pages/ResultPage";
 import AdminPage from "./pages/AdminPage";
 import ProgressPage from "./pages/ProgressPage";
+import ConquistasPage from "./pages/ConquistasPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/resultado/:resultId" element={<ResultPage />} />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/meu-progresso" element={<ProgressPage />} />
+            <Route path="/conquistas" element={<ConquistasPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
