@@ -205,6 +205,48 @@ export type Database = {
           },
         ]
       }
+      insignias: {
+        Row: {
+          condition_type: string
+          condition_value: number
+          created_at: string
+          description: string
+          display_order: number | null
+          icon: string
+          id: string
+          is_active: boolean | null
+          name: string
+          rarity: Database["public"]["Enums"]["badge_rarity"]
+          updated_at: string
+        }
+        Insert: {
+          condition_type: string
+          condition_value?: number
+          created_at?: string
+          description: string
+          display_order?: number | null
+          icon?: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          rarity?: Database["public"]["Enums"]["badge_rarity"]
+          updated_at?: string
+        }
+        Update: {
+          condition_type?: string
+          condition_value?: number
+          created_at?: string
+          description?: string
+          display_order?: number | null
+          icon?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          rarity?: Database["public"]["Enums"]["badge_rarity"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -354,6 +396,35 @@ export type Database = {
           },
         ]
       }
+      user_insignias: {
+        Row: {
+          earned_at: string
+          id: string
+          insignia_id: string
+          user_id: string
+        }
+        Insert: {
+          earned_at?: string
+          id?: string
+          insignia_id: string
+          user_id: string
+        }
+        Update: {
+          earned_at?: string
+          id?: string
+          insignia_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_insignias_insignia_id_fkey"
+            columns: ["insignia_id"]
+            isOneToOne: false
+            referencedRelation: "insignias"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -391,6 +462,7 @@ export type Database = {
     }
     Enums: {
       app_role: "user" | "premium" | "admin"
+      badge_rarity: "bronze" | "silver" | "gold" | "platinum"
       difficulty_level: "easy" | "medium" | "hard"
     }
     CompositeTypes: {
@@ -520,6 +592,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["user", "premium", "admin"],
+      badge_rarity: ["bronze", "silver", "gold", "platinum"],
       difficulty_level: ["easy", "medium", "hard"],
     },
   },
