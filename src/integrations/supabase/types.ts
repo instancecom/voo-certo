@@ -205,6 +205,51 @@ export type Database = {
           },
         ]
       }
+      guia_etapas: {
+        Row: {
+          created_at: string
+          description: string
+          details: Json
+          display_order: number | null
+          emoji: string
+          id: string
+          is_active: boolean | null
+          simulado_ids: Json | null
+          step_number: number
+          tips: Json
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          details?: Json
+          display_order?: number | null
+          emoji?: string
+          id?: string
+          is_active?: boolean | null
+          simulado_ids?: Json | null
+          step_number: number
+          tips?: Json
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          details?: Json
+          display_order?: number | null
+          emoji?: string
+          id?: string
+          is_active?: boolean | null
+          simulado_ids?: Json | null
+          step_number?: number
+          tips?: Json
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       insignias: {
         Row: {
           condition_type: string
