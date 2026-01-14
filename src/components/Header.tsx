@@ -57,22 +57,32 @@ export function Header() {
               Simulados
             </Link>
             <Link
-              to="/categorias"
+              to="/guia-carreira"
               className={`text-sm font-medium transition-colors hover:text-accent ${
                 isHome ? 'text-primary-foreground/80' : 'text-muted-foreground'
               }`}
             >
-              Categorias
+              Guia de Carreira
             </Link>
             {user && (
-              <Link
-                to="/meu-progresso"
-                className={`text-sm font-medium transition-colors hover:text-accent ${
-                  isHome ? 'text-primary-foreground/80' : 'text-muted-foreground'
-                }`}
-              >
-                Meu Progresso
-              </Link>
+              <>
+                <Link
+                  to="/conquistas"
+                  className={`text-sm font-medium transition-colors hover:text-accent ${
+                    isHome ? 'text-primary-foreground/80' : 'text-muted-foreground'
+                  }`}
+                >
+                  Conquistas
+                </Link>
+                <Link
+                  to="/meu-progresso"
+                  className={`text-sm font-medium transition-colors hover:text-accent ${
+                    isHome ? 'text-primary-foreground/80' : 'text-muted-foreground'
+                  }`}
+                >
+                  Meu Progresso
+                </Link>
+              </>
             )}
           </nav>
 
@@ -176,20 +186,29 @@ export function Header() {
               Simulados
             </Link>
             <Link
-              to="/categorias"
+              to="/guia-carreira"
               onClick={() => setIsMenuOpen(false)}
               className="text-foreground font-medium py-2"
             >
-              Categorias
+              Guia de Carreira
             </Link>
             {user && (
-              <Link
-                to="/meu-progresso"
-                onClick={() => setIsMenuOpen(false)}
-                className="text-foreground font-medium py-2"
-              >
-                Meu Progresso
-              </Link>
+              <>
+                <Link
+                  to="/conquistas"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="text-foreground font-medium py-2"
+                >
+                  Conquistas
+                </Link>
+                <Link
+                  to="/meu-progresso"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="text-foreground font-medium py-2"
+                >
+                  Meu Progresso
+                </Link>
+              </>
             )}
             <div className="flex flex-col gap-2 pt-2 border-t border-border">
               {user ? (
