@@ -12,6 +12,7 @@ import {
   Briefcase,
   Layers,
   TrendingUp,
+  Map,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -21,6 +22,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { ProfessionsManager } from '@/components/admin/ProfessionsManager';
 import { BlocksManager } from '@/components/admin/BlocksManager';
 import { BlockQuestionsManager } from '@/components/admin/BlockQuestionsManager';
+import { GuiaCarreiraManager } from '@/components/admin/GuiaCarreiraManager';
 
 type AdminView = 'professions' | 'blocks' | 'questions';
 
@@ -197,9 +199,12 @@ export default function AdminPage() {
             </div>
 
             <Tabs defaultValue="content" className="space-y-6">
-              <TabsList className="bg-muted">
+              <TabsList className="bg-muted flex-wrap">
                 <TabsTrigger value="content" className="flex items-center gap-2">
                   <Briefcase className="w-4 h-4" />Profissões & Blocos
+                </TabsTrigger>
+                <TabsTrigger value="guia" className="flex items-center gap-2">
+                  <Map className="w-4 h-4" />Guia de Carreira
                 </TabsTrigger>
                 <TabsTrigger value="stats" className="flex items-center gap-2">
                   <BarChart3 className="w-4 h-4" />Estatísticas
@@ -227,6 +232,10 @@ export default function AdminPage() {
                     onBack={handleBackToBlocks}
                   />
                 )}
+              </TabsContent>
+
+              <TabsContent value="guia" className="space-y-6">
+                <GuiaCarreiraManager />
               </TabsContent>
 
               <TabsContent value="stats" className="space-y-6">
