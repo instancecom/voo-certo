@@ -13,6 +13,7 @@ import {
   Layers,
   TrendingUp,
   Map,
+  Award,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -23,6 +24,7 @@ import { ProfessionsManager } from '@/components/admin/ProfessionsManager';
 import { BlocksManager } from '@/components/admin/BlocksManager';
 import { BlockQuestionsManager } from '@/components/admin/BlockQuestionsManager';
 import { GuiaCarreiraManager } from '@/components/admin/GuiaCarreiraManager';
+import { VerificationsManager } from '@/components/admin/VerificationsManager';
 
 type AdminView = 'professions' | 'blocks' | 'questions';
 
@@ -206,6 +208,9 @@ export default function AdminPage() {
                 <TabsTrigger value="guia" className="flex items-center gap-2">
                   <Map className="w-4 h-4" />Guia de Carreira
                 </TabsTrigger>
+                <TabsTrigger value="verifications" className="flex items-center gap-2">
+                  <Award className="w-4 h-4" />Verificações
+                </TabsTrigger>
                 <TabsTrigger value="stats" className="flex items-center gap-2">
                   <BarChart3 className="w-4 h-4" />Estatísticas
                 </TabsTrigger>
@@ -236,6 +241,10 @@ export default function AdminPage() {
 
               <TabsContent value="guia" className="space-y-6">
                 <GuiaCarreiraManager />
+              </TabsContent>
+
+              <TabsContent value="verifications" className="space-y-6">
+                <VerificationsManager />
               </TabsContent>
 
               <TabsContent value="stats" className="space-y-6">

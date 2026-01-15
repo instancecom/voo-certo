@@ -14,6 +14,59 @@ export type Database = {
   }
   public: {
     Tables: {
+      badge_verifications: {
+        Row: {
+          admin_notes: string | null
+          anac_code: string | null
+          approval_id: string | null
+          id: string
+          insignia_id: string | null
+          proof_type: string
+          proof_url: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          submitted_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          anac_code?: string | null
+          approval_id?: string | null
+          id?: string
+          insignia_id?: string | null
+          proof_type: string
+          proof_url?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          submitted_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          anac_code?: string | null
+          approval_id?: string | null
+          id?: string
+          insignia_id?: string | null
+          proof_type?: string
+          proof_url?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          submitted_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "badge_verifications_insignia_id_fkey"
+            columns: ["insignia_id"]
+            isOneToOne: false
+            referencedRelation: "insignias"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       categories: {
         Row: {
           active_modes: string[] | null
