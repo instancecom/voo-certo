@@ -10,7 +10,9 @@ import {
   Eye,
   Award,
   User,
-  Calendar
+  Calendar,
+  X,
+  Download
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -58,6 +60,12 @@ export const VerificationsManager = () => {
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [rejectNotes, setRejectNotes] = useState("");
   const [viewTab, setViewTab] = useState<'pending' | 'all'>('pending');
+  
+  // Preview modal state
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewType, setPreviewType] = useState<'image' | 'pdf'>('image');
+  const [previewLoading, setPreviewLoading] = useState(false);
 
   const handleApprove = async (id: string) => {
     try {
@@ -93,17 +101,41 @@ export const VerificationsManager = () => {
   };
 
   const viewProof = async (proofUrl: string) => {
+    setPreviewLoading(true);
     try {
       const { data } = await supabase.storage
         .from('badge-proofs')
         .createSignedUrl(proofUrl, 3600);
 
       if (data?.signedUrl) {
-        window.open(data.signedUrl, '_blank');
+        // Determine file type from URL
+        const isPdf = proofUrl.toLowerCase().endsWith('.pdf');
+        setPreviewType(isPdf ? 'pdf' : 'image');
+        setPreviewUrl(data.signedUrl);
+        setPreviewOpen(true);
       }
     } catch (error) {
       console.error("Error getting proof URL:", error);
       toast.error("Erro ao abrir comprovante");
+    } finally {
+      setPreviewLoading(false);
+    }
+  };
+
+  const closePreview = () => {
+    setPreviewOpen(false);
+    setPreviewUrl(null);
+  };
+
+  const downloadProof = () => {
+    if (previewUrl) {
+      const link = document.createElement('a');
+      link.href = previewUrl;
+      link.download = 'comprovante';
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
   };
 
@@ -260,6 +292,7 @@ export const VerificationsManager = () => {
       )}
 
       {/* Reject Dialog */}
+      {/* Reject Dialog */}
       <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -293,6 +326,63 @@ export const VerificationsManager = () => {
               Rejeitar
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Preview Modal */}
+      <Dialog open={previewOpen} onOpenChange={closePreview}>
+        <DialogContent className="max-w-4xl max-h-[90vh] p-0 overflow-hidden">
+          <div className="flex items-center justify-between p-4 border-b bg-muted/30">
+            <div className="flex items-center gap-2">
+              <FileText className="w-5 h-5 text-primary" />
+              <span className="font-medium">Visualização do Comprovante</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={downloadProof}
+                className="gap-2"
+              >
+                <Download className="w-4 h-4" />
+                Baixar
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={closePreview}
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+          
+          <div className="flex items-center justify-center min-h-[400px] max-h-[70vh] overflow-auto bg-muted/10 p-4">
+            {previewLoading ? (
+              <div className="flex flex-col items-center gap-3">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                <span className="text-muted-foreground">Carregando...</span>
+              </div>
+            ) : previewUrl ? (
+              previewType === 'pdf' ? (
+                <iframe
+                  src={previewUrl}
+                  className="w-full h-[65vh] rounded border"
+                  title="PDF Preview"
+                />
+              ) : (
+                <img
+                  src={previewUrl}
+                  alt="Comprovante"
+                  className="max-w-full max-h-[65vh] object-contain rounded shadow-lg"
+                />
+              )
+            ) : (
+              <div className="text-muted-foreground">
+                Não foi possível carregar o comprovante
+              </div>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </div>
