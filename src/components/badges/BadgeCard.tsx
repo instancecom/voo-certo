@@ -1,8 +1,13 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Lock } from "lucide-react";
+import { Lock, Upload, Award } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DynamicIcon } from "@/components/ui/dynamic-icon";
 import type { Insignia, BadgeRarity } from "@/hooks/useInsignias";
+import { VerificationSubmitModal } from "./VerificationSubmitModal";
+import { CertificateGeneratorModal } from "./CertificateGeneratorModal";
+import { useUserVerifications, BadgeVerification } from "@/hooks/useBadgeVerifications";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface BadgeCardProps {
   insignia: Insignia;
@@ -47,75 +52,153 @@ const rarityLabels: Record<BadgeRarity, string> = {
 };
 
 export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = true, onClick }: BadgeCardProps) => {
+  const { user } = useAuth();
   const colors = rarityColors[insignia.rarity];
+  const [verificationModalOpen, setVerificationModalOpen] = useState(false);
+  const [certificateModalOpen, setCertificateModalOpen] = useState(false);
+  const { data: userVerifications } = useUserVerifications();
+
+  // Check if this is an ANAC approval badge
+  const isAnacBadge = insignia.condition_type === 'anac_approval';
+  
+  // Find verification for this badge
+  const verification = userVerifications?.find(
+    (v) => v.insignia_id === insignia.id
+  );
+  
+  const hasPendingVerification = verification?.status === 'pending';
+  const hasApprovedVerification = verification?.status === 'approved';
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+      return;
+    }
+
+    // If ANAC badge and not earned
+    if (isAnacBadge && !earned && user) {
+      if (!hasPendingVerification) {
+        setVerificationModalOpen(true);
+      }
+    }
+    
+    // If earned ANAC badge, open certificate generator
+    if (isAnacBadge && earned && hasApprovedVerification) {
+      setCertificateModalOpen(true);
+    }
+  };
 
   return (
-    <motion.div
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.98 }}
-      className={cn(
-        "relative rounded-xl p-4 border-2 cursor-pointer transition-all duration-300",
-        colors.border,
-        earned ? colors.bg : "bg-muted/50 border-muted-foreground/20",
-        earned && `shadow-lg ${colors.glow}`,
-        !earned && "opacity-50 grayscale"
-      )}
-      onClick={onClick}
-    >
-      {/* Rarity badge */}
-      <div className={cn(
-        "absolute -top-2 -right-2 text-[10px] font-bold px-2 py-0.5 rounded-full",
-        earned ? colors.bg : "bg-muted",
-        earned ? colors.text : "text-muted-foreground"
-      )}>
-        {rarityLabels[insignia.rarity]}
-      </div>
-
-      {/* Icon */}
-      <div className={cn(
-        "w-12 h-12 mx-auto mb-2 rounded-full flex items-center justify-center",
-        earned ? "bg-white/20" : "bg-muted-foreground/10"
-      )}>
-        <DynamicIcon 
-          name={insignia.icon}
-          size={28} 
-          className={cn(
-            earned ? colors.text : "text-muted-foreground"
-          )} 
-        />
-      </div>
-
-      {/* Name */}
-      <h3 className={cn(
-        "text-sm font-bold text-center mb-1 line-clamp-2",
-        earned ? colors.text : "text-muted-foreground"
-      )}>
-        {insignia.name}
-      </h3>
-
-      {/* Description */}
-      {showDetails && (
-        <p className={cn(
-          "text-[11px] text-center line-clamp-2",
-          earned ? "text-white/70" : "text-muted-foreground/70"
+    <>
+      <motion.div
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.98 }}
+        className={cn(
+          "relative rounded-xl p-4 border-2 cursor-pointer transition-all duration-300",
+          colors.border,
+          earned ? colors.bg : "bg-muted/50 border-muted-foreground/20",
+          earned && `shadow-lg ${colors.glow}`,
+          !earned && "opacity-50 grayscale",
+          hasPendingVerification && "opacity-75 grayscale-0 border-yellow-500/50"
+        )}
+        onClick={handleClick}
+      >
+        {/* Rarity badge */}
+        <div className={cn(
+          "absolute -top-2 -right-2 text-[10px] font-bold px-2 py-0.5 rounded-full",
+          earned ? colors.bg : "bg-muted",
+          earned ? colors.text : "text-muted-foreground"
         )}>
-          {insignia.description}
-        </p>
-      )}
-
-      {/* Earned date */}
-      {earned && earnedAt && (
-        <p className="text-[10px] text-center text-white/50 mt-2">
-          {new Date(earnedAt).toLocaleDateString("pt-BR")}
-        </p>
-      )}
-
-      {/* Locked overlay */}
-      {!earned && (
-        <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-black/20">
-          <Lock className="text-muted-foreground/50" size={20} />
+          {rarityLabels[insignia.rarity]}
         </div>
+
+        {/* Icon */}
+        <div className={cn(
+          "w-12 h-12 mx-auto mb-2 rounded-full flex items-center justify-center",
+          earned ? "bg-white/20" : "bg-muted-foreground/10"
+        )}>
+          <DynamicIcon 
+            name={insignia.icon}
+            size={28} 
+            className={cn(
+              earned ? colors.text : "text-muted-foreground"
+            )} 
+          />
+        </div>
+
+        {/* Name */}
+        <h3 className={cn(
+          "text-sm font-bold text-center mb-1 line-clamp-2",
+          earned ? colors.text : "text-muted-foreground"
+        )}>
+          {insignia.name}
+        </h3>
+
+        {/* Description */}
+        {showDetails && (
+          <p className={cn(
+            "text-[11px] text-center line-clamp-2",
+            earned ? "text-white/70" : "text-muted-foreground/70"
+          )}>
+            {insignia.description}
+          </p>
+        )}
+
+        {/* Earned date */}
+        {earned && earnedAt && (
+          <p className="text-[10px] text-center text-white/50 mt-2">
+            {new Date(earnedAt).toLocaleDateString("pt-BR")}
+          </p>
+        )}
+
+        {/* Generate certificate button for earned ANAC badges */}
+        {earned && isAnacBadge && hasApprovedVerification && (
+          <div className="mt-2 text-center">
+            <span className="text-[10px] text-white/70 flex items-center justify-center gap-1">
+              <Award className="w-3 h-3" />
+              Clique para gerar certificado
+            </span>
+          </div>
+        )}
+
+        {/* Locked overlay */}
+        {!earned && !hasPendingVerification && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center rounded-xl bg-black/20">
+            {isAnacBadge ? (
+              <>
+                <Upload className="text-muted-foreground/50" size={20} />
+                <span className="text-[10px] text-muted-foreground/50 mt-1">Enviar comprovante</span>
+              </>
+            ) : (
+              <Lock className="text-muted-foreground/50" size={20} />
+            )}
+          </div>
+        )}
+
+        {/* Pending verification overlay */}
+        {hasPendingVerification && !earned && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center rounded-xl bg-yellow-500/10">
+            <span className="text-[10px] text-yellow-600 font-medium">Aguardando aprovação</span>
+          </div>
+        )}
+      </motion.div>
+
+      {/* Modals */}
+      <VerificationSubmitModal
+        open={verificationModalOpen}
+        onOpenChange={setVerificationModalOpen}
+        insigniaId={insignia.id}
+        insigniaName={insignia.name}
+      />
+
+      {hasApprovedVerification && (
+        <CertificateGeneratorModal
+          open={certificateModalOpen}
+          onOpenChange={setCertificateModalOpen}
+          approvalId={verification?.approval_id || ''}
+          approvedAt={verification?.reviewed_at || new Date().toISOString()}
+        />
       )}
-    </motion.div>
+    </>
   );
 };
