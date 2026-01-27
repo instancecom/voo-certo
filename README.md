@@ -1,73 +1,92 @@
-# Welcome to your Lovable project
+# ✈️ Voo Certo
 
-## Project info
+**Voo Certo** é uma plataforma digital focada na **preparação de candidatos para o concurso de Comissário de Bordo (ANAC)**, oferecendo simulados realistas, cronometrados e alinhados ao formato oficial das provas.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+O projeto foi desenvolvido para ajudar candidatos a estudarem com estratégia, controle de tempo e acompanhamento de desempenho.
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## 🚀 Visão Geral
 
-**Use Lovable**
+O Voo Certo centraliza a preparação em um único ambiente, permitindo que o candidato pratique com simulados específicos por categoria, acompanhe sua evolução e se prepare de forma consistente para cada etapa do processo seletivo.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+A plataforma é acessível tanto para iniciantes quanto para candidatos avançados.
 
-Changes made via Lovable will be committed automatically to this repo.
+---
 
-**Use your preferred IDE**
+## ✨ Principais Recursos
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+* ⏱️ **Simulados Cronometrados**
+  Experiência fiel ao tempo real da prova, ajudando no controle de ritmo e desempenho.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+* 📝 **Questões Realistas**
+  Questões baseadas em provas anteriores e na legislação ANAC atualizada.
 
-Follow these steps:
+* 🤖 **IA por Questão**
+  Cada questão conta com o apoio de uma Inteligência Artificial para explicações, correções e reforço do aprendizado.
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+* 🏅 **Sistema de Conquistas e Insígnias**
+  A plataforma estimula a prática constante por meio de conquistas e insígnias desbloqueáveis conforme o desempenho nos simulados.
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+* 📊 **Relatórios Detalhados**
+  Acompanhamento de evolução por categoria, identificação de pontos fortes e fracos.
 
-# Step 3: Install the necessary dependencies.
-npm i
+* 🎧 **Áudios Reais**
+  Conteúdos em inglês e espanhol com áudio, simulando situações reais da prova.
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+* 🎯 **Categorias Específicas**
+  Inglês, Espanhol, SHL, Conhecimentos Técnicos e Fit Cultural.
 
-**Edit a file directly in GitHub**
+* 🏆 **Selo Digital de Aprovação**
+  Ao ser aprovado na banca da ANAC, o candidato recebe um **selo digital exclusivo** para compartilhar no LinkedIn.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+---
 
-**Use GitHub Codespaces**
+## 🖥️ Interface
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+A interface do Voo Certo foi projetada para ser:
 
-## What technologies are used for this project?
+* Moderna e intuitiva
+* Focada em desempenho e clareza
+* Adaptada para longos períodos de estudo
 
-This project is built with:
+A landing page apresenta métricas claras, planos disponíveis e chamadas diretas para início imediato.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+---
 
-## How can I deploy this project?
+## 🎯 Objetivo do Projeto
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+* Preparar candidatos de forma realista para o concurso ANAC
+* Aumentar a taxa de aprovação
+* Oferecer controle total da evolução do candidato
+* Centralizar simulados, relatórios e histórico de desempenho
 
-## Can I connect a custom domain to my Lovable project?
+---
 
-Yes, you can!
+## 👥 Público-Alvo
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+* Candidatos a Comissário de Bordo
+* Estudantes em preparação para concursos da aviação
+* Pessoas que buscam simulados profissionais e direcionados
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+---
+
+## 📄 Licença
+
+Este projeto é **proprietário**.
+
+❌ **Não é permitida** a cópia, modificação, redistribuição ou uso comercial sem autorização expressa do autor.
+
+Todos os direitos reservados.
+
+---
+
+## 👤 Autor
+
+**by Instance**
+
+---
+
+## ✅ Status do Projeto
+
+🟡 Em desenvolvimento (uso interno apenas)
