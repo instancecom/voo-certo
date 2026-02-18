@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_question_cache: {
+        Row: {
+          ai_response: string
+          created_at: string
+          expires_at: string
+          id: string
+          question_hash: string
+          question_id: string
+          user_question: string
+        }
+        Insert: {
+          ai_response: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          question_hash: string
+          question_id: string
+          user_question: string
+        }
+        Update: {
+          ai_response?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          question_hash?: string
+          question_id?: string
+          user_question?: string
+        }
+        Relationships: []
+      }
       badge_verifications: {
         Row: {
           admin_notes: string | null
@@ -103,6 +133,66 @@ export type Database = {
           name?: string
           slug?: string
           total_time?: number | null
+        }
+        Relationships: []
+      }
+      curriculum_data: {
+        Row: {
+          certificates: Json | null
+          city: string | null
+          created_at: string
+          education: Json | null
+          email: string | null
+          experience: Json | null
+          full_name: string | null
+          id: string
+          languages: Json | null
+          phone: string | null
+          photo_url: string | null
+          profession: string | null
+          skills: string[] | null
+          summary: string | null
+          template: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          certificates?: Json | null
+          city?: string | null
+          created_at?: string
+          education?: Json | null
+          email?: string | null
+          experience?: Json | null
+          full_name?: string | null
+          id?: string
+          languages?: Json | null
+          phone?: string | null
+          photo_url?: string | null
+          profession?: string | null
+          skills?: string[] | null
+          summary?: string | null
+          template?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          certificates?: Json | null
+          city?: string | null
+          created_at?: string
+          education?: Json | null
+          email?: string | null
+          experience?: Json | null
+          full_name?: string | null
+          id?: string
+          languages?: Json | null
+          phone?: string | null
+          photo_url?: string | null
+          profession?: string | null
+          skills?: string[] | null
+          summary?: string | null
+          template?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -345,6 +435,89 @@ export type Database = {
         }
         Relationships: []
       }
+      microcourse_progress: {
+        Row: {
+          completed: boolean | null
+          completed_at: string | null
+          created_at: string
+          id: string
+          microcourse_id: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          microcourse_id: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          microcourse_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "microcourse_progress_microcourse_id_fkey"
+            columns: ["microcourse_id"]
+            isOneToOne: false
+            referencedRelation: "microcourses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      microcourses: {
+        Row: {
+          category: string
+          content: string | null
+          created_at: string
+          description: string | null
+          display_order: number | null
+          duration_minutes: number | null
+          id: string
+          is_active: boolean | null
+          tags: string[] | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          category?: string
+          content?: string | null
+          created_at?: string
+          description?: string | null
+          display_order?: number | null
+          duration_minutes?: number | null
+          id?: string
+          is_active?: boolean | null
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          category?: string
+          content?: string | null
+          created_at?: string
+          description?: string | null
+          display_order?: number | null
+          duration_minutes?: number | null
+          id?: string
+          is_active?: boolean | null
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -383,6 +556,7 @@ export type Database = {
       }
       questions: {
         Row: {
+          audio_storage_path: string | null
           audio_url: string | null
           block_number: number | null
           category_id: string
@@ -399,6 +573,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          audio_storage_path?: string | null
           audio_url?: string | null
           block_number?: number | null
           category_id: string
@@ -415,6 +590,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          audio_storage_path?: string | null
           audio_url?: string | null
           block_number?: number | null
           category_id?: string
