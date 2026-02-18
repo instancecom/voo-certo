@@ -14,6 +14,8 @@ import AdminPage from "./pages/AdminPage";
 import ProgressPage from "./pages/ProgressPage";
 import ConquistasPage from "./pages/ConquistasPage";
 import GuiaCarreiraPage from "./pages/GuiaCarreiraPage";
+import MicrocoursesPage from "./pages/MicrocoursesPage";
+import CurriculumPage from "./pages/CurriculumPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -37,6 +39,8 @@ const App = () => (
             <Route path="/meu-progresso" element={<ProgressPage />} />
             <Route path="/conquistas" element={<ConquistasPage />} />
             <Route path="/guia-carreira" element={<GuiaCarreiraPage />} />
+            <Route path="/microcursos" element={<MicrocoursesPage />} />
+            <Route path="/curriculo" element={<CurriculumPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

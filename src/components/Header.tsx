@@ -64,6 +64,14 @@ export function Header() {
             >
               Guia de Carreira
             </Link>
+            <Link
+              to="/microcursos"
+              className={`text-sm font-medium transition-colors hover:text-accent ${
+                isHome ? 'text-primary-foreground/80' : 'text-muted-foreground'
+              }`}
+            >
+              Microcursos
+            </Link>
             {user && (
               <>
                 <Link
@@ -80,7 +88,15 @@ export function Header() {
                     isHome ? 'text-primary-foreground/80' : 'text-muted-foreground'
                   }`}
                 >
-                  Meu Progresso
+                  Progresso
+                </Link>
+                <Link
+                  to="/curriculo"
+                  className={`text-sm font-medium transition-colors hover:text-accent ${
+                    isHome ? 'text-primary-foreground/80' : 'text-muted-foreground'
+                  }`}
+                >
+                  Currículo
                 </Link>
               </>
             )}
@@ -118,6 +134,12 @@ export function Header() {
                       <Link to="/meu-progresso" className="flex items-center gap-2">
                         <User className="w-4 h-4" />
                         Meu Progresso
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/curriculo" className="flex items-center gap-2">
+                        <User className="w-4 h-4" />
+                        Meu Currículo
                       </Link>
                     </DropdownMenuItem>
                     {!profile?.is_premium && (
@@ -194,19 +216,17 @@ export function Header() {
             </Link>
             {user && (
               <>
-                <Link
-                  to="/conquistas"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="text-foreground font-medium py-2"
-                >
+                <Link to="/conquistas" onClick={() => setIsMenuOpen(false)} className="text-foreground font-medium py-2">
                   Conquistas
                 </Link>
-                <Link
-                  to="/meu-progresso"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="text-foreground font-medium py-2"
-                >
+                <Link to="/meu-progresso" onClick={() => setIsMenuOpen(false)} className="text-foreground font-medium py-2">
                   Meu Progresso
+                </Link>
+                <Link to="/microcursos" onClick={() => setIsMenuOpen(false)} className="text-foreground font-medium py-2">
+                  Microcursos
+                </Link>
+                <Link to="/curriculo" onClick={() => setIsMenuOpen(false)} className="text-foreground font-medium py-2">
+                  Meu Currículo
                 </Link>
               </>
             )}
