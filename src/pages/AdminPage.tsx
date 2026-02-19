@@ -14,6 +14,8 @@ import {
   TrendingUp,
   Map,
   Award,
+  BookOpen,
+  ImageIcon,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -25,6 +27,9 @@ import { BlocksManager } from '@/components/admin/BlocksManager';
 import { BlockQuestionsManager } from '@/components/admin/BlockQuestionsManager';
 import { GuiaCarreiraManager } from '@/components/admin/GuiaCarreiraManager';
 import { VerificationsManager } from '@/components/admin/VerificationsManager';
+import { MicrocoursesManager } from '@/components/admin/MicrocoursesManager';
+import { InsigniasModelManager } from '@/components/admin/InsigniasModelManager';
+import { AdminStatsManager } from '@/components/admin/AdminStatsManager';
 
 type AdminView = 'professions' | 'blocks' | 'questions';
 
@@ -201,12 +206,18 @@ export default function AdminPage() {
             </div>
 
             <Tabs defaultValue="content" className="space-y-6">
-              <TabsList className="bg-muted flex-wrap">
+              <TabsList className="bg-muted flex-wrap h-auto gap-1">
                 <TabsTrigger value="content" className="flex items-center gap-2">
                   <Briefcase className="w-4 h-4" />Profissões & Blocos
                 </TabsTrigger>
+                <TabsTrigger value="microcourses" className="flex items-center gap-2">
+                  <BookOpen className="w-4 h-4" />Microcursos
+                </TabsTrigger>
                 <TabsTrigger value="guia" className="flex items-center gap-2">
                   <Map className="w-4 h-4" />Guia de Carreira
+                </TabsTrigger>
+                <TabsTrigger value="insignias-models" className="flex items-center gap-2">
+                  <ImageIcon className="w-4 h-4" />Modelos PNG
                 </TabsTrigger>
                 <TabsTrigger value="verifications" className="flex items-center gap-2">
                   <Award className="w-4 h-4" />Verificações
@@ -239,8 +250,16 @@ export default function AdminPage() {
                 )}
               </TabsContent>
 
+              <TabsContent value="microcourses" className="space-y-6">
+                <MicrocoursesManager />
+              </TabsContent>
+
               <TabsContent value="guia" className="space-y-6">
                 <GuiaCarreiraManager />
+              </TabsContent>
+
+              <TabsContent value="insignias-models" className="space-y-6">
+                <InsigniasModelManager />
               </TabsContent>
 
               <TabsContent value="verifications" className="space-y-6">
@@ -248,13 +267,7 @@ export default function AdminPage() {
               </TabsContent>
 
               <TabsContent value="stats" className="space-y-6">
-                <div className="text-center py-12">
-                  <BarChart3 className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-foreground mb-2">Estatísticas em Breve</h3>
-                  <p className="text-muted-foreground max-w-md mx-auto">
-                    Em breve você poderá visualizar estatísticas detalhadas sobre o desempenho dos alunos.
-                  </p>
-                </div>
+                <AdminStatsManager />
               </TabsContent>
             </Tabs>
           </>

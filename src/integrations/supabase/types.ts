@@ -44,6 +44,45 @@ export type Database = {
         }
         Relationships: []
       }
+      badge_proof_cleanup_log: {
+        Row: {
+          acceptance_date: string | null
+          codigo_id: string | null
+          created_at: string
+          doc_accepted: boolean | null
+          file_deleted_at: string | null
+          file_path: string
+          historico_resumido: string | null
+          id: string
+          user_name: string | null
+          verification_id: string
+        }
+        Insert: {
+          acceptance_date?: string | null
+          codigo_id?: string | null
+          created_at?: string
+          doc_accepted?: boolean | null
+          file_deleted_at?: string | null
+          file_path: string
+          historico_resumido?: string | null
+          id?: string
+          user_name?: string | null
+          verification_id: string
+        }
+        Update: {
+          acceptance_date?: string | null
+          codigo_id?: string | null
+          created_at?: string
+          doc_accepted?: boolean | null
+          file_deleted_at?: string | null
+          file_path?: string
+          historico_resumido?: string | null
+          id?: string
+          user_name?: string | null
+          verification_id?: string
+        }
+        Relationships: []
+      }
       badge_verifications: {
         Row: {
           admin_notes: string | null
@@ -403,6 +442,7 @@ export type Database = {
           icon: string
           id: string
           is_active: boolean | null
+          model_url: string | null
           name: string
           rarity: Database["public"]["Enums"]["badge_rarity"]
           updated_at: string
@@ -416,6 +456,7 @@ export type Database = {
           icon?: string
           id?: string
           is_active?: boolean | null
+          model_url?: string | null
           name: string
           rarity?: Database["public"]["Enums"]["badge_rarity"]
           updated_at?: string
@@ -429,6 +470,7 @@ export type Database = {
           icon?: string
           id?: string
           is_active?: boolean | null
+          model_url?: string | null
           name?: string
           rarity?: Database["public"]["Enums"]["badge_rarity"]
           updated_at?: string
@@ -520,35 +562,50 @@ export type Database = {
       }
       profiles: {
         Row: {
+          ai_questions_count: number
           avatar_url: string | null
           created_at: string
           email: string
           full_name: string | null
           id: string
           is_premium: boolean | null
+          plan_expires_at: string | null
+          plan_type: string
           premium_expires_at: string | null
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          ai_questions_count?: number
           avatar_url?: string | null
           created_at?: string
           email: string
           full_name?: string | null
           id?: string
           is_premium?: boolean | null
+          plan_expires_at?: string | null
+          plan_type?: string
           premium_expires_at?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          ai_questions_count?: number
           avatar_url?: string | null
           created_at?: string
           email?: string
           full_name?: string | null
           id?: string
           is_premium?: boolean | null
+          plan_expires_at?: string | null
+          plan_type?: string
           premium_expires_at?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           updated_at?: string
           user_id?: string
         }
