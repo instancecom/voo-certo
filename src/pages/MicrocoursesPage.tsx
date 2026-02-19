@@ -1,21 +1,22 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   BookOpen, Play, Clock, CheckCircle2, Search,
-  ArrowRight, Loader2, Zap, Lock
+  Loader2, Zap, Lock, X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 interface Microcourse {
   id: string;
@@ -40,84 +41,9 @@ const CATEGORIES = [
   { value: 'geral', label: 'Geral', emoji: '✈️' },
 ];
 
-// Demo microcourses for when DB is empty
-const DEMO_COURSES: Microcourse[] = [
-  {
-    id: 'demo-1',
-    title: 'Briefing de Segurança: O que o passageiro precisa saber',
-    description: 'Aprenda os fundamentos do briefing de segurança e como apresentá-lo de forma eficaz.',
-    content: null,
-    video_url: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    thumbnail_url: null,
-    category: 'seguranca',
-    tags: ['briefing', 'segurança', 'passageiros'],
-    duration_minutes: 8,
-    display_order: 1,
-  },
-  {
-    id: 'demo-2',
-    title: 'RBAC 121 Simplificado: O essencial para a banca',
-    description: 'Os pontos mais cobrados do RBAC 121 em menos de 10 minutos.',
-    content: null,
-    video_url: null,
-    thumbnail_url: null,
-    category: 'regulamentacao',
-    tags: ['RBAC', 'regulamentação', 'ANAC'],
-    duration_minutes: 10,
-    display_order: 2,
-  },
-  {
-    id: 'demo-3',
-    title: 'Evacuação de Aeronave: Procedimentos e Comandos',
-    description: 'Comandos corretos, ordem de evacuação e responsabilidades da tripulação.',
-    content: null,
-    video_url: null,
-    thumbnail_url: null,
-    category: 'emergencias',
-    tags: ['evacuação', 'emergência', 'comandos'],
-    duration_minutes: 12,
-    display_order: 3,
-  },
-  {
-    id: 'demo-4',
-    title: 'Aviation English: Vocabulary for the ANAC Exam',
-    description: 'Vocabulário essencial em inglês para a prova da ANAC.',
-    content: null,
-    video_url: null,
-    thumbnail_url: null,
-    category: 'ingles',
-    tags: ['inglês', 'vocabulary', 'listening'],
-    duration_minutes: 15,
-    display_order: 4,
-  },
-  {
-    id: 'demo-5',
-    title: 'Gerenciamento de Recursos da Cabine (CRM)',
-    description: 'Comunicação eficaz, trabalho em equipe e tomada de decisão na cabine.',
-    content: null,
-    video_url: null,
-    thumbnail_url: null,
-    category: 'procedimentos',
-    tags: ['CRM', 'equipe', 'comunicação'],
-    duration_minutes: 20,
-    display_order: 5,
-  },
-  {
-    id: 'demo-6',
-    title: 'Manuseio de Equipamentos de Emergência',
-    description: 'Colete salva-vidas, slides, extintores e equipamentos de oxigênio.',
-    content: null,
-    video_url: null,
-    thumbnail_url: null,
-    category: 'emergencias',
-    tags: ['equipamentos', 'emergência', 'oxigênio'],
-    duration_minutes: 18,
-    display_order: 6,
-  },
-];
-
 export default function MicrocoursesPage() {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedCourse, setSelectedCourse] = useState<Microcourse | null>(null);
@@ -142,20 +68,44 @@ export default function MicrocoursesPage() {
       const { data } = await supabase
         .from('microcourse_progress')
         .select('*')
-        .eq('user_id', user.id)
-        .eq('completed', true);
+        .eq('user_id', user.id);
       return data || [];
     },
     enabled: !!user,
   });
 
-  const displayCourses = courses && courses.length > 0 ? courses : DEMO_COURSES;
-  const completedIds = new Set((progress || []).map((p: any) => p.microcourse_id));
+  const markCompletedMutation = useMutation({
+    mutationFn: async (microcourseId: string) => {
+      const existing = (progress || []).find((p: any) => p.microcourse_id === microcourseId);
+      if (existing) {
+        const { error } = await supabase.from('microcourse_progress')
+          .update({ completed: true, completed_at: new Date().toISOString() })
+          .eq('id', (existing as any).id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from('microcourse_progress').insert({
+          user_id: user!.id,
+          microcourse_id: microcourseId,
+          completed: true,
+          completed_at: new Date().toISOString(),
+        });
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['microcourse-progress', user?.id] });
+      toast.success('Microcurso marcado como concluído! 🎉');
+    },
+    onError: () => toast.error('Erro ao marcar como concluído.'),
+  });
+
+  const completedIds = new Set((progress || []).filter((p: any) => p.completed).map((p: any) => p.microcourse_id));
+  const displayCourses = courses || [];
 
   const filtered = displayCourses.filter((c) => {
     const matchSearch = !search || c.title.toLowerCase().includes(search.toLowerCase()) ||
       c.description?.toLowerCase().includes(search.toLowerCase()) ||
-      c.tags.some(t => t.toLowerCase().includes(search.toLowerCase()));
+      (c.tags || []).some((t: string) => t.toLowerCase().includes(search.toLowerCase()));
     const matchCat = selectedCategory === 'all' || c.category === selectedCategory;
     return matchSearch && matchCat;
   });
@@ -193,7 +143,7 @@ export default function MicrocoursesPage() {
           )}
 
           {/* Filters */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-8">
+          <div className="flex flex-col sm:flex-row gap-4 mb-6">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
@@ -205,12 +155,12 @@ export default function MicrocoursesPage() {
             </div>
           </div>
 
-          <div className="flex gap-2 flex-wrap mb-8">
+          <div className="flex gap-2 flex-wrap mb-8 overflow-x-auto pb-2">
             {CATEGORIES.map(cat => (
               <button
                 key={cat.value}
                 onClick={() => setSelectedCategory(cat.value)}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
                   selectedCategory === cat.value
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-muted text-muted-foreground hover:bg-muted/80'
@@ -227,6 +177,18 @@ export default function MicrocoursesPage() {
               {Array.from({ length: 6 }).map((_, i) => (
                 <Skeleton key={i} className="h-48 rounded-xl" />
               ))}
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="text-center py-16">
+              <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground text-lg font-medium mb-2">
+                {displayCourses.length === 0
+                  ? 'Nenhum microcurso cadastrado ainda.'
+                  : 'Nenhum microcurso encontrado para esta busca.'}
+              </p>
+              {displayCourses.length === 0 && (
+                <p className="text-sm text-muted-foreground">Em breve novos conteúdos serão adicionados aqui pelo admin.</p>
+              )}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -252,7 +214,16 @@ export default function MicrocoursesPage() {
                         </div>
                       ) : (
                         <div className="h-36 rounded-t-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                          <span className="text-5xl">{catInfo?.emoji || '✈️'}</span>
+                          {course.video_url ? (
+                            <div className="flex flex-col items-center gap-2">
+                              <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+                                <Play className="w-6 h-6 text-primary ml-0.5" />
+                              </div>
+                              <span className="text-xs text-muted-foreground">Vídeo disponível</span>
+                            </div>
+                          ) : (
+                            <span className="text-5xl">{catInfo?.emoji || '✈️'}</span>
+                          )}
                         </div>
                       )}
                       <CardContent className="pt-4 flex-1 flex flex-col">
@@ -281,28 +252,21 @@ export default function MicrocoursesPage() {
               })}
             </div>
           )}
-
-          {filtered.length === 0 && !isLoading && (
-            <div className="text-center py-16">
-              <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">Nenhum microcurso encontrado.</p>
-            </div>
-          )}
         </div>
       </main>
 
       {/* Course Modal */}
       {selectedCourse && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={() => setSelectedCourse(null)}>
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={() => setSelectedCourse(null)}>
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-card rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-xl"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-card rounded-t-2xl sm:rounded-2xl w-full max-w-2xl max-h-[92vh] overflow-y-auto shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="p-6">
+            <div className="p-5 md:p-6">
               <div className="flex items-start justify-between mb-4">
-                <div>
+                <div className="flex-1 pr-4">
                   <Badge variant="outline" className="mb-2">
                     {CATEGORIES.find(c => c.value === selectedCourse.category)?.label}
                   </Badge>
@@ -312,7 +276,9 @@ export default function MicrocoursesPage() {
                     <span>{selectedCourse.duration_minutes} minutos</span>
                   </div>
                 </div>
-                <button onClick={() => setSelectedCourse(null)} className="p-2 hover:bg-muted rounded-lg">✕</button>
+                <button onClick={() => setSelectedCourse(null)} className="p-2 hover:bg-muted rounded-lg shrink-0">
+                  <X className="w-4 h-4" />
+                </button>
               </div>
 
               {selectedCourse.video_url && (
@@ -322,6 +288,7 @@ export default function MicrocoursesPage() {
                     className="w-full h-full"
                     allowFullScreen
                     title={selectedCourse.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   />
                 </div>
               )}
@@ -331,32 +298,41 @@ export default function MicrocoursesPage() {
               )}
 
               {selectedCourse.content && (
-                <div className="prose prose-sm max-w-none text-foreground">
-                  <p>{selectedCourse.content}</p>
+                <div className="bg-muted/50 rounded-xl p-4 mb-4">
+                  <p className="text-sm text-foreground whitespace-pre-wrap">{selectedCourse.content}</p>
                 </div>
               )}
 
               {!selectedCourse.video_url && !selectedCourse.content && (
-                <div className="text-center py-8 bg-muted/50 rounded-xl">
+                <div className="text-center py-8 bg-muted/50 rounded-xl mb-4">
                   <BookOpen className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
                   <p className="text-muted-foreground text-sm">Conteúdo em breve</p>
                 </div>
               )}
 
-              <div className="flex gap-3 mt-6">
+              <div className="flex gap-3">
                 <Button variant="outline" className="flex-1" onClick={() => setSelectedCourse(null)}>
                   Fechar
                 </Button>
                 {user ? (
-                  <Button className="flex-1">
-                    <CheckCircle2 className="w-4 h-4 mr-2" />
-                    Marcar como Concluído
+                  <Button
+                    className="flex-1"
+                    disabled={completedIds.has(selectedCourse.id) || markCompletedMutation.isPending}
+                    onClick={() => markCompletedMutation.mutate(selectedCourse.id)}
+                  >
+                    {completedIds.has(selectedCourse.id) ? (
+                      <><CheckCircle2 className="w-4 h-4 mr-2" />Concluído</>
+                    ) : markCompletedMutation.isPending ? (
+                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Salvando...</>
+                    ) : (
+                      <><CheckCircle2 className="w-4 h-4 mr-2" />Marcar como Concluído</>
+                    )}
                   </Button>
                 ) : (
                   <Button className="flex-1" asChild>
                     <Link to="/auth">
                       <Lock className="w-4 h-4 mr-2" />
-                      Fazer Login para Salvar
+                      Login para Salvar
                     </Link>
                   </Button>
                 )}
