@@ -158,7 +158,7 @@ export default function SimuladosPage() {
               <h3 className="text-2xl font-bold mb-2">Acesso ilimitado a todos os simulados</h3>
               <p className="text-primary-foreground/70">Desbloqueie questões exclusivas e relatórios avançados.</p>
             </div>
-            <Button variant="hero" size="lg" asChild><Link to="/premium">Assinar por R$ 29,90/mês</Link></Button>
+            <Button variant="hero" size="lg" asChild><Link to="/premium">Ver Planos</Link></Button>
           </div>
         </div>
       </section>

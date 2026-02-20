@@ -16,6 +16,7 @@ import ConquistasPage from "./pages/ConquistasPage";
 import GuiaCarreiraPage from "./pages/GuiaCarreiraPage";
 import MicrocoursesPage from "./pages/MicrocoursesPage";
 import CurriculumPage from "./pages/CurriculumPage";
+import PremiumPage from "./pages/PremiumPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/guia-carreira" element={<GuiaCarreiraPage />} />
             <Route path="/microcursos" element={<MicrocoursesPage />} />
             <Route path="/curriculo" element={<CurriculumPage />} />
+            <Route path="/premium" element={<PremiumPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
