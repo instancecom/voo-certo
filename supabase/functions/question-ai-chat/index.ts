@@ -12,8 +12,8 @@ serve(async (req) => {
   try {
     const { questionId, questionText, options, correctAnswer, explanation, userQuestion } = await req.json();
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
+    const GROQ_API_KEY = Deno.env.get("GROQ_API_KEY");
+    if (!GROQ_API_KEY) throw new Error("GROQ_API_KEY not configured");
 
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -69,19 +69,21 @@ ${explanation ? `Explicação: ${explanation}` : ""}
 
 PERGUNTA DO ALUNO: ${userQuestion}`;
 
-    const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    // Call Groq API (Llama 3.1 8B Instant)
+    const aiResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        Authorization: `Bearer ${GROQ_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: "llama-3.1-8b-instant",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userMessage },
         ],
         max_tokens: 400,
+        temperature: 0.3,
       }),
     });
 
@@ -92,17 +94,25 @@ PERGUNTA DO ALUNO: ${userQuestion}`;
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      if (aiResponse.status === 402) {
-        return new Response(JSON.stringify({ error: "Créditos de IA insuficientes." }), {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      throw new Error(`AI error: ${aiResponse.status}`);
+      const errText = await aiResponse.text();
+      console.error("Groq API error:", aiResponse.status, errText);
+      throw new Error(`Groq API error: ${aiResponse.status}`);
     }
 
     const aiData = await aiResponse.json();
     const responseText = aiData.choices?.[0]?.message?.content || "Não foi possível obter resposta.";
+
+    // Increment AI questions counter for user
+    const authHeader = req.headers.get("Authorization");
+    if (authHeader) {
+      const token = authHeader.replace("Bearer ", "");
+      const { data: userData } = await supabase.auth.getUser(token);
+      if (userData?.user) {
+        await supabase.rpc("increment_ai_count", { _user_id: userData.user.id }).catch(() => {
+          // Silently fail if function doesn't exist yet
+        });
+      }
+    }
 
     // Save to cache
     await supabase.from("ai_question_cache").upsert({
