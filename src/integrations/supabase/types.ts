@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_youtube_tokens: {
+        Row: {
+          access_token: string
+          channel_id: string | null
+          channel_title: string | null
+          created_at: string
+          id: string
+          refresh_token: string
+          token_expires_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token: string
+          channel_id?: string | null
+          channel_title?: string | null
+          created_at?: string
+          id?: string
+          refresh_token: string
+          token_expires_at: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string
+          channel_id?: string | null
+          channel_title?: string | null
+          created_at?: string
+          id?: string
+          refresh_token?: string
+          token_expires_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ai_question_cache: {
         Row: {
           ai_response: string
@@ -527,6 +563,7 @@ export type Database = {
           title: string
           updated_at: string
           video_url: string | null
+          youtube_video_id: string | null
         }
         Insert: {
           category?: string
@@ -542,6 +579,7 @@ export type Database = {
           title: string
           updated_at?: string
           video_url?: string | null
+          youtube_video_id?: string | null
         }
         Update: {
           category?: string
@@ -557,6 +595,7 @@ export type Database = {
           title?: string
           updated_at?: string
           video_url?: string | null
+          youtube_video_id?: string | null
         }
         Relationships: []
       }
