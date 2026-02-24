@@ -293,10 +293,10 @@ Deno.serve(async (req) => {
         });
       }
 
-      // Check file size (100MB limit)
-      if (videoFile.size > 100 * 1024 * 1024) {
+      // Check file size (500MB limit)
+      if (videoFile.size > 500 * 1024 * 1024) {
         return new Response(
-          JSON.stringify({ error: "Arquivo excede o limite de 100MB" }),
+          JSON.stringify({ error: "Arquivo excede o limite de 500MB" }),
           {
             status: 400,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
