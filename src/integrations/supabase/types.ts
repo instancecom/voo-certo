@@ -244,6 +244,95 @@ export type Database = {
         }
         Relationships: []
       }
+      coupon_uses: {
+        Row: {
+          coupon_id: string
+          id: string
+          used_at: string
+          user_id: string
+        }
+        Insert: {
+          coupon_id: string
+          id?: string
+          used_at?: string
+          user_id: string
+        }
+        Update: {
+          coupon_id?: string
+          id?: string
+          used_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coupon_uses_coupon_id_fkey"
+            columns: ["coupon_id"]
+            isOneToOne: false
+            referencedRelation: "coupons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coupons: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string | null
+          ends_at: string | null
+          id: string
+          is_active: boolean
+          max_uses: number | null
+          max_uses_per_user: number | null
+          min_amount: number | null
+          plan_id: string | null
+          starts_at: string | null
+          stripe_coupon_id: string | null
+          stripe_promotion_code_id: string | null
+          type: string
+          updated_at: string
+          uses_count: number
+          value: number
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_uses?: number | null
+          max_uses_per_user?: number | null
+          min_amount?: number | null
+          plan_id?: string | null
+          starts_at?: string | null
+          stripe_coupon_id?: string | null
+          stripe_promotion_code_id?: string | null
+          type?: string
+          updated_at?: string
+          uses_count?: number
+          value: number
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_uses?: number | null
+          max_uses_per_user?: number | null
+          min_amount?: number | null
+          plan_id?: string | null
+          starts_at?: string | null
+          stripe_coupon_id?: string | null
+          stripe_promotion_code_id?: string | null
+          type?: string
+          updated_at?: string
+          uses_count?: number
+          value?: number
+        }
+        Relationships: []
+      }
       curriculum_data: {
         Row: {
           certificates: Json | null

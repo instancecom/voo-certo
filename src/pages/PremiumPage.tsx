@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Link, useSearchParams } from 'react-router-dom';
-import { Check, Crown, Plane, Zap, Brain, Shield, Star, Loader2, ExternalLink } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import { Check, Crown, Plane, Zap, Star, Loader2, ExternalLink, Tag, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { useAuth } from '@/contexts/AuthContext';
@@ -15,9 +16,9 @@ const PLANS = [
   {
     id: 'solo',
     name: 'Solo',
-    price: 'R$ 19,90',
+    price: 19.90,
+    priceLabel: 'R$ 19,90',
     priceId: 'price_1T2s0K5IdjxdYZGcfJIVoMGL',
-    productId: 'prod_U0tnPUvclNJK3E',
     icon: Plane,
     description: 'Para quem está começando na aviação',
     features: [
@@ -32,9 +33,9 @@ const PLANS = [
   {
     id: 'tripulante',
     name: 'Tripulante',
-    price: 'R$ 39,90',
+    price: 39.90,
+    priceLabel: 'R$ 39,90',
     priceId: 'price_1T2s125IdjxdYZGcbdnPSAWj',
-    productId: 'prod_U0toDu9l9EMg60',
     icon: Zap,
     description: 'O mais escolhido pelos futuros comissários',
     popular: true,
@@ -52,9 +53,9 @@ const PLANS = [
   {
     id: 'comandante',
     name: 'Comandante',
-    price: 'R$ 79,90',
+    price: 79.90,
+    priceLabel: 'R$ 79,90',
     priceId: 'price_1T2s1m5IdjxdYZGcxahBdOM0',
-    productId: 'prod_U0tpKbroOySxsX',
     icon: Crown,
     description: 'Acesso total para quem quer voar alto',
     features: [
@@ -70,11 +71,22 @@ const PLANS = [
   },
 ];
 
+interface AppliedCoupon {
+  id: string;
+  code: string;
+  type: string;
+  value: number;
+  stripe_promotion_code_id: string;
+}
+
 export default function PremiumPage() {
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState<string | null>(null);
   const [currentPlan, setCurrentPlan] = useState<string>('free');
+  const [couponCode, setCouponCode] = useState('');
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
 
   useEffect(() => {
     if (searchParams.get('canceled') === 'true') {
@@ -82,21 +94,50 @@ export default function PremiumPage() {
     }
   }, [searchParams]);
 
-  // Check subscription on load
   useEffect(() => {
     if (!user) return;
     const checkSub = async () => {
       try {
         const { data, error } = await supabase.functions.invoke('check-subscription');
-        if (!error && data?.plan) {
-          setCurrentPlan(data.plan);
-        }
-      } catch {
-        // silently fail
-      }
+        if (!error && data?.plan) setCurrentPlan(data.plan);
+      } catch { /* silently fail */ }
     };
     checkSub();
   }, [user]);
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    setCouponLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('validate-coupon', {
+        body: { code: couponCode },
+      });
+      if (error) throw error;
+      if (data?.valid) {
+        setAppliedCoupon(data.coupon);
+        toast.success(`Cupom ${data.coupon.code} aplicado!`);
+      } else {
+        toast.error(data?.message || 'Cupom inválido');
+      }
+    } catch (err: any) {
+      toast.error(`Erro ao validar cupom: ${err.message}`);
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode('');
+  };
+
+  const getDiscountedPrice = (price: number) => {
+    if (!appliedCoupon) return null;
+    if (appliedCoupon.type === 'percent') {
+      return price - (price * appliedCoupon.value / 100);
+    }
+    return Math.max(0, price - appliedCoupon.value);
+  };
 
   const handleCheckout = async (priceId: string, planId: string) => {
     if (!user) {
@@ -105,13 +146,13 @@ export default function PremiumPage() {
     }
     setLoading(planId);
     try {
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { priceId },
-      });
-      if (error) throw error;
-      if (data?.url) {
-        window.open(data.url, '_blank');
+      const body: any = { priceId };
+      if (appliedCoupon?.stripe_promotion_code_id) {
+        body.promotionCodeId = appliedCoupon.stripe_promotion_code_id;
       }
+      const { data, error } = await supabase.functions.invoke('create-checkout', { body });
+      if (error) throw error;
+      if (data?.url) window.open(data.url, '_blank');
     } catch (err: any) {
       toast.error(`Erro ao iniciar checkout: ${err.message}`);
     } finally {
@@ -124,9 +165,7 @@ export default function PremiumPage() {
     try {
       const { data, error } = await supabase.functions.invoke('customer-portal');
       if (error) throw error;
-      if (data?.url) {
-        window.open(data.url, '_blank');
-      }
+      if (data?.url) window.open(data.url, '_blank');
     } catch (err: any) {
       toast.error(`Erro: ${err.message}`);
     } finally {
@@ -146,9 +185,7 @@ export default function PremiumPage() {
               <Star className="w-4 h-4" />
               <span className="text-sm font-semibold">7 dias grátis</span>
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-              Escolha seu Plano
-            </h1>
+            <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-4">Escolha seu Plano</h1>
             <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
               Invista na sua carreira na aviação. Cancele quando quiser.
             </p>
@@ -178,11 +215,53 @@ export default function PremiumPage() {
             </motion.div>
           )}
 
+          {/* Coupon Input */}
+          {user && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-8 max-w-md mx-auto">
+              {appliedCoupon ? (
+                <div className="flex items-center gap-3 p-3 rounded-lg border border-success/30 bg-success/5">
+                  <Tag className="w-5 h-5 text-success shrink-0" />
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-foreground">
+                      Cupom <span className="font-mono">{appliedCoupon.code}</span> aplicado
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {appliedCoupon.type === 'percent' ? `${appliedCoupon.value}% de desconto` : `R$ ${appliedCoupon.value} de desconto`}
+                    </p>
+                  </div>
+                  <Button variant="ghost" size="icon" onClick={removeCoupon}>
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Tem um cupom? Digite aqui"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                    onKeyDown={(e) => e.key === 'Enter' && handleApplyCoupon()}
+                    className="flex-1"
+                  />
+                  <Button
+                    variant="outline"
+                    onClick={handleApplyCoupon}
+                    disabled={couponLoading || !couponCode.trim()}
+                    className="gap-2 shrink-0"
+                  >
+                    {couponLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Tag className="w-4 h-4" />}
+                    Aplicar
+                  </Button>
+                </div>
+              )}
+            </motion.div>
+          )}
+
           {/* Plans Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {PLANS.map((plan, index) => {
               const Icon = plan.icon;
               const isCurrent = currentPlan === plan.id;
+              const discountedPrice = getDiscountedPrice(plan.price);
               return (
                 <motion.div
                   key={plan.id}
@@ -210,7 +289,16 @@ export default function PremiumPage() {
                       <CardTitle className="text-xl">{plan.name}</CardTitle>
                       <p className="text-sm text-muted-foreground">{plan.description}</p>
                       <div className="mt-3">
-                        <span className="text-3xl font-bold text-foreground">{plan.price}</span>
+                        {discountedPrice !== null ? (
+                          <>
+                            <span className="text-lg line-through text-muted-foreground mr-2">{plan.priceLabel}</span>
+                            <span className="text-3xl font-bold text-success">
+                              R$ {discountedPrice.toFixed(2).replace('.', ',')}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-3xl font-bold text-foreground">{plan.priceLabel}</span>
+                        )}
                         <span className="text-muted-foreground text-sm">/mês</span>
                       </div>
                     </CardHeader>
@@ -234,9 +322,7 @@ export default function PremiumPage() {
                           onClick={() => handleCheckout(plan.priceId, plan.id)}
                           disabled={!!loading}
                         >
-                          {loading === plan.id ? (
-                            <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                          ) : null}
+                          {loading === plan.id ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                           {user ? 'Começar Trial Grátis' : 'Fazer Login para Assinar'}
                         </Button>
                       )}
