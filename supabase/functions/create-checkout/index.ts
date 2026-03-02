@@ -22,7 +22,7 @@ serve(async (req) => {
     const user = data.user;
     if (!user?.email) throw new Error("User not authenticated");
 
-    const { priceId } = await req.json();
+    const { priceId, promotionCodeId } = await req.json();
     if (!priceId) throw new Error("priceId is required");
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", { apiVersion: "2025-08-27.basil" });
@@ -35,7 +35,7 @@ serve(async (req) => {
 
     const origin = req.headers.get("origin") || "https://voocerto.app";
 
-    const session = await stripe.checkout.sessions.create({
+    const sessionParams: any = {
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
       line_items: [{ price: priceId, quantity: 1 }],
@@ -43,8 +43,16 @@ serve(async (req) => {
       subscription_data: { trial_period_days: 7 },
       success_url: `${origin}/?subscription=success`,
       cancel_url: `${origin}/premium?canceled=true`,
-      allow_promotion_codes: true,
-    });
+    };
+
+    // Apply coupon/promotion code if provided
+    if (promotionCodeId) {
+      sessionParams.discounts = [{ promotion_code: promotionCodeId }];
+    } else {
+      sessionParams.allow_promotion_codes = true;
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams);
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
