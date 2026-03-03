@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 const GOOGLE_CLIENT_ID = Deno.env.get("GOOGLE_CLIENT_ID")!;
@@ -14,6 +14,7 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const REDIRECT_URI = `${SUPABASE_URL}/functions/v1/google-drive?action=callback`;
 const SCOPES = [
   "https://www.googleapis.com/auth/drive.file",
+  "https://www.googleapis.com/auth/drive",
 ].join(" ");
 
 function getSupabaseAdmin() {
@@ -86,11 +87,7 @@ async function getValidAccessToken(userId: string) {
   return { accessToken: refreshed.access_token, folderId: tokenData.folder_id };
 }
 
-// Create or find the "Insignias VooCerto" folder in Drive
-async function getOrCreateFolder(accessToken: string): Promise<string> {
-  const folderName = "Insignias VooCerto";
-
-  // Search for existing folder
+async function getOrCreateFolder(accessToken: string, folderName = "Insignias VooCerto"): Promise<string> {
   const searchRes = await fetch(
     `https://www.googleapis.com/drive/v3/files?q=name='${folderName}' and mimeType='application/vnd.google-apps.folder' and trashed=false&fields=files(id,name)`,
     { headers: { Authorization: `Bearer ${accessToken}` } }
@@ -101,7 +98,6 @@ async function getOrCreateFolder(accessToken: string): Promise<string> {
     return searchData.files[0].id;
   }
 
-  // Create folder
   const createRes = await fetch("https://www.googleapis.com/drive/v3/files", {
     method: "POST",
     headers: {
@@ -117,7 +113,6 @@ async function getOrCreateFolder(accessToken: string): Promise<string> {
   return folder.id;
 }
 
-// Make a file publicly viewable
 async function makeFilePublic(accessToken: string, fileId: string) {
   await fetch(
     `https://www.googleapis.com/drive/v3/files/${fileId}/permissions`,
@@ -210,8 +205,6 @@ Deno.serve(async (req) => {
 
       const tokens = await tokenRes.json();
       const expiresAt = new Date(Date.now() + tokens.expires_in * 1000);
-
-      // Create/find the badge folder
       const folderId = await getOrCreateFolder(tokens.access_token);
 
       const supabase = getSupabaseAdmin();
@@ -227,7 +220,7 @@ Deno.serve(async (req) => {
         }, { onConflict: "user_id" });
 
       return new Response(
-        `<html><body><h2>✅ Google Drive conectado!</h2><p>Pasta "Insignias VooCerto" pronta.</p><script>setTimeout(()=>window.close(),2000);</script></body></html>`,
+        `<html><body><h2>✅ Google Drive conectado!</h2><p>Pasta pronta.</p><script>if(window.opener){window.opener.postMessage({type:'drive_connected'},'*');}setTimeout(()=>window.close(),2000);</script></body></html>`,
         { headers: { "Content-Type": "text/html" } }
       );
     }
@@ -252,7 +245,64 @@ Deno.serve(async (req) => {
       });
     }
 
-    // ─── UPLOAD FILE ───
+    // ─── LIST FOLDERS ───
+    if (action === "list_folders") {
+      const user = await getUserFromRequest(req);
+      if (!user) {
+        return new Response(JSON.stringify({ error: "Não autenticado" }), {
+          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (!(await isUserAdmin(user.id))) {
+        return new Response(JSON.stringify({ error: "Acesso negado" }), {
+          status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const { accessToken } = await getValidAccessToken(user.id);
+
+      const listRes = await fetch(
+        `https://www.googleapis.com/drive/v3/files?q=mimeType='application/vnd.google-apps.folder' and trashed=false&fields=files(id,name)&orderBy=name&pageSize=100`,
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      );
+      const listData = await listRes.json();
+
+      return new Response(JSON.stringify({ folders: listData.files || [] }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // ─── CREATE FOLDER ───
+    if (action === "create_folder") {
+      const user = await getUserFromRequest(req);
+      if (!user) {
+        return new Response(JSON.stringify({ error: "Não autenticado" }), {
+          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (!(await isUserAdmin(user.id))) {
+        return new Response(JSON.stringify({ error: "Acesso negado" }), {
+          status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const body = await req.json();
+      const folderName = body.name;
+      if (!folderName) {
+        return new Response(JSON.stringify({ error: "Nome da pasta é obrigatório" }), {
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const { accessToken } = await getValidAccessToken(user.id);
+      const folderId = await getOrCreateFolder(accessToken, folderName);
+
+      return new Response(JSON.stringify({ folderId, name: folderName }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // ─── UPLOAD FILE (to specific folder) ───
     if (action === "upload") {
       const user = await getUserFromRequest(req);
       if (!user) {
@@ -269,6 +319,7 @@ Deno.serve(async (req) => {
       const formData = await req.formData();
       const file = formData.get("file") as File;
       const fileName = formData.get("fileName") as string || file.name;
+      const targetFolderIdParam = formData.get("folderId") as string || null;
 
       if (!file) {
         return new Response(JSON.stringify({ error: "Nenhum arquivo enviado" }), {
@@ -277,9 +328,8 @@ Deno.serve(async (req) => {
       }
 
       const { accessToken, folderId } = await getValidAccessToken(user.id);
-      const targetFolder = folderId || await getOrCreateFolder(accessToken);
+      const targetFolder = targetFolderIdParam || folderId || await getOrCreateFolder(accessToken);
 
-      // Upload using multipart
       const metadata = JSON.stringify({
         name: fileName,
         parents: [targetFolder],
@@ -313,8 +363,6 @@ Deno.serve(async (req) => {
       }
 
       const uploadData = await uploadRes.json();
-
-      // Make public so we can display directly
       await makeFilePublic(accessToken, uploadData.id);
 
       const directUrl = `https://drive.google.com/uc?export=view&id=${uploadData.id}`;

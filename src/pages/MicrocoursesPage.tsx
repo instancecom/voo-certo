@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   BookOpen, Play, Clock, CheckCircle2, Search,
-  Loader2, Zap, Lock, X, Youtube
+  Loader2, Zap, Lock, X, Youtube, ChevronRight, ChevronDown,
+  Layers, FileText, Download, GraduationCap,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,14 +23,33 @@ interface Microcourse {
   id: string;
   title: string;
   description: string | null;
-  content: string | null;
-  video_url: string | null;
+  category: string;
+  duration_minutes: number;
   thumbnail_url: string | null;
   youtube_video_id: string | null;
-  category: string;
-  tags: string[];
-  duration_minutes: number;
+  video_url: string | null;
   display_order: number;
+}
+
+interface Module {
+  id: string;
+  microcourse_id: string;
+  title: string;
+  description: string | null;
+  display_order: number;
+}
+
+interface Lesson {
+  id: string;
+  module_id: string;
+  title: string;
+  description: string | null;
+  display_order: number;
+  video_url: string | null;
+  youtube_video_id: string | null;
+  material_url: string | null;
+  material_name: string | null;
+  is_premium: boolean;
 }
 
 const CATEGORIES = [
@@ -44,37 +64,51 @@ const CATEGORIES = [
 
 function extractYouTubeId(url: string | null): string | null {
   if (!url) return null;
-  const match = url.match(
-    /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
-  );
+  const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
   return match ? match[1] : null;
-}
-
-function getYouTubeThumbnail(videoId: string): string {
-  return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
 }
 
 function getYouTubeEmbedUrl(videoId: string): string {
   return `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`;
 }
 
+function getYouTubeThumbnail(videoId: string): string {
+  return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+}
+
 export default function MicrocoursesPage() {
-  const { user } = useAuth();
+  const { user, isPremium } = useAuth();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedCourse, setSelectedCourse] = useState<Microcourse | null>(null);
+  const [expandedCourses, setExpandedCourses] = useState<Set<string>>(new Set());
+  const [expandedModules, setExpandedModules] = useState<Set<string>>(new Set());
+  const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
 
   const { data: courses, isLoading } = useQuery({
     queryKey: ['microcourses'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('microcourses')
-        .select('*')
-        .eq('is_active', true)
-        .order('display_order', { ascending: true });
+      const { data, error } = await supabase.from('microcourses').select('*').eq('is_active', true).order('display_order');
       if (error) throw error;
       return (data || []) as unknown as Microcourse[];
+    },
+  });
+
+  const { data: allModules } = useQuery({
+    queryKey: ['modules'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('modules').select('*').eq('is_active', true).order('display_order');
+      if (error) throw error;
+      return data as Module[];
+    },
+  });
+
+  const { data: allLessons } = useQuery({
+    queryKey: ['lessons'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('lessons').select('*').eq('is_active', true).order('display_order');
+      if (error) throw error;
+      return data as Lesson[];
     },
   });
 
@@ -82,10 +116,7 @@ export default function MicrocoursesPage() {
     queryKey: ['microcourse-progress', user?.id],
     queryFn: async () => {
       if (!user) return [];
-      const { data } = await supabase
-        .from('microcourse_progress')
-        .select('*')
-        .eq('user_id', user.id);
+      const { data } = await supabase.from('microcourse_progress').select('*').eq('user_id', user.id);
       return data || [];
     },
     enabled: !!user,
@@ -95,34 +126,19 @@ export default function MicrocoursesPage() {
     mutationFn: async (microcourseId: string) => {
       const existing = (progress || []).find((p: any) => p.microcourse_id === microcourseId);
       if (existing) {
-        const { error } = await supabase.from('microcourse_progress')
-          .update({ completed: true, completed_at: new Date().toISOString() })
-          .eq('id', (existing as any).id);
-        if (error) throw error;
+        await supabase.from('microcourse_progress').update({ completed: true, completed_at: new Date().toISOString() }).eq('id', (existing as any).id);
       } else {
-        const { error } = await supabase.from('microcourse_progress').insert({
-          user_id: user!.id,
-          microcourse_id: microcourseId,
-          completed: true,
-          completed_at: new Date().toISOString(),
-        });
-        if (error) throw error;
+        await supabase.from('microcourse_progress').insert({ user_id: user!.id, microcourse_id: microcourseId, completed: true, completed_at: new Date().toISOString() });
       }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['microcourse-progress', user?.id] });
-      toast.success('Microcurso concluído! 🎉');
-    },
-    onError: () => toast.error('Erro ao marcar como concluído.'),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['microcourse-progress', user?.id] }); toast.success('Concluído! 🎉'); },
   });
 
   const completedIds = new Set((progress || []).filter((p: any) => p.completed).map((p: any) => p.microcourse_id));
   const displayCourses = courses || [];
 
-  const filtered = displayCourses.filter((c) => {
-    const matchSearch = !search || c.title.toLowerCase().includes(search.toLowerCase()) ||
-      c.description?.toLowerCase().includes(search.toLowerCase()) ||
-      (c.tags || []).some((t: string) => t.toLowerCase().includes(search.toLowerCase()));
+  const filtered = displayCourses.filter(c => {
+    const matchSearch = !search || c.title.toLowerCase().includes(search.toLowerCase()) || c.description?.toLowerCase().includes(search.toLowerCase());
     const matchCat = selectedCategory === 'all' || c.category === selectedCategory;
     return matchSearch && matchCat;
   });
@@ -130,14 +146,24 @@ export default function MicrocoursesPage() {
   const completedCount = displayCourses.filter(c => completedIds.has(c.id)).length;
   const progressPct = displayCourses.length ? Math.round((completedCount / displayCourses.length) * 100) : 0;
 
-  const getVideoId = (course: Microcourse) =>
-    course.youtube_video_id || extractYouTubeId(course.video_url);
+  const getModules = (mcId: string) => (allModules || []).filter(m => m.microcourse_id === mcId);
+  const getLessons = (modId: string) => (allLessons || []).filter(l => l.module_id === modId);
 
-  const getThumbnail = (course: Microcourse) => {
-    if (course.thumbnail_url) return course.thumbnail_url;
-    const ytId = getVideoId(course);
-    return ytId ? getYouTubeThumbnail(ytId) : null;
+  const toggleExpand = (set: Set<string>, id: string, setter: (s: Set<string>) => void) => {
+    const next = new Set(set);
+    next.has(id) ? next.delete(id) : next.add(id);
+    setter(next);
   };
+
+  const handleOpenLesson = (lesson: Lesson) => {
+    if (lesson.is_premium && !isPremium) {
+      toast.error('Esta aula é exclusiva para assinantes Premium.');
+      return;
+    }
+    setSelectedLesson(lesson);
+  };
+
+  const getVideoId = (lesson: Lesson) => lesson.youtube_video_id || extractYouTubeId(lesson.video_url);
 
   return (
     <div className="min-h-screen bg-background">
@@ -152,7 +178,7 @@ export default function MicrocoursesPage() {
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Microcursos</h1>
             <p className="text-muted-foreground max-w-xl mx-auto">
-              Conteúdos rápidos e objetivos para dominar os tópicos mais cobrados na banca ANAC.
+              Conteúdos estruturados para dominar os tópicos mais cobrados na banca ANAC.
             </p>
           </motion.div>
 
@@ -172,12 +198,7 @@ export default function MicrocoursesPage() {
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Buscar microcurso..."
-                className="pl-10"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
+              <Input placeholder="Buscar microcurso..." className="pl-10" value={search} onChange={e => setSearch(e.target.value)} />
             </div>
           </div>
 
@@ -187,9 +208,7 @@ export default function MicrocoursesPage() {
                 key={cat.value}
                 onClick={() => setSelectedCategory(cat.value)}
                 className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
-                  selectedCategory === cat.value
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                  selectedCategory === cat.value ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'
                 }`}
               >
                 {cat.emoji} {cat.label}
@@ -197,104 +216,127 @@ export default function MicrocoursesPage() {
             ))}
           </div>
 
-          {/* Course Grid */}
+          {/* Course List - Hierarchical */}
           {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <Skeleton key={i} className="h-64 rounded-xl" />
-              ))}
+            <div className="space-y-4">
+              {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-20 rounded-xl" />)}
             </div>
           ) : filtered.length === 0 ? (
             <div className="text-center py-16">
               <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground text-lg font-medium mb-2">
-                {displayCourses.length === 0
-                  ? 'Nenhum microcurso cadastrado ainda.'
-                  : 'Nenhum microcurso encontrado para esta busca.'}
-              </p>
+              <p className="text-muted-foreground text-lg font-medium">Nenhum microcurso encontrado.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="space-y-3">
               {filtered.map((course, index) => {
+                const modules = getModules(course.id);
+                const isExpanded = expandedCourses.has(course.id);
                 const isCompleted = completedIds.has(course.id);
                 const catInfo = CATEGORIES.find(c => c.value === course.category);
-                const thumbnail = getThumbnail(course);
-                const ytId = getVideoId(course);
+                const totalLessons = modules.reduce((acc, m) => acc + getLessons(m.id).length, 0);
 
                 return (
-                  <motion.div
-                    key={course.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                  >
-                    <Card
-                      className={`h-full flex flex-col cursor-pointer group hover:border-primary/50 hover:shadow-lg transition-all ${
-                        isCompleted ? 'border-success/30 bg-success/5' : ''
-                      }`}
-                      onClick={() => setSelectedCourse(course)}
-                    >
-                      {/* Thumbnail */}
-                      <div className="relative h-44 rounded-t-xl overflow-hidden bg-gradient-to-br from-primary/20 to-primary/5">
-                        {thumbnail ? (
-                          <>
-                            <img
-                              src={thumbnail}
-                              alt={course.title}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            />
-                            {ytId && (
-                              <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
-                                <div className="w-14 h-14 rounded-full bg-destructive/90 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                                  <Play className="w-6 h-6 text-white ml-0.5" />
-                                </div>
-                              </div>
-                            )}
-                          </>
-                        ) : (
-                          <div className="w-full h-full flex flex-col items-center justify-center gap-2">
-                            {ytId ? (
-                              <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center">
-                                <Play className="w-6 h-6 text-primary ml-0.5" />
-                              </div>
-                            ) : (
-                              <span className="text-5xl">{catInfo?.emoji || '✈️'}</span>
-                            )}
+                  <motion.div key={course.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.03 }}>
+                    <Card className={`overflow-hidden ${isCompleted ? 'border-success/30' : 'hover:border-primary/30'} transition-colors`}>
+                      <CardContent className="py-4">
+                        {/* Course Header */}
+                        <div
+                          className="flex items-center gap-3 cursor-pointer"
+                          onClick={() => toggleExpand(expandedCourses, course.id, setExpandedCourses)}
+                        >
+                          <div className="p-2 rounded-lg bg-primary/10">
+                            <GraduationCap className="w-5 h-5 text-primary" />
                           </div>
-                        )}
-                        {/* YouTube badge */}
-                        {ytId && (
-                          <div className="absolute top-2 right-2">
-                            <Badge className="bg-destructive/90 text-white border-0 text-xs gap-1">
-                              <Youtube className="w-3 h-3" /> YouTube
-                            </Badge>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <h3 className="font-semibold text-foreground text-sm">{course.title}</h3>
+                              {isCompleted && <Badge className="text-xs bg-success/20 text-success border-0"><CheckCircle2 className="w-3 h-3 mr-1" />Concluído</Badge>}
+                            </div>
+                            <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1">
+                              <Badge variant="outline" className="text-xs">{catInfo?.emoji} {catInfo?.label}</Badge>
+                              <span className="flex items-center gap-1"><Layers className="w-3 h-3" />{modules.length} módulos</span>
+                              <span className="flex items-center gap-1"><Play className="w-3 h-3" />{totalLessons} aulas</span>
+                              <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{course.duration_minutes} min</span>
+                            </div>
                           </div>
-                        )}
-                        {/* Completed badge */}
-                        {isCompleted && (
-                          <div className="absolute top-2 left-2">
-                            <Badge className="bg-success text-success-foreground border-0 text-xs gap-1">
-                              <CheckCircle2 className="w-3 h-3" /> Concluído
-                            </Badge>
-                          </div>
-                        )}
-                      </div>
-
-                      <CardContent className="pt-4 flex-1 flex flex-col">
-                        <Badge variant="outline" className="text-xs w-fit mb-2">{catInfo?.label || course.category}</Badge>
-                        <h3 className="font-semibold text-foreground mb-2 line-clamp-2">{course.title}</h3>
-                        {course.description && (
-                          <p className="text-sm text-muted-foreground mb-3 line-clamp-2 flex-1">{course.description}</p>
-                        )}
-                        <div className="flex items-center justify-between mt-auto pt-2 border-t border-border/50">
-                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                            <Clock className="w-3 h-3" />
-                            <span>{course.duration_minutes} min</span>
-                          </div>
-                          <span className="text-xs font-medium text-primary">
-                            {isCompleted ? 'Rever →' : 'Assistir →'}
-                          </span>
+                          {isExpanded ? <ChevronDown className="w-5 h-5 text-muted-foreground shrink-0" /> : <ChevronRight className="w-5 h-5 text-muted-foreground shrink-0" />}
                         </div>
+
+                        {/* Expanded Modules */}
+                        <AnimatePresence>
+                          {isExpanded && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="overflow-hidden"
+                            >
+                              <div className="mt-4 ml-4 space-y-2 border-l-2 border-border pl-4">
+                                {modules.length === 0 ? (
+                                  <p className="text-xs text-muted-foreground py-2">Nenhum módulo disponível ainda.</p>
+                                ) : modules.map(mod => {
+                                  const lessons = getLessons(mod.id);
+                                  const modExpanded = expandedModules.has(mod.id);
+
+                                  return (
+                                    <div key={mod.id}>
+                                      <div
+                                        className="flex items-center gap-2 py-2 cursor-pointer hover:bg-muted/50 rounded-lg px-2 -mx-2"
+                                        onClick={() => toggleExpand(expandedModules, mod.id, setExpandedModules)}
+                                      >
+                                        {modExpanded ? <ChevronDown className="w-4 h-4 text-muted-foreground" /> : <ChevronRight className="w-4 h-4 text-muted-foreground" />}
+                                        <Layers className="w-4 h-4 text-accent" />
+                                        <span className="font-medium text-sm flex-1">{mod.title}</span>
+                                        <Badge variant="secondary" className="text-xs">{lessons.length} aulas</Badge>
+                                      </div>
+
+                                      <AnimatePresence>
+                                        {modExpanded && (
+                                          <motion.div
+                                            initial={{ height: 0, opacity: 0 }}
+                                            animate={{ height: 'auto', opacity: 1 }}
+                                            exit={{ height: 0, opacity: 0 }}
+                                            className="ml-6 space-y-1 border-l border-border/50 pl-3 overflow-hidden"
+                                          >
+                                            {lessons.map(lesson => {
+                                              const ytId = getVideoId(lesson);
+                                              return (
+                                                <div
+                                                  key={lesson.id}
+                                                  className="flex items-center gap-2 py-2 px-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
+                                                  onClick={() => handleOpenLesson(lesson)}
+                                                >
+                                                  {ytId ? <Play className="w-3.5 h-3.5 text-primary shrink-0" /> : <BookOpen className="w-3.5 h-3.5 text-muted-foreground shrink-0" />}
+                                                  <span className="text-sm flex-1">{lesson.title}</span>
+                                                  {lesson.is_premium && !isPremium && <Lock className="w-3 h-3 text-accent" />}
+                                                  {lesson.material_url && <FileText className="w-3 h-3 text-success" />}
+                                                </div>
+                                              );
+                                            })}
+                                          </motion.div>
+                                        )}
+                                      </AnimatePresence>
+                                    </div>
+                                  );
+                                })}
+
+                                {/* Mark completed */}
+                                {user && !isCompleted && (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="mt-2 gap-1 text-xs"
+                                    onClick={() => markCompletedMutation.mutate(course.id)}
+                                    disabled={markCompletedMutation.isPending}
+                                  >
+                                    <CheckCircle2 className="w-3 h-3" /> Marcar como concluído
+                                  </Button>
+                                )}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </CardContent>
                     </Card>
                   </motion.div>
@@ -305,36 +347,30 @@ export default function MicrocoursesPage() {
         </div>
       </main>
 
-      {/* Course Modal */}
+      {/* Lesson Modal */}
       <AnimatePresence>
-        {selectedCourse && (
+        {selectedLesson && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 bg-black/70 flex items-end sm:items-center justify-center p-0 sm:p-4"
-            onClick={() => setSelectedCourse(null)}
+            onClick={() => setSelectedLesson(null)}
           >
             <motion.div
               initial={{ opacity: 0, y: 60 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 60 }}
               className="bg-card rounded-t-2xl sm:rounded-2xl w-full max-w-2xl max-h-[95vh] overflow-y-auto shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
+              onClick={e => e.stopPropagation()}
             >
-              {/* Video Embed */}
+              {/* Video */}
               {(() => {
-                const ytId = getVideoId(selectedCourse);
+                const ytId = getVideoId(selectedLesson);
                 if (ytId) {
                   return (
                     <div className="aspect-video w-full bg-black sm:rounded-t-2xl overflow-hidden">
-                      <iframe
-                        src={getYouTubeEmbedUrl(ytId)}
-                        className="w-full h-full"
-                        allowFullScreen
-                        title={selectedCourse.title}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      />
+                      <iframe src={getYouTubeEmbedUrl(ytId)} className="w-full h-full" allowFullScreen title={selectedLesson.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" />
                     </div>
                   );
                 }
@@ -343,72 +379,41 @@ export default function MicrocoursesPage() {
 
               <div className="p-5 md:p-6">
                 <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1 pr-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Badge variant="outline">
-                        {CATEGORIES.find(c => c.value === selectedCourse.category)?.label}
-                      </Badge>
-                      {getVideoId(selectedCourse) && (
-                        <Badge className="bg-destructive/10 text-destructive border-0 text-xs gap-1">
-                          <Youtube className="w-3 h-3" /> YouTube
-                        </Badge>
-                      )}
-                    </div>
-                    <h2 className="text-xl font-bold text-foreground">{selectedCourse.title}</h2>
-                    <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
-                      <Clock className="w-3 h-3" />
-                      <span>{selectedCourse.duration_minutes} minutos</span>
-                    </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-foreground">{selectedLesson.title}</h2>
+                    {selectedLesson.description && <p className="text-sm text-muted-foreground mt-1">{selectedLesson.description}</p>}
                   </div>
-                  <button onClick={() => setSelectedCourse(null)} className="p-2 hover:bg-muted rounded-lg shrink-0">
+                  <button onClick={() => setSelectedLesson(null)} className="p-2 hover:bg-muted rounded-lg shrink-0">
                     <X className="w-5 h-5" />
                   </button>
                 </div>
 
-                {selectedCourse.description && (
-                  <p className="text-muted-foreground mb-4">{selectedCourse.description}</p>
-                )}
-
-                {selectedCourse.content && (
-                  <div className="bg-muted/50 rounded-xl p-4 mb-4">
-                    <p className="text-sm text-foreground whitespace-pre-wrap">{selectedCourse.content}</p>
+                {/* Material Download */}
+                {selectedLesson.material_url && (
+                  <div className="p-4 rounded-xl bg-muted/50 border border-border mb-4">
+                    <p className="text-sm font-medium mb-2 flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-primary" /> Material Complementar
+                    </p>
+                    <a
+                      href={selectedLesson.material_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+                    >
+                      <Download className="w-4 h-4" />
+                      {selectedLesson.material_name || 'Baixar material'}
+                    </a>
                   </div>
                 )}
 
-                {!getVideoId(selectedCourse) && !selectedCourse.content && (
+                {!getVideoId(selectedLesson) && !selectedLesson.material_url && (
                   <div className="text-center py-8 bg-muted/50 rounded-xl mb-4">
                     <BookOpen className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
                     <p className="text-muted-foreground text-sm">Conteúdo em breve</p>
                   </div>
                 )}
 
-                <div className="flex gap-3">
-                  <Button variant="outline" className="flex-1" onClick={() => setSelectedCourse(null)}>
-                    Fechar
-                  </Button>
-                  {user ? (
-                    <Button
-                      className="flex-1"
-                      disabled={completedIds.has(selectedCourse.id) || markCompletedMutation.isPending}
-                      onClick={() => markCompletedMutation.mutate(selectedCourse.id)}
-                    >
-                      {completedIds.has(selectedCourse.id) ? (
-                        <><CheckCircle2 className="w-4 h-4 mr-2" />Concluído</>
-                      ) : markCompletedMutation.isPending ? (
-                        <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Salvando...</>
-                      ) : (
-                        <><CheckCircle2 className="w-4 h-4 mr-2" />Marcar como Concluído</>
-                      )}
-                    </Button>
-                  ) : (
-                    <Button className="flex-1" asChild>
-                      <Link to="/auth">
-                        <Lock className="w-4 h-4 mr-2" />
-                        Login para Salvar
-                      </Link>
-                    </Button>
-                  )}
-                </div>
+                <Button variant="outline" className="w-full" onClick={() => setSelectedLesson(null)}>Fechar</Button>
               </div>
             </motion.div>
           </motion.div>

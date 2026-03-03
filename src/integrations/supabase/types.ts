@@ -635,6 +635,68 @@ export type Database = {
         }
         Relationships: []
       }
+      lessons: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number
+          id: string
+          is_active: boolean
+          is_premium: boolean
+          material_drive_folder: string | null
+          material_name: string | null
+          material_url: string | null
+          module_id: string
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          video_url: string | null
+          youtube_video_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          is_premium?: boolean
+          material_drive_folder?: string | null
+          material_name?: string | null
+          material_url?: string | null
+          module_id: string
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          video_url?: string | null
+          youtube_video_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          is_premium?: boolean
+          material_drive_folder?: string | null
+          material_name?: string | null
+          material_url?: string | null
+          module_id?: string
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+          youtube_video_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lessons_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       microcourse_progress: {
         Row: {
           completed: boolean | null
@@ -720,6 +782,47 @@ export type Database = {
           youtube_video_id?: string | null
         }
         Relationships: []
+      }
+      modules: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number
+          id: string
+          is_active: boolean
+          microcourse_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          microcourse_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          microcourse_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "modules_microcourse_id_fkey"
+            columns: ["microcourse_id"]
+            isOneToOne: false
+            referencedRelation: "microcourses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
