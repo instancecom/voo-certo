@@ -73,10 +73,20 @@ serve(async (req) => {
       .eq("user_id", userId)
       .maybeSingle();
 
+    // Check if user is admin (bypass limits)
+    const { data: adminRole } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .eq("role", "admin")
+      .maybeSingle();
+
+    const isAdmin = !!adminRole;
+
     const planType = profile?.plan_type || "free";
     const limit = PLAN_LIMITS[planType] ?? 0;
 
-    if (limit === 0) {
+    if (!isAdmin && limit === 0) {
       return new Response(JSON.stringify({
         error: "Seu plano não inclui perguntas à IA. Atualize para Tripulante ou Comandante.",
         limitReached: true,
@@ -86,7 +96,7 @@ serve(async (req) => {
     }
 
     const dailyCount = profile?.ai_questions_count || 0;
-    if (dailyCount >= limit) {
+    if (!isAdmin && dailyCount >= limit) {
       return new Response(JSON.stringify({
         error: `Limite de ${limit} perguntas/dia atingido. Atualize seu plano para continuar.`,
         limitReached: true,
