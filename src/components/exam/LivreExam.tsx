@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Flag, CheckCircle2, XCircle, BookOpen, Loader2 } from 'lucide-react';
+import { QuestionAIChat } from './QuestionAIChat';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
@@ -280,6 +281,24 @@ export function LivreExam({ questions, selectedBlock, onFinish, onExit }: LivreE
                       </>
                     )}
                   </div>
+                </motion.div>
+              )}
+
+              {/* AI Chat */}
+              {showAnswer && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="mt-6"
+                >
+                  <QuestionAIChat
+                    questionId={currentQuestion.id}
+                    questionText={currentQuestion.text}
+                    options={currentQuestion.options as string[]}
+                    correctAnswer={currentQuestion.correct_answer}
+                    explanation={currentQuestion.explanation}
+                  />
                 </motion.div>
               )}
             </motion.div>
