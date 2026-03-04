@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bot, Send, X, Loader2, Sparkles, MessageCircle } from 'lucide-react';
+import { Bot, Send, X, Loader2, Sparkles, MessageCircle, Clock, ArrowUpRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { Link } from 'react-router-dom';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -33,6 +35,7 @@ export function QuestionAIChat({
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [limitReached, setLimitReached] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -40,7 +43,7 @@ export function QuestionAIChat({
   }, [messages]);
 
   const sendMessage = async () => {
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isLoading || limitReached) return;
 
     const userMessage = input.trim();
     setInput('');
@@ -59,9 +62,35 @@ export function QuestionAIChat({
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        // Check for FunctionsFetchError with specific status
+        const errorBody = (error as any)?.context?.body;
+        if (errorBody) {
+          try {
+            const parsed = typeof errorBody === 'string' ? JSON.parse(errorBody) : errorBody;
+            if (parsed.limitReached) {
+              setLimitReached(true);
+              setMessages(prev => prev.slice(0, -1));
+              return;
+            }
+            if (parsed.error) {
+              toast.error(parsed.error);
+              setMessages(prev => prev.slice(0, -1));
+              return;
+            }
+          } catch {}
+        }
+        throw error;
+      }
 
-      if (data.error) {
+      if (data?.limitReached) {
+        setLimitReached(true);
+        toast.error(data.error);
+        setMessages(prev => prev.slice(0, -1));
+        return;
+      }
+
+      if (data?.error) {
         toast.error(data.error);
         setMessages(prev => prev.slice(0, -1));
         return;
@@ -127,7 +156,7 @@ export function QuestionAIChat({
 
               {/* Messages */}
               <div className="h-64 overflow-y-auto p-4 space-y-3">
-                {messages.length === 0 && (
+                {messages.length === 0 && !limitReached && (
                   <div className="text-center py-4">
                     <Bot className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
                     <p className="text-sm text-muted-foreground mb-4">
@@ -155,10 +184,15 @@ export function QuestionAIChat({
                         : 'bg-muted text-foreground'
                     }`}>
                       {msg.role === 'assistant' && (
-                        <div className="flex items-center gap-1 mb-1">
+                        <div className="flex items-center gap-1.5 mb-1">
                           <Sparkles className="w-3 h-3 text-primary" />
                           <span className="text-xs text-primary font-medium">Instrutor IA</span>
-                          {msg.cached && <span className="text-xs text-muted-foreground">(cache)</span>}
+                          {msg.cached && (
+                            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 bg-muted-foreground/10 text-muted-foreground font-normal gap-0.5">
+                              <Clock className="w-2.5 h-2.5" />
+                              Em cache
+                            </Badge>
+                          )}
                         </div>
                       )}
                       <p className="leading-relaxed whitespace-pre-wrap">{msg.content}</p>
@@ -174,6 +208,25 @@ export function QuestionAIChat({
                     </div>
                   </div>
                 )}
+
+                {limitReached && (
+                  <div className="text-center py-4 space-y-3">
+                    <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4">
+                      <p className="text-sm text-destructive font-medium mb-2">
+                        Limite de perguntas atingido
+                      </p>
+                      <p className="text-xs text-muted-foreground mb-3">
+                        Atualize seu plano para continuar perguntando ao Instrutor IA.
+                      </p>
+                      <Button asChild size="sm" className="gap-1">
+                        <Link to="/premium">
+                          Upgrade <ArrowUpRight className="w-3 h-3" />
+                        </Link>
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
                 <div ref={messagesEndRef} />
               </div>
 
@@ -183,11 +236,11 @@ export function QuestionAIChat({
                   value={input}
                   onChange={e => setInput(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && sendMessage()}
-                  placeholder="Sua pergunta..."
+                  placeholder={limitReached ? "Limite atingido" : "Sua pergunta..."}
                   className="text-sm h-9"
-                  disabled={isLoading}
+                  disabled={isLoading || limitReached}
                 />
-                <Button size="sm" onClick={sendMessage} disabled={isLoading || !input.trim()} className="h-9 w-9 p-0">
+                <Button size="sm" onClick={sendMessage} disabled={isLoading || !input.trim() || limitReached} className="h-9 w-9 p-0">
                   <Send className="w-4 h-4" />
                 </Button>
               </div>
