@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Trash2, ToggleLeft, ToggleRight, Loader2, Tag, Percent, DollarSign, Calendar, Hash } from 'lucide-react';
+import { Plus, Trash2, ToggleLeft, ToggleRight, Loader2, Tag, Percent, DollarSign, Calendar, Hash, Repeat, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -17,6 +17,12 @@ const PLANS = [
   { id: 'comandante', name: 'Comandante', price: 'R$ 79,90/mês', priceId: 'price_1T2s1m5IdjxdYZGcxahBdOM0' },
 ];
 
+const DURATION_LABELS: Record<string, string> = {
+  once: 'Primeira cobrança',
+  repeating: 'Repetido',
+  forever: 'Para sempre',
+};
+
 interface Coupon {
   id: string;
   code: string;
@@ -30,6 +36,8 @@ interface Coupon {
   uses_count: number;
   is_active: boolean;
   created_at: string;
+  duration: string;
+  duration_in_months: number | null;
 }
 
 export function PlansAndCouponsManager() {
@@ -43,6 +51,12 @@ export function PlansAndCouponsManager() {
     ends_at: '',
     max_uses: '',
     max_uses_per_user: '1',
+    duration: 'once' as 'once' | 'repeating' | 'forever',
+    duration_in_months: '',
+  });
+
+  const resetForm = () => setForm({
+    code: '', type: 'percent', value: '', plan_id: 'all', ends_at: '', max_uses: '', max_uses_per_user: '1', duration: 'once', duration_in_months: '',
   });
 
   const { data: coupons, isLoading } = useQuery({
@@ -68,6 +82,8 @@ export function PlansAndCouponsManager() {
           ends_at: form.ends_at || null,
           max_uses: form.max_uses ? parseInt(form.max_uses) : null,
           max_uses_per_user: parseInt(form.max_uses_per_user) || 1,
+          duration: form.duration,
+          duration_in_months: form.duration === 'repeating' ? parseInt(form.duration_in_months) : null,
         },
       });
       if (error) throw error;
@@ -78,7 +94,7 @@ export function PlansAndCouponsManager() {
       toast.success('Cupom criado com sucesso!');
       queryClient.invalidateQueries({ queryKey: ['admin-coupons'] });
       setDialogOpen(false);
-      setForm({ code: '', type: 'percent', value: '', plan_id: 'all', ends_at: '', max_uses: '', max_uses_per_user: '1' });
+      resetForm();
     },
     onError: (err: any) => toast.error(`Erro ao criar cupom: ${err.message}`),
   });
@@ -112,6 +128,8 @@ export function PlansAndCouponsManager() {
     },
     onError: (err: any) => toast.error(`Erro: ${err.message}`),
   });
+
+  const isFormValid = form.code && form.value && (form.duration !== 'repeating' || (form.duration_in_months && parseInt(form.duration_in_months) > 0));
 
   return (
     <div className="space-y-6">
@@ -154,7 +172,7 @@ export function PlansAndCouponsManager() {
                 <Plus className="w-4 h-4" /> Criar Cupom
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md">
+            <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Criar Novo Cupom</DialogTitle>
               </DialogHeader>
@@ -188,6 +206,39 @@ export function PlansAndCouponsManager() {
                     />
                   </div>
                 </div>
+
+                {/* Duration field */}
+                <div>
+                  <Label className="flex items-center gap-1.5">
+                    <Repeat className="w-3.5 h-3.5" />
+                    Duração do desconto
+                  </Label>
+                  <Select value={form.duration} onValueChange={(v: 'once' | 'repeating' | 'forever') => setForm({ ...form, duration: v })}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="once">Once – Apenas na primeira cobrança</SelectItem>
+                      <SelectItem value="repeating">Repeating – Por X meses</SelectItem>
+                      <SelectItem value="forever">Forever – Todas as cobranças</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {form.duration === 'repeating' && (
+                  <div>
+                    <Label className="flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5" />
+                      Duração em meses
+                    </Label>
+                    <Input
+                      type="number"
+                      min="1"
+                      placeholder="Ex: 3, 6, 12"
+                      value={form.duration_in_months}
+                      onChange={(e) => setForm({ ...form, duration_in_months: e.target.value })}
+                    />
+                  </div>
+                )}
+
                 <div>
                   <Label>Aplicável a</Label>
                   <Select value={form.plan_id} onValueChange={(v) => setForm({ ...form, plan_id: v })}>
@@ -230,7 +281,7 @@ export function PlansAndCouponsManager() {
                 <Button
                   className="w-full"
                   onClick={() => createMutation.mutate()}
-                  disabled={createMutation.isPending || !form.code || !form.value}
+                  disabled={createMutation.isPending || !isFormValid}
                 >
                   {createMutation.isPending && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
                   Criar Cupom no Stripe
@@ -269,6 +320,11 @@ export function PlansAndCouponsManager() {
                         {coupon.type === 'percent' ? `${coupon.value}%` : `R$ ${coupon.value}`}
                       </span>
                       <span className="flex items-center gap-1">
+                        <Repeat className="w-3 h-3" />
+                        {DURATION_LABELS[coupon.duration] || coupon.duration}
+                        {coupon.duration === 'repeating' && coupon.duration_in_months && ` (${coupon.duration_in_months}m)`}
+                      </span>
+                      <span className="flex items-center gap-1">
                         <Hash className="w-3 h-3" />
                         {coupon.uses_count}{coupon.max_uses ? `/${coupon.max_uses}` : ''} usos
                       </span>
@@ -287,7 +343,7 @@ export function PlansAndCouponsManager() {
                       onClick={() => toggleMutation.mutate({ coupon_id: coupon.id, is_active: !coupon.is_active })}
                       disabled={toggleMutation.isPending}
                     >
-                      {coupon.is_active ? <ToggleRight className="w-5 h-5 text-success" /> : <ToggleLeft className="w-5 h-5 text-muted-foreground" />}
+                      {coupon.is_active ? <ToggleRight className="w-5 h-5 text-green-500" /> : <ToggleLeft className="w-5 h-5 text-muted-foreground" />}
                     </Button>
                     <Button
                       variant="ghost"

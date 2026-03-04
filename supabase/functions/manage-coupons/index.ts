@@ -37,12 +37,18 @@ serve(async (req) => {
     const { action } = body;
 
     if (action === "create") {
-      const { code, type, value, plan_id, starts_at, ends_at, max_uses, max_uses_per_user, min_amount } = body;
+      const { code, type, value, plan_id, starts_at, ends_at, max_uses, max_uses_per_user, min_amount, duration, duration_in_months } = body;
 
-      // Create Stripe coupon
+      // Create Stripe coupon with duration
       const couponParams: any = {
         name: code,
+        duration: duration || 'once',
       };
+
+      if (duration === 'repeating' && duration_in_months) {
+        couponParams.duration_in_months = duration_in_months;
+      }
+
       if (type === "percent") {
         couponParams.percent_off = value;
       } else {
@@ -51,6 +57,12 @@ serve(async (req) => {
       }
       if (max_uses) couponParams.max_redemptions = max_uses;
       if (ends_at) couponParams.redeem_by = Math.floor(new Date(ends_at).getTime() / 1000);
+
+      if (plan_id) {
+        couponParams.metadata = { aplicavel_a: plan_id };
+      } else {
+        couponParams.metadata = { aplicavel_a: 'todos' };
+      }
 
       const stripeCoupon = await stripe.coupons.create(couponParams);
 
@@ -77,6 +89,8 @@ serve(async (req) => {
           stripe_coupon_id: stripeCoupon.id,
           stripe_promotion_code_id: promoCode.id,
           created_by: user.id,
+          duration: duration || 'once',
+          duration_in_months: duration === 'repeating' ? duration_in_months : null,
         })
         .select()
         .single();
@@ -104,7 +118,6 @@ serve(async (req) => {
     if (action === "toggle") {
       const { coupon_id, is_active } = body;
 
-      // Update Stripe promotion code
       const { data: coupon } = await supabaseClient
         .from("coupons")
         .select("stripe_promotion_code_id")
