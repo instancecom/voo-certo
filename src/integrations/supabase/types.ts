@@ -278,6 +278,8 @@ export type Database = {
           code: string
           created_at: string
           created_by: string | null
+          duration: string
+          duration_in_months: number | null
           ends_at: string | null
           id: string
           is_active: boolean
@@ -297,6 +299,8 @@ export type Database = {
           code: string
           created_at?: string
           created_by?: string | null
+          duration?: string
+          duration_in_months?: number | null
           ends_at?: string | null
           id?: string
           is_active?: boolean
@@ -316,6 +320,8 @@ export type Database = {
           code?: string
           created_at?: string
           created_by?: string | null
+          duration?: string
+          duration_in_months?: number | null
           ends_at?: string | null
           id?: string
           is_active?: boolean
