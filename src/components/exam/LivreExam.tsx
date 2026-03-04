@@ -283,6 +283,24 @@ export function LivreExam({ questions, selectedBlock, onFinish, onExit }: LivreE
                   </div>
                 </motion.div>
               )}
+
+              {/* AI Chat */}
+              {showAnswer && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="mt-6"
+                >
+                  <QuestionAIChat
+                    questionId={currentQuestion.id}
+                    questionText={currentQuestion.text}
+                    options={currentQuestion.options as string[]}
+                    correctAnswer={currentQuestion.correct_answer}
+                    explanation={currentQuestion.explanation}
+                  />
+                </motion.div>
+              )}
             </motion.div>
           </AnimatePresence>
         </div>
