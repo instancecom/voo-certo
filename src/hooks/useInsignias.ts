@@ -14,6 +14,7 @@ export interface Insignia {
   rarity: BadgeRarity;
   display_order: number;
   is_active: boolean;
+  model_url: string | null;
   created_at: string;
   updated_at: string;
 }
