@@ -1,11 +1,20 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription,
+} from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { Loader2, Upload, ImageIcon, CheckCircle2, Award, ExternalLink, CloudIcon, Link2 } from 'lucide-react';
+import {
+  Loader2, Upload, ImageIcon, CheckCircle2, CloudIcon, Plus, Pencil, Trash2, Search, Award, FolderPlus,
+} from 'lucide-react';
 
 interface Insignia {
   id: string;
@@ -17,35 +26,62 @@ interface Insignia {
   condition_value: number;
   model_url: string | null;
   is_active: boolean | null;
+  display_order: number | null;
+}
+
+interface DriveFolder {
+  id: string;
+  name: string;
 }
 
 const RARITY_COLORS: Record<string, string> = {
-  bronze: 'text-amber-600 bg-amber-50 border-amber-200',
-  silver: 'text-slate-500 bg-slate-50 border-slate-200',
-  gold: 'text-yellow-500 bg-yellow-50 border-yellow-200',
-  platinum: 'text-cyan-500 bg-cyan-50 border-cyan-200',
+  bronze: 'text-amber-600 bg-amber-900/20 border-amber-700/40',
+  silver: 'text-slate-300 bg-slate-700/30 border-slate-500/40',
+  gold: 'text-yellow-400 bg-yellow-900/20 border-yellow-600/40',
+  platinum: 'text-cyan-300 bg-cyan-900/20 border-cyan-600/40',
 };
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
 export function InsigniasModelManager() {
   const queryClient = useQueryClient();
-  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
-  const [uploading, setUploading] = useState<Record<string, boolean>>({});
-  const [previews, setPreviews] = useState<Record<string, string>>({});
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const dropRef = useRef<HTMLDivElement | null>(null);
+
   const [driveConnected, setDriveConnected] = useState<boolean | null>(null);
   const [connectingDrive, setConnectingDrive] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  // Check Drive connection status
+  // Modal state
+  const [editingInsignia, setEditingInsignia] = useState<Insignia | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [editDescription, setEditDescription] = useState('');
+  const [editActive, setEditActive] = useState(true);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [filePreview, setFilePreview] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  // Drive folder state
+  const [driveFolders, setDriveFolders] = useState<DriveFolder[]>([]);
+  const [loadingFolders, setLoadingFolders] = useState(false);
+  const [selectedFolderId, setSelectedFolderId] = useState<string>('');
+  const [creatingFolder, setCreatingFolder] = useState(false);
+  const [newFolderName, setNewFolderName] = useState('');
+  const [showNewFolder, setShowNewFolder] = useState(false);
+
+  // Delete state
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  // Check Drive connection
   useEffect(() => {
     const checkDrive = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) return;
-        const res = await fetch(
-          `${SUPABASE_URL}/functions/v1/google-drive?action=status`,
-          { headers: { Authorization: `Bearer ${session.access_token}` } }
-        );
+        const res = await fetch(`${SUPABASE_URL}/functions/v1/google-drive?action=status`, {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        });
         const data = await res.json();
         setDriveConnected(data.connected);
       } catch {
@@ -67,20 +103,32 @@ export function InsigniasModelManager() {
     },
   });
 
-  const updateModelUrl = useMutation({
-    mutationFn: async ({ id, model_url }: { id: string; model_url: string }) => {
-      const { error } = await supabase
-        .from('insignias')
-        .update({ model_url })
-        .eq('id', id);
+  const updateInsignia = useMutation({
+    mutationFn: async (params: { id: string; updates: Record<string, any> }) => {
+      const { error } = await supabase.from('insignias').update(params.updates).eq('id', params.id);
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-insignias-models'] });
       queryClient.invalidateQueries({ queryKey: ['insignias'] });
-      toast.success('PNG do modelo salvo com sucesso!');
     },
-    onError: (err: any) => toast.error(`Erro: ${err.message}`),
+  });
+
+  const deleteInsignia = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from('insignias').delete().eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-insignias-models'] });
+      queryClient.invalidateQueries({ queryKey: ['insignias'] });
+      toast.success('Insígnia excluída!');
+      setDeletingId(null);
+    },
+    onError: (err: any) => {
+      toast.error(`Erro ao excluir: ${err.message}`);
+      setDeletingId(null);
+    },
   });
 
   const handleConnectDrive = async () => {
@@ -88,14 +136,11 @@ export function InsigniasModelManager() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('Não autenticado');
-
-      const res = await fetch(
-        `${SUPABASE_URL}/functions/v1/google-drive?action=auth_url`,
-        { headers: { Authorization: `Bearer ${session.access_token}` } }
-      );
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/google-drive?action=auth_url`, {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
-
       const popup = window.open(data.url, 'google-drive-auth', 'width=600,height=700');
       const interval = setInterval(() => {
         if (popup?.closed) {
@@ -111,58 +156,180 @@ export function InsigniasModelManager() {
     }
   };
 
-  const handleFileSelect = async (insigniaId: string, insigniaName: string, file: File) => {
+  const loadDriveFolders = useCallback(async () => {
+    setLoadingFolders(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/google-drive?action=list_folders`, {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      const data = await res.json();
+      setDriveFolders(data.folders || []);
+    } catch {
+      toast.error('Erro ao listar pastas do Drive');
+    } finally {
+      setLoadingFolders(false);
+    }
+  }, []);
+
+  const handleCreateFolder = async () => {
+    if (!newFolderName.trim()) return;
+    setCreatingFolder(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/google-drive?action=create_folder`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: newFolderName.trim() }),
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      setDriveFolders(prev => [...prev, { id: data.folderId, name: newFolderName.trim() }]);
+      setSelectedFolderId(data.folderId);
+      setNewFolderName('');
+      setShowNewFolder(false);
+      toast.success('Pasta criada!');
+    } catch (err: any) {
+      toast.error(`Erro: ${err.message}`);
+    } finally {
+      setCreatingFolder(false);
+    }
+  };
+
+  const openEditModal = (insignia: Insignia) => {
+    setEditingInsignia(insignia);
+    setEditName(insignia.name);
+    setEditDescription(insignia.description);
+    setEditActive(insignia.is_active !== false);
+    setSelectedFile(null);
+    setFilePreview(null);
+    setSelectedFolderId('');
+    setShowNewFolder(false);
+    setNewFolderName('');
+    setModalOpen(true);
+    if (driveConnected) loadDriveFolders();
+  };
+
+  const openNewModal = () => {
+    setEditingInsignia(null);
+    setEditName('');
+    setEditDescription('');
+    setEditActive(true);
+    setSelectedFile(null);
+    setFilePreview(null);
+    setSelectedFolderId('');
+    setShowNewFolder(false);
+    setNewFolderName('');
+    setModalOpen(true);
+    if (driveConnected) loadDriveFolders();
+  };
+
+  const handleFileChange = (file: File | null) => {
     if (!file) return;
     if (!file.type.startsWith('image/')) {
-      toast.error('Apenas imagens PNG, JPG ou WebP são aceitas.');
+      toast.error('Apenas imagens PNG, JPG ou WebP.');
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      toast.error('Arquivo muito grande. Máximo: 5MB.');
+      toast.error('Máximo 5MB.');
+      return;
+    }
+    setSelectedFile(file);
+    setFilePreview(URL.createObjectURL(file));
+  };
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const file = e.dataTransfer.files?.[0];
+    if (file) handleFileChange(file);
+  }, []);
+
+  const handleSave = async () => {
+    if (!editName.trim()) {
+      toast.error('Nome é obrigatório.');
       return;
     }
 
-    const localUrl = URL.createObjectURL(file);
-    setPreviews(p => ({ ...p, [insigniaId]: localUrl }));
+    // If new file selected, folder must be selected
+    if (selectedFile && !selectedFolderId) {
+      toast.error('Selecione ou crie uma pasta no Drive.');
+      return;
+    }
 
-    setUploading(u => ({ ...u, [insigniaId]: true }));
+    setSaving(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error('Não autenticado');
+      let modelUrl = editingInsignia?.model_url || null;
 
-      const ext = file.name.split('.').pop()?.toLowerCase() || 'png';
-      const safeName = insigniaName.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
-      const fileName = `${safeName}_${insigniaId.slice(0, 8)}.${ext}`;
+      // Upload file if selected
+      if (selectedFile && selectedFolderId) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) throw new Error('Não autenticado');
 
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('fileName', fileName);
+        const ext = selectedFile.name.split('.').pop()?.toLowerCase() || 'png';
+        const safeName = editName.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+        const fileName = `${safeName}_${Date.now()}.${ext}`;
 
-      const res = await fetch(
-        `${SUPABASE_URL}/functions/v1/google-drive?action=upload`,
-        {
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        formData.append('fileName', fileName);
+        formData.append('folderId', selectedFolderId);
+
+        const res = await fetch(`${SUPABASE_URL}/functions/v1/google-drive?action=upload`, {
           method: 'POST',
           headers: { Authorization: `Bearer ${session.access_token}` },
           body: formData,
-        }
-      );
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        modelUrl = data.directUrl;
+      }
 
-      const data = await res.json();
-      if (data.error) throw new Error(data.error);
+      if (editingInsignia) {
+        // Update existing
+        await updateInsignia.mutateAsync({
+          id: editingInsignia.id,
+          updates: {
+            name: editName.trim(),
+            description: editDescription.trim(),
+            is_active: editActive,
+            ...(modelUrl !== editingInsignia.model_url ? { model_url: modelUrl } : {}),
+          },
+        });
+      } else {
+        // Create new
+        const { error } = await supabase.from('insignias').insert({
+          name: editName.trim(),
+          description: editDescription.trim(),
+          is_active: editActive,
+          model_url: modelUrl,
+          icon: 'Award',
+          condition_type: 'manual',
+          condition_value: 1,
+          rarity: 'bronze' as any,
+        });
+        if (error) throw error;
+        queryClient.invalidateQueries({ queryKey: ['admin-insignias-models'] });
+        queryClient.invalidateQueries({ queryKey: ['insignias'] });
+      }
 
-      // Store the Drive direct URL in model_url
-      await updateModelUrl.mutateAsync({ id: insigniaId, model_url: data.directUrl });
+      toast.success('Insígnia salva com sucesso!');
+      setModalOpen(false);
     } catch (err: any) {
-      toast.error(`Erro no upload: ${err.message}`);
-      setPreviews(p => {
-        const next = { ...p };
-        delete next[insigniaId];
-        return next;
-      });
+      toast.error(`Erro: ${err.message}`);
     } finally {
-      setUploading(u => ({ ...u, [insigniaId]: false }));
+      setSaving(false);
     }
   };
+
+  const filteredInsignias = insignias?.filter(i =>
+    i.name.toLowerCase().includes(searchQuery.toLowerCase())
+  ) || [];
 
   if (isLoading) {
     return (
@@ -173,145 +340,282 @@ export function InsigniasModelManager() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-start justify-between gap-4 flex-wrap">
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <h2 className="text-2xl font-bold text-foreground">Modelos PNG de Insígnias</h2>
-          <p className="text-muted-foreground">
-            Faça upload dos PNGs para o Google Drive. Os modelos são usados na geração dos selos de conquista.
-          </p>
+          <h2 className="text-xl font-bold text-foreground">Modelos de Insígnias</h2>
+          <p className="text-sm text-muted-foreground">Upload de PNGs via Google Drive</p>
         </div>
         <div className="flex items-center gap-2">
           {driveConnected ? (
-            <Badge variant="outline" className="gap-1.5 text-green-600 border-green-200 bg-green-50">
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              Drive conectado
+            <Badge variant="outline" className="gap-1.5 text-green-400 border-green-700/50 bg-green-900/20 text-xs">
+              <CheckCircle2 className="w-3 h-3" /> Drive
             </Badge>
           ) : (
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-2"
-              disabled={connectingDrive}
-              onClick={handleConnectDrive}
-            >
-              {connectingDrive ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <CloudIcon className="w-4 h-4" />
-              )}
-              Conectar Google Drive
+            <Button variant="outline" size="sm" className="gap-2 text-xs" disabled={connectingDrive} onClick={handleConnectDrive}>
+              {connectingDrive ? <Loader2 className="w-3 h-3 animate-spin" /> : <CloudIcon className="w-3 h-3" />}
+              Conectar Drive
             </Button>
           )}
+          <Button size="sm" className="gap-1.5" onClick={openNewModal}>
+            <Plus className="w-3.5 h-3.5" /> Nova Insígnia
+          </Button>
         </div>
       </div>
 
-      {!driveConnected && driveConnected !== null && (
-        <Card className="border-amber-200 bg-amber-50/50">
-          <CardContent className="py-4">
-            <p className="text-sm text-amber-800">
-              ⚠️ Conecte o Google Drive para fazer upload dos modelos PNG. Os arquivos serão salvos na pasta "Insignias VooCerto".
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Input
+          placeholder="Buscar insígnia..."
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+          className="pl-9 h-9 text-sm"
+        />
+      </div>
+
+      {/* Compact List */}
+      <div className="rounded-lg border border-border overflow-hidden">
+        {filteredInsignias.length === 0 ? (
+          <div className="text-center py-12 bg-muted/20">
+            <Award className="w-10 h-10 text-muted-foreground mx-auto mb-2" />
+            <p className="text-sm text-muted-foreground">
+              {searchQuery ? 'Nenhuma insígnia encontrada.' : 'Nenhuma insígnia cadastrada.'}
             </p>
-          </CardContent>
-        </Card>
-      )}
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {insignias?.map(insignia => {
-          const rarityStyle = RARITY_COLORS[insignia.rarity] || RARITY_COLORS.bronze;
-          const isUploadingThis = uploading[insignia.id];
-          const localPreview = previews[insignia.id];
-          // model_url now stores the Google Drive direct URL
-          const driveUrl = insignia.model_url;
-
-          return (
-            <Card key={insignia.id} className="overflow-hidden">
-              <CardHeader className="pb-3">
-                <div className="flex items-start gap-3">
-                  <div className="text-3xl">{insignia.icon}</div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <CardTitle className="text-base">{insignia.name}</CardTitle>
-                      <Badge className={`text-xs capitalize border ${rarityStyle}`}>
-                        {insignia.rarity}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{insignia.description}</p>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="rounded-lg border-2 border-dashed border-border h-36 flex items-center justify-center overflow-hidden bg-muted/30">
-                  {localPreview ? (
-                    <img src={localPreview} alt="Preview" className="h-full w-full object-contain" />
-                  ) : driveUrl ? (
+          </div>
+        ) : (
+          <div className="divide-y divide-border">
+            {filteredInsignias.map(insignia => (
+              <div
+                key={insignia.id}
+                className="group flex items-center gap-3 px-3 py-2.5 hover:bg-muted/30 transition-colors cursor-pointer"
+                onClick={() => openEditModal(insignia)}
+              >
+                {/* Preview 40x40 */}
+                <div className="w-10 h-10 rounded-md border border-border bg-muted/30 flex items-center justify-center overflow-hidden shrink-0">
+                  {insignia.model_url ? (
                     <img
-                      src={driveUrl}
+                      src={insignia.model_url}
                       alt={insignia.name}
-                      className="h-full w-full object-contain"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none';
-                        (e.target as HTMLImageElement).parentElement!.innerHTML =
-                          '<div class="flex flex-col items-center gap-2"><span class="text-xs text-muted-foreground">Erro ao carregar imagem</span></div>';
-                      }}
+                      className="w-full h-full object-contain"
+                      onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
                     />
                   ) : (
-                    <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                      <ImageIcon className="w-8 h-8" />
-                      <span className="text-xs">Sem modelo PNG</span>
-                    </div>
+                    <ImageIcon className="w-4 h-4 text-muted-foreground" />
                   )}
                 </div>
 
-                <div className="flex gap-2">
-                  <input
-                    ref={el => { fileInputRefs.current[insignia.id] = el; }}
-                    type="file"
-                    accept="image/png,image/jpeg,image/webp"
-                    className="hidden"
-                    onChange={e => {
-                      const file = e.target.files?.[0];
-                      if (file) handleFileSelect(insignia.id, insignia.name, file);
-                    }}
-                  />
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1 gap-2"
-                    disabled={isUploadingThis || !driveConnected}
-                    onClick={() => fileInputRefs.current[insignia.id]?.click()}
-                  >
-                    {isUploadingThis ? (
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    ) : (
-                      <Upload className="w-3.5 h-3.5" />
-                    )}
-                    {isUploadingThis ? 'Enviando...' : driveUrl ? 'Trocar PNG' : 'Upload PNG'}
-                  </Button>
-                  {driveUrl && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 w-8 p-0"
-                      onClick={() => window.open(driveUrl, '_blank')}
-                    >
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </Button>
-                  )}
+                {/* Name + rarity */}
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate">{insignia.name}</p>
+                  <Badge className={`text-[10px] capitalize border ${RARITY_COLORS[insignia.rarity] || RARITY_COLORS.bronze} px-1.5 py-0`}>
+                    {insignia.rarity}
+                  </Badge>
                 </div>
-                <p className="text-xs text-muted-foreground">PNG/JPG até 5MB. Recomendado: 800×800px, fundo transparente.</p>
-              </CardContent>
-            </Card>
-          );
-        })}
+
+                {/* Status */}
+                <Badge
+                  variant="outline"
+                  className={`text-[10px] shrink-0 ${
+                    insignia.is_active !== false
+                      ? 'text-green-400 border-green-700/50 bg-green-900/20'
+                      : 'text-red-400 border-red-700/50 bg-red-900/20'
+                  }`}
+                >
+                  {insignia.is_active !== false ? 'Ativa' : 'Inativa'}
+                </Badge>
+
+                {/* Actions */}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 shrink-0"
+                  onClick={e => { e.stopPropagation(); openEditModal(insignia); }}
+                >
+                  <Pencil className="w-3.5 h-3.5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 shrink-0 opacity-0 group-hover:opacity-100 text-destructive hover:text-destructive transition-opacity"
+                  onClick={e => {
+                    e.stopPropagation();
+                    setDeletingId(insignia.id);
+                  }}
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      {(!insignias || insignias.length === 0) && (
-        <div className="text-center py-12 bg-muted/50 rounded-xl">
-          <Award className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-          <p className="text-muted-foreground">Nenhuma insígnia cadastrada ainda.</p>
-        </div>
-      )}
+      {/* Delete confirmation dialog */}
+      <Dialog open={!!deletingId} onOpenChange={open => !open && setDeletingId(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Excluir insígnia?</DialogTitle>
+            <DialogDescription>Essa ação não pode ser desfeita.</DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" size="sm" onClick={() => setDeletingId(null)}>Cancelar</Button>
+            <Button
+              variant="destructive"
+              size="sm"
+              disabled={deleteInsignia.isPending}
+              onClick={() => deletingId && deleteInsignia.mutate(deletingId)}
+            >
+              {deleteInsignia.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" /> : null}
+              Excluir
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit/Create Modal */}
+      <Dialog open={modalOpen} onOpenChange={open => !open && setModalOpen(false)}>
+        <DialogContent className="max-w-2xl w-full max-h-[90vh] overflow-y-auto p-0">
+          <DialogHeader className="p-4 pb-0">
+            <DialogTitle>{editingInsignia ? 'Editar Insígnia' : 'Nova Insígnia'}</DialogTitle>
+            <DialogDescription>
+              {editingInsignia ? 'Atualize os dados e o modelo PNG.' : 'Preencha os campos para criar.'}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid grid-cols-1 sm:grid-cols-[200px_1fr] gap-4 p-4">
+            {/* Left: preview */}
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-full aspect-square max-w-[200px] rounded-lg border-2 border-dashed border-border bg-muted/20 flex items-center justify-center overflow-hidden">
+                {filePreview ? (
+                  <img src={filePreview} alt="Preview" className="w-full h-full object-contain" />
+                ) : editingInsignia?.model_url ? (
+                  <img src={editingInsignia.model_url} alt={editingInsignia.name} className="w-full h-full object-contain" />
+                ) : (
+                  <div className="flex flex-col items-center gap-1 text-muted-foreground">
+                    <ImageIcon className="w-8 h-8" />
+                    <span className="text-[10px]">Sem imagem</span>
+                  </div>
+                )}
+              </div>
+              <p className="text-[10px] text-muted-foreground text-center">PNG/JPG até 5MB · 800×800px</p>
+            </div>
+
+            {/* Right: fields */}
+            <div className="space-y-3">
+              <div>
+                <Label className="text-xs">Nome</Label>
+                <Input value={editName} onChange={e => setEditName(e.target.value)} placeholder="Nome da insígnia" className="h-9 text-sm" />
+              </div>
+
+              {/* Drag & drop upload */}
+              <div>
+                <Label className="text-xs">Imagem</Label>
+                <div
+                  ref={dropRef}
+                  onDragOver={e => { e.preventDefault(); e.stopPropagation(); }}
+                  onDrop={handleDrop}
+                  onClick={() => fileInputRef.current?.click()}
+                  className="mt-1 border-2 border-dashed border-border rounded-lg p-4 text-center cursor-pointer hover:border-primary/50 transition-colors"
+                >
+                  <Upload className="w-5 h-5 mx-auto text-muted-foreground mb-1" />
+                  <p className="text-xs text-muted-foreground">
+                    {selectedFile ? selectedFile.name : 'Arraste ou clique para selecionar'}
+                  </p>
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  className="hidden"
+                  onChange={e => {
+                    const file = e.target.files?.[0];
+                    if (file) handleFileChange(file);
+                  }}
+                />
+              </div>
+
+              {/* Drive folder selector - shown when file selected */}
+              {selectedFile && driveConnected && (
+                <div className="space-y-2 p-3 rounded-lg bg-muted/20 border border-border">
+                  <Label className="text-xs flex items-center gap-1.5">
+                    <CloudIcon className="w-3 h-3" /> Pasta no Google Drive
+                  </Label>
+                  {loadingFolders ? (
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground py-2">
+                      <Loader2 className="w-3 h-3 animate-spin" /> Carregando pastas...
+                    </div>
+                  ) : (
+                    <>
+                      <Select value={selectedFolderId} onValueChange={val => {
+                        if (val === '__new__') {
+                          setShowNewFolder(true);
+                          setSelectedFolderId('');
+                        } else {
+                          setShowNewFolder(false);
+                          setSelectedFolderId(val);
+                        }
+                      }}>
+                        <SelectTrigger className="h-9 text-sm">
+                          <SelectValue placeholder="Selecione uma pasta" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {driveFolders.map(f => (
+                            <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>
+                          ))}
+                          <SelectItem value="__new__">
+                            <span className="flex items-center gap-1.5"><FolderPlus className="w-3 h-3" /> Criar nova pasta</span>
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+
+                      {showNewFolder && (
+                        <div className="flex gap-2">
+                          <Input
+                            value={newFolderName}
+                            onChange={e => setNewFolderName(e.target.value)}
+                            placeholder="Nome da pasta"
+                            className="h-8 text-sm flex-1"
+                          />
+                          <Button size="sm" className="h-8 text-xs" disabled={creatingFolder || !newFolderName.trim()} onClick={handleCreateFolder}>
+                            {creatingFolder ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Criar'}
+                          </Button>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
+
+              <div>
+                <Label className="text-xs">Descrição / Mensagem do verso</Label>
+                <Textarea
+                  value={editDescription}
+                  onChange={e => setEditDescription(e.target.value)}
+                  placeholder="Descrição da insígnia..."
+                  className="text-sm min-h-[60px]"
+                />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Switch checked={editActive} onCheckedChange={setEditActive} id="active-toggle" />
+                <Label htmlFor="active-toggle" className="text-xs">Ativa</Label>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="p-4 pt-0 gap-2">
+            <Button variant="outline" size="sm" onClick={() => setModalOpen(false)} disabled={saving}>
+              Cancelar
+            </Button>
+            <Button size="sm" onClick={handleSave} disabled={saving} className="gap-1.5">
+              {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+              Salvar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
