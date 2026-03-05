@@ -536,11 +536,11 @@ export function InsigniasModelManager() {
                 />
               </div>
 
-              {/* Drive folder selector - shown when file selected */}
-              {selectedFile && driveConnected && (
+              {/* Drive folder selector - always visible when Drive connected */}
+              {driveConnected && (
                 <div className="space-y-2 p-3 rounded-lg bg-muted/20 border border-border">
                   <Label className="text-xs flex items-center gap-1.5">
-                    <CloudIcon className="w-3 h-3" /> Pasta no Google Drive
+                    <CloudIcon className="w-3 h-3" /> Pasta de destino no Google Drive
                   </Label>
                   {loadingFolders ? (
                     <div className="flex items-center gap-2 text-xs text-muted-foreground py-2">
@@ -584,6 +584,9 @@ export function InsigniasModelManager() {
                         </div>
                       )}
                     </>
+                  )}
+                  {!selectedFile && (
+                    <p className="text-[10px] text-muted-foreground">Selecione uma imagem acima para fazer upload nesta pasta.</p>
                   )}
                 </div>
               )}
