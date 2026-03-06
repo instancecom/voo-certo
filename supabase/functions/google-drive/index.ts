@@ -365,7 +365,7 @@ Deno.serve(async (req) => {
       const uploadData = await uploadRes.json();
       await makeFilePublic(accessToken, uploadData.id);
 
-      const directUrl = `https://drive.google.com/uc?export=view&id=${uploadData.id}`;
+      const directUrl = `https://lh3.googleusercontent.com/d/${uploadData.id}`;
 
       return new Response(JSON.stringify({
         fileId: uploadData.id,

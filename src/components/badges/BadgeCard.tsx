@@ -51,9 +51,24 @@ const rarityLabels: Record<BadgeRarity, string> = {
   platinum: "Platina",
 };
 
+// Convert old Drive URLs to working format
+const getDriveImageUrl = (url: string | null): string | null => {
+  if (!url) return null;
+  // Already using lh3 format
+  if (url.includes('lh3.googleusercontent.com')) return url;
+  // Convert uc?export=view format
+  const ucMatch = url.match(/drive\.google\.com\/uc\?export=view&id=([^&]+)/);
+  if (ucMatch) return `https://lh3.googleusercontent.com/d/${ucMatch[1]}`;
+  // Convert /file/d/ format
+  const fileMatch = url.match(/drive\.google\.com\/file\/d\/([^/]+)/);
+  if (fileMatch) return `https://lh3.googleusercontent.com/d/${fileMatch[1]}`;
+  return url;
+};
+
 export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = true, onClick }: BadgeCardProps) => {
   const { user } = useAuth();
   const colors = rarityColors[insignia.rarity];
+  const imageUrl = getDriveImageUrl(insignia.model_url);
   const [verificationModalOpen, setVerificationModalOpen] = useState(false);
   const [certificateModalOpen, setCertificateModalOpen] = useState(false);
   const { data: userVerifications } = useUserVerifications();
@@ -117,11 +132,13 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
           "w-14 h-14 mx-auto mb-2 rounded-full flex items-center justify-center overflow-hidden",
           earned ? "bg-white/20" : "bg-muted-foreground/10"
         )}>
-          {insignia.model_url ? (
+          {imageUrl ? (
             <img
-              src={insignia.model_url}
+              src={imageUrl}
               alt={insignia.name}
               className="w-full h-full object-contain"
+              crossOrigin="anonymous"
+              referrerPolicy="no-referrer"
               onError={(e) => {
                 (e.target as HTMLImageElement).style.display = 'none';
                 (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
@@ -132,7 +149,7 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
             name={insignia.icon}
             size={28} 
             className={cn(
-              insignia.model_url ? "hidden" : "",
+              imageUrl ? "hidden" : "",
               earned ? colors.text : "text-muted-foreground"
             )} 
           />
