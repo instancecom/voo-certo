@@ -132,11 +132,13 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
           "w-14 h-14 mx-auto mb-2 rounded-full flex items-center justify-center overflow-hidden",
           earned ? "bg-white/20" : "bg-muted-foreground/10"
         )}>
-          {insignia.model_url ? (
+          {imageUrl ? (
             <img
-              src={insignia.model_url}
+              src={imageUrl}
               alt={insignia.name}
               className="w-full h-full object-contain"
+              crossOrigin="anonymous"
+              referrerPolicy="no-referrer"
               onError={(e) => {
                 (e.target as HTMLImageElement).style.display = 'none';
                 (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
@@ -147,7 +149,7 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
             name={insignia.icon}
             size={28} 
             className={cn(
-              insignia.model_url ? "hidden" : "",
+              imageUrl ? "hidden" : "",
               earned ? colors.text : "text-muted-foreground"
             )} 
           />
