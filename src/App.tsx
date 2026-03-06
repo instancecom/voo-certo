@@ -42,6 +42,7 @@ const App = () => (
             <Route path="/meu-progresso" element={<ProgressPage />} />
             <Route path="/conquistas" element={<ConquistasPage />} />
             <Route path="/guia-carreira" element={<GuiaCarreiraPage />} />
+            <Route path="/guia-carreira/:guideId" element={<GuiaCarreiraDetailPage />} />
             <Route path="/microcursos" element={<MicrocoursesPage />} />
             <Route path="/curriculo" element={<CurriculumPage />} />
             <Route path="/premium" element={<PremiumPage />} />
