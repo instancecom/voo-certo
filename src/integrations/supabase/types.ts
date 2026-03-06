@@ -205,6 +205,80 @@ export type Database = {
           },
         ]
       }
+      career_guide_steps: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          guide_id: string
+          id: string
+          microcourse_ids: string[] | null
+          simulado_ids: string[] | null
+          step_order: number | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          guide_id: string
+          id?: string
+          microcourse_ids?: string[] | null
+          simulado_ids?: string[] | null
+          step_order?: number | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          guide_id?: string
+          id?: string
+          microcourse_ids?: string[] | null
+          simulado_ids?: string[] | null
+          step_order?: number | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "career_guide_steps_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "career_guides"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      career_guides: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          display_order: number | null
+          id: string
+          is_active: boolean | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           active_modes: string[] | null
@@ -595,6 +669,41 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      guide_step_progress: {
+        Row: {
+          completed: boolean | null
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          step_id: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          step_id: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          step_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guide_step_progress_step_id_fkey"
+            columns: ["step_id"]
+            isOneToOne: false
+            referencedRelation: "career_guide_steps"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       insignias: {
         Row: {
