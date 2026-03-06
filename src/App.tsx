@@ -14,6 +14,7 @@ import AdminPage from "./pages/AdminPage";
 import ProgressPage from "./pages/ProgressPage";
 import ConquistasPage from "./pages/ConquistasPage";
 import GuiaCarreiraPage from "./pages/GuiaCarreiraPage";
+import GuiaCarreiraDetailPage from "./pages/GuiaCarreiraDetailPage";
 import MicrocoursesPage from "./pages/MicrocoursesPage";
 import CurriculumPage from "./pages/CurriculumPage";
 import PremiumPage from "./pages/PremiumPage";
