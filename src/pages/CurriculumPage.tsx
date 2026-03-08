@@ -86,6 +86,7 @@ const TEMPLATES = [
 
 export default function CurriculumPage() {
   const { user } = useAuth();
+  const { canSaveCurriculum } = usePlan();
   const queryClient = useQueryClient();
   const [data, setData] = useState<CurriculumData>(EMPTY_DATA);
   const [newSkill, setNewSkill] = useState('');
