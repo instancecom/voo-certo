@@ -142,6 +142,22 @@ export default function ProfessionExamPage() {
     );
   }
 
+  if (!canAccessSimulados) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="pt-24 pb-12">
+          <div className="container mx-auto px-4 max-w-lg">
+            <PlanGate requiredPlan="solo" feature="Simulados">
+              <div />
+            </PlanGate>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
