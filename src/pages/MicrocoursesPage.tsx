@@ -315,7 +315,7 @@ export default function MicrocoursesPage() {
                                                 >
                                                   {ytId ? <Play className="w-3.5 h-3.5 text-primary shrink-0" /> : <BookOpen className="w-3.5 h-3.5 text-muted-foreground shrink-0" />}
                                                   <span className="text-sm flex-1">{lesson.title}</span>
-                                                  {lesson.is_premium && !hasActivePlan && <Lock className="w-3 h-3 text-accent" />}
+                                                  {!canAccessMicrocursos && <Lock className="w-3 h-3 text-accent" />}
                                                   {lesson.material_url && <FileText className="w-3 h-3 text-success" />}
                                                 </div>
                                               );
