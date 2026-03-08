@@ -36,13 +36,12 @@ export default function GuiaCarreiraDetailPage() {
   const { guideId } = useParams<{ guideId: string }>();
   const navigate = useNavigate();
   const { user, isPremium, isLoading: authLoading } = useAuth();
+  const { canAccessGuideContent } = usePlan();
   const { data: guide, isLoading } = useCareerGuideWithSteps(guideId);
   const { data: progress } = useGuideStepProgress(guideId);
   const toggleProgress = useToggleStepProgress();
   const { data: simuladoOptions } = useSimuladoOptions();
   const { data: microcourseMap } = useMicrocourseMap();
-
-  const hasAccess = !!user && isPremium;
 
   const completedStepIds = new Set((progress || []).filter(p => p.completed).map(p => p.step_id));
   const totalSteps = guide?.steps?.length || 0;
