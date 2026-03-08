@@ -215,85 +215,119 @@ export default function AdminPage() {
               </Card>
             </div>
 
-            <Tabs defaultValue="content" className="space-y-6">
-              <TabsList className="bg-muted flex-wrap h-auto gap-1">
-                <TabsTrigger value="content" className="flex items-center gap-2">
-                  <Briefcase className="w-4 h-4" />Profissões & Blocos
-                </TabsTrigger>
-                <TabsTrigger value="microcourses" className="flex items-center gap-2">
-                  <BookOpen className="w-4 h-4" />Microcursos
-                </TabsTrigger>
-                <TabsTrigger value="guia" className="flex items-center gap-2">
-                  <Map className="w-4 h-4" />Guia de Carreira
-                </TabsTrigger>
-                <TabsTrigger value="insignias-models" className="flex items-center gap-2">
-                  <ImageIcon className="w-4 h-4" />Modelos PNG
-                </TabsTrigger>
-                <TabsTrigger value="verifications" className="flex items-center gap-2">
-                  <Award className="w-4 h-4" />Verificações
-                </TabsTrigger>
-                <TabsTrigger value="stats" className="flex items-center gap-2">
-                  <BarChart3 className="w-4 h-4" />Estatísticas
-                </TabsTrigger>
-                <TabsTrigger value="plans" className="flex items-center gap-2">
-                  <Tag className="w-4 h-4" />Planos & Cupons
-                </TabsTrigger>
-                <TabsTrigger value="connections" className="flex items-center gap-2">
-                  <Plug className="w-4 h-4" />Conexões
-                </TabsTrigger>
-              </TabsList>
+            {(() => {
+              const tabs = [
+                { value: 'content', label: 'Profissões & Blocos', icon: Briefcase },
+                { value: 'microcourses', label: 'Microcursos', icon: BookOpen },
+                { value: 'guia', label: 'Guia de Carreira', icon: Map },
+                { value: 'insignias-models', label: 'Modelos PNG', icon: ImageIcon },
+                { value: 'verifications', label: 'Verificações', icon: Award },
+                { value: 'stats', label: 'Estatísticas', icon: BarChart3 },
+                { value: 'plans', label: 'Planos & Cupons', icon: Tag },
+                { value: 'connections', label: 'Conexões', icon: Plug },
+              ];
 
-              <TabsContent value="content" className="space-y-6">
-                {view === 'professions' && (
-                  <ProfessionsManager onSelectProfession={handleSelectProfession} />
-                )}
-                {view === 'blocks' && (
-                  <BlocksManager
-                    professionId={selectedProfessionId}
-                    professionName={selectedProfessionName}
-                    onBack={handleBackToProfessions}
-                    onSelectBlock={handleSelectBlock}
-                  />
-                )}
-                {view === 'questions' && (
-                  <BlockQuestionsManager
-                    professionId={selectedProfessionId}
-                    professionName={selectedProfessionName}
-                    blockId={selectedBlockId}
-                    blockName={selectedBlockName}
-                    onBack={handleBackToBlocks}
-                  />
-                )}
-              </TabsContent>
+              const currentTab = tabs.find(t => t.value === activeTab);
 
-              <TabsContent value="microcourses" className="space-y-6">
-                <MicrocoursesManager />
-              </TabsContent>
+              const TabButtons = ({ onSelect }: { onSelect?: () => void }) => (
+                <div className="flex flex-col gap-1">
+                  {tabs.map(tab => {
+                    const Icon = tab.icon;
+                    const isActive = activeTab === tab.value;
+                    return (
+                      <button
+                        key={tab.value}
+                        onClick={() => { setActiveTab(tab.value); onSelect?.(); }}
+                        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-left w-full ${
+                          isActive
+                            ? 'bg-primary/10 text-primary'
+                            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                        }`}
+                      >
+                        <Icon className="w-4 h-4 shrink-0" />
+                        {tab.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              );
 
-              <TabsContent value="guia" className="space-y-6">
-                <CareerGuidesManager />
-              </TabsContent>
+              const Content = () => {
+                switch (activeTab) {
+                  case 'content':
+                    return (
+                      <div className="space-y-6">
+                        {view === 'professions' && (
+                          <ProfessionsManager onSelectProfession={handleSelectProfession} />
+                        )}
+                        {view === 'blocks' && (
+                          <BlocksManager
+                            professionId={selectedProfessionId}
+                            professionName={selectedProfessionName}
+                            onBack={handleBackToProfessions}
+                            onSelectBlock={handleSelectBlock}
+                          />
+                        )}
+                        {view === 'questions' && (
+                          <BlockQuestionsManager
+                            professionId={selectedProfessionId}
+                            professionName={selectedProfessionName}
+                            blockId={selectedBlockId}
+                            blockName={selectedBlockName}
+                            onBack={handleBackToBlocks}
+                          />
+                        )}
+                      </div>
+                    );
+                  case 'microcourses': return <MicrocoursesManager />;
+                  case 'guia': return <CareerGuidesManager />;
+                  case 'insignias-models': return <InsigniasModelManager />;
+                  case 'verifications': return <VerificationsManager />;
+                  case 'stats': return <AdminStatsManager />;
+                  case 'plans': return <PlansAndCouponsManager />;
+                  case 'connections': return <ConnectionsManager />;
+                  default: return null;
+                }
+              };
 
-              <TabsContent value="insignias-models" className="space-y-6">
-                <InsigniasModelManager />
-              </TabsContent>
-
-              <TabsContent value="verifications" className="space-y-6">
-                <VerificationsManager />
-              </TabsContent>
-
-              <TabsContent value="stats" className="space-y-6">
-                <AdminStatsManager />
-              </TabsContent>
-
-              <TabsContent value="plans" className="space-y-6">
-                <PlansAndCouponsManager />
-              </TabsContent>
-
-              <TabsContent value="connections" className="space-y-6">
-                <ConnectionsManager />
-              </TabsContent>
-            </Tabs>
+              return (
+                <>
+                  {/* Mobile: Sheet menu + floating button */}
+                  {isMobile ? (
+                    <div className="space-y-4">
+                      <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+                        <SheetTrigger asChild>
+                          <Button variant="outline" className="w-full justify-between gap-2">
+                            <span className="flex items-center gap-2">
+                              {currentTab && <currentTab.icon className="w-4 h-4" />}
+                              {currentTab?.label || 'Menu'}
+                            </span>
+                            <Menu className="w-4 h-4" />
+                          </Button>
+                        </SheetTrigger>
+                        <SheetContent side="bottom" className="pb-8 max-h-[70vh]">
+                          <h3 className="text-sm font-semibold text-muted-foreground mb-3 px-1">Navegação</h3>
+                          <TabButtons onSelect={() => setMobileMenuOpen(false)} />
+                        </SheetContent>
+                      </Sheet>
+                      <Content />
+                    </div>
+                  ) : (
+                    /* Desktop: side nav */
+                    <div className="flex gap-6">
+                      <aside className="w-56 shrink-0">
+                        <div className="sticky top-24 bg-card border border-border rounded-xl p-3">
+                          <TabButtons />
+                        </div>
+                      </aside>
+                      <div className="flex-1 min-w-0">
+                        <Content />
+                      </div>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
           </>
         )}
       </main>
