@@ -129,8 +129,38 @@ function MicrocourseForm({ course, onSave, onCancel }: {
     display_order: course?.display_order || 0,
     is_active: course?.is_active ?? true,
   });
+  const [uploadingThumb, setUploadingThumb] = useState(false);
+  const thumbRef = useRef<HTMLInputElement>(null);
 
   const videoId = extractYouTubeId(form.video_url);
+
+  const handleThumbUpload = async (file: File) => {
+    if (!file) return;
+    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    if (!allowed.includes(file.type)) {
+      toast.error('Use JPG, PNG ou WebP.');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Imagem deve ter no máximo 5MB.');
+      return;
+    }
+    setUploadingThumb(true);
+    try {
+      const ext = file.name.split('.').pop() || 'jpg';
+      const path = `${crypto.randomUUID()}.${ext}`;
+      const { error } = await supabase.storage.from('course-thumbnails').upload(path, file, { upsert: true });
+      if (error) throw error;
+      const { data: { publicUrl } } = supabase.storage.from('course-thumbnails').getPublicUrl(path);
+      setForm(f => ({ ...f, thumbnail_url: publicUrl }));
+      toast.success('Capa enviada!');
+    } catch (e: any) {
+      console.error(e);
+      toast.error(e.message || 'Erro ao enviar capa');
+    } finally {
+      setUploadingThumb(false);
+    }
+  };
 
   return (
     <Card className="border-primary/30">
@@ -142,6 +172,43 @@ function MicrocourseForm({ course, onSave, onCancel }: {
           <label className="text-sm font-medium mb-1 block">Título *</label>
           <Input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Nome do microcurso" />
         </div>
+
+        {/* Thumbnail / Capa */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium mb-1 block">Capa do Curso</label>
+          <div className="flex items-start gap-4">
+            {form.thumbnail_url ? (
+              <div className="relative group shrink-0">
+                <img src={form.thumbnail_url} alt="Capa" className="w-32 h-20 object-cover rounded-lg border border-border" />
+                <button
+                  type="button"
+                  onClick={() => setForm(f => ({ ...f, thumbnail_url: '' }))}
+                  className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  ×
+                </button>
+              </div>
+            ) : (
+              <div className="w-32 h-20 rounded-lg border-2 border-dashed border-border flex items-center justify-center text-muted-foreground text-xs shrink-0">
+                Sem capa
+              </div>
+            )}
+            <div className="flex flex-col gap-2">
+              <Button type="button" variant="outline" size="sm" onClick={() => thumbRef.current?.click()} disabled={uploadingThumb} className="gap-1 text-xs">
+                {uploadingThumb ? <Loader2 className="w-3 h-3 animate-spin" /> : <Upload className="w-3 h-3" />}
+                {uploadingThumb ? 'Enviando...' : 'Enviar imagem'}
+              </Button>
+              <input ref={thumbRef} type="file" className="hidden" accept="image/jpeg,image/png,image/webp" onChange={e => { if (e.target.files?.[0]) handleThumbUpload(e.target.files[0]); }} />
+              <Input
+                value={form.thumbnail_url}
+                onChange={e => setForm(f => ({ ...f, thumbnail_url: e.target.value }))}
+                placeholder="Ou cole a URL da imagem"
+                className="h-8 text-xs"
+              />
+            </div>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="text-sm font-medium mb-1 block">Bloco / Categoria</label>
@@ -560,6 +627,7 @@ export function MicrocoursesManager() {
         title: data.title,
         description: data.description || null,
         content: data.content || null,
+        thumbnail_url: data.thumbnail_url || null,
         category: data.category,
         tags: data.tags ? data.tags.split(',').map((t: string) => t.trim()).filter(Boolean) : [],
         duration_minutes: data.duration_minutes,
