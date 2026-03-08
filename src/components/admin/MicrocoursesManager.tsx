@@ -627,6 +627,7 @@ export function MicrocoursesManager() {
         title: data.title,
         description: data.description || null,
         content: data.content || null,
+        thumbnail_url: data.thumbnail_url || null,
         category: data.category,
         tags: data.tags ? data.tags.split(',').map((t: string) => t.trim()).filter(Boolean) : [],
         duration_minutes: data.duration_minutes,
