@@ -122,6 +122,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
+  const hasActivePlan = (() => {
+    if (!profile) return false;
+    const validPlans = ['solo', 'tripulante', 'comandante'];
+    if (!validPlans.includes(profile.plan_type)) return false;
+    if (profile.plan_expires_at && new Date(profile.plan_expires_at) < new Date()) return false;
+    return true;
+  })();
+
   return (
     <AuthContext.Provider
       value={{
@@ -130,6 +138,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         profile,
         isAdmin,
         isPremium,
+        hasActivePlan,
         isLoading,
         signOut,
         refreshProfile,
