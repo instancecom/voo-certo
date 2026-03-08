@@ -46,6 +46,7 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState('content');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isMobile = useIsMobile();
+  const [selectedProfessionId, setSelectedProfessionId] = useState<string>('');
   const [selectedProfessionName, setSelectedProfessionName] = useState<string>('');
   const [selectedBlockId, setSelectedBlockId] = useState<string>('');
   const [selectedBlockName, setSelectedBlockName] = useState<string>('');
