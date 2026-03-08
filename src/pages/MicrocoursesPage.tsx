@@ -377,7 +377,7 @@ export default function MicrocoursesPage() {
                 const thumbnailUrl = selectedLesson.youtube_video_id
                   ? getYouTubeThumbnail(selectedLesson.youtube_video_id)
                   : null;
-                const canAccess = !selectedLesson.is_premium || hasActivePlan;
+                const canAccess = canAccessMicrocursos;
 
                 if (videoSrc || ytId) {
                   const embedUrl = ytId ? getYouTubeEmbedUrl(ytId) : videoSrc!;
