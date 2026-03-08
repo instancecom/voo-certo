@@ -157,8 +157,10 @@ export default function MicrocoursesPage() {
   };
 
   const handleOpenLesson = (lesson: Lesson) => {
-    if (lesson.is_premium && !isPremium) {
-      toast.error('Esta aula é exclusiva para assinantes Premium.');
+    if (lesson.is_premium && !hasActivePlan) {
+      toast.error('Assine para acessar este conteúdo', {
+        action: { label: 'Assinar', onClick: () => window.location.href = '/premium' },
+      });
       return;
     }
     setSelectedLesson(lesson);
