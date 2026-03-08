@@ -41,6 +41,7 @@ export default function ProfessionExamPage() {
   const [searchParams] = useSearchParams();
   const modo = searchParams.get('modo') as ExamMode | null;
   const { user, isLoading: authLoading } = useAuth();
+  const { canAccessSimulados } = usePlan();
   const [phase, setPhase] = useState<ExamPhase>('in_progress');
   const [examResult, setExamResult] = useState<ExamResultData | null>(null);
   const submitResult = useSubmitResult();
