@@ -174,24 +174,34 @@ export default function GuiaCarreiraDetailPage() {
 
                       {(step.simulado_ids?.length > 0 || step.microcourse_ids?.length > 0) && (
                         <CardContent className="pt-0">
-                          <div className="flex flex-wrap gap-2">
-                            {step.simulado_ids?.map(id => (
-                              <Button key={id} variant="outline" size="sm" asChild className="border-accent/30 hover:bg-accent hover:text-accent-foreground text-xs">
-                                <Link to={getSimuladoLink(id)}>
-                                  <BookOpen className="w-3 h-3 mr-1" />{getSimuladoLabel(id)}
-                                  <ArrowRight className="w-3 h-3 ml-1" />
-                                </Link>
+                          {!canAccessGuideContent ? (
+                            <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border text-sm text-muted-foreground">
+                              <Lock className="w-4 h-4 shrink-0" />
+                              <span className="flex-1">Assine o plano Tripulante para acessar simulados e microcursos vinculados.</span>
+                              <Button variant="outline" size="sm" asChild>
+                                <Link to="/premium"><Crown className="w-3 h-3 mr-1" />Upgrade</Link>
                               </Button>
-                            ))}
-                            {step.microcourse_ids?.map(id => (
-                              <Button key={id} variant="outline" size="sm" asChild className="border-primary/30 hover:bg-primary hover:text-primary-foreground text-xs">
-                                <Link to="/microcursos">
-                                  <GraduationCap className="w-3 h-3 mr-1" />{microcourseMap?.get(id) || 'Microcurso'}
-                                  <ArrowRight className="w-3 h-3 ml-1" />
-                                </Link>
-                              </Button>
-                            ))}
-                          </div>
+                            </div>
+                          ) : (
+                            <div className="flex flex-wrap gap-2">
+                              {step.simulado_ids?.map(id => (
+                                <Button key={id} variant="outline" size="sm" asChild className="border-accent/30 hover:bg-accent hover:text-accent-foreground text-xs">
+                                  <Link to={getSimuladoLink(id)}>
+                                    <BookOpen className="w-3 h-3 mr-1" />{getSimuladoLabel(id)}
+                                    <ArrowRight className="w-3 h-3 ml-1" />
+                                  </Link>
+                                </Button>
+                              ))}
+                              {step.microcourse_ids?.map(id => (
+                                <Button key={id} variant="outline" size="sm" asChild className="border-primary/30 hover:bg-primary hover:text-primary-foreground text-xs">
+                                  <Link to="/microcursos">
+                                    <GraduationCap className="w-3 h-3 mr-1" />{microcourseMap?.get(id) || 'Microcurso'}
+                                    <ArrowRight className="w-3 h-3 ml-1" />
+                                  </Link>
+                                </Button>
+                              ))}
+                            </div>
+                          )}
                         </CardContent>
                       )}
                     </Card>
