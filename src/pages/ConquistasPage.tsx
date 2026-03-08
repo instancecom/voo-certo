@@ -28,6 +28,7 @@ const rarityLabels: Record<BadgeRarity, string> = {
 const ConquistasPage = () => {
   const navigate = useNavigate();
   const { user, isLoading: authLoading } = useAuth();
+  const { canAccessConquistas } = usePlan();
   const { data: insignias, isLoading: insigniasLoading } = useInsignias();
   const { data: userInsignias, isLoading: userInsigniasLoading } = useUserInsignias();
   const [selectedRarity, setSelectedRarity] = useState<BadgeRarity | "all">("all");
