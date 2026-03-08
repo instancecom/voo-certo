@@ -16,9 +16,11 @@ import {
 export default function GuiaCarreiraPage() {
   const { data: guides, isLoading } = useCareerGuides();
   const { user, isPremium, isLoading: authLoading } = useAuth();
+  const { canAccessGuideContent } = usePlan();
   const navigate = useNavigate();
 
-  const hasAccess = !!user && isPremium;
+  // Free users can see guide structure but linked content is locked
+  const hasAccess = true; // Everyone can see the guides list
 
   return (
     <div className="min-h-screen bg-background">
