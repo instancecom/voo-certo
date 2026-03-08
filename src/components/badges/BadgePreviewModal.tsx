@@ -37,8 +37,7 @@ const getDriveImageUrl = (url: string | null): string | null => {
 
 export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt }: BadgePreviewModalProps) {
   const colors = rarityColors[insignia.rarity];
-  const imageUrl = getDriveImageUrl(insignia.model_url);
-  const versoTexto = (insignia as any).verso_texto as string | null;
+  const versoTexto = insignia.verso_texto;
 
   if (!open) return null;
 
