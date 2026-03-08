@@ -231,6 +231,10 @@ function LessonForm({ lesson, onSave, onCancel, youtubeConnected }: {
   const [folders, setFolders] = useState<DriveFolder[]>([]);
   const [creatingFolder, setCreatingFolder] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const videoFileRef = useRef<HTMLInputElement>(null);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   useEffect(() => {
     loadFolders();
@@ -269,6 +273,64 @@ function LessonForm({ lesson, onSave, onCancel, youtubeConnected }: {
     }
   };
 
+  const handleVideoUpload = async () => {
+    if (!videoFile) return;
+    if (!ALLOWED_VIDEO_TYPES.includes(videoFile.type)) {
+      toast.error('Formato não suportado. Use MP4, MOV, WebM ou AVI.');
+      return;
+    }
+    if (videoFile.size > MAX_FILE_SIZE) {
+      toast.error('Arquivo excede 500MB.');
+      return;
+    }
+    setUploadingVideo(true);
+    setUploadProgress(10);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Não autenticado');
+      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+
+      const formData = new FormData();
+      formData.append('video', videoFile);
+      formData.append('title', title || videoFile.name);
+      formData.append('description', description || '');
+      formData.append('privacy', 'unlisted');
+
+      setUploadProgress(30);
+
+      const resp = await fetch(
+        `https://${projectId}.supabase.co/functions/v1/youtube-upload?action=upload`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+          body: formData,
+        }
+      );
+
+      setUploadProgress(80);
+      const data = await resp.json();
+
+      if (!resp.ok || !data.success) {
+        throw new Error(data.error || 'Falha no upload');
+      }
+
+      setUploadProgress(100);
+      const newUrl = `https://www.youtube.com/watch?v=${data.video_id}`;
+      setVideoUrl(newUrl);
+      setVideoFile(null);
+      toast.success(`Vídeo enviado ao YouTube! ID: ${data.video_id}`);
+    } catch (e: any) {
+      console.error('Upload error:', e);
+      toast.error(e.message || 'Erro ao enviar vídeo');
+    } finally {
+      setUploadingVideo(false);
+      setUploadProgress(0);
+    }
+  };
+
   const videoId = extractYouTubeId(videoUrl);
 
   return (
@@ -293,6 +355,45 @@ function LessonForm({ lesson, onSave, onCancel, youtubeConnected }: {
           </label>
         </div>
       </div>
+
+      {/* YouTube Upload */}
+      {youtubeConnected && (
+        <div className="space-y-2 p-3 rounded-lg bg-background border border-primary/20">
+          <p className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+            <Youtube className="w-4 h-4 text-destructive" /> Enviar vídeo ao YouTube
+          </p>
+          {uploadingVideo ? (
+            <div className="space-y-2">
+              <Progress value={uploadProgress} className="h-2" />
+              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                <Loader2 className="w-3 h-3 animate-spin" /> Enviando... {uploadProgress}%
+              </p>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 flex-wrap">
+              <Button type="button" variant="outline" size="sm" onClick={() => videoFileRef.current?.click()} className="gap-1 text-xs">
+                <Upload className="w-3 h-3" /> {videoFile ? videoFile.name : 'Selecionar vídeo'}
+              </Button>
+              <input ref={videoFileRef} type="file" className="hidden" accept="video/mp4,video/quicktime,video/webm,video/x-msvideo" onChange={e => setVideoFile(e.target.files?.[0] || null)} />
+              {videoFile && (
+                <Button type="button" size="sm" onClick={handleVideoUpload} className="gap-1 text-xs bg-destructive hover:bg-destructive/90">
+                  <Youtube className="w-3 h-3" /> Enviar ao YouTube
+                </Button>
+              )}
+              {videoFile && (
+                <span className="text-xs text-muted-foreground">
+                  {(videoFile.size / (1024 * 1024)).toFixed(1)} MB
+                </span>
+              )}
+            </div>
+          )}
+          {!youtubeConnected && (
+            <p className="text-xs text-muted-foreground flex items-center gap-1">
+              <AlertCircle className="w-3 h-3" /> Conecte o YouTube na aba "Conexões" para habilitar o upload.
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Material Upload */}
       <div className="space-y-2 p-3 rounded-lg bg-background border border-border/50">
