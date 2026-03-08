@@ -15,6 +15,7 @@ export interface Insignia {
   display_order: number;
   is_active: boolean;
   model_url: string | null;
+  verso_texto: string | null;
   created_at: string;
   updated_at: string;
 }
