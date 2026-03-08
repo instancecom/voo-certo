@@ -83,11 +83,9 @@ export default function MicrocoursesPage() {
   const { user, isPremium, hasActivePlan } = useAuth();
   const { canAccessMicrocursos } = usePlan();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [expandedCourses, setExpandedCourses] = useState<Set<string>>(new Set());
-  const [expandedModules, setExpandedModules] = useState<Set<string>>(new Set());
-  const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
 
   const { data: courses, isLoading } = useQuery({
     queryKey: ['microcourses'],
