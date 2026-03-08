@@ -136,83 +136,54 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-50 bg-card border-b border-border">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon" asChild>
+        <div className="container mx-auto px-3 sm:px-4">
+          <div className="flex items-center justify-between h-14 sm:h-16">
+            <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+              <Button variant="ghost" size="icon" asChild className="shrink-0">
                 <Link to="/"><ArrowLeft className="w-4 h-4" /></Link>
               </Button>
-              <div className="flex items-center gap-2">
-                <Settings className="w-5 h-5 text-primary" />
-                <h1 className="text-lg font-semibold">Painel Administrativo</h1>
+              <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                <Settings className="w-4 h-4 sm:w-5 sm:h-5 text-primary shrink-0" />
+                <h1 className="text-sm sm:text-lg font-semibold truncate">Painel Admin</h1>
               </div>
             </div>
-            <Button variant="outline" size="sm" asChild>
+            <Button variant="outline" size="sm" asChild className="shrink-0 text-xs sm:text-sm">
               <Link to="/simulados">Ver Simulados</Link>
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : (
           <>
-            {/* Stats Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                    <Briefcase className="w-4 h-4" />Profissões
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold text-foreground">{stats?.professions || 0}</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                    <Layers className="w-4 h-4" />Blocos
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold text-foreground">{stats?.blocks || 0}</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                    <FileQuestion className="w-4 h-4" />Questões
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold text-foreground">{stats?.questions || 0}</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4" />Simulados
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold text-foreground">{stats?.results || 0}</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                    <Users className="w-4 h-4" />Usuários
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold text-foreground">{stats?.users || 0}</div>
-                </CardContent>
-              </Card>
+            {/* Stats Cards - horizontal scroll on mobile */}
+            <div className="flex gap-3 mb-6 sm:mb-8 overflow-x-auto pb-2 sm:pb-0 sm:grid sm:grid-cols-5 sm:overflow-visible scrollbar-none">
+              {[
+                { icon: Briefcase, label: 'Profissões', value: stats?.professions || 0 },
+                { icon: Layers, label: 'Blocos', value: stats?.blocks || 0 },
+                { icon: FileQuestion, label: 'Questões', value: stats?.questions || 0 },
+                { icon: TrendingUp, label: 'Simulados', value: stats?.results || 0 },
+                { icon: Users, label: 'Usuários', value: stats?.users || 0 },
+              ].map(stat => {
+                const Icon = stat.icon;
+                return (
+                  <Card key={stat.label} className="min-w-[120px] sm:min-w-0 shrink-0 sm:shrink">
+                    <CardHeader className="pb-1 sm:pb-2 px-3 pt-3 sm:px-6 sm:pt-6">
+                      <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground flex items-center gap-1.5">
+                        <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />{stat.label}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="px-3 pb-3 sm:px-6 sm:pb-6">
+                      <div className="text-2xl sm:text-3xl font-bold text-foreground">{stat.value}</div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
 
             {(() => {
