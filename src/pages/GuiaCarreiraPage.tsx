@@ -117,7 +117,6 @@ export default function GuiaCarreiraPage() {
               </div>
             </div>
           </section>
-        )}
       </main>
 
       <Footer />
