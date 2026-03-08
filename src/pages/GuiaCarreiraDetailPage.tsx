@@ -17,6 +17,7 @@ import { useSimuladoOptions } from '@/hooks/useGuiaEtapas';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { usePlan } from '@/hooks/usePlan';
 import {
   ArrowLeft, ArrowRight, BookOpen, GraduationCap, CheckCircle2, Lock, Crown, Plane,
 } from 'lucide-react';
