@@ -81,6 +81,7 @@ function getYouTubeThumbnail(videoId: string): string {
 
 export default function MicrocoursesPage() {
   const { user, isPremium, hasActivePlan } = useAuth();
+  const { canAccessMicrocursos } = usePlan();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
