@@ -7,11 +7,15 @@ import { LivreExam } from '@/components/exam/LivreExam';
 import { ExamResults } from '@/components/exam/ExamResults';
 import { DbQuestion, useSubmitResult } from '@/hooks/useExams';
 import { useAuth } from '@/contexts/AuthContext';
+import { usePlan } from '@/hooks/usePlan';
+import { PlanGate } from '@/components/PlanGate';
 import { Loader2, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { ExamMode } from '@/components/exam/ExamModeSelector';
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 
 type ExamPhase = 'in_progress' | 'results';
 
