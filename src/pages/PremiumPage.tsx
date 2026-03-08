@@ -195,20 +195,32 @@ export default function PremiumPage() {
           {user && currentPlan !== 'free' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-8">
               <Card className="border-success/30 bg-success/5 max-w-md mx-auto">
-                <CardContent className="py-4 flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-foreground">Plano atual</p>
-                    <p className="text-lg font-bold text-success capitalize">{currentPlan}</p>
+                <CardContent className="py-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Plano atual</p>
+                      <p className="text-lg font-bold text-success capitalize">{currentPlan}</p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleManageSubscription}
+                      disabled={loading === 'manage'}
+                      className="gap-2"
+                    >
+                      {loading === 'manage' ? <Loader2 className="w-4 h-4 animate-spin" /> : <ExternalLink className="w-4 h-4" />}
+                      Gerenciar
+                    </Button>
                   </div>
                   <Button
-                    variant="outline"
+                    variant="ghost"
                     size="sm"
                     onClick={handleManageSubscription}
                     disabled={loading === 'manage'}
-                    className="gap-2"
+                    className="w-full text-destructive hover:text-destructive hover:bg-destructive/10 gap-2"
                   >
-                    {loading === 'manage' ? <Loader2 className="w-4 h-4 animate-spin" /> : <ExternalLink className="w-4 h-4" />}
-                    Gerenciar
+                    {loading === 'manage' ? <Loader2 className="w-4 h-4 animate-spin" /> : <X className="w-4 h-4" />}
+                    Cancelar Assinatura
                   </Button>
                 </CardContent>
               </Card>
