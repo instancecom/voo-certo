@@ -6,7 +6,8 @@ import { DynamicIcon } from "@/components/ui/dynamic-icon";
 import type { Insignia, BadgeRarity } from "@/hooks/useInsignias";
 import { VerificationSubmitModal } from "./VerificationSubmitModal";
 import { CertificateGeneratorModal } from "./CertificateGeneratorModal";
-import { useUserVerifications, BadgeVerification } from "@/hooks/useBadgeVerifications";
+import { BadgePreviewModal } from "./BadgePreviewModal";
+import { useUserVerifications } from "@/hooks/useBadgeVerifications";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface BadgeCardProps {
@@ -18,48 +19,21 @@ interface BadgeCardProps {
 }
 
 const rarityColors: Record<BadgeRarity, { bg: string; border: string; text: string; glow: string }> = {
-  bronze: {
-    bg: "bg-gradient-to-br from-amber-700 to-amber-900",
-    border: "border-amber-600",
-    text: "text-amber-200",
-    glow: "shadow-amber-500/30",
-  },
-  silver: {
-    bg: "bg-gradient-to-br from-slate-400 to-slate-600",
-    border: "border-slate-300",
-    text: "text-slate-100",
-    glow: "shadow-slate-400/30",
-  },
-  gold: {
-    bg: "bg-gradient-to-br from-yellow-400 to-yellow-600",
-    border: "border-yellow-300",
-    text: "text-yellow-100",
-    glow: "shadow-yellow-400/40",
-  },
-  platinum: {
-    bg: "bg-gradient-to-br from-cyan-300 via-purple-400 to-pink-400",
-    border: "border-cyan-200",
-    text: "text-white",
-    glow: "shadow-purple-400/50",
-  },
+  bronze: { bg: "bg-gradient-to-br from-amber-700 to-amber-900", border: "border-amber-600", text: "text-amber-200", glow: "shadow-amber-500/30" },
+  silver: { bg: "bg-gradient-to-br from-slate-400 to-slate-600", border: "border-slate-300", text: "text-slate-100", glow: "shadow-slate-400/30" },
+  gold: { bg: "bg-gradient-to-br from-yellow-400 to-yellow-600", border: "border-yellow-300", text: "text-yellow-100", glow: "shadow-yellow-400/40" },
+  platinum: { bg: "bg-gradient-to-br from-cyan-300 via-purple-400 to-pink-400", border: "border-cyan-200", text: "text-white", glow: "shadow-purple-400/50" },
 };
 
 const rarityLabels: Record<BadgeRarity, string> = {
-  bronze: "Bronze",
-  silver: "Prata",
-  gold: "Ouro",
-  platinum: "Platina",
+  bronze: "Bronze", silver: "Prata", gold: "Ouro", platinum: "Platina",
 };
 
-// Convert old Drive URLs to working format
 const getDriveImageUrl = (url: string | null): string | null => {
   if (!url) return null;
-  // Already using lh3 format
   if (url.includes('lh3.googleusercontent.com')) return url;
-  // Convert uc?export=view format
   const ucMatch = url.match(/drive\.google\.com\/uc\?export=view&id=([^&]+)/);
   if (ucMatch) return `https://lh3.googleusercontent.com/d/${ucMatch[1]}`;
-  // Convert /file/d/ format
   const fileMatch = url.match(/drive\.google\.com\/file\/d\/([^/]+)/);
   if (fileMatch) return `https://lh3.googleusercontent.com/d/${fileMatch[1]}`;
   return url;
@@ -71,35 +45,32 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
   const imageUrl = getDriveImageUrl(insignia.model_url);
   const [verificationModalOpen, setVerificationModalOpen] = useState(false);
   const [certificateModalOpen, setCertificateModalOpen] = useState(false);
+  const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const { data: userVerifications } = useUserVerifications();
 
-  // Check if this is an ANAC approval badge
   const isAnacBadge = insignia.condition_type === 'anac_approval';
-  
-  // Find verification for this badge
-  const verification = userVerifications?.find(
-    (v) => v.insignia_id === insignia.id
-  );
-  
+  const verification = userVerifications?.find((v) => v.insignia_id === insignia.id);
   const hasPendingVerification = verification?.status === 'pending';
   const hasApprovedVerification = verification?.status === 'approved';
 
   const handleClick = () => {
-    if (onClick) {
-      onClick();
+    if (onClick) { onClick(); return; }
+
+    // Earned badge → open preview modal
+    if (earned) {
+      // ANAC badge with approved verification → certificate
+      if (isAnacBadge && hasApprovedVerification) {
+        setCertificateModalOpen(true);
+        return;
+      }
+      // All other earned badges → preview modal
+      setPreviewModalOpen(true);
       return;
     }
 
-    // If ANAC badge and not earned
-    if (isAnacBadge && !earned && user) {
-      if (!hasPendingVerification) {
-        setVerificationModalOpen(true);
-      }
-    }
-    
-    // If earned ANAC badge, open certificate generator
-    if (isAnacBadge && earned && hasApprovedVerification) {
-      setCertificateModalOpen(true);
+    // Not earned ANAC badge → verification flow
+    if (isAnacBadge && !earned && user && !hasPendingVerification) {
+      setVerificationModalOpen(true);
     }
   };
 
@@ -145,30 +116,21 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
               }}
             />
           ) : null}
-          <DynamicIcon 
+          <DynamicIcon
             name={insignia.icon}
-            size={28} 
-            className={cn(
-              imageUrl ? "hidden" : "",
-              earned ? colors.text : "text-muted-foreground"
-            )} 
+            size={28}
+            className={cn(imageUrl ? "hidden" : "", earned ? colors.text : "text-muted-foreground")}
           />
         </div>
 
         {/* Name */}
-        <h3 className={cn(
-          "text-sm font-bold text-center mb-1 line-clamp-2",
-          earned ? colors.text : "text-muted-foreground"
-        )}>
+        <h3 className={cn("text-sm font-bold text-center mb-1 line-clamp-2", earned ? colors.text : "text-muted-foreground")}>
           {insignia.name}
         </h3>
 
         {/* Description */}
         {showDetails && (
-          <p className={cn(
-            "text-[11px] text-center line-clamp-2",
-            earned ? "text-white/70" : "text-muted-foreground/70"
-          )}>
+          <p className={cn("text-[11px] text-center line-clamp-2", earned ? "text-white/70" : "text-muted-foreground/70")}>
             {insignia.description}
           </p>
         )}
@@ -180,7 +142,7 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
           </p>
         )}
 
-        {/* Generate certificate button for earned ANAC badges */}
+        {/* Certificate hint for ANAC */}
         {earned && isAnacBadge && hasApprovedVerification && (
           <div className="mt-2 text-center">
             <span className="text-[10px] text-white/70 flex items-center justify-center gap-1">
@@ -213,6 +175,13 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
       </motion.div>
 
       {/* Modals */}
+      <BadgePreviewModal
+        open={previewModalOpen}
+        onOpenChange={setPreviewModalOpen}
+        insignia={insignia}
+        earnedAt={earnedAt}
+      />
+
       <VerificationSubmitModal
         open={verificationModalOpen}
         onOpenChange={setVerificationModalOpen}

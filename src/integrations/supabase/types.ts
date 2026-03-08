@@ -719,6 +719,7 @@ export type Database = {
           name: string
           rarity: Database["public"]["Enums"]["badge_rarity"]
           updated_at: string
+          verso_texto: string | null
         }
         Insert: {
           condition_type: string
@@ -733,6 +734,7 @@ export type Database = {
           name: string
           rarity?: Database["public"]["Enums"]["badge_rarity"]
           updated_at?: string
+          verso_texto?: string | null
         }
         Update: {
           condition_type?: string
@@ -747,6 +749,7 @@ export type Database = {
           name?: string
           rarity?: Database["public"]["Enums"]["badge_rarity"]
           updated_at?: string
+          verso_texto?: string | null
         }
         Relationships: []
       }
