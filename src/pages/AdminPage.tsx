@@ -33,6 +33,7 @@ import { MicrocoursesManager } from '@/components/admin/MicrocoursesManager';
 import { InsigniasModelManager } from '@/components/admin/InsigniasModelManager';
 import { AdminStatsManager } from '@/components/admin/AdminStatsManager';
 import { PlansAndCouponsManager } from '@/components/admin/PlansAndCouponsManager';
+import { ConnectionsManager } from '@/components/admin/ConnectionsManager';
 
 type AdminView = 'professions' | 'blocks' | 'questions';
 
