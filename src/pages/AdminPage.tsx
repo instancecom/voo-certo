@@ -17,6 +17,7 @@ import {
   BookOpen,
   ImageIcon,
   Tag,
+  Plug,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -33,6 +34,7 @@ import { MicrocoursesManager } from '@/components/admin/MicrocoursesManager';
 import { InsigniasModelManager } from '@/components/admin/InsigniasModelManager';
 import { AdminStatsManager } from '@/components/admin/AdminStatsManager';
 import { PlansAndCouponsManager } from '@/components/admin/PlansAndCouponsManager';
+import { ConnectionsManager } from '@/components/admin/ConnectionsManager';
 
 type AdminView = 'professions' | 'blocks' | 'questions';
 
@@ -231,6 +233,9 @@ export default function AdminPage() {
                 <TabsTrigger value="plans" className="flex items-center gap-2">
                   <Tag className="w-4 h-4" />Planos & Cupons
                 </TabsTrigger>
+                <TabsTrigger value="connections" className="flex items-center gap-2">
+                  <Plug className="w-4 h-4" />Conexões
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="content" className="space-y-6">
@@ -282,6 +287,10 @@ export default function AdminPage() {
 
               <TabsContent value="plans" className="space-y-6">
                 <PlansAndCouponsManager />
+              </TabsContent>
+
+              <TabsContent value="connections" className="space-y-6">
+                <ConnectionsManager />
               </TabsContent>
             </Tabs>
           </>
