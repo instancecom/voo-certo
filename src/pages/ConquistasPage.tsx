@@ -1,83 +1,118 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Trophy, Lock, Award, Star, Crown, Gem, Filter } from "lucide-react";
+import { Trophy, Lock, Award, Star, Crown, Gem, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { BadgeCard } from "@/components/badges/BadgeCard";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/contexts/AuthContext";
-import { usePlan } from "@/hooks/usePlan";
-import { PlanGate } from "@/components/PlanGate";
 import { useInsignias, useUserInsignias, BadgeRarity } from "@/hooks/useInsignias";
-import { Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-const rarityIcons: Record<BadgeRarity, React.ElementType> = {
-  bronze: Award,
-  silver: Star,
-  gold: Crown,
-  platinum: Gem,
+const rarityConfig: Record<BadgeRarity, { icon: React.ElementType; label: string; gradient: string }> = {
+  bronze: { icon: Award, label: "Bronze", gradient: "from-amber-700 to-amber-900" },
+  silver: { icon: Star, label: "Prata", gradient: "from-slate-400 to-slate-600" },
+  gold: { icon: Crown, label: "Ouro", gradient: "from-yellow-400 to-yellow-600" },
+  platinum: { icon: Gem, label: "Platina", gradient: "from-cyan-300 via-purple-400 to-pink-400" },
 };
 
-const rarityLabels: Record<BadgeRarity, string> = {
-  bronze: "Bronze",
-  silver: "Prata",
-  gold: "Ouro",
-  platinum: "Platina",
-};
+const RARITY_ORDER: BadgeRarity[] = ["bronze", "silver", "gold", "platinum"];
+
+function ScrollRow({ title, icon: Icon, gradient, badges, earnedIds, earnedMap, earned, total }: {
+  title: string;
+  icon: React.ElementType;
+  gradient: string;
+  badges: any[];
+  earnedIds: Set<string>;
+  earnedMap: Map<string, string>;
+  earned: number;
+  total: number;
+}) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (dir: number) => {
+    scrollRef.current?.scrollBy({ left: dir * 280, behavior: "smooth" });
+  };
+
+  if (badges.length === 0) return null;
+
+  return (
+    <div className="mb-8">
+      {/* Row header */}
+      <div className="flex items-center justify-between mb-3 px-1">
+        <div className="flex items-center gap-2.5">
+          <div className={cn("w-8 h-8 rounded-lg bg-gradient-to-br flex items-center justify-center", gradient)}>
+            <Icon className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <h2 className="text-base sm:text-lg font-bold text-foreground leading-tight">{title}</h2>
+            <p className="text-xs text-muted-foreground">{earned}/{total} conquistadas</p>
+          </div>
+        </div>
+        <div className="hidden sm:flex items-center gap-1">
+          <button onClick={() => scroll(-1)} className="p-1.5 rounded-lg hover:bg-muted transition-colors">
+            <ChevronLeft className="w-4 h-4 text-muted-foreground" />
+          </button>
+          <button onClick={() => scroll(1)} className="p-1.5 rounded-lg hover:bg-muted transition-colors">
+            <ChevronRight className="w-4 h-4 text-muted-foreground" />
+          </button>
+        </div>
+      </div>
+
+      {/* Scrollable row */}
+      <div
+        ref={scrollRef}
+        className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
+        {badges.map((insignia, i) => (
+          <motion.div
+            key={insignia.id}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: i * 0.03 }}
+            className="shrink-0 w-[140px] sm:w-[160px] snap-start"
+          >
+            <BadgeCard
+              insignia={insignia}
+              earned={earnedIds.has(insignia.id)}
+              earnedAt={earnedMap.get(insignia.id)}
+            />
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 const ConquistasPage = () => {
   const navigate = useNavigate();
   const { user, isLoading: authLoading } = useAuth();
-  const { canAccessConquistas } = usePlan();
   const { data: insignias, isLoading: insigniasLoading } = useInsignias();
   const { data: userInsignias, isLoading: userInsigniasLoading } = useUserInsignias();
-  const [selectedRarity, setSelectedRarity] = useState<BadgeRarity | "all">("all");
 
   const isLoading = authLoading || insigniasLoading || userInsigniasLoading;
 
-  const earnedBadgeIds = useMemo(() => {
-    return new Set(userInsignias?.map((ui) => ui.insignia_id) || []);
-  }, [userInsignias]);
+  const earnedBadgeIds = useMemo(() => new Set(userInsignias?.map((ui) => ui.insignia_id) || []), [userInsignias]);
 
   const earnedBadgesMap = useMemo(() => {
     const map = new Map<string, string>();
-    userInsignias?.forEach((ui) => {
-      map.set(ui.insignia_id, ui.earned_at);
-    });
+    userInsignias?.forEach((ui) => map.set(ui.insignia_id, ui.earned_at));
     return map;
   }, [userInsignias]);
 
-  const filteredInsignias = useMemo(() => {
-    if (!insignias) return [];
-    if (selectedRarity === "all") return insignias;
-    return insignias.filter((i) => i.rarity === selectedRarity);
-  }, [insignias, selectedRarity]);
+  const byRarity = useMemo(() => {
+    const groups: Record<BadgeRarity, any[]> = { bronze: [], silver: [], gold: [], platinum: [] };
+    insignias?.forEach((i) => groups[i.rarity].push(i));
+    return groups;
+  }, [insignias]);
 
   const stats = useMemo(() => {
-    if (!insignias || !userInsignias) return { total: 0, earned: 0, byRarity: {} as Record<BadgeRarity, { total: number; earned: number }> };
-    
-    const byRarity: Record<BadgeRarity, { total: number; earned: number }> = {
-      bronze: { total: 0, earned: 0 },
-      silver: { total: 0, earned: 0 },
-      gold: { total: 0, earned: 0 },
-      platinum: { total: 0, earned: 0 },
-    };
-
-    insignias.forEach((i) => {
-      byRarity[i.rarity].total++;
-      if (earnedBadgeIds.has(i.id)) {
-        byRarity[i.rarity].earned++;
-      }
-    });
-
-    return {
-      total: insignias.length,
-      earned: userInsignias.length,
-      byRarity,
-    };
-  }, [insignias, userInsignias, earnedBadgeIds]);
+    if (!insignias) return { total: 0, earned: 0 };
+    return { total: insignias.length, earned: userInsignias?.length || 0 };
+  }, [insignias, userInsignias]);
 
   if (authLoading) {
     return (
@@ -94,9 +129,7 @@ const ConquistasPage = () => {
         <main className="container mx-auto px-4 py-16 text-center">
           <Lock className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
           <h1 className="text-2xl font-bold mb-2">Acesso Restrito</h1>
-          <p className="text-muted-foreground mb-6">
-            Faça login para ver suas conquistas
-          </p>
+          <p className="text-muted-foreground mb-6">Faça login para ver suas conquistas</p>
           <Button onClick={() => navigate("/auth")}>Fazer Login</Button>
         </main>
         <Footer />
@@ -104,114 +137,83 @@ const ConquistasPage = () => {
     );
   }
 
+  const progressPct = stats.total ? Math.round((stats.earned / stats.total) * 100) : 0;
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
 
-      <main className="flex-1 container mx-auto px-4 py-8">
-        {/* Hero */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
-        >
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
-            <Trophy className="w-8 h-8 text-primary" />
-          </div>
-          <h1 className="text-3xl font-bold mb-2">Minhas Conquistas</h1>
-          <p className="text-muted-foreground">
-            Colecione insígnias e mostre seu progresso
-          </p>
-        </motion.div>
-
-        {/* Stats Overview */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8"
-        >
-          {/* Total Progress */}
-          <div className="col-span-2 md:col-span-1 bg-card border rounded-xl p-4 text-center">
-            <div className="text-3xl font-bold text-primary">
-              {stats.earned}/{stats.total}
+      <main className="flex-1 pt-24 pb-16">
+        <div className="container mx-auto px-4">
+          {/* Hero */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary mb-4">
+              <Trophy className="w-4 h-4" />
+              <span className="text-sm font-semibold">Suas Conquistas</span>
             </div>
-            <p className="text-sm text-muted-foreground">Total</p>
-            <div className="mt-2 h-2 bg-muted rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-primary transition-all duration-500"
-                style={{ width: `${(stats.earned / stats.total) * 100}%` }}
-              />
-            </div>
-          </div>
-
-          {/* By Rarity */}
-          {(Object.keys(stats.byRarity) as BadgeRarity[]).map((rarity) => {
-            const Icon = rarityIcons[rarity];
-            const data = stats.byRarity[rarity];
-            return (
-              <div key={rarity} className="bg-card border rounded-xl p-4 text-center">
-                <Icon className="w-6 h-6 mx-auto mb-1 text-muted-foreground" />
-                <div className="text-xl font-bold">
-                  {data.earned}/{data.total}
-                </div>
-                <p className="text-xs text-muted-foreground">{rarityLabels[rarity]}</p>
-              </div>
-            );
-          })}
-        </motion.div>
-
-        {/* Filter Tabs */}
-        <div className="flex items-center gap-4 mb-6">
-          <Filter className="w-5 h-5 text-muted-foreground" />
-          <Tabs value={selectedRarity} onValueChange={(v) => setSelectedRarity(v as BadgeRarity | "all")}>
-            <TabsList>
-              <TabsTrigger value="all">Todas</TabsTrigger>
-              <TabsTrigger value="bronze">Bronze</TabsTrigger>
-              <TabsTrigger value="silver">Prata</TabsTrigger>
-              <TabsTrigger value="gold">Ouro</TabsTrigger>
-              <TabsTrigger value="platinum">Platina</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
-
-        {/* Badges Grid */}
-        {isLoading ? (
-          <div className="flex items-center justify-center py-16">
-            <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          </div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
-          >
-            {filteredInsignias.map((insignia, index) => (
-              <motion.div
-                key={insignia.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.02 }}
-              >
-                <BadgeCard
-                  insignia={insignia}
-                  earned={earnedBadgeIds.has(insignia.id)}
-                  earnedAt={earnedBadgesMap.get(insignia.id)}
-                />
-              </motion.div>
-            ))}
-          </motion.div>
-        )}
-
-        {filteredInsignias.length === 0 && !isLoading && (
-          <div className="text-center py-16">
-            <Trophy className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
-            <p className="text-muted-foreground">
-              Nenhuma insígnia encontrada nesta categoria
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Insígnias</h1>
+            <p className="text-muted-foreground max-w-md mx-auto">
+              Colecione insígnias completando desafios e avançando nos seus estudos.
             </p>
-          </div>
-        )}
+          </motion.div>
+
+          {/* Overall Progress */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="max-w-xl mx-auto mb-10 p-4 rounded-xl bg-card border border-border"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-foreground">Progresso Geral</span>
+              <span className="text-sm text-muted-foreground font-medium">{stats.earned}/{stats.total} • {progressPct}%</span>
+            </div>
+            <Progress value={progressPct} className="h-2.5" />
+            <div className="flex items-center justify-between mt-3 gap-2">
+              {RARITY_ORDER.map((rarity) => {
+                const cfg = rarityConfig[rarity];
+                const group = byRarity[rarity] || [];
+                const earned = group.filter((b: any) => earnedBadgeIds.has(b.id)).length;
+                return (
+                  <div key={rarity} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <div className={cn("w-5 h-5 rounded bg-gradient-to-br flex items-center justify-center", cfg.gradient)}>
+                      <cfg.icon className="w-3 h-3 text-white" />
+                    </div>
+                    <span>{earned}/{group.length}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </motion.div>
+
+          {/* Netflix-style rows by rarity */}
+          {isLoading ? (
+            <div className="flex items-center justify-center py-16">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          ) : (
+            <div>
+              {RARITY_ORDER.map((rarity) => {
+                const cfg = rarityConfig[rarity];
+                const badges = byRarity[rarity] || [];
+                const earned = badges.filter((b: any) => earnedBadgeIds.has(b.id)).length;
+                return (
+                  <ScrollRow
+                    key={rarity}
+                    title={cfg.label}
+                    icon={cfg.icon}
+                    gradient={cfg.gradient}
+                    badges={badges}
+                    earnedIds={earnedBadgeIds}
+                    earnedMap={earnedBadgesMap}
+                    earned={earned}
+                    total={badges.length}
+                  />
+                );
+              })}
+            </div>
+          )}
+        </div>
       </main>
 
       <Footer />
