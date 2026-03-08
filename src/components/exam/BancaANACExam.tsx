@@ -46,8 +46,19 @@ export function BancaANACExam({ questions, onFinish, onExit }: BancaANACExamProp
   const [lastBlockResult, setLastBlockResult] = useState<BlockResult | null>(null);
   const [totalTimeSpent, setTotalTimeSpent] = useState(0);
 
-  // Get questions for current block
-  const blockQuestions = questions.filter(q => q.block_number === currentBlock);
+  // Distribute questions into blocks - use block_number if set, otherwise auto-distribute
+  const hasBlockNumbers = questions.some(q => q.block_number !== null && q.block_number !== undefined);
+  
+  const getBlockQuestions = (block: number) => {
+    if (hasBlockNumbers) {
+      return questions.filter(q => q.block_number === block);
+    }
+    // Auto-distribute: split questions evenly into 4 blocks
+    const startIdx = (block - 1) * QUESTIONS_PER_BLOCK;
+    return questions.slice(startIdx, startIdx + QUESTIONS_PER_BLOCK);
+  };
+
+  const blockQuestions = getBlockQuestions(currentBlock);
   const currentQuestion = blockQuestions[currentQuestionIndex];
   const selectedAnswer = currentQuestion ? answers[currentQuestion.id] : undefined;
 
