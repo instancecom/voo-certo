@@ -212,12 +212,12 @@ export function ProfessionsManager({ onSelectProfession }: ProfessionsManagerPro
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-bold text-foreground">Profissões</h2>
-          <p className="text-muted-foreground">Gerencie profissões, blocos e questões</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-foreground">Profissões</h2>
+          <p className="text-sm text-muted-foreground">Gerencie profissões, blocos e questões</p>
         </div>
-        <Button onClick={openNewDialog}>
+        <Button onClick={openNewDialog} className="w-full sm:w-auto">
           <Plus className="w-4 h-4 mr-2" />
           Nova Profissão
         </Button>
