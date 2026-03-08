@@ -63,6 +63,12 @@ export default function SimuladosPage() {
   });
 
   const handleStartSimulado = (professionId: string, mode: string) => {
+    if (!canAccessSimulados) {
+      toast.error('Assine o plano Solo ou superior para acessar simulados', {
+        action: { label: 'Ver Planos', onClick: () => navigate('/premium') },
+      });
+      return;
+    }
     navigate(`/simulado-profissao/${professionId}?modo=${mode}`);
   };
 
