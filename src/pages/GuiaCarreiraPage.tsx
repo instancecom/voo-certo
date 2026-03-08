@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useCareerGuides } from '@/hooks/useCareerGuides';
 import { useAuth } from '@/contexts/AuthContext';
+import { usePlan } from '@/hooks/usePlan';
 import {
   ArrowRight, Plane, Loader2, Lock, BookOpen, Crown,
 } from 'lucide-react';
@@ -15,9 +16,11 @@ import {
 export default function GuiaCarreiraPage() {
   const { data: guides, isLoading } = useCareerGuides();
   const { user, isPremium, isLoading: authLoading } = useAuth();
+  const { canAccessGuideContent } = usePlan();
   const navigate = useNavigate();
 
-  const hasAccess = !!user && isPremium;
+  // Free users can see guide structure but linked content is locked
+  const hasAccess = true; // Everyone can see the guides list
 
   return (
     <div className="min-h-screen bg-background">
@@ -59,35 +62,8 @@ export default function GuiaCarreiraPage() {
           </div>
         </section>
 
-        {/* Access gate */}
-        {!authLoading && !hasAccess && (
-          <section className="py-16">
-            <div className="container mx-auto px-4 max-w-lg">
-              <Card className="text-center border-accent/30">
-                <CardContent className="pt-8 pb-8 space-y-4">
-                  <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mx-auto">
-                    <Lock className="w-8 h-8 text-accent" />
-                  </div>
-                  <h2 className="text-xl font-bold text-foreground">Conteúdo Exclusivo</h2>
-                  <p className="text-muted-foreground">
-                    {!user
-                      ? 'Faça login para acessar os guias de carreira.'
-                      : 'Assine um plano para acessar os guias de carreira completos.'}
-                  </p>
-                  <Button variant="hero" size="lg" asChild>
-                    <Link to={!user ? '/auth' : '/premium'}>
-                      {!user ? 'Fazer Login' : <><Crown className="w-4 h-4 mr-2" />Assinar Agora</>}
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </section>
-        )}
-
-        {/* Guides list */}
-        {(hasAccess || authLoading) && (
-          <section className="py-16 md:py-24">
+        {/* Guides list - visible to all, content links locked for non-Tripulante+ */}
+        <section className="py-16 md:py-24">
             <div className="container mx-auto px-4">
               <div className="max-w-4xl mx-auto">
                 <motion.div
@@ -141,7 +117,6 @@ export default function GuiaCarreiraPage() {
               </div>
             </div>
           </section>
-        )}
       </main>
 
       <Footer />

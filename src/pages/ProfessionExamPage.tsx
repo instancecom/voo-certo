@@ -7,11 +7,15 @@ import { LivreExam } from '@/components/exam/LivreExam';
 import { ExamResults } from '@/components/exam/ExamResults';
 import { DbQuestion, useSubmitResult } from '@/hooks/useExams';
 import { useAuth } from '@/contexts/AuthContext';
+import { usePlan } from '@/hooks/usePlan';
+import { PlanGate } from '@/components/PlanGate';
 import { Loader2, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { ExamMode } from '@/components/exam/ExamModeSelector';
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 
 type ExamPhase = 'in_progress' | 'results';
 
@@ -37,6 +41,7 @@ export default function ProfessionExamPage() {
   const [searchParams] = useSearchParams();
   const modo = searchParams.get('modo') as ExamMode | null;
   const { user, isLoading: authLoading } = useAuth();
+  const { canAccessSimulados } = usePlan();
   const [phase, setPhase] = useState<ExamPhase>('in_progress');
   const [examResult, setExamResult] = useState<ExamResultData | null>(null);
   const submitResult = useSubmitResult();
@@ -133,6 +138,22 @@ export default function ProfessionExamPage() {
             <Link to="/auth">Fazer Login</Link>
           </Button>
         </div>
+      </div>
+    );
+  }
+
+  if (!canAccessSimulados) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="pt-24 pb-12">
+          <div className="container mx-auto px-4 max-w-lg">
+            <PlanGate requiredPlan="solo" feature="Simulados">
+              <div />
+            </PlanGate>
+          </div>
+        </main>
+        <Footer />
       </div>
     );
   }

@@ -17,6 +17,8 @@ import { Footer } from '@/components/Footer';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { usePlan } from '@/hooks/usePlan';
+import { PlanGate } from '@/components/PlanGate';
 import { VideoPlayer } from '@/components/VideoPlayer';
 import { toast } from 'sonner';
 
@@ -79,6 +81,7 @@ function getYouTubeThumbnail(videoId: string): string {
 
 export default function MicrocoursesPage() {
   const { user, isPremium, hasActivePlan } = useAuth();
+  const { canAccessMicrocursos } = usePlan();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -157,9 +160,9 @@ export default function MicrocoursesPage() {
   };
 
   const handleOpenLesson = (lesson: Lesson) => {
-    if (lesson.is_premium && !hasActivePlan) {
-      toast.error('Assine para acessar este conteúdo', {
-        action: { label: 'Assinar', onClick: () => window.location.href = '/premium' },
+    if (!canAccessMicrocursos) {
+      toast.error('Assine o plano Tripulante ou superior para acessar microcursos', {
+        action: { label: 'Ver Planos', onClick: () => window.location.href = '/premium' },
       });
       return;
     }
@@ -312,7 +315,7 @@ export default function MicrocoursesPage() {
                                                 >
                                                   {ytId ? <Play className="w-3.5 h-3.5 text-primary shrink-0" /> : <BookOpen className="w-3.5 h-3.5 text-muted-foreground shrink-0" />}
                                                   <span className="text-sm flex-1">{lesson.title}</span>
-                                                  {lesson.is_premium && !hasActivePlan && <Lock className="w-3 h-3 text-accent" />}
+                                                  {!canAccessMicrocursos && <Lock className="w-3 h-3 text-accent" />}
                                                   {lesson.material_url && <FileText className="w-3 h-3 text-success" />}
                                                 </div>
                                               );
@@ -374,7 +377,7 @@ export default function MicrocoursesPage() {
                 const thumbnailUrl = selectedLesson.youtube_video_id
                   ? getYouTubeThumbnail(selectedLesson.youtube_video_id)
                   : null;
-                const canAccess = !selectedLesson.is_premium || hasActivePlan;
+                const canAccess = canAccessMicrocursos;
 
                 if (videoSrc || ytId) {
                   const embedUrl = ytId ? getYouTubeEmbedUrl(ytId) : videoSrc!;

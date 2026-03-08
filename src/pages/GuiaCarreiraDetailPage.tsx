@@ -17,6 +17,7 @@ import { useSimuladoOptions } from '@/hooks/useGuiaEtapas';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { usePlan } from '@/hooks/usePlan';
 import {
   ArrowLeft, ArrowRight, BookOpen, GraduationCap, CheckCircle2, Lock, Crown, Plane,
 } from 'lucide-react';
@@ -35,13 +36,12 @@ export default function GuiaCarreiraDetailPage() {
   const { guideId } = useParams<{ guideId: string }>();
   const navigate = useNavigate();
   const { user, isPremium, isLoading: authLoading } = useAuth();
+  const { canAccessGuideContent } = usePlan();
   const { data: guide, isLoading } = useCareerGuideWithSteps(guideId);
   const { data: progress } = useGuideStepProgress(guideId);
   const toggleProgress = useToggleStepProgress();
   const { data: simuladoOptions } = useSimuladoOptions();
   const { data: microcourseMap } = useMicrocourseMap();
-
-  const hasAccess = !!user && isPremium;
 
   const completedStepIds = new Set((progress || []).filter(p => p.completed).map(p => p.step_id));
   const totalSteps = guide?.steps?.length || 0;
@@ -64,33 +64,7 @@ export default function GuiaCarreiraDetailPage() {
     return <div className="min-h-screen bg-background flex items-center justify-center"><Skeleton className="w-8 h-8" /></div>;
   }
 
-  if (!hasAccess) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <main className="pt-20 md:pt-24">
-          <section className="py-16">
-            <div className="container mx-auto px-4 max-w-lg">
-              <Card className="text-center border-accent/30">
-                <CardContent className="pt-8 pb-8 space-y-4">
-                  <Lock className="w-12 h-12 text-accent mx-auto" />
-                  <h2 className="text-xl font-bold text-foreground">Acesso Restrito</h2>
-                  <p className="text-muted-foreground">
-                    {!user ? 'Faça login para acessar.' : 'Assine para acessar os guias de carreira.'}
-                  </p>
-                  <Button variant="hero" size="lg" asChild>
-                    <Link to={!user ? '/auth' : '/premium'}>
-                      {!user ? 'Fazer Login' : <><Crown className="w-4 h-4 mr-2" />Assinar</>}
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </section>
-        </main>
-      </div>
-    );
-  }
+  // Guide detail is visible to all - linked content is gated in the step cards
 
   return (
     <div className="min-h-screen bg-background">
@@ -173,24 +147,34 @@ export default function GuiaCarreiraDetailPage() {
 
                       {(step.simulado_ids?.length > 0 || step.microcourse_ids?.length > 0) && (
                         <CardContent className="pt-0">
-                          <div className="flex flex-wrap gap-2">
-                            {step.simulado_ids?.map(id => (
-                              <Button key={id} variant="outline" size="sm" asChild className="border-accent/30 hover:bg-accent hover:text-accent-foreground text-xs">
-                                <Link to={getSimuladoLink(id)}>
-                                  <BookOpen className="w-3 h-3 mr-1" />{getSimuladoLabel(id)}
-                                  <ArrowRight className="w-3 h-3 ml-1" />
-                                </Link>
+                          {!canAccessGuideContent ? (
+                            <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border text-sm text-muted-foreground">
+                              <Lock className="w-4 h-4 shrink-0" />
+                              <span className="flex-1">Assine o plano Tripulante para acessar simulados e microcursos vinculados.</span>
+                              <Button variant="outline" size="sm" asChild>
+                                <Link to="/premium"><Crown className="w-3 h-3 mr-1" />Upgrade</Link>
                               </Button>
-                            ))}
-                            {step.microcourse_ids?.map(id => (
-                              <Button key={id} variant="outline" size="sm" asChild className="border-primary/30 hover:bg-primary hover:text-primary-foreground text-xs">
-                                <Link to="/microcursos">
-                                  <GraduationCap className="w-3 h-3 mr-1" />{microcourseMap?.get(id) || 'Microcurso'}
-                                  <ArrowRight className="w-3 h-3 ml-1" />
-                                </Link>
-                              </Button>
-                            ))}
-                          </div>
+                            </div>
+                          ) : (
+                            <div className="flex flex-wrap gap-2">
+                              {step.simulado_ids?.map(id => (
+                                <Button key={id} variant="outline" size="sm" asChild className="border-accent/30 hover:bg-accent hover:text-accent-foreground text-xs">
+                                  <Link to={getSimuladoLink(id)}>
+                                    <BookOpen className="w-3 h-3 mr-1" />{getSimuladoLabel(id)}
+                                    <ArrowRight className="w-3 h-3 ml-1" />
+                                  </Link>
+                                </Button>
+                              ))}
+                              {step.microcourse_ids?.map(id => (
+                                <Button key={id} variant="outline" size="sm" asChild className="border-primary/30 hover:bg-primary hover:text-primary-foreground text-xs">
+                                  <Link to="/microcursos">
+                                    <GraduationCap className="w-3 h-3 mr-1" />{microcourseMap?.get(id) || 'Microcurso'}
+                                    <ArrowRight className="w-3 h-3 ml-1" />
+                                  </Link>
+                                </Button>
+                              ))}
+                            </div>
+                          )}
                         </CardContent>
                       )}
                     </Card>

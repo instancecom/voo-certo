@@ -1,12 +1,15 @@
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Plane, Clock, Brain, BookOpen, Crown, ArrowRight, Loader2, Play, FileQuestion, Timer, Zap, Layers } from 'lucide-react';
+import { Plane, Clock, Brain, BookOpen, Crown, ArrowRight, Loader2, Play, FileQuestion, Timer, Zap, Layers, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
+import { usePlan } from '@/hooks/usePlan';
+import { PlanGate } from '@/components/PlanGate';
+import { toast } from 'sonner';
 
 interface ProfessionWithBlocks {
   id: string;
@@ -23,6 +26,7 @@ interface ProfessionWithBlocks {
 
 export default function SimuladosPage() {
   const navigate = useNavigate();
+  const { canAccessSimulados, isLoggedIn } = usePlan();
 
   const { data: professions, isLoading } = useQuery({
     queryKey: ['professions-with-blocks'],
@@ -59,6 +63,12 @@ export default function SimuladosPage() {
   });
 
   const handleStartSimulado = (professionId: string, mode: string) => {
+    if (!canAccessSimulados) {
+      toast.error('Assine o plano Solo ou superior para acessar simulados', {
+        action: { label: 'Ver Planos', onClick: () => navigate('/premium') },
+      });
+      return;
+    }
     navigate(`/simulado-profissao/${professionId}?modo=${mode}`);
   };
 

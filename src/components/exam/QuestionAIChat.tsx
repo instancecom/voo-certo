@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bot, Send, X, Loader2, Sparkles, MessageCircle, Clock, ArrowUpRight } from 'lucide-react';
+import { Bot, Send, X, Loader2, Sparkles, MessageCircle, Clock, ArrowUpRight, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { usePlan } from '@/hooks/usePlan';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 
@@ -31,6 +32,7 @@ export function QuestionAIChat({
   explanation,
 }: QuestionAIChatProps) {
   const { user } = useAuth();
+  const { canAccessAIChat, aiChatLimit, currentPlan } = usePlan();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -117,6 +119,18 @@ export function QuestionAIChat({
 
   if (!user) return null;
 
+  if (!canAccessAIChat) {
+    return (
+      <div className="flex items-center gap-2 p-3 rounded-xl bg-muted/50 border border-border text-sm">
+        <Lock className="w-4 h-4 text-muted-foreground shrink-0" />
+        <span className="text-muted-foreground flex-1">Chat IA disponível no plano Tripulante+</span>
+        <Button variant="outline" size="sm" asChild>
+          <Link to="/premium">Upgrade</Link>
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="relative">
       <Button
@@ -127,6 +141,7 @@ export function QuestionAIChat({
       >
         <MessageCircle className="w-4 h-4 mr-2" />
         Pergunte à IA sobre essa questão
+        {aiChatLimit < 999 && <Badge variant="outline" className="ml-2 text-xs">{aiChatLimit} msgs</Badge>}
       </Button>
 
       <AnimatePresence>

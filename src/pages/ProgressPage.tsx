@@ -17,11 +17,14 @@ import {
 } from 'recharts';
 import { useUserResults, useExams, useSubcategories } from '@/hooks/useExams';
 import { useAuth } from '@/contexts/AuthContext';
+import { usePlan } from '@/hooks/usePlan';
+import { PlanGate } from '@/components/PlanGate';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 export default function ProgressPage() {
   const { user, isLoading: authLoading } = useAuth();
+  const { canAccessProgress } = usePlan();
   const { data: examResults, isLoading: resultsLoading } = useUserResults();
   const { data: exams, isLoading: examsLoading } = useExams();
   const { data: subcategories } = useSubcategories();
@@ -36,18 +39,15 @@ export default function ProgressPage() {
     );
   }
 
-  if (!user) {
+  if (!user || !canAccessProgress) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
         <main className="pt-24 pb-12">
-          <div className="container mx-auto px-4">
-            <div className="max-w-md mx-auto text-center p-8 rounded-2xl bg-card border border-border">
-              <Lock className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-foreground mb-2">Acesso Restrito</h2>
-              <p className="text-muted-foreground mb-6">Faça login para ver seu progresso e histórico de simulados.</p>
-              <Button asChild><Link to="/auth">Fazer Login</Link></Button>
-            </div>
+          <div className="container mx-auto px-4 max-w-lg">
+            <PlanGate requiredPlan="tripulante" feature="Dashboard de Progresso">
+              <div />
+            </PlanGate>
           </div>
         </main>
         <Footer />

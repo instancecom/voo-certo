@@ -8,6 +8,8 @@ import { BadgeCard } from "@/components/badges/BadgeCard";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/contexts/AuthContext";
+import { usePlan } from "@/hooks/usePlan";
+import { PlanGate } from "@/components/PlanGate";
 import { useInsignias, useUserInsignias, BadgeRarity } from "@/hooks/useInsignias";
 import { Loader2 } from "lucide-react";
 
@@ -28,6 +30,7 @@ const rarityLabels: Record<BadgeRarity, string> = {
 const ConquistasPage = () => {
   const navigate = useNavigate();
   const { user, isLoading: authLoading } = useAuth();
+  const { canAccessConquistas } = usePlan();
   const { data: insignias, isLoading: insigniasLoading } = useInsignias();
   const { data: userInsignias, isLoading: userInsigniasLoading } = useUserInsignias();
   const [selectedRarity, setSelectedRarity] = useState<BadgeRarity | "all">("all");
