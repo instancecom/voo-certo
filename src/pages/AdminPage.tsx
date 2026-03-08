@@ -233,6 +233,9 @@ export default function AdminPage() {
                 <TabsTrigger value="plans" className="flex items-center gap-2">
                   <Tag className="w-4 h-4" />Planos & Cupons
                 </TabsTrigger>
+                <TabsTrigger value="connections" className="flex items-center gap-2">
+                  <Plug className="w-4 h-4" />Conexões
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="content" className="space-y-6">
