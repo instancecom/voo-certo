@@ -442,10 +442,17 @@ export default function CurriculumPage() {
 
           {/* Action buttons */}
           <div className="flex gap-3 mb-6">
-            <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending} variant="outline">
-              {saveMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-              Salvar
-            </Button>
+            {canSaveCurriculum ? (
+              <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending} variant="outline">
+                {saveMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                Salvar
+              </Button>
+            ) : (
+              <Button variant="outline" disabled className="opacity-60">
+                <Lock className="w-4 h-4 mr-2" />
+                Salvar (Plano Tripulante+)
+              </Button>
+            )}
             <Button onClick={downloadPDF} disabled={isGenerating} variant="accent">
               {isGenerating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
               Download PDF
