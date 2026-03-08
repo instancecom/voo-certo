@@ -16,6 +16,7 @@ import ConquistasPage from "./pages/ConquistasPage";
 import GuiaCarreiraPage from "./pages/GuiaCarreiraPage";
 import GuiaCarreiraDetailPage from "./pages/GuiaCarreiraDetailPage";
 import MicrocoursesPage from "./pages/MicrocoursesPage";
+import MicrocoursePlayerPage from "./pages/MicrocoursePlayerPage";
 import CurriculumPage from "./pages/CurriculumPage";
 import PremiumPage from "./pages/PremiumPage";
 import ProfessionExamPage from "./pages/ProfessionExamPage";
