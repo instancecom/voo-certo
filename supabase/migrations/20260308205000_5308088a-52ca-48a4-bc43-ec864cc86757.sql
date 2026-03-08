@@ -1,0 +1,1 @@
+ALTER TABLE public.insignias ADD COLUMN IF NOT EXISTS verso_texto text DEFAULT NULL;
