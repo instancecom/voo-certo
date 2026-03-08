@@ -16,6 +16,7 @@ import ConquistasPage from "./pages/ConquistasPage";
 import GuiaCarreiraPage from "./pages/GuiaCarreiraPage";
 import GuiaCarreiraDetailPage from "./pages/GuiaCarreiraDetailPage";
 import MicrocoursesPage from "./pages/MicrocoursesPage";
+import MicrocoursePlayerPage from "./pages/MicrocoursePlayerPage";
 import CurriculumPage from "./pages/CurriculumPage";
 import PremiumPage from "./pages/PremiumPage";
 import ProfessionExamPage from "./pages/ProfessionExamPage";
@@ -44,6 +45,7 @@ const App = () => (
             <Route path="/guia-carreira" element={<GuiaCarreiraPage />} />
             <Route path="/guia-carreira/:guideId" element={<GuiaCarreiraDetailPage />} />
             <Route path="/microcursos" element={<MicrocoursesPage />} />
+            <Route path="/microcursos/:courseId" element={<MicrocoursePlayerPage />} />
             <Route path="/curriculo" element={<CurriculumPage />} />
             <Route path="/premium" element={<PremiumPage />} />
             <Route path="/simulado-profissao/:professionId" element={<ProfessionExamPage />} />
