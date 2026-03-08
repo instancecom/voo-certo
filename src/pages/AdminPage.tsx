@@ -288,6 +288,10 @@ export default function AdminPage() {
               <TabsContent value="plans" className="space-y-6">
                 <PlansAndCouponsManager />
               </TabsContent>
+
+              <TabsContent value="connections" className="space-y-6">
+                <ConnectionsManager />
+              </TabsContent>
             </Tabs>
           </>
         )}
