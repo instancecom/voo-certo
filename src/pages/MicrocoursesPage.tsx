@@ -166,9 +166,6 @@ export default function MicrocoursesPage() {
       });
       return;
     }
-      });
-      return;
-    }
     setSelectedLesson(lesson);
   };
 
