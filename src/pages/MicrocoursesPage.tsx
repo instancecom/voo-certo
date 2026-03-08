@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   BookOpen, Play, Clock, CheckCircle2, Search,
-  Loader2, Zap, Lock, X, Youtube, ChevronRight, ChevronDown,
-  Layers, FileText, Download, GraduationCap,
+  Loader2, Zap, Lock, X, ChevronRight, ChevronDown,
+  Layers, FileText, Download, GraduationCap, Crown,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
