@@ -43,7 +43,9 @@ type AdminView = 'professions' | 'blocks' | 'questions';
 export default function AdminPage() {
   const { user, isAdmin, isLoading: authLoading } = useAuth();
   const [view, setView] = useState<AdminView>('professions');
-  const [selectedProfessionId, setSelectedProfessionId] = useState<string>('');
+  const [activeTab, setActiveTab] = useState('content');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const isMobile = useIsMobile();
   const [selectedProfessionName, setSelectedProfessionName] = useState<string>('');
   const [selectedBlockId, setSelectedBlockId] = useState<string>('');
   const [selectedBlockName, setSelectedBlockName] = useState<string>('');
