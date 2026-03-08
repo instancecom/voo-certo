@@ -119,6 +119,18 @@ export function QuestionAIChat({
 
   if (!user) return null;
 
+  if (!canAccessAIChat) {
+    return (
+      <div className="flex items-center gap-2 p-3 rounded-xl bg-muted/50 border border-border text-sm">
+        <Lock className="w-4 h-4 text-muted-foreground shrink-0" />
+        <span className="text-muted-foreground flex-1">Chat IA disponível no plano Tripulante+</span>
+        <Button variant="outline" size="sm" asChild>
+          <Link to="/premium">Upgrade</Link>
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="relative">
       <Button
@@ -129,6 +141,7 @@ export function QuestionAIChat({
       >
         <MessageCircle className="w-4 h-4 mr-2" />
         Pergunte à IA sobre essa questão
+        {aiChatLimit < 999 && <Badge variant="outline" className="ml-2 text-xs">{aiChatLimit} msgs</Badge>}
       </Button>
 
       <AnimatePresence>
