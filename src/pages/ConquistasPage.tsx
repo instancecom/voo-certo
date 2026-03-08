@@ -72,10 +72,9 @@ function ScrollRow({ rarity, badges, earnedIds, earnedMap }: {
 
         <div
           ref={scrollRef}
-          className="flex gap-3 overflow-x-auto pb-4 px-1 snap-x snap-mandatory"
+          className="flex gap-3 overflow-x-auto overflow-y-visible py-3 px-1 -my-3 snap-x snap-mandatory"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}
         >
-          <style>{`.scrollbar-hide::-webkit-scrollbar { display: none; }`}</style>
           {badges.map((insignia: any, i: number) => (
             <motion.div
               key={insignia.id}
