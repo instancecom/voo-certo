@@ -26,6 +26,7 @@ interface ProfessionWithBlocks {
 
 export default function SimuladosPage() {
   const navigate = useNavigate();
+  const { canAccessSimulados, isLoggedIn } = usePlan();
 
   const { data: professions, isLoading } = useQuery({
     queryKey: ['professions-with-blocks'],
