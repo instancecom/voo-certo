@@ -17,6 +17,8 @@ import {
 } from 'recharts';
 import { useUserResults, useExams, useSubcategories } from '@/hooks/useExams';
 import { useAuth } from '@/contexts/AuthContext';
+import { usePlan } from '@/hooks/usePlan';
+import { PlanGate } from '@/components/PlanGate';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
