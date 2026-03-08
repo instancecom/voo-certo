@@ -27,7 +27,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { ProfessionsManager } from '@/components/admin/ProfessionsManager';
 import { BlocksManager } from '@/components/admin/BlocksManager';
 import { BlockQuestionsManager } from '@/components/admin/BlockQuestionsManager';
-import { GuiaCarreiraManager } from '@/components/admin/GuiaCarreiraManager';
 import { CareerGuidesManager } from '@/components/admin/CareerGuidesManager';
 import { VerificationsManager } from '@/components/admin/VerificationsManager';
 import { MicrocoursesManager } from '@/components/admin/MicrocoursesManager';
@@ -267,10 +266,6 @@ export default function AdminPage() {
 
               <TabsContent value="guia" className="space-y-6">
                 <CareerGuidesManager />
-                <div className="border-t border-border pt-6">
-                  <h3 className="text-lg font-semibold text-muted-foreground mb-4">Etapas Legadas (Guia Antigo)</h3>
-                  <GuiaCarreiraManager />
-                </div>
               </TabsContent>
 
               <TabsContent value="insignias-models" className="space-y-6">
