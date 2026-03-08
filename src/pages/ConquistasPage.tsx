@@ -8,6 +8,8 @@ import { BadgeCard } from "@/components/badges/BadgeCard";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/contexts/AuthContext";
+import { usePlan } from "@/hooks/usePlan";
+import { PlanGate } from "@/components/PlanGate";
 import { useInsignias, useUserInsignias, BadgeRarity } from "@/hooks/useInsignias";
 import { Loader2 } from "lucide-react";
 
