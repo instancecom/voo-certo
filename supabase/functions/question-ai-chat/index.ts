@@ -167,11 +167,13 @@ PERGUNTA DO ALUNO: ${userQuestion}`;
     const aiData = await aiResponse.json();
     const responseText = aiData.choices?.[0]?.message?.content || "Não foi possível obter resposta.";
 
-    // Increment AI questions counter
-    await supabase
-      .from("profiles")
-      .update({ ai_questions_count: dailyCount + 1 })
-      .eq("user_id", userId);
+    // Increment AI questions counter (atomic)
+    const { error: incError } = await supabase.rpc("increment_ai_questions", { p_user_id: userId });
+    if (incError) {
+      console.error("Failed to increment ai_questions_count:", incError);
+    } else {
+      console.log(`AI questions count incremented for user ${userId}`);
+    }
 
     // Save to cache (30 days)
     await supabase.from("ai_question_cache").upsert({
