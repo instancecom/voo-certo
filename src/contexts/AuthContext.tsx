@@ -20,6 +20,7 @@ interface AuthContextType {
   profile: Profile | null;
   isAdmin: boolean;
   isPremium: boolean;
+  hasActivePlan: boolean;
   isLoading: boolean;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
