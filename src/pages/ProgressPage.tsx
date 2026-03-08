@@ -315,7 +315,7 @@ export default function ProgressPage() {
                   <TabsTrigger value="distribution" className="text-xs sm:text-sm gap-1.5">
                     <BarChart3 className="w-3.5 h-3.5" /> Distribuição
                   </TabsTrigger>
-                </Tabs>
+                </TabsList>
 
                 <TabsContent value="evolution">
                   <Card>
