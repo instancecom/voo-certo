@@ -367,13 +367,25 @@ export default function MicrocoursesPage() {
               className="bg-card rounded-t-2xl sm:rounded-2xl w-full max-w-2xl max-h-[95vh] overflow-y-auto shadow-2xl"
               onClick={e => e.stopPropagation()}
             >
-              {/* Video */}
+              {/* Video Player */}
               {(() => {
+                const videoSrc = selectedLesson.video_url;
                 const ytId = getVideoId(selectedLesson);
-                if (ytId) {
+                const thumbnailUrl = selectedLesson.youtube_video_id
+                  ? getYouTubeThumbnail(selectedLesson.youtube_video_id)
+                  : null;
+                const canAccess = !selectedLesson.is_premium || hasActivePlan;
+
+                if (videoSrc || ytId) {
+                  const embedUrl = ytId ? getYouTubeEmbedUrl(ytId) : videoSrc!;
                   return (
-                    <div className="aspect-video w-full bg-black sm:rounded-t-2xl overflow-hidden">
-                      <iframe src={getYouTubeEmbedUrl(ytId)} className="w-full h-full" allowFullScreen title={selectedLesson.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" />
+                    <div className="p-4 pb-0">
+                      <VideoPlayer
+                        videoUrl={embedUrl}
+                        thumbnailUrl={thumbnailUrl}
+                        title={selectedLesson.title}
+                        hasAccess={canAccess}
+                      />
                     </div>
                   );
                 }
