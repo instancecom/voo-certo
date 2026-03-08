@@ -4,11 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
-  Users, TrendingUp, Target, Clock, Brain, Award, BarChart3, AlertTriangle
+  Users, TrendingUp, Target, Brain, Award, BarChart3, AlertTriangle,
+  BookOpen, GraduationCap, Clock, DollarSign, Calendar, Percent, ArrowUpRight, ArrowDownRight
 } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  LineChart, Line
+  LineChart, Line, PieChart, Pie, Cell, AreaChart, Area
 } from 'recharts';
 
 interface UserStat {
@@ -21,30 +22,56 @@ interface UserStat {
   avg_score: number;
   total_time: number;
   approved_count: number;
+  created_at: string;
 }
 
+const PLAN_COLORS: Record<string, string> = {
+  Gratuito: 'hsl(var(--muted-foreground))',
+  Solo: 'hsl(210, 80%, 55%)',
+  Tripulante: 'hsl(var(--primary))',
+  Comandante: 'hsl(var(--accent))',
+};
+
+const PLAN_BADGE: Record<string, string> = {
+  free: 'bg-muted text-muted-foreground',
+  solo: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+  tripulante: 'bg-primary/10 text-primary',
+  comandante: 'bg-accent/10 text-accent',
+};
+
+const PLAN_LABEL: Record<string, string> = {
+  free: 'Gratuito',
+  solo: 'Solo',
+  tripulante: 'Tripulante',
+  comandante: 'Comandante',
+};
+
+const PLAN_PRICE: Record<string, number> = {
+  solo: 19.90,
+  tripulante: 39.90,
+  comandante: 79.90,
+};
+
 export function AdminStatsManager() {
-  // Fetch profiles with plan info
   const { data: profiles, isLoading: profilesLoading } = useQuery({
     queryKey: ['admin-stats-profiles'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('profiles')
-        .select('user_id, email, full_name, plan_type, ai_questions_count')
+        .select('user_id, email, full_name, plan_type, ai_questions_count, created_at')
         .order('created_at', { ascending: false })
-        .limit(200);
+        .limit(500);
       if (error) throw error;
       return data || [];
     },
   });
 
-  // Fetch exam results to compute per-user stats
   const { data: examResults, isLoading: resultsLoading } = useQuery({
     queryKey: ['admin-stats-results'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('exam_results')
-        .select('user_id, score, time_spent, completed_at')
+        .select('user_id, score, time_spent, completed_at, exam_mode')
         .order('completed_at', { ascending: false })
         .limit(1000);
       if (error) throw error;
@@ -52,9 +79,72 @@ export function AdminStatsManager() {
     },
   });
 
+  const { data: microcourses } = useQuery({
+    queryKey: ['admin-stats-microcourses'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('microcourses').select('id, title, is_active');
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  const { data: microcourseProgress } = useQuery({
+    queryKey: ['admin-stats-microcourse-progress'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('microcourse_progress').select('id, microcourse_id, user_id, completed');
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  const { data: insignias } = useQuery({
+    queryKey: ['admin-stats-insignias'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('insignias').select('id, name, is_active');
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  const { data: userInsignias } = useQuery({
+    queryKey: ['admin-stats-user-insignias'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('user_insignias').select('id, user_id, insignia_id, earned_at');
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  const { data: questions } = useQuery({
+    queryKey: ['admin-stats-questions'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('questions').select('id', { count: 'exact', head: true });
+      if (error) throw error;
+      return { count: (error as any) ? 0 : data };
+    },
+  });
+
+  const { data: questionsCount } = useQuery({
+    queryKey: ['admin-stats-questions-count'],
+    queryFn: async () => {
+      const { count, error } = await supabase.from('questions').select('*', { count: 'exact', head: true });
+      if (error) throw error;
+      return count || 0;
+    },
+  });
+
+  const { data: badgeVerifications } = useQuery({
+    queryKey: ['admin-stats-verifications'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('badge_verifications').select('id, status, submitted_at');
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
   const isLoading = profilesLoading || resultsLoading;
 
-  // Compute per-user stats
+  // Per-user stats
   const userStats: UserStat[] = (profiles || []).map(profile => {
     const results = (examResults || []).filter(r => r.user_id === profile.user_id);
     const exam_count = results.length;
@@ -68,12 +158,13 @@ export function AdminStatsManager() {
       user_id: profile.user_id,
       email: profile.email,
       full_name: profile.full_name,
-      plan_type: (profile as any).plan_type || 'free',
-      ai_questions_count: (profile as any).ai_questions_count || 0,
+      plan_type: profile.plan_type || 'free',
+      ai_questions_count: profile.ai_questions_count || 0,
       exam_count,
       avg_score,
       total_time,
       approved_count,
+      created_at: profile.created_at,
     };
   });
 
@@ -85,19 +176,25 @@ export function AdminStatsManager() {
     ? Math.round(userStats.reduce((a, u) => a + u.avg_score * u.exam_count, 0) / totalExams)
     : 0;
   const totalAIQuestions = userStats.reduce((a, u) => a + u.ai_questions_count, 0);
+  const totalTimeSpent = userStats.reduce((a, u) => a + u.total_time, 0);
+  const approvalRate = totalExams
+    ? Math.round((userStats.reduce((a, u) => a + u.approved_count, 0) / totalExams) * 100)
+    : 0;
+
+  // Revenue estimate (MRR)
+  const payingUsers = userStats.filter(u => u.plan_type !== 'free');
+  const mrr = payingUsers.reduce((a, u) => a + (PLAN_PRICE[u.plan_type] || 0), 0);
 
   // Plan distribution
   const planCounts = userStats.reduce((acc, u) => {
-    acc[u.plan_type] = (acc[u.plan_type] || 0) + 1;
+    const label = PLAN_LABEL[u.plan_type] || u.plan_type;
+    acc[label] = (acc[label] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 
-  const planChartData = Object.entries(planCounts).map(([plan, count]) => ({
-    name: plan === 'free' ? 'Gratuito' : plan === 'solo' ? 'Solo' : plan === 'tripulante' ? 'Tripulante' : plan === 'comandante' ? 'Comandante' : plan,
-    count,
-  }));
+  const planPieData = Object.entries(planCounts).map(([name, value]) => ({ name, value }));
 
-  // Score distribution chart
+  // Score distribution
   const scoreRanges = [
     { range: '0-30%', min: 0, max: 30 },
     { range: '31-50%', min: 31, max: 50 },
@@ -111,17 +208,56 @@ export function AdminStatsManager() {
     count: userStats.filter(u => u.avg_score >= r.min && u.avg_score <= r.max && u.exam_count > 0).length,
   }));
 
-  // Recent activity (last 30 days per day)
-  const last7Days = Array.from({ length: 7 }, (_, i) => {
+  // Last 30 days activity
+  const last30Days = Array.from({ length: 30 }, (_, i) => {
     const d = new Date();
-    d.setDate(d.getDate() - (6 - i));
+    d.setDate(d.getDate() - (29 - i));
     const dateStr = d.toISOString().slice(0, 10);
     const count = (examResults || []).filter(r => r.completed_at.slice(0, 10) === dateStr).length;
+    const newUsers = (profiles || []).filter(p => p.created_at.slice(0, 10) === dateStr).length;
     return {
-      date: d.toLocaleDateString('pt-BR', { weekday: 'short' }),
+      date: d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),
       simulados: count,
+      novosUsuarios: newUsers,
     };
   });
+
+  // Last 7 days for quick view
+  const last7Days = last30Days.slice(-7).map((d, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (6 - i));
+    return { ...d, date: date.toLocaleDateString('pt-BR', { weekday: 'short' }) };
+  });
+
+  // New users this week vs last week
+  const now = new Date();
+  const oneWeekAgo = new Date(now); oneWeekAgo.setDate(now.getDate() - 7);
+  const twoWeeksAgo = new Date(now); twoWeeksAgo.setDate(now.getDate() - 14);
+  const newUsersThisWeek = (profiles || []).filter(p => new Date(p.created_at) >= oneWeekAgo).length;
+  const newUsersLastWeek = (profiles || []).filter(p => new Date(p.created_at) >= twoWeeksAgo && new Date(p.created_at) < oneWeekAgo).length;
+  const userGrowth = newUsersLastWeek > 0 ? Math.round(((newUsersThisWeek - newUsersLastWeek) / newUsersLastWeek) * 100) : newUsersThisWeek > 0 ? 100 : 0;
+
+  // Microcourse stats
+  const totalMicrocourses = (microcourses || []).filter(m => m.is_active).length;
+  const completedMicrocourses = (microcourseProgress || []).filter(p => p.completed).length;
+  const enrolledMicrocourses = (microcourseProgress || []).length;
+
+  // Badge stats
+  const totalInsignias = (insignias || []).filter(i => i.is_active).length;
+  const totalEarnedInsignias = (userInsignias || []).length;
+  const pendingVerifications = (badgeVerifications || []).filter(v => v.status === 'pending').length;
+
+  // Exam mode distribution
+  const examModes = (examResults || []).reduce((acc, r) => {
+    const mode = r.exam_mode || 'standard';
+    acc[mode] = (acc[mode] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const examModeData = Object.entries(examModes).map(([mode, count]) => ({
+    name: mode === 'standard' ? 'Padrão' : mode === 'livre' ? 'Livre' : mode === 'anac' ? 'ANAC' : mode,
+    value: count,
+  }));
 
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
@@ -130,92 +266,113 @@ export function AdminStatsManager() {
     return `${mins}m`;
   };
 
-  const PLAN_BADGE: Record<string, string> = {
-    free: 'bg-muted text-muted-foreground',
-    solo: 'bg-blue-100 text-blue-700',
-    tripulante: 'bg-primary/10 text-primary',
-    comandante: 'bg-accent/10 text-accent',
+  const tooltipStyle = {
+    background: 'hsl(var(--card))',
+    border: '1px solid hsl(var(--border))',
+    borderRadius: 8,
+    color: 'hsl(var(--foreground))',
   };
 
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-foreground">Estatísticas da Plataforma</h2>
-        <p className="text-muted-foreground">Visão geral do desempenho e engajamento dos usuários.</p>
+        <p className="text-muted-foreground">Visão geral completa do desempenho, engajamento e receita.</p>
       </div>
 
       {isLoading ? (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-24 rounded-xl" />)}
+          {Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-28 rounded-xl" />)}
         </div>
       ) : (
         <>
-          {/* KPI Cards */}
+          {/* KPI Cards - Row 1 */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card>
-              <CardContent className="pt-4 pb-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="p-1.5 rounded-lg bg-primary/10"><Users className="w-4 h-4 text-primary" /></div>
-                  <span className="text-xs text-muted-foreground">Usuários</span>
-                </div>
-                <div className="text-3xl font-bold text-foreground">{totalUsers}</div>
-                <p className="text-xs text-muted-foreground mt-1">{activeUsers} ativos</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-4 pb-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="p-1.5 rounded-lg bg-accent/10"><TrendingUp className="w-4 h-4 text-accent" /></div>
-                  <span className="text-xs text-muted-foreground">Simulados</span>
-                </div>
-                <div className="text-3xl font-bold text-foreground">{totalExams}</div>
-                <p className="text-xs text-muted-foreground mt-1">total realizados</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-4 pb-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="p-1.5 rounded-lg bg-success/10"><Target className="w-4 h-4 text-success" /></div>
-                  <span className="text-xs text-muted-foreground">Média Global</span>
-                </div>
-                <div className={`text-3xl font-bold ${globalAvg >= 70 ? 'text-success' : 'text-warning'}`}>{globalAvg}%</div>
-                <p className="text-xs text-muted-foreground mt-1">mín: 70%</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-4 pb-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="p-1.5 rounded-lg bg-warning/10"><Brain className="w-4 h-4 text-warning" /></div>
-                  <span className="text-xs text-muted-foreground">Perguntas IA</span>
-                </div>
-                <div className="text-3xl font-bold text-foreground">{totalAIQuestions}</div>
-                <p className="text-xs text-muted-foreground mt-1">total ao chat IA</p>
-              </CardContent>
-            </Card>
+            <StatCard
+              icon={Users} iconColor="text-primary" iconBg="bg-primary/10"
+              label="Usuários" value={totalUsers}
+              sub={<span className="flex items-center gap-1">
+                {activeUsers} ativos
+                {userGrowth !== 0 && (
+                  <span className={`flex items-center text-xs ${userGrowth > 0 ? 'text-success' : 'text-destructive'}`}>
+                    {userGrowth > 0 ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+                    {Math.abs(userGrowth)}%
+                  </span>
+                )}
+              </span>}
+            />
+            <StatCard
+              icon={TrendingUp} iconColor="text-accent" iconBg="bg-accent/10"
+              label="Simulados" value={totalExams}
+              sub={`${last7Days.reduce((a, d) => a + d.simulados, 0)} esta semana`}
+            />
+            <StatCard
+              icon={Target} iconColor="text-success" iconBg="bg-success/10"
+              label="Média Global" value={`${globalAvg}%`}
+              valueColor={globalAvg >= 70 ? 'text-success' : 'text-warning'}
+              sub={`${approvalRate}% aprovação (≥70%)`}
+            />
+            <StatCard
+              icon={Brain} iconColor="text-warning" iconBg="bg-warning/10"
+              label="Perguntas IA" value={totalAIQuestions}
+              sub="total ao chat IA"
+            />
           </div>
 
-          {/* Charts Row */}
+          {/* KPI Cards - Row 2 */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <StatCard
+              icon={DollarSign} iconColor="text-success" iconBg="bg-success/10"
+              label="MRR Estimado" value={`R$ ${mrr.toFixed(2).replace('.', ',')}`}
+              sub={`${payingUsers.length} assinantes`}
+            />
+            <StatCard
+              icon={Clock} iconColor="text-primary" iconBg="bg-primary/10"
+              label="Tempo Total" value={formatTime(totalTimeSpent)}
+              sub="em simulados"
+            />
+            <StatCard
+              icon={BookOpen} iconColor="text-accent" iconBg="bg-accent/10"
+              label="Microcursos" value={totalMicrocourses}
+              sub={`${completedMicrocourses} conclusões`}
+            />
+            <StatCard
+              icon={Award} iconColor="text-warning" iconBg="bg-warning/10"
+              label="Insígnias" value={totalInsignias}
+              sub={<span>{totalEarnedInsignias} conquistadas {pendingVerifications > 0 && <Badge variant="destructive" className="text-[10px] ml-1">{pendingVerifications} pendentes</Badge>}</span>}
+            />
+          </div>
+
+          {/* Charts Row 1 */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Activity last 7 days */}
+            {/* Activity last 30 days */}
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm flex items-center gap-2">
                   <BarChart3 className="w-4 h-4 text-primary" />
-                  Simulados nos Últimos 7 Dias
+                  Atividade nos Últimos 30 Dias
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={180}>
-                  <BarChart data={last7Days} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                <ResponsiveContainer width="100%" height={220}>
+                  <AreaChart data={last30Days} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="simGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                      </linearGradient>
+                      <linearGradient id="userGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
                     <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                    <XAxis dataKey="date" tick={{ fontSize: 11 }} />
+                    <XAxis dataKey="date" tick={{ fontSize: 9 }} interval={4} />
                     <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
-                    <Tooltip
-                      contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 8 }}
-                      labelStyle={{ color: 'hsl(var(--foreground))' }}
-                    />
-                    <Bar dataKey="simulados" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} name="Simulados" />
-                  </BarChart>
+                    <Tooltip contentStyle={tooltipStyle} />
+                    <Area type="monotone" dataKey="simulados" stroke="hsl(var(--primary))" fill="url(#simGrad)" name="Simulados" />
+                    <Area type="monotone" dataKey="novosUsuarios" stroke="hsl(var(--accent))" fill="url(#userGrad)" name="Novos Usuários" />
+                  </AreaChart>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
@@ -229,14 +386,12 @@ export function AdminStatsManager() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={180}>
+                <ResponsiveContainer width="100%" height={220}>
                   <BarChart data={scoreDistribution} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
                     <XAxis dataKey="range" tick={{ fontSize: 10 }} />
                     <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
-                    <Tooltip
-                      contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 8 }}
-                    />
+                    <Tooltip contentStyle={tooltipStyle} />
                     <Bar dataKey="count" fill="hsl(var(--accent))" radius={[4, 4, 0, 0]} name="Usuários" />
                   </BarChart>
                 </ResponsiveContainer>
@@ -244,8 +399,9 @@ export function AdminStatsManager() {
             </Card>
           </div>
 
-          {/* Plan distribution */}
-          {planChartData.length > 0 && (
+          {/* Charts Row 2 */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Plan distribution pie */}
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm flex items-center gap-2">
@@ -254,60 +410,123 @@ export function AdminStatsManager() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-wrap gap-4">
-                  {planChartData.map(p => (
-                    <div key={p.name} className="flex items-center gap-3 p-3 rounded-xl bg-muted/50 flex-1 min-w-32">
-                      <div>
-                        <p className="text-2xl font-bold text-foreground">{p.count}</p>
-                        <p className="text-xs text-muted-foreground">{p.name}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <ResponsiveContainer width="100%" height={200}>
+                  <PieChart>
+                    <Pie
+                      data={planPieData}
+                      cx="50%" cy="50%"
+                      innerRadius={50} outerRadius={80}
+                      paddingAngle={3}
+                      dataKey="value"
+                      label={({ name, value }) => `${name}: ${value}`}
+                    >
+                      {planPieData.map((entry) => (
+                        <Cell key={entry.name} fill={PLAN_COLORS[entry.name] || 'hsl(var(--muted-foreground))'} />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={tooltipStyle} />
+                  </PieChart>
+                </ResponsiveContainer>
               </CardContent>
             </Card>
-          )}
 
-          {/* User Table */}
+            {/* Exam mode distribution */}
+            {examModeData.length > 0 && (
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <GraduationCap className="w-4 h-4 text-accent" />
+                    Simulados por Modo
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={200}>
+                    <PieChart>
+                      <Pie
+                        data={examModeData}
+                        cx="50%" cy="50%"
+                        innerRadius={50} outerRadius={80}
+                        paddingAngle={3}
+                        dataKey="value"
+                        label={({ name, value }) => `${name}: ${value}`}
+                      >
+                        <Cell fill="hsl(var(--primary))" />
+                        <Cell fill="hsl(var(--accent))" />
+                        <Cell fill="hsl(var(--success))" />
+                      </Pie>
+                      <Tooltip contentStyle={tooltipStyle} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Quick numbers */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <Percent className="w-4 h-4 text-success" />
+                  Métricas de Engajamento
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <MetricRow label="Taxa de ativação" value={totalUsers > 0 ? `${Math.round((activeUsers / totalUsers) * 100)}%` : '0%'} desc="Usuários que fizeram ≥1 simulado" />
+                <MetricRow label="Média simulados/user" value={activeUsers > 0 ? (totalExams / activeUsers).toFixed(1) : '0'} desc="Entre usuários ativos" />
+                <MetricRow label="Tempo médio/simulado" value={totalExams > 0 ? formatTime(Math.round(totalTimeSpent / totalExams)) : '0m'} desc="Duração média" />
+                <MetricRow label="Novos esta semana" value={String(newUsersThisWeek)} desc={`Semana anterior: ${newUsersLastWeek}`} />
+                <MetricRow label="Questões cadastradas" value={String(questionsCount || 0)} desc="No banco de questões" />
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* All Users Table */}
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm flex items-center gap-2">
                 <Users className="w-4 h-4 text-primary" />
-                Usuários com Maior Atividade
+                Todos os Usuários ({totalUsers})
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2 max-h-96 overflow-y-auto">
+              {/* Table header */}
+              <div className="hidden md:grid grid-cols-[1fr_auto_auto_auto_auto_auto] gap-3 p-2 text-xs font-semibold text-muted-foreground border-b border-border mb-2">
+                <span>Usuário</span>
+                <span className="w-24 text-center">Plano</span>
+                <span className="w-16 text-center">Testes</span>
+                <span className="w-16 text-center">Média</span>
+                <span className="w-16 text-center">Chat IA</span>
+                <span className="w-24 text-center">Cadastro</span>
+              </div>
+              <div className="space-y-1 max-h-[500px] overflow-y-auto">
                 {userStats
-                  .filter(u => u.exam_count > 0)
                   .sort((a, b) => b.exam_count - a.exam_count)
-                  .slice(0, 20)
                   .map(u => (
-                    <div key={u.user_id} className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/60 transition-colors">
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-foreground truncate">{u.full_name || u.email}</p>
+                    <div key={u.user_id} className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto_auto_auto_auto] gap-2 md:gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/60 transition-colors items-center">
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-foreground truncate">{u.full_name || u.email.split('@')[0]}</p>
                         <p className="text-xs text-muted-foreground truncate">{u.email}</p>
                       </div>
-                      <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
+                      <div className="w-24 flex justify-center">
                         <Badge className={`text-xs ${PLAN_BADGE[u.plan_type] || PLAN_BADGE.free}`}>
-                          {u.plan_type}
+                          {PLAN_LABEL[u.plan_type] || u.plan_type}
                         </Badge>
-                        <span className="text-xs text-muted-foreground">{u.exam_count} testes</span>
-                        <span className={`text-xs font-bold ${u.avg_score >= 70 ? 'text-success' : 'text-warning'}`}>
-                          {u.avg_score}%
-                        </span>
-                        {u.ai_questions_count > 0 && (
-                          <span className="text-xs text-muted-foreground flex items-center gap-0.5">
-                            <Brain className="w-3 h-3" />{u.ai_questions_count}
-                          </span>
-                        )}
                       </div>
+                      <span className="w-16 text-center text-sm text-foreground">{u.exam_count}</span>
+                      <span className={`w-16 text-center text-sm font-bold ${u.exam_count === 0 ? 'text-muted-foreground' : u.avg_score >= 70 ? 'text-success' : 'text-warning'}`}>
+                        {u.exam_count > 0 ? `${u.avg_score}%` : '—'}
+                      </span>
+                      <span className="w-16 text-center text-sm text-muted-foreground">
+                        {u.ai_questions_count > 0 ? u.ai_questions_count : '—'}
+                      </span>
+                      <span className="w-24 text-center text-xs text-muted-foreground">
+                        {new Date(u.created_at).toLocaleDateString('pt-BR')}
+                      </span>
                     </div>
                   ))}
-                {userStats.filter(u => u.exam_count > 0).length === 0 && (
+                {userStats.length === 0 && (
                   <div className="text-center py-8">
                     <AlertTriangle className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground">Nenhum usuário com testes realizados.</p>
+                    <p className="text-sm text-muted-foreground">Nenhum usuário cadastrado.</p>
                   </div>
                 )}
               </div>
@@ -315,6 +534,37 @@ export function AdminStatsManager() {
           </Card>
         </>
       )}
+    </div>
+  );
+}
+
+function StatCard({ icon: Icon, iconColor, iconBg, label, value, valueColor, sub }: {
+  icon: any; iconColor: string; iconBg: string;
+  label: string; value: string | number; valueColor?: string;
+  sub: React.ReactNode;
+}) {
+  return (
+    <Card>
+      <CardContent className="pt-4 pb-4">
+        <div className="flex items-center gap-2 mb-2">
+          <div className={`p-1.5 rounded-lg ${iconBg}`}><Icon className={`w-4 h-4 ${iconColor}`} /></div>
+          <span className="text-xs text-muted-foreground">{label}</span>
+        </div>
+        <div className={`text-2xl font-bold ${valueColor || 'text-foreground'}`}>{value}</div>
+        <p className="text-xs text-muted-foreground mt-1">{sub}</p>
+      </CardContent>
+    </Card>
+  );
+}
+
+function MetricRow({ label, value, desc }: { label: string; value: string; desc: string }) {
+  return (
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-sm font-medium text-foreground">{label}</p>
+        <p className="text-xs text-muted-foreground">{desc}</p>
+      </div>
+      <span className="text-lg font-bold text-foreground">{value}</span>
     </div>
   );
 }
