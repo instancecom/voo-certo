@@ -81,27 +81,6 @@ export default function SimuladosPage() {
         </div>
       </section>
 
-      <section className="py-8 border-b border-border">
-        <div className="container mx-auto px-4">
-          <Link to="/simulado-anac" className="block">
-            <div className="p-6 md:p-8 rounded-2xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground hover:shadow-xl transition-all">
-              <div className="flex flex-col md:flex-row items-center gap-6">
-                <div className="p-4 rounded-2xl bg-white/10"><Plane className="w-10 h-10" /></div>
-                <div className="flex-1 text-center md:text-left">
-                  <h2 className="text-2xl md:text-3xl font-bold mb-2">Simulado ANAC Oficial</h2>
-                  <p className="text-primary-foreground/80 mb-4">80 questões em 4 blocos cronometrados. Formato oficial.</p>
-                  <div className="flex flex-wrap items-center gap-4 justify-center md:justify-start">
-                    <Badge className="bg-white/20"><Timer className="w-3 h-3 mr-1" />2 horas</Badge>
-                    <Badge className="bg-white/20"><FileQuestion className="w-3 h-3 mr-1" />80 questões</Badge>
-                    <Badge className="bg-white/20"><Brain className="w-3 h-3 mr-1" />4 blocos</Badge>
-                  </div>
-                </div>
-                <Button variant="secondary" size="lg"><Play className="w-5 h-5 mr-2" />Iniciar</Button>
-              </div>
-            </div>
-          </Link>
-        </div>
-      </section>
 
       <section className="py-12">
         <div className="container mx-auto px-4">
