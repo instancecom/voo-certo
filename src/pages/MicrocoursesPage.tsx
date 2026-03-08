@@ -17,6 +17,7 @@ import { Footer } from '@/components/Footer';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { VideoPlayer } from '@/components/VideoPlayer';
 import { toast } from 'sonner';
 
 interface Microcourse {
