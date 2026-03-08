@@ -10,6 +10,8 @@ interface Profile {
   avatar_url: string | null;
   is_premium: boolean;
   premium_expires_at: string | null;
+  plan_type: string;
+  plan_expires_at: string | null;
 }
 
 interface AuthContextType {
@@ -18,6 +20,7 @@ interface AuthContextType {
   profile: Profile | null;
   isAdmin: boolean;
   isPremium: boolean;
+  hasActivePlan: boolean;
   isLoading: boolean;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -119,6 +122,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
+  const hasActivePlan = (() => {
+    if (!profile) return false;
+    const validPlans = ['solo', 'tripulante', 'comandante'];
+    if (!validPlans.includes(profile.plan_type)) return false;
+    if (profile.plan_expires_at && new Date(profile.plan_expires_at) < new Date()) return false;
+    return true;
+  })();
+
   return (
     <AuthContext.Provider
       value={{
@@ -127,6 +138,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         profile,
         isAdmin,
         isPremium,
+        hasActivePlan,
         isLoading,
         signOut,
         refreshProfile,

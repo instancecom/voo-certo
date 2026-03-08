@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   BookOpen, Play, Clock, CheckCircle2, Search,
-  Loader2, Zap, Lock, X, Youtube, ChevronRight, ChevronDown,
-  Layers, FileText, Download, GraduationCap,
+  Loader2, Zap, Lock, X, ChevronRight, ChevronDown,
+  Layers, FileText, Download, GraduationCap, Crown,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,6 +17,7 @@ import { Footer } from '@/components/Footer';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { VideoPlayer } from '@/components/VideoPlayer';
 import { toast } from 'sonner';
 
 interface Microcourse {
@@ -77,7 +78,7 @@ function getYouTubeThumbnail(videoId: string): string {
 }
 
 export default function MicrocoursesPage() {
-  const { user, isPremium } = useAuth();
+  const { user, isPremium, hasActivePlan } = useAuth();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -156,8 +157,10 @@ export default function MicrocoursesPage() {
   };
 
   const handleOpenLesson = (lesson: Lesson) => {
-    if (lesson.is_premium && !isPremium) {
-      toast.error('Esta aula é exclusiva para assinantes Premium.');
+    if (lesson.is_premium && !hasActivePlan) {
+      toast.error('Assine para acessar este conteúdo', {
+        action: { label: 'Assinar', onClick: () => window.location.href = '/premium' },
+      });
       return;
     }
     setSelectedLesson(lesson);
@@ -309,7 +312,7 @@ export default function MicrocoursesPage() {
                                                 >
                                                   {ytId ? <Play className="w-3.5 h-3.5 text-primary shrink-0" /> : <BookOpen className="w-3.5 h-3.5 text-muted-foreground shrink-0" />}
                                                   <span className="text-sm flex-1">{lesson.title}</span>
-                                                  {lesson.is_premium && !isPremium && <Lock className="w-3 h-3 text-accent" />}
+                                                  {lesson.is_premium && !hasActivePlan && <Lock className="w-3 h-3 text-accent" />}
                                                   {lesson.material_url && <FileText className="w-3 h-3 text-success" />}
                                                 </div>
                                               );
@@ -364,13 +367,25 @@ export default function MicrocoursesPage() {
               className="bg-card rounded-t-2xl sm:rounded-2xl w-full max-w-2xl max-h-[95vh] overflow-y-auto shadow-2xl"
               onClick={e => e.stopPropagation()}
             >
-              {/* Video */}
+              {/* Video Player */}
               {(() => {
+                const videoSrc = selectedLesson.video_url;
                 const ytId = getVideoId(selectedLesson);
-                if (ytId) {
+                const thumbnailUrl = selectedLesson.youtube_video_id
+                  ? getYouTubeThumbnail(selectedLesson.youtube_video_id)
+                  : null;
+                const canAccess = !selectedLesson.is_premium || hasActivePlan;
+
+                if (videoSrc || ytId) {
+                  const embedUrl = ytId ? getYouTubeEmbedUrl(ytId) : videoSrc!;
                   return (
-                    <div className="aspect-video w-full bg-black sm:rounded-t-2xl overflow-hidden">
-                      <iframe src={getYouTubeEmbedUrl(ytId)} className="w-full h-full" allowFullScreen title={selectedLesson.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" />
+                    <div className="p-4 pb-0">
+                      <VideoPlayer
+                        videoUrl={embedUrl}
+                        thumbnailUrl={thumbnailUrl}
+                        title={selectedLesson.title}
+                        hasAccess={canAccess}
+                      />
                     </div>
                   );
                 }
