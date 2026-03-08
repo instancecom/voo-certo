@@ -231,6 +231,10 @@ function LessonForm({ lesson, onSave, onCancel, youtubeConnected }: {
   const [folders, setFolders] = useState<DriveFolder[]>([]);
   const [creatingFolder, setCreatingFolder] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const videoFileRef = useRef<HTMLInputElement>(null);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   useEffect(() => {
     loadFolders();
