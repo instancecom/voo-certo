@@ -32,6 +32,7 @@ export function QuestionAIChat({
   explanation,
 }: QuestionAIChatProps) {
   const { user } = useAuth();
+  const { canAccessAIChat, aiChatLimit, currentPlan } = usePlan();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
