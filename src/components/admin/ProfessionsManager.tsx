@@ -212,12 +212,12 @@ export function ProfessionsManager({ onSelectProfession }: ProfessionsManagerPro
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-bold text-foreground">Profissões</h2>
-          <p className="text-muted-foreground">Gerencie profissões, blocos e questões</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-foreground">Profissões</h2>
+          <p className="text-sm text-muted-foreground">Gerencie profissões, blocos e questões</p>
         </div>
-        <Button onClick={openNewDialog}>
+        <Button onClick={openNewDialog} className="w-full sm:w-auto">
           <Plus className="w-4 h-4 mr-2" />
           Nova Profissão
         </Button>
@@ -245,66 +245,53 @@ export function ProfessionsManager({ onSelectProfession }: ProfessionsManagerPro
               transition={{ delay: index * 0.05 }}
             >
               <Card className="hover:border-primary/50 transition-colors">
-                <CardContent className="py-4">
-                  <div className="flex items-center gap-4">
-                    <div className="text-3xl">{profession.icon || '✈️'}</div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-foreground truncate">{profession.name}</h3>
-                        {!profession.is_active && (
-                          <Badge variant="secondary">Inativo</Badge>
-                        )}
-                      </div>
-                      <p className="text-sm text-muted-foreground truncate">
-                        {profession.description || 'Sem descrição'}
-                      </p>
-                      <div className="flex items-center gap-2 mt-2 flex-wrap">
-                        <Badge variant="outline" className="gap-1">
-                          <Blocks className="w-3 h-3" />
-                          {profession.block_count} blocos
-                        </Badge>
-                        <Badge variant="outline">
-                          {profession.question_count} questões
-                        </Badge>
-                        <Badge variant="outline" className="gap-1">
-                          <Clock className="w-3 h-3" />
-                          {profession.total_time || 120} min
-                        </Badge>
-                        {profession.active_modes?.includes('banca_anac') && (
-                          <Badge className="bg-primary/10 text-primary">Banca</Badge>
-                        )}
-                        {profession.active_modes?.includes('livre') && (
-                          <Badge className="bg-accent/10 text-accent">Livre</Badge>
-                        )}
+                <CardContent className="py-4 px-3 sm:px-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="text-2xl sm:text-3xl shrink-0">{profession.icon || '✈️'}</div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <h3 className="font-semibold text-foreground text-sm sm:text-base truncate">{profession.name}</h3>
+                          {!profession.is_active && (
+                            <Badge variant="secondary" className="text-[10px] shrink-0">Inativo</Badge>
+                          )}
+                        </div>
+                        <p className="text-xs sm:text-sm text-muted-foreground truncate">
+                          {profession.description || 'Sem descrição'}
+                        </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => openEditDialog(profession)}
-                      >
-                        <Edit2 className="w-4 h-4" />
+                    <div className="flex items-center gap-1.5 flex-wrap pl-9 sm:pl-0">
+                      <Badge variant="outline" className="gap-1 text-[10px] sm:text-xs">
+                        <Blocks className="w-3 h-3" />
+                        {profession.block_count} blocos
+                      </Badge>
+                      <Badge variant="outline" className="text-[10px] sm:text-xs">
+                        {profession.question_count} questões
+                      </Badge>
+                      <Badge variant="outline" className="gap-1 text-[10px] sm:text-xs">
+                        <Clock className="w-3 h-3" />
+                        {profession.total_time || 120} min
+                      </Badge>
+                      {profession.active_modes?.includes('banca_anac') && (
+                        <Badge className="bg-primary/10 text-primary text-[10px] sm:text-xs">Banca</Badge>
+                      )}
+                      {profession.active_modes?.includes('livre') && (
+                        <Badge className="bg-accent/10 text-accent text-[10px] sm:text-xs">Livre</Badge>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-2 pl-9 sm:pl-0 sm:ml-auto shrink-0">
+                      <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => openEditDialog(profession)}>
+                        <Edit2 className="w-3.5 h-3.5" />
                       </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedProfession(profession);
-                          setShowDeleteDialog(true);
-                        }}
-                      >
-                        <Trash2 className="w-4 h-4 text-destructive" />
+                      <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => { setSelectedProfession(profession); setShowDeleteDialog(true); }}>
+                        <Trash2 className="w-3.5 h-3.5 text-destructive" />
                       </Button>
-                      <Button
-                        variant="default"
-                        size="sm"
-                        onClick={() => onSelectProfession(profession.id, profession.name)}
-                      >
-                        Gerenciar Blocos
-                        <ChevronRight className="w-4 h-4 ml-1" />
+                      <Button size="sm" className="text-xs h-8" onClick={() => onSelectProfession(profession.id, profession.name)}>
+                        Gerenciar
+                        <ChevronRight className="w-3.5 h-3.5 ml-1" />
                       </Button>
                     </div>
                   </div>
