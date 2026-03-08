@@ -160,9 +160,12 @@ export default function MicrocoursesPage() {
   };
 
   const handleOpenLesson = (lesson: Lesson) => {
-    if (lesson.is_premium && !hasActivePlan) {
-      toast.error('Assine para acessar este conteúdo', {
-        action: { label: 'Assinar', onClick: () => window.location.href = '/premium' },
+    if (!canAccessMicrocursos) {
+      toast.error('Assine o plano Tripulante ou superior para acessar microcursos', {
+        action: { label: 'Ver Planos', onClick: () => window.location.href = '/premium' },
+      });
+      return;
+    }
       });
       return;
     }

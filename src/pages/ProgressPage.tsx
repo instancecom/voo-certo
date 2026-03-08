@@ -24,6 +24,7 @@ import { ptBR } from 'date-fns/locale';
 
 export default function ProgressPage() {
   const { user, isLoading: authLoading } = useAuth();
+  const { canAccessProgress } = usePlan();
   const { data: examResults, isLoading: resultsLoading } = useUserResults();
   const { data: exams, isLoading: examsLoading } = useExams();
   const { data: subcategories } = useSubcategories();
