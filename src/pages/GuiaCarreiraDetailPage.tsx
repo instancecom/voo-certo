@@ -64,33 +64,7 @@ export default function GuiaCarreiraDetailPage() {
     return <div className="min-h-screen bg-background flex items-center justify-center"><Skeleton className="w-8 h-8" /></div>;
   }
 
-  if (!hasAccess) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <main className="pt-20 md:pt-24">
-          <section className="py-16">
-            <div className="container mx-auto px-4 max-w-lg">
-              <Card className="text-center border-accent/30">
-                <CardContent className="pt-8 pb-8 space-y-4">
-                  <Lock className="w-12 h-12 text-accent mx-auto" />
-                  <h2 className="text-xl font-bold text-foreground">Acesso Restrito</h2>
-                  <p className="text-muted-foreground">
-                    {!user ? 'Faça login para acessar.' : 'Assine para acessar os guias de carreira.'}
-                  </p>
-                  <Button variant="hero" size="lg" asChild>
-                    <Link to={!user ? '/auth' : '/premium'}>
-                      {!user ? 'Fazer Login' : <><Crown className="w-4 h-4 mr-2" />Assinar</>}
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </section>
-        </main>
-      </div>
-    );
-  }
+  // Guide detail is visible to all - linked content is gated in the step cards
 
   return (
     <div className="min-h-screen bg-background">
