@@ -213,8 +213,8 @@ export function AdminStatsManager() {
     const d = new Date();
     d.setDate(d.getDate() - (29 - i));
     const dateStr = d.toISOString().slice(0, 10);
-    const count = (examResults || []).filter(r => r.completed_at.slice(0, 10) === dateStr).length;
-    const newUsers = (profiles || []).filter(p => p.created_at.slice(0, 10) === dateStr).length;
+    const count = (examResults || []).filter(r => r.completed_at?.slice(0, 10) === dateStr).length;
+    const newUsers = (profiles || []).filter(p => p.created_at?.slice(0, 10) === dateStr).length;
     return {
       date: d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),
       simulados: count,
