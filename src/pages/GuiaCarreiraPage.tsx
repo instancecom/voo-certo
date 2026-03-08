@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useCareerGuides } from '@/hooks/useCareerGuides';
 import { useAuth } from '@/contexts/AuthContext';
+import { usePlan } from '@/hooks/usePlan';
 import {
   ArrowRight, Plane, Loader2, Lock, BookOpen, Crown,
 } from 'lucide-react';
