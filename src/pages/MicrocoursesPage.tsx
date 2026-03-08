@@ -17,6 +17,8 @@ import { Footer } from '@/components/Footer';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { usePlan } from '@/hooks/usePlan';
+import { PlanGate } from '@/components/PlanGate';
 import { VideoPlayer } from '@/components/VideoPlayer';
 import { toast } from 'sonner';
 
