@@ -262,6 +262,6 @@ export function Header() {
           </div>
         </motion.div>
       )}
-    </motion.header>
+    </header>
   );
 }
