@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Flag, CheckCircle2, XCircle, BookOpen, Loader2 } from 'lucide-react';
 import { QuestionAIChat } from './QuestionAIChat';
@@ -7,6 +7,8 @@ import { Progress } from '@/components/ui/progress';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { DbQuestion } from '@/hooks/useExams';
 import { BLOCKS } from './ExamModeSelector';
+import { ExamLoadingScreen } from './ExamLoadingScreen';
+import { ShuffledQuestion, prepareExamQuestions } from '@/lib/examShuffle';
 
 interface BlockResult {
   blockNumber: number;
@@ -18,7 +20,7 @@ interface BlockResult {
 
 interface LivreExamProps {
   questions: DbQuestion[];
-  selectedBlock?: number; // undefined = all blocks
+  selectedBlock?: number;
   onFinish: (results: {
     blockResults: BlockResult[];
     totalCorrect: number;
@@ -30,21 +32,29 @@ interface LivreExamProps {
 }
 
 export function LivreExam({ questions, selectedBlock, onFinish, onExit }: LivreExamProps) {
+  const [shuffledQuestions, setShuffledQuestions] = useState<ShuffledQuestion[] | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [showAnswer, setShowAnswer] = useState(false);
   const [showFinishDialog, setShowFinishDialog] = useState(false);
 
-  // Filter questions by selected block(s)
-  const filteredQuestions = selectedBlock
-    ? questions.filter(q => q.block_number === selectedBlock)
-    : questions;
+  // Shuffle on mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShuffledQuestions(prepareExamQuestions(questions, selectedBlock));
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [questions, selectedBlock]);
 
-  const currentQuestion = filteredQuestions[currentQuestionIndex];
+  if (!shuffledQuestions) {
+    return <ExamLoadingScreen />;
+  }
+
+  const currentQuestion = shuffledQuestions[currentQuestionIndex];
   const selectedAnswer = currentQuestion ? answers[currentQuestion.id] : undefined;
   const isAnswered = selectedAnswer !== undefined;
-  const isCorrect = selectedAnswer === currentQuestion?.correct_answer;
-  const progress = ((currentQuestionIndex + 1) / filteredQuestions.length) * 100;
+  const isCorrect = selectedAnswer === currentQuestion?.shuffledCorrectAnswer;
+  const progress = ((currentQuestionIndex + 1) / shuffledQuestions.length) * 100;
   const blockInfo = selectedBlock ? BLOCKS.find(b => b.id === selectedBlock) : null;
 
   const submitAnswer = (questionId: string, answer: number) => {
@@ -56,7 +66,7 @@ export function LivreExam({ questions, selectedBlock, onFinish, onExit }: LivreE
 
   const nextQuestion = () => {
     setShowAnswer(false);
-    if (currentQuestionIndex < filteredQuestions.length - 1) {
+    if (currentQuestionIndex < shuffledQuestions.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1);
     }
   };
@@ -69,25 +79,24 @@ export function LivreExam({ questions, selectedBlock, onFinish, onExit }: LivreE
   };
 
   const handleFinish = () => {
-    // Calculate results per block
     const blockResults: BlockResult[] = [];
     const blocksToCalculate = selectedBlock ? [selectedBlock] : [1, 2, 3, 4];
 
     blocksToCalculate.forEach(blockNum => {
-      const blockQuestions = filteredQuestions.filter(q => q.block_number === blockNum);
-      if (blockQuestions.length === 0) return;
+      const blockQs = shuffledQuestions.filter(q => q.block_number === blockNum);
+      if (blockQs.length === 0) return;
 
       let correctCount = 0;
-      blockQuestions.forEach(q => {
-        if (answers[q.id] === q.correct_answer) {
+      blockQs.forEach(q => {
+        if (answers[q.id] === q.shuffledCorrectAnswer) {
           correctCount++;
         }
       });
 
-      const percentage = (correctCount / blockQuestions.length) * 100;
+      const percentage = (correctCount / blockQs.length) * 100;
       blockResults.push({
         blockNumber: blockNum,
-        totalQuestions: blockQuestions.length,
+        totalQuestions: blockQs.length,
         correctAnswers: correctCount,
         percentage,
         passed: percentage >= 70,
@@ -98,16 +107,25 @@ export function LivreExam({ questions, selectedBlock, onFinish, onExit }: LivreE
     const totalQuestions = blockResults.reduce((acc, r) => acc + r.totalQuestions, 0);
     const overallPassed = blockResults.every(r => r.passed);
 
+    // Convert answers back to original indices for storage
+    const originalAnswers: Record<string, number> = {};
+    Object.entries(answers).forEach(([qId, shuffledIdx]) => {
+      const q = shuffledQuestions.find(sq => sq.id === qId);
+      if (q) {
+        originalAnswers[qId] = q.optionMap[shuffledIdx];
+      }
+    });
+
     onFinish({
       blockResults,
       totalCorrect,
       totalQuestions,
       overallPassed,
-      answers,
+      answers: originalAnswers,
     });
   };
 
-  if (!currentQuestion || filteredQuestions.length === 0) {
+  if (!currentQuestion || shuffledQuestions.length === 0) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
@@ -153,7 +171,7 @@ export function LivreExam({ questions, selectedBlock, onFinish, onExit }: LivreE
           <div className="pb-2">
             <Progress value={progress} className="h-1" />
             <div className="flex justify-between text-xs text-muted-foreground mt-1">
-              <span>Questão {currentQuestionIndex + 1} de {filteredQuestions.length}</span>
+              <span>Questão {currentQuestionIndex + 1} de {shuffledQuestions.length}</span>
               <span>{Object.keys(answers).length} respondidas</span>
             </div>
           </div>
@@ -190,9 +208,9 @@ export function LivreExam({ questions, selectedBlock, onFinish, onExit }: LivreE
               </div>
 
               <div className="space-y-3">
-                {(currentQuestion.options as string[]).map((option, index) => {
+                {currentQuestion.shuffledOptions.map((option, index) => {
                   const isSelected = selectedAnswer === index;
-                  const isCorrectOption = index === currentQuestion.correct_answer;
+                  const isCorrectOption = index === currentQuestion.shuffledCorrectAnswer;
                   const optionLetter = String.fromCharCode(65 + index);
 
                   let optionStyle = 'border-border bg-card hover:border-accent/50 hover:bg-accent/5';
@@ -276,7 +294,7 @@ export function LivreExam({ questions, selectedBlock, onFinish, onExit }: LivreE
                       <>
                         <XCircle className="w-5 h-5 text-destructive" />
                         <span className="font-semibold text-destructive">
-                          Resposta Incorreta. A correta é: {String.fromCharCode(65 + currentQuestion.correct_answer)}
+                          Resposta Incorreta. A correta é: {String.fromCharCode(65 + currentQuestion.shuffledCorrectAnswer)}
                         </span>
                       </>
                     )}
@@ -321,11 +339,11 @@ export function LivreExam({ questions, selectedBlock, onFinish, onExit }: LivreE
 
             <div className="text-center">
               <span className="text-sm text-muted-foreground">
-                {currentQuestionIndex + 1} / {filteredQuestions.length}
+                {currentQuestionIndex + 1} / {shuffledQuestions.length}
               </span>
             </div>
 
-            {currentQuestionIndex === filteredQuestions.length - 1 ? (
+            {currentQuestionIndex === shuffledQuestions.length - 1 ? (
               <Button variant="hero" onClick={() => setShowFinishDialog(true)}>
                 Ver Resultado
                 <Flag className="w-4 h-4 ml-2" />
@@ -346,11 +364,11 @@ export function LivreExam({ questions, selectedBlock, onFinish, onExit }: LivreE
           <DialogHeader>
             <DialogTitle>Finalizar Simulado?</DialogTitle>
             <DialogDescription>
-              {Object.keys(answers).length < filteredQuestions.length ? (
+              {Object.keys(answers).length < shuffledQuestions.length ? (
                 <>
                   Você ainda tem{' '}
                   <span className="font-semibold text-warning">
-                    {filteredQuestions.length - Object.keys(answers).length}
+                    {shuffledQuestions.length - Object.keys(answers).length}
                   </span>{' '}
                   questões não respondidas.
                 </>
