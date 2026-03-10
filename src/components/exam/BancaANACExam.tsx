@@ -7,6 +7,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Card, CardContent } from '@/components/ui/card';
 import { DbQuestion } from '@/hooks/useExams';
 import { BLOCKS } from './ExamModeSelector';
+import { ExamLoadingScreen } from './ExamLoadingScreen';
+import { ShuffledQuestion, prepareBancaQuestions } from '@/lib/examShuffle';
 
 interface BlockResult {
   blockNumber: number;
@@ -30,11 +32,12 @@ interface BancaANACExamProps {
   onExit: () => void;
 }
 
-const BLOCK_TIME = 30 * 60; // 30 minutes per block
+const BLOCK_TIME = 30 * 60;
 const QUESTIONS_PER_BLOCK = 20;
-const PASS_THRESHOLD = 0.7; // 70%
+const PASS_THRESHOLD = 0.7;
 
 export function BancaANACExam({ questions, onFinish, onExit }: BancaANACExamProps) {
+  const [shuffledQuestions, setShuffledQuestions] = useState<ShuffledQuestion[] | null>(null);
   const [currentBlock, setCurrentBlock] = useState(1);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
@@ -46,37 +49,91 @@ export function BancaANACExam({ questions, onFinish, onExit }: BancaANACExamProp
   const [lastBlockResult, setLastBlockResult] = useState<BlockResult | null>(null);
   const [totalTimeSpent, setTotalTimeSpent] = useState(0);
 
-  // Distribute questions into blocks - use block_number if set, otherwise auto-distribute
-  const hasBlockNumbers = questions.some(q => q.block_number !== null && q.block_number !== undefined);
-  
+  // Shuffle questions on mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShuffledQuestions(prepareBancaQuestions(questions));
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [questions]);
+
+  if (!shuffledQuestions) {
+    return <ExamLoadingScreen />;
+  }
+
   const getBlockQuestions = (block: number) => {
-    if (hasBlockNumbers) {
-      return questions.filter(q => q.block_number === block);
-    }
-    // Auto-distribute: split questions evenly into 4 blocks
-    const startIdx = (block - 1) * QUESTIONS_PER_BLOCK;
-    return questions.slice(startIdx, startIdx + QUESTIONS_PER_BLOCK);
+    return shuffledQuestions.filter(q => q.block_number === block);
   };
 
   const blockQuestions = getBlockQuestions(currentBlock);
   const currentQuestion = blockQuestions[currentQuestionIndex];
   const selectedAnswer = currentQuestion ? answers[currentQuestion.id] : undefined;
 
-  // Timer
+  // Timer component extracted to avoid hook issues
+  return (
+    <BancaExamInner
+      shuffledQuestions={shuffledQuestions}
+      currentBlock={currentBlock}
+      setCurrentBlock={setCurrentBlock}
+      currentQuestionIndex={currentQuestionIndex}
+      setCurrentQuestionIndex={setCurrentQuestionIndex}
+      answers={answers}
+      setAnswers={setAnswers}
+      timeRemaining={timeRemaining}
+      setTimeRemaining={setTimeRemaining}
+      blockResults={blockResults}
+      setBlockResults={setBlockResults}
+      showBlockEndDialog={showBlockEndDialog}
+      setShowBlockEndDialog={setShowBlockEndDialog}
+      showTimeWarning={showTimeWarning}
+      setShowTimeWarning={setShowTimeWarning}
+      showExitDialog={showExitDialog}
+      setShowExitDialog={setShowExitDialog}
+      lastBlockResult={lastBlockResult}
+      setLastBlockResult={setLastBlockResult}
+      totalTimeSpent={totalTimeSpent}
+      setTotalTimeSpent={setTotalTimeSpent}
+      onFinish={onFinish}
+      onExit={onExit}
+    />
+  );
+}
+
+// Inner component to avoid conditional hooks
+function BancaExamInner({
+  shuffledQuestions,
+  currentBlock, setCurrentBlock,
+  currentQuestionIndex, setCurrentQuestionIndex,
+  answers, setAnswers,
+  timeRemaining, setTimeRemaining,
+  blockResults, setBlockResults,
+  showBlockEndDialog, setShowBlockEndDialog,
+  showTimeWarning, setShowTimeWarning,
+  showExitDialog, setShowExitDialog,
+  lastBlockResult, setLastBlockResult,
+  totalTimeSpent, setTotalTimeSpent,
+  onFinish, onExit,
+}: any) {
+  const getBlockQuestions = (block: number): ShuffledQuestion[] => {
+    return shuffledQuestions.filter((q: ShuffledQuestion) => q.block_number === block);
+  };
+
+  const blockQuestions = getBlockQuestions(currentBlock);
+  const currentQuestion = blockQuestions[currentQuestionIndex];
+  const selectedAnswer = currentQuestion ? answers[currentQuestion.id] : undefined;
+
   useEffect(() => {
     if (currentBlock > 4) return;
 
     const interval = setInterval(() => {
-      setTimeRemaining(prev => {
+      setTimeRemaining((prev: number) => {
         if (prev === 300 && !showTimeWarning) {
           setShowTimeWarning(true);
         }
-        
         if (prev <= 1) {
           finishCurrentBlock();
           return 0;
         }
-        
         return prev - 1;
       });
     }, 1000);
@@ -86,11 +143,12 @@ export function BancaANACExam({ questions, onFinish, onExit }: BancaANACExamProp
 
   const finishCurrentBlock = useCallback(() => {
     const timeSpent = BLOCK_TIME - timeRemaining;
-    setTotalTimeSpent(prev => prev + timeSpent);
+    setTotalTimeSpent((prev: number) => prev + timeSpent);
 
     let correctCount = 0;
-    blockQuestions.forEach(q => {
-      if (answers[q.id] === q.correct_answer) {
+    blockQuestions.forEach((q: ShuffledQuestion) => {
+      // Compare against shuffledCorrectAnswer since user selects from shuffled options
+      if (answers[q.id] === q.shuffledCorrectAnswer) {
         correctCount++;
       }
     });
@@ -108,42 +166,50 @@ export function BancaANACExam({ questions, onFinish, onExit }: BancaANACExamProp
     };
 
     setLastBlockResult(result);
-    setBlockResults(prev => [...prev, result]);
+    setBlockResults((prev: BlockResult[]) => [...prev, result]);
     setShowBlockEndDialog(true);
   }, [currentBlock, blockQuestions, answers, timeRemaining]);
 
   const proceedToNextBlock = () => {
     setShowBlockEndDialog(false);
     setShowTimeWarning(false);
-    
+
     if (currentBlock >= 4) {
-      // All blocks complete - finish exam
       const allResults = [...blockResults, lastBlockResult!];
-      const totalCorrect = allResults.reduce((acc, r) => acc + r.correctAnswers, 0);
-      const overallPassed = allResults.every(r => r.passed);
-      
+      const totalCorrect = allResults.reduce((acc: number, r: BlockResult) => acc + r.correctAnswers, 0);
+      const overallPassed = allResults.every((r: BlockResult) => r.passed);
+
+      // Convert answers back to original indices for storage
+      const originalAnswers: Record<string, number> = {};
+      Object.entries(answers).forEach(([qId, shuffledIdx]) => {
+        const q = shuffledQuestions.find((sq: ShuffledQuestion) => sq.id === qId);
+        if (q) {
+          originalAnswers[qId] = q.optionMap[shuffledIdx as number];
+        }
+      });
+
       onFinish({
         blockResults: allResults,
         totalCorrect,
         totalQuestions: 80,
         overallPassed,
-        answers,
+        answers: originalAnswers,
         totalTimeSpent: totalTimeSpent + (BLOCK_TIME - timeRemaining),
       });
     } else {
-      setCurrentBlock(prev => prev + 1);
+      setCurrentBlock((prev: number) => prev + 1);
       setCurrentQuestionIndex(0);
       setTimeRemaining(BLOCK_TIME);
     }
   };
 
   const submitAnswer = (questionId: string, answer: number) => {
-    setAnswers(prev => ({ ...prev, [questionId]: answer }));
+    setAnswers((prev: Record<string, number>) => ({ ...prev, [questionId]: answer }));
   };
 
   const nextQuestion = () => {
     if (currentQuestionIndex < blockQuestions.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
+      setCurrentQuestionIndex((prev: number) => prev + 1);
     }
   };
 
@@ -259,7 +325,7 @@ export function BancaANACExam({ questions, onFinish, onExit }: BancaANACExamProp
               </div>
 
               <div className="space-y-3">
-                {(currentQuestion.options as string[]).map((option, index) => {
+                {currentQuestion.shuffledOptions.map((option: string, index: number) => {
                   const isSelected = selectedAnswer === index;
                   const optionLetter = String.fromCharCode(65 + index);
 
@@ -301,7 +367,7 @@ export function BancaANACExam({ questions, onFinish, onExit }: BancaANACExamProp
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="hidden md:flex gap-1 overflow-x-auto max-w-md">
-              {blockQuestions.map((q, index) => {
+              {blockQuestions.map((q: ShuffledQuestion, index: number) => {
                 const isAnswered = answers[q.id] !== undefined;
                 const isCurrent = index === currentQuestionIndex;
 
