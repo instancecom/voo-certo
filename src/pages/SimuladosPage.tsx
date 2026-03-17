@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { usePlan } from '@/hooks/usePlan';
 import { PlanGate } from '@/components/PlanGate';
@@ -189,12 +189,13 @@ export default function SimuladosPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Escolha o Bloco</DialogTitle>
+            <DialogDescription className="hidden">Selecione um bloco para o simulado.</DialogDescription>
           </DialogHeader>
           <div className="space-y-2 py-4 max-h-[60vh] overflow-y-auto">
-            {selectedProfession?.blocks.length === 0 && (
+            {selectedProfession?.blocks?.length === 0 && (
               <p className="text-muted-foreground text-sm">Nenhum bloco cadastrado para esta profissão.</p>
             )}
-            {selectedProfession?.blocks.map(block => (
+            {selectedProfession?.blocks?.map(block => (
               <Button
                 key={block.id}
                 variant="outline"
