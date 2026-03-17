@@ -51,6 +51,8 @@ export function QuestionsManager({ categoryId, categoryName, onBack }: Questions
   const queryClient = useQueryClient();
   const [showDialog, setShowDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showMassDeleteDialog, setShowMassDeleteDialog] = useState(false);
+  const [massDeleteRange, setMassDeleteRange] = useState({ start: 1, end: 1 });
   const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(null);
   const [formData, setFormData] = useState({
     text: '',
@@ -172,6 +174,22 @@ export function QuestionsManager({ categoryId, categoryName, onBack }: Questions
     },
   });
 
+  const massDeleteMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      const { error } = await supabase.from('questions').delete().in('id', ids);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-questions', categoryId] });
+      queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
+      queryClient.invalidateQueries({ queryKey: ['anac-questions'] });
+      toast.success('Questões excluídas com sucesso!');
+      setShowMassDeleteDialog(false);
+      setMassDeleteRange({ start: 1, end: 1 });
+    },
+    onError: () => toast.error('Erro ao excluir questões em massa'),
+  });
+
   const openNewDialog = () => {
     setSelectedQuestion(null);
     setFormData({
@@ -229,6 +247,17 @@ export function QuestionsManager({ categoryId, categoryName, onBack }: Questions
     saveMutation.mutate({ ...formData, id: selectedQuestion?.id });
   };
 
+  const handleMassDelete = () => {
+    if (!questions) return;
+    const { start, end } = massDeleteRange;
+    if (start < 1 || end > questions.length || start > end) {
+      toast.error('Intervalo inválido. Verifique os números preenchidos.');
+      return;
+    }
+    const idsToDelete = questions.slice(start - 1, end).map(q => q.id);
+    massDeleteMutation.mutate(idsToDelete);
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -253,6 +282,12 @@ export function QuestionsManager({ categoryId, categoryName, onBack }: Questions
           <p className="text-muted-foreground">{questions?.length || 0} questões cadastradas</p>
         </div>
         <div className="flex items-center gap-2">
+          {questions && questions.length > 0 && (
+            <Button variant="outline" className="text-destructive border-destructive hover:bg-destructive/10 hover:text-destructive" onClick={() => setShowMassDeleteDialog(true)}>
+              <Trash2 className="w-4 h-4 mr-2" />
+              E. em Massa
+            </Button>
+          )}
           <Button variant="outline" asChild>
             <Link to="/admin/importar-questoes">
               <Upload className="w-4 h-4 mr-2" />
@@ -482,6 +517,53 @@ export function QuestionsManager({ categoryId, categoryName, onBack }: Questions
             >
               {deleteMutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               Excluir
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Mass Delete Confirmation */}
+      <Dialog open={showMassDeleteDialog} onOpenChange={setShowMassDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-destructive">Excluir Questões em Massa</DialogTitle>
+            <DialogDescription>
+              Selecione o intervalo de questões que deseja excluir. Verifique a numeração exibida na lista de questões. Esta ação não poderá ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4 space-y-4">
+            <div className="flex items-center gap-4">
+              <div className="flex-1 space-y-2">
+                <Label>Da questão Nº</Label>
+                <Input 
+                  type="number" 
+                  min={1} 
+                  max={questions?.length || 1} 
+                  value={massDeleteRange.start} 
+                  onChange={(e) => setMassDeleteRange(prev => ({ ...prev, start: parseInt(e.target.value) || 1 }))} 
+                />
+              </div>
+              <div className="flex-1 space-y-2">
+                <Label>Até a questão Nº</Label>
+                <Input 
+                  type="number" 
+                  min={1} 
+                  max={questions?.length || 1} 
+                  value={massDeleteRange.end} 
+                  onChange={(e) => setMassDeleteRange(prev => ({ ...prev, end: parseInt(e.target.value) || 1 }))} 
+                />
+              </div>
+            </div>
+            {questions && massDeleteRange.start <= massDeleteRange.end && massDeleteRange.start >= 1 && massDeleteRange.end <= questions.length && (
+              <p className="text-sm font-medium text-destructive">
+                Isso irá apagar {massDeleteRange.end - massDeleteRange.start + 1} questão(ões) permanentemente.
+              </p>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowMassDeleteDialog(false)}>Cancelar</Button>
+            <Button variant="destructive" onClick={handleMassDelete} disabled={massDeleteMutation.isPending}>
+              {massDeleteMutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}Excluir em Massa
             </Button>
           </DialogFooter>
         </DialogContent>
