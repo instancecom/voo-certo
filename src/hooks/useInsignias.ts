@@ -16,6 +16,7 @@ export interface Insignia {
   is_active: boolean;
   model_url: string | null;
   verso_texto: string | null;
+  plano_minimo?: string;
   created_at: string;
   updated_at: string;
 }

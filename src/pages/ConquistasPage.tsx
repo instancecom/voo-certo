@@ -65,32 +65,22 @@ function ScrollRow({ rarity, badges, earnedIds, earnedMap }: {
         </div>
       </div>
 
-      {/* Scroll container with fade edges */}
-      <div className="relative">
-        <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
-
-        <div
-          ref={scrollRef}
-          className="flex gap-3 overflow-x-auto overflow-y-visible py-3 px-1 -my-3 snap-x snap-mandatory"
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}
-        >
-          {badges.map((insignia: any, i: number) => (
-            <motion.div
-              key={insignia.id}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: i * 0.04 }}
-              className="shrink-0 w-[150px] sm:w-[165px] snap-start"
-            >
-              <BadgeCard
-                insignia={insignia}
-                earned={earnedIds.has(insignia.id)}
-                earnedAt={earnedMap.get(insignia.id)}
-              />
-            </motion.div>
-          ))}
-        </div>
+      {/* Grid container em vez de scroll horizontal */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 py-2">
+        {badges.map((insignia: any, i: number) => (
+          <motion.div
+            key={insignia.id}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: i * 0.04 }}
+          >
+            <BadgeCard
+              insignia={insignia}
+              earned={earnedIds.has(insignia.id)}
+              earnedAt={earnedMap.get(insignia.id)}
+            />
+          </motion.div>
+        ))}
       </div>
     </motion.section>
   );
@@ -148,7 +138,7 @@ const ConquistasPage = () => {
   const progressPct = stats.total ? Math.round((stats.earned / stats.total) * 100) : 0;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-[#F5F7F9] flex flex-col">
       <Header />
 
       <main className="flex-1 pt-24 pb-16">
@@ -158,11 +148,11 @@ const ConquistasPage = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-primary/90 to-primary/70 p-6 sm:p-8 mb-10"
+            className="relative overflow-hidden rounded-2xl bg-white border border-yellow-500/30 shadow-sm p-6 sm:p-8 mb-10"
           >
             {/* Decorative elements */}
-            <div className="absolute top-0 right-0 w-48 h-48 bg-accent/10 rounded-full -translate-y-1/2 translate-x-1/4" />
-            <div className="absolute bottom-0 left-1/3 w-32 h-32 bg-white/5 rounded-full translate-y-1/2" />
+            <div className="absolute top-0 right-0 w-48 h-48 bg-yellow-500/5 rounded-full -translate-y-1/2 translate-x-1/4" />
+            <div className="absolute bottom-0 left-1/3 w-32 h-32 bg-yellow-500/5 rounded-full translate-y-1/2" />
 
             <div className="relative z-10 flex flex-col sm:flex-row items-center gap-6">
               {/* Trophy visual */}
@@ -171,25 +161,25 @@ const ConquistasPage = () => {
               </div>
 
               <div className="flex-1 text-center sm:text-left">
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-primary-foreground mb-1">
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1A233A] mb-1">
                   Suas Conquistas
                 </h1>
-                <p className="text-primary-foreground/70 text-sm sm:text-base mb-4">
+                <p className="text-[#1A233A]/70 text-sm sm:text-base mb-4">
                   Colecione insígnias e mostre seu progresso como aviador
                 </p>
 
                 {/* Progress bar */}
                 <div className="max-w-md">
-                  <div className="flex items-center justify-between text-xs text-primary-foreground/80 mb-1.5">
-                    <span className="font-medium">{stats.earned} de {stats.total} insígnias</span>
-                    <span className="font-bold">{progressPct}%</span>
+                  <div className="flex items-center justify-between text-xs text-[#1A233A]/80 mb-1.5">
+                    <span className="font-medium">{stats.earned} de {stats.total} insígnias conquistadas</span>
+                    <span className="font-bold text-yellow-600">{progressPct}%</span>
                   </div>
-                  <div className="h-2.5 bg-white/15 rounded-full overflow-hidden">
+                  <div className="h-2.5 bg-gray-200 rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${progressPct}%` }}
                       transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
-                      className="h-full bg-accent rounded-full"
+                      className="h-full bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full"
                     />
                   </div>
                 </div>
@@ -204,10 +194,10 @@ const ConquistasPage = () => {
                   return (
                     <div
                       key={rarity}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 backdrop-blur-sm border border-white/10"
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-yellow-500/10 border border-yellow-500/20"
                     >
-                      <cfg.icon className="w-3.5 h-3.5 text-primary-foreground/80" />
-                      <span className="text-xs font-semibold text-primary-foreground">
+                      <cfg.icon className="w-3.5 h-3.5 text-yellow-600" />
+                      <span className="text-xs font-semibold text-[#1A233A]">
                         {earned}/{group.length}
                       </span>
                     </div>
@@ -229,16 +219,16 @@ const ConquistasPage = () => {
                 <Sparkles className="w-5 h-5 text-accent" />
                 <h2 className="text-lg font-bold text-foreground">Últimas Conquistas</h2>
               </div>
-              <div className="flex gap-3 overflow-x-auto pb-3" style={{ scrollbarWidth: "none" }}>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pb-3">
                 {[...userInsignias]
                   .sort((a, b) => new Date(b.earned_at).getTime() - new Date(a.earned_at).getTime())
-                  .slice(0, 6)
+                  .slice(0, 3)
                   .map((ui) => {
                     const badge = insignias?.find((i) => i.id === ui.insignia_id);
                     if (!badge) return null;
                     return (
-                      <div key={ui.id} className="shrink-0 w-[150px] sm:w-[165px]">
-                        <BadgeCard insignia={badge} earned earnedAt={ui.earned_at} />
+                      <div key={ui.id} className="w-full">
+                        <BadgeCard insignia={badge} earned earnedAt={ui.earned_at} large />
                       </div>
                     );
                   })}

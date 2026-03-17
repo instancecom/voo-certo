@@ -15,14 +15,15 @@ interface BadgeCardProps {
   earned?: boolean;
   earnedAt?: string;
   showDetails?: boolean;
+  large?: boolean;
   onClick?: () => void;
 }
 
-const rarityColors: Record<BadgeRarity, { bg: string; border: string; text: string; glow: string }> = {
-  bronze: { bg: "bg-gradient-to-br from-amber-700 to-amber-900", border: "border-amber-600", text: "text-amber-200", glow: "shadow-amber-500/30" },
-  silver: { bg: "bg-gradient-to-br from-slate-400 to-slate-600", border: "border-slate-300", text: "text-slate-100", glow: "shadow-slate-400/30" },
-  gold: { bg: "bg-gradient-to-br from-yellow-400 to-yellow-600", border: "border-yellow-300", text: "text-yellow-100", glow: "shadow-yellow-400/40" },
-  platinum: { bg: "bg-gradient-to-br from-cyan-300 via-purple-400 to-pink-400", border: "border-cyan-200", text: "text-white", glow: "shadow-purple-400/50" },
+const rarityColors: Record<BadgeRarity, { border: string; text: string; glow: string }> = {
+  bronze: { border: "border-amber-600", text: "text-amber-700", glow: "shadow-amber-600/20" },
+  silver: { border: "border-slate-400", text: "text-slate-600", glow: "shadow-slate-400/20" },
+  gold: { border: "border-yellow-400", text: "text-yellow-600", glow: "shadow-yellow-400/30" },
+  platinum: { border: "border-cyan-400", text: "text-cyan-600", glow: "shadow-cyan-400/30" },
 };
 
 const rarityLabels: Record<BadgeRarity, string> = {
@@ -39,7 +40,7 @@ const getDriveImageUrl = (url: string | null): string | null => {
   return url;
 };
 
-export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = true, onClick }: BadgeCardProps) => {
+export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = true, large, onClick }: BadgeCardProps) => {
   const { user } = useAuth();
   const colors = rarityColors[insignia.rarity];
   const imageUrl = getDriveImageUrl(insignia.model_url);
@@ -56,22 +57,17 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
   const handleClick = () => {
     if (onClick) { onClick(); return; }
 
-    // Earned badge → open preview modal
-    if (earned) {
-      // ANAC badge with approved verification → certificate
-      if (isAnacBadge && hasApprovedVerification) {
-        setCertificateModalOpen(true);
-        return;
-      }
-      // All other earned badges → preview modal
-      setPreviewModalOpen(true);
+    if (earned && isAnacBadge && hasApprovedVerification) {
+      setCertificateModalOpen(true);
       return;
     }
 
-    // Not earned ANAC badge → verification flow
-    if (isAnacBadge && !earned && user && !hasPendingVerification) {
+    if (isAnacBadge && !earned && user && !hasPendingVerification && !insignia.plano_minimo) {
       setVerificationModalOpen(true);
+      return;
     }
+
+    setPreviewModalOpen(true);
   };
 
   return (
@@ -80,34 +76,35 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.98 }}
         className={cn(
-          "relative rounded-xl p-4 border-2 cursor-pointer transition-all duration-300",
-          colors.border,
-          earned ? colors.bg : "bg-muted/50 border-muted-foreground/20",
-          earned && `shadow-lg ${colors.glow}`,
-          !earned && "opacity-50 grayscale",
-          hasPendingVerification && "opacity-75 grayscale-0 border-yellow-500/50"
+          "relative rounded-xl border-2 cursor-pointer transition-all duration-300 overflow-hidden",
+          large ? "p-6" : "p-4",
+          earned ? `bg-white ${colors.border} ${colors.glow} shadow-md` : "bg-[#EAEFF5] border-transparent opacity-80",
+          hasPendingVerification && "opacity-90 grayscale-0 border-yellow-500/50"
         )}
         onClick={handleClick}
       >
         {/* Rarity badge */}
         <div className={cn(
-          "absolute -top-2 -right-2 text-[10px] font-bold px-2 py-0.5 rounded-full",
-          earned ? colors.bg : "bg-muted",
-          earned ? colors.text : "text-muted-foreground"
+          "absolute -top-1.5 -right-1.5 text-[0.65rem] font-bold px-2 py-0.5 rounded-full shadow-sm z-10",
+          earned ? "bg-white" : "bg-[#F5F7F9]",
+          earned ? colors.text : "text-muted-foreground",
+          earned ? `border ${colors.border}` : "border border-border"
         )}>
           {rarityLabels[insignia.rarity]}
         </div>
 
         {/* Icon or Model Image */}
         <div className={cn(
-          "w-14 h-14 mx-auto mb-2 rounded-full flex items-center justify-center overflow-hidden",
-          earned ? "bg-white/20" : "bg-muted-foreground/10"
+          "mx-auto mb-3 rounded-2xl flex items-center justify-center overflow-hidden drop-shadow-sm",
+          large ? "w-20 h-20" : "w-14 h-14",
+          earned ? "bg-[#F5F7F9]" : "bg-muted-foreground/5",
+          !earned && "grayscale opacity-70"
         )}>
           {imageUrl ? (
             <img
               src={imageUrl}
               alt={insignia.name}
-              className="w-full h-full object-contain"
+              className="w-full h-full object-contain p-2"
               crossOrigin="anonymous"
               referrerPolicy="no-referrer"
               onError={(e) => {
@@ -118,26 +115,34 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
           ) : null}
           <DynamicIcon
             name={insignia.icon}
-            size={28}
+            size={large ? 38 : 28}
             className={cn(imageUrl ? "hidden" : "", earned ? colors.text : "text-muted-foreground")}
           />
         </div>
 
         {/* Name */}
-        <h3 className={cn("text-sm font-bold text-center mb-1 line-clamp-2", earned ? colors.text : "text-muted-foreground")}>
+        <h3 className={cn(
+          "font-bold text-center mb-1 line-clamp-2",
+          large ? "text-base" : "text-sm",
+          earned ? "text-[#1A233A]" : "text-muted-foreground"
+        )}>
           {insignia.name}
         </h3>
 
         {/* Description */}
         {showDetails && (
-          <p className={cn("text-[11px] text-center line-clamp-2", earned ? "text-white/70" : "text-muted-foreground/70")}>
+          <p className={cn(
+            "text-center line-clamp-2",
+            large ? "text-xs mt-2" : "text-[11px]",
+            earned ? "text-muted-foreground" : "text-muted-foreground/70"
+          )}>
             {insignia.description}
           </p>
         )}
 
         {/* Earned date */}
         {earned && earnedAt && (
-          <p className="text-[10px] text-center text-white/50 mt-2">
+          <p className="text-[10px] text-center text-muted-foreground/80 mt-2 font-medium">
             {new Date(earnedAt).toLocaleDateString("pt-BR")}
           </p>
         )}
@@ -154,14 +159,17 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
 
         {/* Locked overlay */}
         {!earned && !hasPendingVerification && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center rounded-xl bg-black/20">
+          <div className="absolute inset-x-0 bottom-0 top-1/2 flex flex-col items-center justify-end pb-3 bg-gradient-to-t from-background/90 to-transparent">
             {isAnacBadge ? (
-              <>
-                <Upload className="text-muted-foreground/50" size={20} />
-                <span className="text-[10px] text-muted-foreground/50 mt-1">Enviar comprovante</span>
-              </>
+               <span className="text-[10px] text-muted-foreground font-medium flex items-center gap-1 bg-[#F5F7F9] px-2 py-0.5 rounded-full border border-border">
+                 <Upload size={12} />
+                 Enviar Doc
+               </span>
             ) : (
-              <Lock className="text-muted-foreground/50" size={20} />
+                <span className="text-[10px] text-muted-foreground font-medium flex items-center gap-1 bg-[#F5F7F9] px-2 py-0.5 rounded-full border border-border">
+                 <Lock size={12} />
+                 Bloqueada
+               </span>
             )}
           </div>
         )}

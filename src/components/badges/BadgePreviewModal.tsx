@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
+import { X, Lock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { DynamicIcon } from '@/components/ui/dynamic-icon';
 import type { Insignia, BadgeRarity } from '@/hooks/useInsignias';
@@ -12,10 +13,10 @@ interface BadgePreviewModalProps {
 }
 
 const rarityColors: Record<BadgeRarity, { bg: string; border: string; text: string }> = {
-  bronze: { bg: 'from-amber-700 to-amber-900', border: 'border-amber-500', text: 'text-amber-200' },
-  silver: { bg: 'from-slate-400 to-slate-600', border: 'border-slate-300', text: 'text-slate-100' },
-  gold: { bg: 'from-yellow-400 to-yellow-600', border: 'border-yellow-300', text: 'text-yellow-100' },
-  platinum: { bg: 'from-cyan-300 via-purple-400 to-pink-400', border: 'border-cyan-200', text: 'text-white' },
+  bronze: { bg: 'from-amber-600 to-amber-800', border: 'border-amber-500', text: 'text-amber-700' },
+  silver: { bg: 'from-slate-400 to-slate-600', border: 'border-slate-400', text: 'text-slate-600' },
+  gold: { bg: 'from-yellow-400 to-yellow-600', border: 'border-yellow-500', text: 'text-yellow-600' },
+  platinum: { bg: 'from-cyan-400 to-purple-500', border: 'border-cyan-400', text: 'text-cyan-600' },
 };
 
 const rarityLabels: Record<BadgeRarity, string> = {
@@ -36,9 +37,11 @@ const getDriveImageUrl = (url: string | null): string | null => {
 };
 
 export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt }: BadgePreviewModalProps) {
+  const navigate = useNavigate();
   const colors = rarityColors[insignia.rarity];
   const imageUrl = getDriveImageUrl(insignia.model_url);
   const versoTexto = insignia.verso_texto;
+  const isLocked = !earnedAt;
 
   if (!open) return null;
 
@@ -62,20 +65,22 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt }: Ba
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-lg bg-card border border-border rounded-2xl shadow-2xl overflow-hidden"
+            className="relative w-full max-w-md bg-[#F5F7F9] border border-yellow-500/20 rounded-2xl shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className={`bg-gradient-to-r ${colors.bg} p-5 flex items-center justify-between`}>
+            <div className="bg-white border-b border-border/40 p-5 flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-white/60 uppercase tracking-wider">Insígnia {rarityLabels[insignia.rarity]}</p>
-                <h2 className="text-lg font-bold text-white">{insignia.name}</h2>
+                <div className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mb-1 bg-gradient-to-r ${colors.bg} text-white shadow-sm`}>
+                  {rarityLabels[insignia.rarity]}
+                </div>
+                <h2 className="text-xl font-extrabold text-[#1A233A] leading-tight">{insignia.name}</h2>
               </div>
               <Button
                 variant="ghost"
-                size="sm"
+                size="icon"
                 onClick={() => onOpenChange(false)}
-                className="h-8 w-8 p-0 text-white/70 hover:text-white hover:bg-white/10"
+                className="text-muted-foreground hover:text-[#1A233A] hover:bg-muted/50 -mr-2"
               >
                 <X className="w-5 h-5" />
               </Button>
@@ -84,13 +89,14 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt }: Ba
             {/* Content */}
             <div className="p-6 space-y-6">
               {/* Image / Icon - Large preview */}
-              <div className="flex justify-center">
-                <div className={`w-48 h-48 sm:w-56 sm:h-56 rounded-2xl bg-gradient-to-br ${colors.bg} ${colors.border} border-2 flex items-center justify-center overflow-hidden shadow-lg`}>
+              <div className="flex justify-center relative">
+                {isLocked && <div className="absolute inset-0 bg-white/40 z-10 rounded-2xl" />}
+                <div className={`w-48 h-48 sm:w-56 sm:h-56 rounded-2xl bg-white border ${colors.border} flex items-center justify-center overflow-hidden shadow-[0_0_30px_rgba(212,175,55,0.15)]`}>
                   {imageUrl ? (
                     <img
                       src={imageUrl}
                       alt={insignia.name}
-                      className="w-full h-full object-contain p-3"
+                      className={`w-full h-full object-contain p-3 ${isLocked ? 'grayscale opacity-60' : ''}`}
                       crossOrigin="anonymous"
                       referrerPolicy="no-referrer"
                       onError={(e) => {
@@ -102,34 +108,49 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt }: Ba
                   <DynamicIcon
                     name={insignia.icon}
                     size={80}
-                    className={imageUrl ? 'hidden' : `${colors.text}`}
+                    className={`${imageUrl ? 'hidden' : colors.text} ${isLocked ? 'grayscale opacity-60' : ''}`}
                   />
                 </div>
               </div>
 
-              {/* Description */}
-              <p className="text-sm text-muted-foreground text-center">{insignia.description}</p>
-
-              {/* Earned date */}
-              {earnedAt && (
-                <p className="text-xs text-muted-foreground text-center">
-                  Conquistada em {new Date(earnedAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
-                </p>
-              )}
-
-              {/* Verso / Motivation message */}
-              {versoTexto ? (
-                <div className="relative rounded-xl border-2 border-accent/30 bg-accent/5 p-5">
-                  <div className="absolute -top-3 left-4 bg-card px-2 text-xs font-semibold text-accent uppercase tracking-wider">
-                    Mensagem
-                  </div>
-                  <p className="text-sm text-foreground leading-relaxed italic">
-                    "{versoTexto}"
+              {/* Detailed Description */}
+              {!isLocked ? (
+                <>
+                  <p className="text-sm text-center text-muted-foreground font-medium px-4">{insignia.description}</p>
+                  <p className="text-xs text-muted-foreground/70 text-center font-semibold">
+                    Conquistada em {new Date(earnedAt!).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
                   </p>
-                </div>
+                  
+                  {versoTexto && (
+                    <div className="relative rounded-xl border border-yellow-500/20 bg-white p-5 mt-2 shadow-sm">
+                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#F5F7F9] px-3 font-bold text-xs text-yellow-600 uppercase tracking-widest border border-yellow-500/20 rounded-full">
+                        Significado
+                      </div>
+                      <p className="text-sm text-[#1A233A] leading-relaxed italic text-center mt-2">
+                        "{versoTexto}"
+                      </p>
+                    </div>
+                  )}
+                </>
               ) : (
-                <div className="rounded-xl border border-border bg-muted/30 p-4 text-center">
-                  <p className="text-xs text-muted-foreground">Esta insígnia não possui mensagem de verso</p>
+                <div className="rounded-xl border border-yellow-500/30 bg-yellow-500/5 p-5 text-center shadow-[inset_0_1px_10px_rgba(212,175,55,0.05)] mt-4">
+                  <Lock className="w-6 h-6 mx-auto text-yellow-600 mb-2" />
+                  <h3 className="text-base font-bold text-[#1A233A] mb-1">
+                    Conquiste esta insígnia
+                  </h3>
+                  <p className="text-xs text-muted-foreground font-medium px-2 mb-4">
+                    Este selo é exclusivo para planos {insignia.plano_minimo === 'comandante' ? 'Comandante' : 'Tripulante ou superior'}. 
+                    Faça upgrade para ter a chance de desbloqueá-lo no seu perfil e currículo.
+                  </p>
+                  <Button 
+                    className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-bold shadow-md shadow-yellow-500/20"
+                    onClick={() => {
+                      onOpenChange(false);
+                      navigate('/premium');
+                    }}
+                  >
+                    Fazer Upgrade Agora
+                  </Button>
                 </div>
               )}
             </div>
