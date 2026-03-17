@@ -20,6 +20,7 @@ import MicrocoursePlayerPage from "./pages/MicrocoursePlayerPage";
 import CurriculumPage from "./pages/CurriculumPage";
 import PremiumPage from "./pages/PremiumPage";
 import ProfessionExamPage from "./pages/ProfessionExamPage";
+import ImportQuestoesPage from "./pages/ImportQuestoesPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,6 +41,7 @@ const App = () => (
             <Route path="/simulado/:examId" element={<ExamPage />} />
             <Route path="/resultado/:resultId" element={<ResultPage />} />
             <Route path="/admin" element={<AdminPage />} />
+            <Route path="/admin/importar-questoes" element={<ImportQuestoesPage />} />
             <Route path="/meu-progresso" element={<ProgressPage />} />
             <Route path="/conquistas" element={<ConquistasPage />} />
             <Route path="/guia-carreira" element={<GuiaCarreiraPage />} />
