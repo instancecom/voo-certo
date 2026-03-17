@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { motion } from 'framer-motion';
-import { Plus, Edit2, Trash2, ChevronLeft, Loader2, FileQuestion, Check } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Plus, Edit2, Trash2, ChevronLeft, Loader2, FileQuestion, Check, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -251,10 +252,18 @@ export function QuestionsManager({ categoryId, categoryName, onBack }: Questions
           <h2 className="text-2xl font-bold text-foreground">Questões: {categoryName}</h2>
           <p className="text-muted-foreground">{questions?.length || 0} questões cadastradas</p>
         </div>
-        <Button onClick={openNewDialog}>
-          <Plus className="w-4 h-4 mr-2" />
-          Nova Questão
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" asChild>
+            <Link to="/admin/importar-questoes">
+              <Upload className="w-4 h-4 mr-2" />
+              Importar CSV
+            </Link>
+          </Button>
+          <Button onClick={openNewDialog}>
+            <Plus className="w-4 h-4 mr-2" />
+            Nova Questão
+          </Button>
+        </div>
       </div>
 
       {/* Questions List */}
