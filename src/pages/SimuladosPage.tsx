@@ -6,10 +6,16 @@ import { Button } from '@/components/ui/button';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { usePlan } from '@/hooks/usePlan';
 import { PlanGate } from '@/components/PlanGate';
 import { toast } from 'sonner';
+
+interface BlockInfo {
+  id: string;
+  name: string;
+}
 
 interface ProfessionWithBlocks {
   id: string;
@@ -22,11 +28,14 @@ interface ProfessionWithBlocks {
   total_time: number | null;
   block_count: number;
   question_count: number;
+  blocks: BlockInfo[];
 }
 
 export default function SimuladosPage() {
   const navigate = useNavigate();
   const { canAccessSimulados, isLoggedIn } = usePlan();
+  const [blockDialogOpen, setBlockDialogOpen] = useState(false);
+  const [selectedProfession, setSelectedProfession] = useState<ProfessionWithBlocks | null>(null);
 
   const { data: professions, isLoading } = useQuery({
     queryKey: ['professions-with-blocks'],
@@ -39,13 +48,19 @@ export default function SimuladosPage() {
 
       if (error) throw error;
 
-      const { data: blocks } = await supabase.from('subcategories').select('category_id');
+      const { data: blocks } = await supabase.from('subcategories').select('id, name, category_id').order('name');
       const { data: questions } = await supabase.from('questions').select('category_id');
 
       const blockCountMap = (blocks || []).reduce((acc, b) => {
         acc[b.category_id] = (acc[b.category_id] || 0) + 1;
         return acc;
       }, {} as Record<string, number>);
+
+      const blocksMap = (blocks || []).reduce((acc, b) => {
+        if (!acc[b.category_id]) acc[b.category_id] = [];
+        acc[b.category_id].push({ id: b.id, name: b.name });
+        return acc;
+      }, {} as Record<string, BlockInfo[]>);
 
       const questionCountMap = (questions || []).reduce((acc, q) => {
         acc[q.category_id] = (acc[q.category_id] || 0) + 1;
@@ -57,6 +72,7 @@ export default function SimuladosPage() {
           ...cat,
           block_count: blockCountMap[cat.id] || 0,
           question_count: questionCountMap[cat.id] || 0,
+          blocks: blocksMap[cat.id] || [],
         }))
         .filter(cat => cat.question_count > 0) as ProfessionWithBlocks[];
     },
@@ -70,6 +86,17 @@ export default function SimuladosPage() {
       return;
     }
     navigate(`/simulado-profissao/${professionId}?modo=${mode}`);
+  };
+
+  const handleOpenBlockSelection = (profession: ProfessionWithBlocks) => {
+    if (!canAccessSimulados) {
+      toast.error('Assine o plano para acessar simulados', {
+        action: { label: 'Ver Planos', onClick: () => navigate('/premium') },
+      });
+      return;
+    }
+    setSelectedProfession(profession);
+    setBlockDialogOpen(true);
   };
 
   return (
@@ -130,6 +157,11 @@ export default function SimuladosPage() {
                           <Zap className="w-4 h-4 mr-2 text-accent" />Modo Livre<ArrowRight className="w-4 h-4 ml-auto" />
                         </Button>
                       )}
+                      {profession.block_count > 0 && (
+                        <Button variant="outline" size="sm" className="w-full justify-start" onClick={() => handleOpenBlockSelection(profession)}>
+                          <Layers className="w-4 h-4 mr-2 text-warning" />Modo Bloco<ArrowRight className="w-4 h-4 ml-auto" />
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </motion.div>
@@ -151,6 +183,35 @@ export default function SimuladosPage() {
           </div>
         </div>
       </section>
+
+      <Dialog open={blockDialogOpen} onOpenChange={setBlockDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Escolha o Bloco</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-2 py-4 max-h-[60vh] overflow-y-auto">
+            {selectedProfession?.blocks.length === 0 && (
+              <p className="text-muted-foreground text-sm">Nenhum bloco cadastrado para esta profissão.</p>
+            )}
+            {selectedProfession?.blocks.map(block => (
+              <Button
+                key={block.id}
+                variant="outline"
+                className="w-full justify-start text-left h-auto py-3 border-accent/20 hover:border-accent hover:bg-accent/5"
+                onClick={() => {
+                  setBlockDialogOpen(false);
+                  navigate(`/simulado-profissao/${selectedProfession.id}?modo=bloco&bloco_id=${block.id}&nome_bloco=${encodeURIComponent(block.name)}`);
+                }}
+              >
+                <div className="flex items-center">
+                  <span className="mr-3 text-2xl">📚</span>
+                  <span className="font-medium">{block.name}</span>
+                </div>
+              </Button>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Footer />
     </div>

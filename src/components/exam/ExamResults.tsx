@@ -15,7 +15,8 @@ interface BlockResult {
 }
 
 interface ExamResultsProps {
-  mode: 'banca_anac' | 'livre';
+  mode: 'banca_anac' | 'livre' | 'bloco';
+  blockName?: string;
   blockResults: BlockResult[];
   totalCorrect: number;
   totalQuestions: number;
@@ -27,6 +28,7 @@ interface ExamResultsProps {
 
 export function ExamResults({
   mode,
+  blockName,
   blockResults,
   totalCorrect,
   totalQuestions,
@@ -71,7 +73,7 @@ export function ExamResults({
             {overallPassed ? 'Parabéns! Você foi Aprovado!' : 'Não foi dessa vez...'}
           </h1>
           <p className="text-muted-foreground text-lg">
-            {mode === 'banca_anac' ? 'Simulado Modo Banca ANAC' : 'Simulado Modo Livre'}
+            {mode === 'banca_anac' ? 'Simulado Modo Banca ANAC' : mode === 'bloco' ? `Simulado Modo Bloco - ${blockName || ''}` : 'Simulado Modo Livre'}
           </p>
         </motion.div>
 
@@ -143,14 +145,14 @@ export function ExamResults({
                     <CardContent className="py-4">
                       <div className="flex items-center gap-4">
                         <div className="flex-shrink-0 text-2xl">
-                          {blockInfo?.icon}
+                          {mode === 'bloco' ? '📚' : blockInfo?.icon}
                         </div>
                         
                         <div className="flex-1">
                           <div className="flex items-center justify-between mb-2">
                             <div>
                               <p className="font-medium text-foreground">
-                                Bloco {result.blockNumber}: {blockInfo?.name}
+                                {mode === 'bloco' ? blockName : `Bloco ${result.blockNumber}: ${blockInfo?.name}`}
                               </p>
                               <p className="text-sm text-muted-foreground">
                                 {result.correctAnswers} de {result.totalQuestions} acertos
@@ -211,10 +213,10 @@ export function ExamResults({
                     <XCircle className="w-6 h-6 text-destructive" />
                     <div>
                       <p className="font-semibold text-destructive">
-                        Reprovado em {blockResults.filter(r => !r.passed).length} bloco(s)
+                        Reprovado{mode === 'bloco' ? '' : ` em ${blockResults.filter(r => !r.passed).length} bloco(s)`}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        É necessário atingir 70% em todos os blocos para aprovação. Continue estudando!
+                        É necessário atingir 70%{mode === 'bloco' ? '' : ' em todos os blocos'} para aprovação. Continue estudando!
                       </p>
                     </div>
                   </>

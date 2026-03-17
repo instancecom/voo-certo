@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { BancaANACExam } from '@/components/exam/BancaANACExam';
 import { LivreExam } from '@/components/exam/LivreExam';
+import { BlockExam } from '@/components/exam/BlockExam';
 import { ExamResults } from '@/components/exam/ExamResults';
 import { DbQuestion, useSubmitResult } from '@/hooks/useExams';
 import { useAuth } from '@/contexts/AuthContext';
@@ -39,7 +40,9 @@ export default function ProfessionExamPage() {
   const navigate = useNavigate();
   const { professionId } = useParams<{ professionId: string }>();
   const [searchParams] = useSearchParams();
-  const modo = searchParams.get('modo') as ExamMode | null;
+  const modo = searchParams.get('modo') as ExamMode | 'bloco' | null;
+  const blocoId = searchParams.get('bloco_id');
+  const nomeBloco = searchParams.get('nome_bloco') || 'Bloco Específico';
   const { user, isLoading: authLoading } = useAuth();
   const { canAccessSimulados } = usePlan();
   const [phase, setPhase] = useState<ExamPhase>('in_progress');
@@ -49,11 +52,17 @@ export default function ProfessionExamPage() {
   const { data: questions, isLoading } = useQuery({
     queryKey: ['profession-questions', professionId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('questions')
         .select('*')
         .eq('category_id', professionId!)
         .order('block_number');
+
+      if (modo === 'bloco' && blocoId) {
+        query = query.eq('subcategory_id', blocoId);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       return (data || []).map(q => ({
@@ -180,6 +189,17 @@ export default function ProfessionExamPage() {
       );
     }
 
+    if (modo === 'bloco') {
+      return (
+        <BlockExam
+          questions={questions}
+          blockName={nomeBloco}
+          onFinish={handleFinish}
+          onExit={() => navigate('/simulados')}
+        />
+      );
+    }
+
     return (
       <LivreExam
         questions={questions}
@@ -192,7 +212,8 @@ export default function ProfessionExamPage() {
   if (phase === 'results' && examResult) {
     return (
       <ExamResults
-        mode={modo || 'livre'}
+        mode={(modo as any) || 'livre'}
+        blockName={modo === 'bloco' ? nomeBloco : undefined}
         blockResults={examResult.blockResults}
         totalCorrect={examResult.totalCorrect}
         totalQuestions={examResult.totalQuestions}
