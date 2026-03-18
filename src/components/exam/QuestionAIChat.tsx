@@ -133,16 +133,20 @@ export function QuestionAIChat({
 
   return (
     <div className="relative">
-      <Button
-        variant="outline"
-        size="sm"
+      <button
         onClick={() => setIsOpen(true)}
-        className="border-primary/30 text-primary hover:bg-primary/5 rounded-full font-medium shadow-sm transition-all hover:shadow-md"
+        className="flex items-center justify-between w-full sm:w-auto min-w-[320px] px-4 py-2.5 bg-transparent border border-slate-300 rounded-full hover:bg-slate-50/50 transition-colors group"
       >
-        <MessageCircle className="w-4 h-4 mr-2" />
-        Pergunte à IA sobre essa questão
-        {aiChatLimit < 999 && <Badge variant="secondary" className="ml-2 text-xs bg-primary/10 text-primary hover:bg-primary/20">{aiChatLimit} msgs</Badge>}
-      </Button>
+        <div className="flex items-center gap-2 text-primary/80 group-hover:text-primary transition-colors">
+          <MessageCircle className="w-4 h-4" />
+          <span className="text-sm font-medium">Pergunte à IA sobre essa questão</span>
+        </div>
+        {aiChatLimit < 999 && (
+          <div className="ml-3 bg-slate-200 text-slate-700 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+            {aiChatLimit} msgs
+          </div>
+        )}
+      </button>
 
       <AnimatePresence>
         {isOpen && (
