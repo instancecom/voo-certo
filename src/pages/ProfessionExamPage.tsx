@@ -74,16 +74,29 @@ export default function ProfessionExamPage() {
   });
 
   const { data: exam } = useQuery({
-    queryKey: ['profession-exam', professionId],
+    queryKey: ['profession-exam', professionId, modo, blocoId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase.from('exams').select('id, subcategory_id').eq('category_id', professionId!);
+      
+      if (modo === 'bloco' && blocoId) {
+        query = query.eq('subcategory_id', blocoId);
+      } else {
+        query = query.is('subcategory_id', null);
+      }
+      
+      const { data, error } = await query.limit(1).maybeSingle();
+
+      if (data) return data;
+
+      // Fallback: if exact match not found, get ANY exam for this profession to avoid failing the save
+      const { data: fallbackData } = await supabase
         .from('exams')
         .select('id')
         .eq('category_id', professionId!)
+        .limit(1)
         .maybeSingle();
-
-      if (error) throw error;
-      return data;
+        
+      return fallbackData;
     },
     enabled: !!professionId,
   });
@@ -92,32 +105,38 @@ export default function ProfessionExamPage() {
     setExamResult(result);
     setPhase('results');
 
-    if (user && exam?.id) {
-      try {
-        const answersArray = Object.entries(result.answers).map(([questionId, selectedAnswer]) => {
-          const question = questions?.find(q => q.id === questionId);
-          return {
-            questionId,
-            selectedAnswer,
-            isCorrect: question ? selectedAnswer === question.correct_answer : false,
-          };
-        });
+    if (!user) return;
+    
+    if (!exam?.id) {
+      console.error('Nenhum exame correspondente encontrado para a profissão:', professionId);
+      toast.error('Erro ao salvar progresso: Configuração de prova (exam) não encontrada.');
+      return;
+    }
 
-        await submitResult.mutateAsync({
-          exam_id: exam.id,
-          score: Math.round((result.totalCorrect / result.totalQuestions) * 100),
-          total_questions: result.totalQuestions,
-          correct_answers: result.totalCorrect,
-          time_spent: result.totalTimeSpent || 0,
-          answers: answersArray,
-          exam_mode: modo || 'livre',
-          block_results: result.blockResults,
-        });
-        toast.success('Resultado salvo com sucesso!');
-      } catch (error) {
-        console.error('Error saving result:', error);
-        toast.error('Erro ao salvar resultado');
-      }
+    try {
+      const answersArray = Object.entries(result.answers).map(([questionId, selectedAnswer]) => {
+        const question = questions?.find(q => q.id === questionId);
+        return {
+          questionId,
+          selectedAnswer,
+          isCorrect: question ? selectedAnswer === question.correct_answer : false,
+        };
+      });
+
+      await submitResult.mutateAsync({
+        exam_id: exam.id,
+        score: Math.round((result.totalCorrect / result.totalQuestions) * 100),
+        total_questions: result.totalQuestions,
+        correct_answers: result.totalCorrect,
+        time_spent: result.totalTimeSpent || 0,
+        answers: answersArray,
+        exam_mode: modo || 'livre',
+        block_results: result.blockResults,
+      });
+      toast.success('Resultado salvo com sucesso!');
+    } catch (error: any) {
+      console.error('Error saving result:', error);
+      toast.error(error.message || 'Erro ao salvar resultado');
     }
   };
 
