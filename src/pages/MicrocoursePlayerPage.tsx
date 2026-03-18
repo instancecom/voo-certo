@@ -133,12 +133,6 @@ export default function MicrocoursePlayerPage() {
   };
 
   const handleSelectLesson = (lesson: Lesson) => {
-    if (!canAccessMicrocursos) {
-      toast.error('Assine para acessar os microcursos', {
-        action: { label: 'Ver Planos', onClick: () => navigate('/premium') },
-      });
-      return;
-    }
     setSelectedLesson(lesson);
     setMobileSidebarOpen(false);
   };
@@ -237,7 +231,7 @@ export default function MicrocoursePlayerPage() {
                               </div>
                               <span className="flex-1 line-clamp-2 text-xs">{lesson.title}</span>
                               {!canAccessMicrocursos && <Lock className="w-3 h-3 text-accent shrink-0" />}
-                              {lesson.material_url && <FileText className="w-3 h-3 text-success shrink-0" />}
+                              {canAccessMicrocursos && lesson.material_url && <FileText className="w-3 h-3 text-success shrink-0" />}
                             </button>
                           );
                         })}
@@ -333,7 +327,27 @@ export default function MicrocoursePlayerPage() {
         {/* Video area */}
         <div className="flex-1 flex flex-col">
           <div className="w-full max-w-5xl mx-auto px-4 pt-4">
-            {selectedLesson && currentEmbedUrl ? (
+            {!canAccessMicrocursos && selectedLesson ? (
+              <div className="aspect-video bg-card border border-border rounded-xl flex items-center justify-center p-6 relative overflow-hidden shadow-sm">
+                <div className="absolute inset-0 bg-primary/5 backdrop-blur-sm z-0" />
+                <div className="relative z-10 text-center max-w-md bg-card/90 p-8 rounded-2xl shadow-xl border border-accent/20">
+                  <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4 border border-accent/20">
+                    <Lock className="w-8 h-8 text-accent" />
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-2">Acesso Restrito</h3>
+                  <p className="text-sm text-muted-foreground mb-6">
+                    Assine o plano <strong className="text-foreground">Tripulante</strong> ou superior para assistir a todas as aulas e baixar os materiais complementares.
+                  </p>
+                  <Button
+                    size="lg"
+                    className="w-full font-bold bg-accent hover:bg-accent/90 text-accent-foreground shadow-md shadow-accent/20"
+                    onClick={() => navigate('/premium')}
+                  >
+                    Assinar Agora
+                  </Button>
+                </div>
+              </div>
+            ) : selectedLesson && currentEmbedUrl ? (
               <VideoPlayer
                 videoUrl={currentEmbedUrl}
                 thumbnailUrl={currentVideoId ? `https://img.youtube.com/vi/${currentVideoId}/hqdefault.jpg` : null}
@@ -376,19 +390,32 @@ export default function MicrocoursePlayerPage() {
 
               {/* Material Download */}
               {selectedLesson.material_url && (
-                <div className="p-4 rounded-xl bg-muted/50 border border-border">
-                  <p className="text-sm font-medium mb-2 flex items-center gap-2">
+                <div className="p-4 rounded-xl bg-muted/50 border border-border mt-4">
+                  <p className="text-sm font-bold mb-2 flex items-center gap-2 text-foreground">
                     <FileText className="w-4 h-4 text-primary" /> Material Complementar
                   </p>
-                  <a
-                    href={selectedLesson.material_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
-                  >
-                    <Download className="w-4 h-4" />
-                    {selectedLesson.material_name || 'Baixar material'}
-                  </a>
+                  
+                  {canAccessMicrocursos ? (
+                    <a
+                      href={selectedLesson.material_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-sm text-primary hover:underline font-medium"
+                    >
+                      <Download className="w-4 h-4" />
+                      {selectedLesson.material_name || 'Baixar material PDF'}
+                    </a>
+                  ) : (
+                    <div className="flex items-center justify-between bg-card p-3 rounded-lg border border-border">
+                      <div className="flex items-center gap-3">
+                         <div className="p-2 bg-muted rounded-md text-muted-foreground"><FileText className="w-4 h-4"/></div>
+                         <span className="text-sm font-medium text-muted-foreground line-through">{selectedLesson.material_name || 'Material PDF Restrito'}</span>
+                      </div>
+                      <Badge variant="outline" className="text-accent border-accent/30 bg-accent/5">
+                        <Lock className="w-3 h-3 mr-1" /> Bloqueado
+                      </Badge>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

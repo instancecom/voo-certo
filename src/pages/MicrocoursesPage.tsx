@@ -13,6 +13,7 @@ import { Footer } from '@/components/Footer';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { usePlan } from '@/hooks/usePlan';
 
 interface Microcourse {
   id: string;
@@ -24,6 +25,7 @@ interface Microcourse {
   youtube_video_id: string | null;
   video_url: string | null;
   display_order: number;
+  release_date?: string | null;
 }
 
 const CATEGORIES = [
@@ -48,6 +50,7 @@ function getYouTubeThumbnail(videoId: string): string {
 
 export default function MicrocoursesPage() {
   const { user } = useAuth();
+  const { currentPlan } = usePlan();
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -92,7 +95,14 @@ export default function MicrocoursesPage() {
   const completedIds = new Set((progress || []).filter((p: any) => p.completed).map((p: any) => p.microcourse_id));
   const displayCourses = courses || [];
 
+  const isComandante = currentPlan === 'comandante';
+
   const filtered = displayCourses.filter(c => {
+    // Priority logic: if it has a future release_date, only comandante sees it
+    if (c.release_date && new Date(c.release_date) > new Date() && !isComandante) {
+      return false;
+    }
+
     const matchSearch = !search || c.title.toLowerCase().includes(search.toLowerCase()) || c.description?.toLowerCase().includes(search.toLowerCase());
     const matchCat = selectedCategory === 'all' || c.category === selectedCategory;
     return matchSearch && matchCat;
@@ -184,7 +194,7 @@ export default function MicrocoursesPage() {
                     className="group relative"
                   >
                     <div
-                      className="relative aspect-[2/3] rounded-xl overflow-hidden cursor-pointer transition-all duration-300 group-hover:scale-[1.03] group-hover:shadow-xl group-hover:shadow-primary/10"
+                      className="relative aspect-[2/3] rounded-xl overflow-hidden cursor-pointer transition-all duration-300 group-hover:scale-[1.03] group-hover:shadow-xl group-hover:shadow-primary/10 border border-transparent hover:border-accent/40"
                       onClick={() => navigate(`/microcursos/${course.id}`)}
                     >
                       {/* Background */}
