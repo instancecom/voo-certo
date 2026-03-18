@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bot, Send, X, Loader2, Sparkles, MessageCircle, Clock, ArrowUpRight, Lock } from 'lucide-react';
+import { Bot, Send, X, Loader2, Sparkles, MessageCircle, Clock, ArrowUpRight, Lock, Plus, ArrowUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -137,52 +137,72 @@ export function QuestionAIChat({
         variant="outline"
         size="sm"
         onClick={() => setIsOpen(true)}
-        className="border-primary/30 text-primary hover:bg-primary/5"
+        className="border-primary/30 text-primary hover:bg-primary/5 rounded-full font-medium shadow-sm transition-all hover:shadow-md"
       >
         <MessageCircle className="w-4 h-4 mr-2" />
         Pergunte à IA sobre essa questão
-        {aiChatLimit < 999 && <Badge variant="outline" className="ml-2 text-xs">{aiChatLimit} msgs</Badge>}
+        {aiChatLimit < 999 && <Badge variant="secondary" className="ml-2 text-xs bg-primary/10 text-primary hover:bg-primary/20">{aiChatLimit} msgs</Badge>}
       </Button>
 
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            className="fixed inset-x-4 bottom-4 z-50 md:absolute md:inset-auto md:bottom-full md:right-0 md:mb-2 md:w-96"
+            initial={{ opacity: 0, y: 50, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 50, scale: 0.95 }}
+            className="fixed inset-x-0 bottom-0 z-[100] md:absolute md:inset-auto md:bottom-full md:right-0 md:mb-3 flex flex-col md:block"
           >
-            <div className="bg-card border border-border rounded-2xl shadow-xl overflow-hidden">
+            {/* Backdrop for mobile */}
+            <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[-1] md:hidden" onClick={() => setIsOpen(false)} />
+
+            <div className="bg-[#F5F7F9] border border-border/40 rounded-t-3xl md:rounded-3xl shadow-2xl flex flex-col h-[85vh] md:h-[500px] md:w-[420px] overflow-hidden">
               {/* Header */}
-              <div className="flex items-center justify-between p-4 border-b border-border bg-primary/5">
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-full bg-primary/10">
-                    <Sparkles className="w-4 h-4 text-primary" />
+              <div className="flex items-center justify-between p-4 bg-white border-b border-border/30 shrink-0 shadow-sm relative z-10">
+                <div className="flex items-center gap-3">
+                  <div className="relative">
+                    <img 
+                      src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=150&h=150" 
+                      alt="Instrutor" 
+                      className="w-10 h-10 rounded-full object-cover border-2 border-accent" 
+                    />
+                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-foreground">Instrutor IA</p>
-                    <p className="text-xs text-muted-foreground">Especialista ANAC</p>
+                    <h3 className="text-[15px] font-bold text-foreground leading-tight">Instrutor IA</h3>
+                    <p className="text-xs text-muted-foreground flex items-center gap-1 font-medium mt-0.5">
+                      <Sparkles className="w-3 h-3 text-accent" /> Especialista ANAC
+                    </p>
                   </div>
                 </div>
-                <Button variant="ghost" size="sm" onClick={() => setIsOpen(false)} className="h-7 w-7 p-0">
-                  <X className="w-4 h-4" />
+                <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="h-8 w-8 rounded-full hover:bg-muted text-muted-foreground">
+                  <X className="w-5 h-5" />
                 </Button>
               </div>
 
-              {/* Messages */}
-              <div className="h-64 overflow-y-auto p-4 space-y-3">
+              {/* Messages Viewport */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages.length === 0 && !limitReached && (
-                  <div className="text-center py-4">
-                    <Bot className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-                    <p className="text-sm text-muted-foreground mb-4">
-                      Tire suas dúvidas sobre essa questão com o Instrutor IA.
+                  <div className="flex flex-col items-center text-center py-6 px-4">
+                    <div className="w-16 h-16 rounded-full bg-white shadow-sm border border-border/50 flex items-center justify-center mb-4 relative">
+                      <img 
+                        src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=150&h=150" 
+                        alt="Instrutor" 
+                        className="w-full h-full rounded-full object-cover" 
+                      />
+                      <div className="absolute -bottom-1 -right-1 bg-accent rounded-full p-1 border-2 border-white">
+                        <Sparkles className="w-3 h-3 text-white" />
+                      </div>
+                    </div>
+                    <h4 className="text-base font-bold text-foreground mb-1">Como posso te ajudar comandante?</h4>
+                    <p className="text-sm text-muted-foreground mb-6">
+                      Tire suas dúvidas sobre essa questão com seu instrutor IA focado no padrão ANAC.
                     </p>
-                    <div className="space-y-2">
-                      {SUGGESTED.map((q, i) => (
+                    <div className="w-full space-y-2">
+                      {['Por que essa é a resposta correta?', 'Como isso se aplica na prática?', 'Qual a regulamentação relacionada?'].map((q, i) => (
                         <button
                           key={i}
                           onClick={() => { setInput(q); }}
-                          className="w-full text-left px-3 py-2 rounded-lg bg-muted hover:bg-muted/80 text-xs text-muted-foreground transition-colors"
+                          className="w-full text-left px-4 py-3 rounded-2xl bg-white border border-border/50 hover:border-accent/40 shadow-sm text-sm text-muted-foreground hover:text-foreground transition-all duration-200"
                         >
                           {q}
                         </button>
@@ -193,49 +213,60 @@ export function QuestionAIChat({
 
                 {messages.map((msg, i) => (
                   <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[85%] px-3 py-2 rounded-xl text-sm ${
-                      msg.role === 'user'
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-muted text-foreground'
-                    }`}>
-                      {msg.role === 'assistant' && (
-                        <div className="flex items-center gap-1.5 mb-1">
-                          <Sparkles className="w-3 h-3 text-primary" />
-                          <span className="text-xs text-primary font-medium">Instrutor IA</span>
-                          {msg.cached && (
-                            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 bg-muted-foreground/10 text-muted-foreground font-normal gap-0.5">
-                              <Clock className="w-2.5 h-2.5" />
-                              Em cache
-                            </Badge>
-                          )}
+                    {msg.role === 'assistant' ? (
+                      <div className="flex gap-2 max-w-[88%]">
+                        <img 
+                          src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=150&h=150"
+                          alt="IA"
+                          className="w-8 h-8 rounded-full object-cover border border-accent/50 shrink-0 mt-1 shadow-sm"
+                        />
+                        <div className="bg-white border border-accent/20 px-4 py-3 rounded-2xl rounded-tl-sm text-[15px] text-foreground shadow-sm">
+                          <div className="flex items-center gap-1.5 mb-1.5">
+                            <span className="text-xs text-primary font-bold">Instrutor</span>
+                            {msg.cached && (
+                              <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 bg-muted text-muted-foreground font-normal gap-0.5 border-none">
+                                <Clock className="w-2.5 h-2.5" /> Em cache
+                              </Badge>
+                            )}
+                          </div>
+                          <p className="leading-relaxed whitespace-pre-wrap">{msg.content}</p>
                         </div>
-                      )}
-                      <p className="leading-relaxed whitespace-pre-wrap">{msg.content}</p>
-                    </div>
+                      </div>
+                    ) : (
+                      <div className="max-w-[85%] px-4 py-3 rounded-2xl rounded-tr-sm text-[15px] bg-primary/90 text-primary-foreground shadow-sm">
+                        <p className="leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                      </div>
+                    )}
                   </div>
                 ))}
 
                 {isLoading && (
                   <div className="flex justify-start">
-                    <div className="bg-muted rounded-xl px-3 py-2 flex items-center gap-2">
-                      <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                      <span className="text-xs text-muted-foreground">Pensando...</span>
+                    <div className="flex gap-2 max-w-[85%]">
+                      <img 
+                        src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=150&h=150"
+                        alt="IA"
+                        className="w-8 h-8 rounded-full object-cover border border-accent/50 shrink-0 mt-1 shadow-sm opacity-70"
+                      />
+                      <div className="bg-white border border-border/50 rounded-2xl rounded-tl-sm px-4 py-3 flex items-center justify-center shadow-sm">
+                        <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                      </div>
                     </div>
                   </div>
                 )}
 
                 {limitReached && (
                   <div className="text-center py-4 space-y-3">
-                    <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4">
-                      <p className="text-sm text-destructive font-medium mb-2">
+                    <div className="bg-destructive/5 border border-destructive/20 rounded-2xl p-5 mb-2 shadow-sm bg-white text-left">
+                      <p className="text-base text-destructive font-bold mb-1">
                         Limite de perguntas atingido
                       </p>
-                      <p className="text-xs text-muted-foreground mb-3">
+                      <p className="text-sm text-muted-foreground mb-4">
                         Atualize seu plano para continuar perguntando ao Instrutor IA.
                       </p>
-                      <Button asChild size="sm" className="gap-1">
+                      <Button asChild className="w-full gap-2 rounded-xl font-bold">
                         <Link to="/premium">
-                          Upgrade <ArrowUpRight className="w-3 h-3" />
+                          Fazer Upgrade <ArrowUpRight className="w-4 h-4" />
                         </Link>
                       </Button>
                     </div>
@@ -245,19 +276,52 @@ export function QuestionAIChat({
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Input */}
-              <div className="p-3 border-t border-border flex gap-2">
-                <Input
-                  value={input}
-                  onChange={e => setInput(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && sendMessage()}
-                  placeholder={limitReached ? "Limite atingido" : "Sua pergunta..."}
-                  className="text-sm h-9"
-                  disabled={isLoading || limitReached}
-                />
-                <Button size="sm" onClick={sendMessage} disabled={isLoading || !input.trim() || limitReached} className="h-9 w-9 p-0">
-                  <Send className="w-4 h-4" />
-                </Button>
+              {/* Input Area */}
+              <div className="p-4 bg-[#F5F7F9] border-t border-border/30 shrink-0 pb-6 md:pb-4 rounded-b-3xl">
+                <div className="flex gap-3 items-start">
+                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border-2 border-accent shrink-0 shadow-sm">
+                    <img 
+                      src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=150&h=150" 
+                      alt="Instrutor" 
+                      className="w-full h-full object-cover" 
+                    />
+                  </div>
+                  <div className="flex-1 flex flex-col gap-2">
+                    <Input
+                      value={input}
+                      onChange={e => setInput(e.target.value)}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          sendMessage();
+                        }
+                      }}
+                      placeholder={limitReached ? "Limite atingido. Atualize seu plano." : "Digite sua dúvida sobre essa questão..."}
+                      className="text-sm rounded-2xl border-border/30 shadow-sm bg-white min-h-[44px] placeholder:text-muted-foreground/50 focus-visible:ring-1 focus-visible:ring-accent"
+                      disabled={isLoading || limitReached}
+                    />
+                    <div className="flex items-center justify-between px-1">
+                      <Button 
+                        title="Anexar arquivo/imagem"
+                        type="button" 
+                        variant="ghost" 
+                        size="icon" 
+                        className="w-8 h-8 rounded-full bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary transition-all duration-200 shrink-0"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        title="Enviar mensagem"
+                        onClick={sendMessage} 
+                        disabled={isLoading || !input.trim() || limitReached} 
+                        size="icon" 
+                        className="w-8 h-8 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200 shrink-0 shadow-sm"
+                      >
+                        <ArrowUp className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </motion.div>
