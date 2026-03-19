@@ -85,20 +85,52 @@ export default function ProfessionExamPage() {
       }
       
       const { data, error } = await query.limit(1).maybeSingle();
-
       if (data) return data;
 
-      // Fallback: if exact match not found, get ANY exam for this profession to avoid failing the save
+      // Fallback: if exact match not found, get ANY exam for this profession
       const { data: fallbackData } = await supabase
         .from('exams')
-        .select('id')
+        .select('id, subcategory_id')
         .eq('category_id', professionId!)
         .limit(1)
         .maybeSingle();
         
-      return fallbackData;
+      if (fallbackData) return fallbackData;
+
+      // If absolutely no exam exists for this profession, attempt to create a generic one
+      // This solves the database missing initial seeds for new professions
+      if (user) {
+        try {
+          const examData: any = {
+            title: modo === 'bloco' ? `Simulado: ${nomeBloco} (Auto)` : `Simulado (Auto-gerado)`,
+            category_id: professionId,
+            duration: 120,
+            question_count: 50,
+            is_active: true,
+          };
+
+          // If in block mode, try to link the auto-generated exam to the subcategory
+          if (modo === 'bloco' && blocoId) {
+            examData.subcategory_id = blocoId;
+          }
+
+          const { data: newExam, error: insertError } = await supabase
+            .from('exams')
+            .insert(examData)
+            .select('id, subcategory_id')
+            .single();
+            
+          if (!insertError && newExam) {
+            return newExam;
+          }
+        } catch (e) {
+          console.error("Auto-create exam failed:", e);
+        }
+      }
+
+      return null;
     },
-    enabled: !!professionId,
+    enabled: !!professionId && !!user,
   });
 
   const handleFinish = async (result: ExamResultData) => {

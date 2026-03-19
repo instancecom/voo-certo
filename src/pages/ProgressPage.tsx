@@ -137,25 +137,48 @@ export default function ProgressPage() {
     color: min >= 70 ? 'hsl(var(--success))' : min >= 51 ? 'hsl(var(--warning))' : 'hsl(var(--destructive))',
   }));
 
-  // Group results by subcategory
-  const resultsByCategory = userResults.reduce((acc, result) => {
-    const exam = exams?.find((e) => e.id === result.exam_id);
-    if (!exam) return acc;
-    if (!acc[exam.subcategory_id]) acc[exam.subcategory_id] = [];
-    acc[exam.subcategory_id].push(result);
-    return acc;
-  }, {} as Record<string, typeof userResults>);
+  // Detailed results calculation mapping through every result
+  const subcategoryStats = useMemo(() => {
+    if (!subcategories || !userResults) return [];
+    
+    return subcategories.map(sub => {
+      // Collect all scores for this subcategory
+      const relevantResults: number[] = [];
+      
+      userResults.forEach(result => {
+        const exam = exams?.find(e => e.id === result.exam_id);
+        
+        // Match by exact subcategory ID in the parent exam
+        if (exam?.subcategory_id === sub.id) {
+          relevantResults.push(result.score);
+        } 
+        // Match by block number in ANAC mode or generic exams with block details
+        else if (result.block_results && Array.isArray(result.block_results)) {
+          const block = result.block_results.find((b: any) => 
+            b.blockNumber === sub.display_order
+          );
+          if (block) {
+            relevantResults.push(block.percentage);
+          }
+        }
+      });
+      
+      const count = relevantResults.length;
+      const avg = count ? Math.round(relevantResults.reduce((a, b) => a + b, 0) / count) : null;
+      const best = count ? Math.max(...relevantResults) : null;
+      const last = count ? relevantResults[0] : null; // userResults is already sorted by date descending
 
-  const subcategoryStats = (subcategories || []).map(sub => {
-    const results = resultsByCategory[sub.id] || [];
-    const avg = results.length
-      ? Math.round(results.reduce((a, r) => a + r.score, 0) / results.length)
-      : null;
-    const best = results.length ? Math.max(...results.map(r => r.score)) : null;
-    const last = results.length ? results[0]?.score : null;
-    return { ...sub, avg, best, last, count: results.length, isWeak: avg !== null && avg < 70 };
-  }).filter(s => s.count > 0)
-    .sort((a, b) => (a.avg || 0) - (b.avg || 0));
+      return {
+        ...sub,
+        avg,
+        best,
+        last,
+        count,
+        isWeak: avg !== null && avg < 70
+      };
+    }).filter(s => s.count > 0)
+      .sort((a, b) => (a.avg || 0) - (b.avg || 0));
+  }, [subcategories, userResults, exams]);
 
   const weakPoints = subcategoryStats.filter(s => s.isWeak);
   const strongPoints = subcategoryStats.filter(s => !s.isWeak);
