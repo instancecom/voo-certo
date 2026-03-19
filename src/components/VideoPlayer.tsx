@@ -98,6 +98,14 @@ export function VideoPlayer({ videoUrl, thumbnailUrl, title, hasAccess, autoplay
         {/* Top left - hides channel avatar */}
         <div className="absolute top-0 left-0 w-[80px] h-[80px] z-20 pointer-events-auto" />
 
+        {/* Bottom left - Cover for "Watch on YouTube" with custom branding */}
+        <div className="absolute bottom-10 left-0 px-5 py-2.5 bg-[#0A192F] border-r border-t border-accent/30 rounded-tr-xl z-30 pointer-events-auto select-none shadow-2xl">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+            <span className="text-[12px] font-black text-white tracking-[0.2em] uppercase">Voo Certo</span>
+          </div>
+        </div>
+
         <iframe
           ref={iframeRef}
           src={`${videoUrl}${videoUrl.includes('?') ? '&' : '?'}iv_load_policy=3&modestbranding=1&rel=0&autohide=1&showinfo=0`}
