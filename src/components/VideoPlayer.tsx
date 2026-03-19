@@ -99,10 +99,10 @@ export function VideoPlayer({ videoUrl, thumbnailUrl, title, hasAccess, autoplay
         <div className="absolute top-0 left-0 w-[80px] h-[80px] z-20 pointer-events-auto" />
 
         {/* Bottom left - Cover for "Watch on YouTube" with custom branding */}
-        <div className="absolute bottom-10 left-0 px-5 py-2.5 bg-[#0A192F] border-r border-t border-accent/30 rounded-tr-xl z-30 pointer-events-auto select-none shadow-2xl">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-            <span className="text-[12px] font-black text-white tracking-[0.2em] uppercase">Voo Certo</span>
+        <div className="absolute bottom-0 left-0 px-6 py-4 bg-[#0A192F] border-t border-r border-accent/20 rounded-tr-2xl z-30 pointer-events-auto select-none shadow-2xl min-w-[200px]">
+          <div className="flex items-center gap-3">
+            <div className="w-2.5 h-2.5 rounded-full bg-accent animate-pulse shadow-[0_0_8px_rgba(212,175,55,0.6)]" />
+            <span className="text-[13px] font-black text-white tracking-[0.25em] uppercase">Voo Certo</span>
           </div>
         </div>
 
