@@ -197,14 +197,14 @@ export function useToggleStepProgress() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ stepId, guideId, completed }: { stepId: string; guideId: string; completed: boolean }) => {
-      const { data: user } = await supabase.auth.getUser();
-      if (!user.user) throw new Error('Not authenticated');
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
 
       if (completed) {
         const { error } = await supabase
           .from('guide_step_progress')
           .upsert({
-            user_id: user.user.id,
+            user_id: user.id,
             step_id: stepId,
             completed: true,
             completed_at: new Date().toISOString(),
@@ -214,14 +214,51 @@ export function useToggleStepProgress() {
         const { error } = await supabase
           .from('guide_step_progress')
           .delete()
-          .eq('user_id', user.user.id)
-          .eq('step_id', stepId);
+          .match({ user_id: user.id, step_id: stepId });
         if (error) throw error;
       }
-      return guideId;
+      return { guideId, stepId, completed };
     },
-    onSuccess: (guideId) => {
-      qc.invalidateQueries({ queryKey: ['guide-step-progress', guideId] });
+    onMutate: async ({ stepId, guideId, completed }) => {
+      // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+      await qc.cancelQueries({ queryKey: ['guide-step-progress', guideId] });
+
+      // Snapshot the previous value
+      const previousProgress = qc.getQueryData(['guide-step-progress', guideId]);
+
+      // Optimistically update to the new value
+      qc.setQueryData(['guide-step-progress', guideId], (old: any[] | undefined) => {
+        const current = old || [];
+        if (completed) {
+          // Add the step if it's not there, or update if it is
+          const exists = current.find(p => p.step_id === stepId);
+          if (exists) {
+            return current.map(p => p.step_id === stepId ? { ...p, completed: true } : p);
+          }
+          return [...current, { step_id: stepId, completed: true }];
+        } else {
+          // Remove or set completed false
+          return current.filter(p => p.step_id !== stepId);
+        }
+      });
+
+      // Return a context object with the snapshotted value
+      return { previousProgress, guideId };
+    },
+    onError: (err, variables, context) => {
+      // If the mutation fails, use the context returned from onMutate to roll back
+      if (context?.previousProgress) {
+        qc.setQueryData(
+          ['guide-step-progress', context.guideId],
+          context.previousProgress
+        );
+      }
+    },
+    onSettled: (data) => {
+      // Always refetch after error or success to keep server in sync
+      if (data?.guideId) {
+        qc.invalidateQueries({ queryKey: ['guide-step-progress', data.guideId] });
+      }
     },
   });
 }
