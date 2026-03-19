@@ -376,30 +376,37 @@ export default function PremiumPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-background/80 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center"
+            className="fixed inset-0 z-[9999] bg-background/95 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center"
           >
-            <div className="relative mb-8">
-              <div className="absolute inset-0 bg-accent/20 rounded-full blur-2xl animate-pulse" />
-              <div className="relative w-24 h-24 rounded-3xl bg-card border border-accent/20 flex items-center justify-center shadow-2xl">
-                <Loader2 className="w-10 h-10 text-accent animate-spin" />
+            <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-accent/5 pointer-events-none" />
+            
+            <div className="relative mb-10">
+              {/* Spinning Loader with Glow */}
+              <div className="absolute inset-0 bg-accent/30 rounded-full blur-[40px] animate-pulse" />
+              <div className="relative w-28 h-28 rounded-[2.5rem] bg-card border border-accent/20 flex items-center justify-center shadow-[0_20px_50px_rgba(0,0,0,0.1)]">
+                <Loader2 className="w-12 h-12 text-accent animate-spin" />
               </div>
             </div>
             
-            <div className="space-y-3 max-w-sm">
-              <h3 className="text-2xl font-black text-foreground tracking-tight">Em um instante...</h3>
-              <p className="text-muted-foreground font-medium">
+            <div className="relative space-y-4 max-w-sm">
+              <h3 className="text-3xl font-black text-foreground tracking-tight">Em um instante...</h3>
+              <p className="text-muted-foreground font-medium text-lg px-4">
                 Estamos preparando o seu acesso seguro e configurando seu ambiente de elite.
               </p>
-              <div className="flex items-center justify-center gap-2 pt-4">
-                <div className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce" style={{ animationDelay: '0ms' }} />
-                <div className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce" style={{ animationDelay: '150ms' }} />
-                <div className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce" style={{ animationDelay: '300ms' }} />
+              
+              <div className="flex items-center justify-center gap-2 pt-6">
+                <div className="w-2 h-2 rounded-full bg-accent animate-bounce" style={{ animationDelay: '0ms' }} />
+                <div className="w-2 h-2 rounded-full bg-accent animate-bounce" style={{ animationDelay: '200ms' }} />
+                <div className="w-2 h-2 rounded-full bg-accent animate-bounce" style={{ animationDelay: '400ms' }} />
               </div>
             </div>
 
-            <div className="absolute bottom-12 flex items-center gap-2 opacity-40">
-              <Check className="w-4 h-4 text-success" />
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Pagamento Seguro via Stripe</span>
+            <div className="absolute bottom-16 flex flex-col items-center gap-3">
+              <div className="flex items-center gap-2 px-4 py-2 bg-success/5 border border-success/10 rounded-full shadow-sm">
+                <Check className="w-4 h-4 text-success" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-success/80">Pagamento Seguro via Stripe</span>
+              </div>
+              <p className="text-[9px] text-muted-foreground/60 font-medium">Você será redirecionado para a página oficial de pagamento</p>
             </div>
           </motion.div>
         )}
