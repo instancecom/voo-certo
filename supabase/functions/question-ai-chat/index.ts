@@ -6,12 +6,20 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// Plan limits for AI questions per day
-const PLAN_LIMITS: Record<string, number> = {
+// Plan limits for AI questions PER QUESTION
+const PLAN_LIMITS_PER_QUESTION: Record<string, number> = {
   free: 0,
   solo: 0,
   tripulante: 5,
   comandante: 15,
+};
+
+// Daily safety cap to prevent system abuse
+const DAILY_SAFETY_LIMIT: Record<string, number> = {
+  free: 0,
+  solo: 0,
+  tripulante: 30, // Max 30 questions per day
+  comandante: 100, // Max 100 questions per day
 };
 
 serve(async (req) => {
@@ -66,14 +74,13 @@ serve(async (req) => {
       });
     }
 
-    // No cache hit — check plan limits
+    // No cache hit — fetch profile and check if user is admin (bypass limits)
     const { data: profile } = await supabase
       .from("profiles")
       .select("plan_type, is_premium, ai_questions_count")
       .eq("user_id", userId)
       .maybeSingle();
 
-    // Check if user is admin (bypass limits)
     const { data: adminRole } = await supabase
       .from("user_roles")
       .select("role")
@@ -82,27 +89,39 @@ serve(async (req) => {
       .maybeSingle();
 
     const isAdmin = !!adminRole;
-
     const planType = profile?.plan_type || "free";
-    const limit = PLAN_LIMITS[planType] ?? 0;
 
-    if (!isAdmin && limit === 0) {
-      return new Response(JSON.stringify({
-        error: "Seu plano não inclui perguntas à IA. Atualize para Tripulante ou Comandante.",
-        limitReached: true,
-      }), {
-        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    if (!isAdmin) {
+      // 1. Check daily safety limit first
+      const dailySafetyMax = DAILY_SAFETY_LIMIT[planType] ?? 0;
+      const currentDailyCount = profile?.ai_questions_count || 0;
+      if (currentDailyCount >= dailySafetyMax) {
+        return new Response(JSON.stringify({
+          error: "Você atingiu o teto diário de segurança de uso de IA. Tente novamente amanhã.",
+          limitType: 'daily_safety',
+          limitReached: true,
+        }), {
+          status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
 
-    const dailyCount = profile?.ai_questions_count || 0;
-    if (!isAdmin && dailyCount >= limit) {
-      return new Response(JSON.stringify({
-        error: `Limite de ${limit} perguntas/dia atingido. Atualize seu plano para continuar.`,
-        limitReached: true,
-      }), {
-        status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      // 2. Check per-question limit using RPC
+      const limitPerQuestion = PLAN_LIMITS_PER_QUESTION[planType] ?? 0;
+      const { data: perQuestionUsage } = await supabase.rpc('get_ai_usage_for_question', {
+        p_user_id: userId,
+        p_question_id: questionId
       });
+      
+      const currentQuestionUsage = perQuestionUsage || 0;
+      if (currentQuestionUsage >= limitPerQuestion) {
+        return new Response(JSON.stringify({
+          error: `Você já atingiu o limite de ${limitPerQuestion} perguntas por questão para o seu plano.`,
+          limitType: 'per_question',
+          limitReached: true,
+        }), {
+          status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
     }
 
     // Call Groq
@@ -127,7 +146,7 @@ Regras que você NUNCA quebra:
 - Termina sempre com uma frase curta e motivadora, mas variando MUITO o jeito de falar. Exemplos possíveis (use só um por resposta e mude sempre): "Entendeu direitinho?", "Deu pra pegar?", "Tá claro agora?", "Vai nessa que é isso aí", "Você pegou o espírito da coisa", "Agora é só repetir na prova", "Tá na mão", "Bora pra próxima com confiança", "Fixou?", "É isso mesmo".
 - Nunca repita a mesma frase de fechamento em respostas seguidas. Varie bastante para soar humano e diferente toda vez.`;
 
-    const userMessage = `CONTEXTO DA QUESTÃO:
+    const groqUserMessage = `CONTEXTO DA QUESTÃO:
 Enunciado: ${questionText}
 
 Alternativas:
@@ -148,7 +167,7 @@ PERGUNTA DO ALUNO: ${userQuestion}`;
         model: "llama-3.1-8b-instant",
         messages: [
           { role: "system", content: systemPrompt },
-          { role: "user", content: userMessage },
+          { role: "user", content: groqUserMessage },
         ],
         max_tokens: 400,
         temperature: 0.3,
@@ -169,12 +188,12 @@ PERGUNTA DO ALUNO: ${userQuestion}`;
     const aiData = await aiResponse.json();
     const responseText = aiData.choices?.[0]?.message?.content || "Não foi possível obter resposta.";
 
-    // Increment AI questions counter (atomic)
-    const { error: incError } = await supabase.rpc("increment_ai_questions", { p_user_id: userId });
-    if (incError) {
-      console.error("Failed to increment ai_questions_count:", incError);
-    } else {
-      console.log(`AI questions count incremented for user ${userId}`);
+    // Increment usage counters (Atomic & Transactional via RPC)
+    if (!isAdmin) {
+      // 1. Incrementar uso global (segurança diária)
+      await supabase.rpc('increment_ai_questions', { p_user_id: userId });
+      // 2. Incrementar uso por questão
+      await supabase.rpc('increment_ai_usage_for_question', { p_user_id: userId, p_question_id: questionId });
     }
 
     // Save to cache (30 days)

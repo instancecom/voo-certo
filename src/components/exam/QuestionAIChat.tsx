@@ -31,24 +31,51 @@ export function QuestionAIChat({
   correctAnswer,
   explanation,
 }: QuestionAIChatProps) {
-  const { user, profile, refreshProfile } = useAuth();
-  const { canAccessAIChat, aiChatLimit, currentPlan } = usePlan();
+  const { user, profile, refreshProfile, isAdmin } = useAuth();
+  const { canAccessAIChat, aiChatLimitPerQuestion, currentPlan } = usePlan();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [limitReached, setLimitReached] = useState(false);
+  const [questionUsage, setQuestionUsage] = useState<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Remaining messages today
-  const remainingToday = Math.max(0, aiChatLimit - (profile?.ai_questions_count || 0));
+  // Fetch current usage for this question
+  useEffect(() => {
+    if (!user || !questionId || !isOpen) return;
+
+    const fetchUsage = async () => {
+      try {
+        const { data, error } = await supabase.rpc('get_ai_usage_for_question', {
+          p_user_id: user.id,
+          p_question_id: questionId
+        });
+        if (!error && typeof data === 'number') {
+          setQuestionUsage(data);
+          if (data >= aiChatLimitPerQuestion && !isAdmin) {
+            setLimitReached(true);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching question usage:', err);
+      }
+    };
+
+    fetchUsage();
+  }, [user, questionId, isOpen, aiChatLimitPerQuestion, isAdmin]);
+
+  // Remaining messages for THIS question
+  const remainingForQuestion = questionUsage !== null 
+    ? Math.max(0, aiChatLimitPerQuestion - questionUsage)
+    : aiChatLimitPerQuestion;
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   const sendMessage = async () => {
-    if (!input.trim() || isLoading || limitReached || remainingToday <= 0) return;
+    if (!input.trim() || isLoading || (limitReached && !isAdmin)) return;
 
     const userMessage = input.trim();
     setInput('');
@@ -67,11 +94,7 @@ export function QuestionAIChat({
         },
       });
 
-      // Refresh the profile to update the daily count
-      refreshProfile();
-
       if (error) {
-        // Check for FunctionsFetchError with specific status
         const errorBody = (error as any)?.context?.body;
         if (errorBody) {
           try {
@@ -104,11 +127,23 @@ export function QuestionAIChat({
         return;
       }
 
+      // Update local usage count if not cached
+      if (!data.cached && !isAdmin) {
+        setQuestionUsage(prev => (prev || 0) + 1);
+        if ((questionUsage || 0) + 1 >= aiChatLimitPerQuestion) {
+          setLimitReached(true);
+        }
+      }
+
       setMessages(prev => [...prev, {
         role: 'assistant',
         content: data.response,
         cached: data.cached,
       }]);
+      
+      // Still refresh profile for the daily safety cap sync
+      refreshProfile();
+      
     } catch (err) {
       toast.error('Erro ao conectar com a IA. Tente novamente.');
       setMessages(prev => prev.slice(0, -1));
@@ -116,12 +151,6 @@ export function QuestionAIChat({
       setIsLoading(false);
     }
   };
-
-  const SUGGESTED = [
-    'Por que essa é a resposta correta?',
-    'Como isso se aplica na prática?',
-    'Qual a regulamentação relacionada?',
-  ];
 
   if (!user) return null;
 
@@ -145,7 +174,6 @@ export function QuestionAIChat({
         onClick={() => setIsOpen(true)}
         className="flex items-center justify-between w-full sm:w-auto min-w-[320px] px-5 py-3 rounded-2xl bg-gradient-to-r from-primary/5 via-primary/10 to-accent/10 border border-primary/20 hover:border-accent/40 shadow-sm hover:shadow-md transition-all group overflow-hidden relative"
       >
-        {/* Shine Effect */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
         
         <div className="flex items-center gap-3 text-primary group-hover:text-accent transition-colors relative z-10">
@@ -155,12 +183,12 @@ export function QuestionAIChat({
           <span className="text-sm font-bold tracking-tight">Pergunte à IA</span>
         </div>
 
-        {aiChatLimit < 999 && (
+        {!isAdmin && (
           <Badge 
             variant="secondary" 
             className="ml-3 bg-white/80 hover:bg-white text-accent border-accent/20 px-3 py-1 font-bold text-[10px] uppercase tracking-wider relative z-10"
           >
-            {remainingToday} {remainingToday === 1 ? 'msg restando' : 'msgs restando'}
+            {remainingForQuestion} {remainingForQuestion === 1 ? 'msg restando' : 'msgs restando'}
           </Badge>
         )}
       </motion.button>
@@ -173,11 +201,9 @@ export function QuestionAIChat({
             exit={{ opacity: 0, y: 50, scale: 0.95 }}
             className="fixed inset-x-0 bottom-0 z-[100] md:absolute md:inset-auto md:bottom-full md:right-0 md:mb-3 flex flex-col md:block"
           >
-            {/* Backdrop for mobile */}
             <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[-1] md:hidden" onClick={() => setIsOpen(false)} />
 
             <div className="bg-[#F5F7F9] border border-border/40 rounded-t-3xl md:rounded-3xl shadow-2xl flex flex-col h-[85vh] md:h-[500px] md:w-[420px] overflow-hidden">
-              {/* Header */}
               <div className="flex items-center justify-between p-5 bg-white border-b border-border/10 shrink-0 shadow-sm relative z-10">
                 <div className="flex items-center gap-3">
                   <div className="relative">
@@ -190,9 +216,16 @@ export function QuestionAIChat({
                   </div>
                   <div>
                     <h3 className="text-base font-bold text-primary leading-tight">Assistente IA</h3>
-                    <p className="text-xs text-muted-foreground flex items-center gap-1 font-semibold mt-0.5 tracking-wide uppercase">
-                      <Sparkles className="w-3.5 h-3.5 text-accent" /> Sempre Online
-                    </p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <p className="text-[10px] text-muted-foreground flex items-center gap-1 font-semibold tracking-wide uppercase">
+                        <Sparkles className="w-3.5 h-3.5 text-accent" /> Sempre Online
+                      </p>
+                      {!isAdmin && (
+                        <span className="text-[10px] bg-accent/10 text-accent px-1.5 py-0.5 rounded font-bold">
+                          {remainingForQuestion}/{aiChatLimitPerQuestion} para esta questão
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="h-9 w-9 rounded-full hover:bg-muted text-muted-foreground transition-all">
@@ -200,7 +233,6 @@ export function QuestionAIChat({
                 </Button>
               </div>
 
-              {/* Messages Viewport */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages.length === 0 && !limitReached && (
                   <div className="flex flex-col items-center text-center py-6 px-4">
@@ -216,10 +248,10 @@ export function QuestionAIChat({
                     </div>
                     <h4 className="text-base font-bold text-foreground mb-1">Como posso te ajudar hoje?</h4>
                     <p className="text-sm text-muted-foreground mb-6 text-balance">
-                      Tire suas dúvidas sobre essa questão com nossa IA assistente.
+                      Tire suas dúvidas específicas sobre esta questão.
                     </p>
                     <div className="w-full space-y-2">
-                      {['Por que essa é a resposta correta?', 'Como isso se aplica na prática?', 'Qual a regulamentação relacionada?'].map((q, i) => (
+                      {['Por que essa é a resposta correta?', 'Como o erro impacta o voo?', 'Explique a regulamentação.'].map((q, i) => (
                         <button
                           key={i}
                           onClick={() => { setInput(q); }}
@@ -276,14 +308,14 @@ export function QuestionAIChat({
                   </div>
                 )}
 
-                {limitReached && (
+                {limitReached && !isAdmin && (
                   <div className="text-center py-4 space-y-3">
                     <div className="bg-destructive/5 border border-destructive/20 rounded-2xl p-5 mb-2 shadow-sm bg-white text-left">
                       <p className="text-base text-destructive font-bold mb-1">
-                        Limite de perguntas atingido
+                        Limite por questão atingido
                       </p>
                       <p className="text-sm text-muted-foreground mb-4">
-                        Atualize seu plano para continuar conversando com a IA.
+                        Você já enviou {aiChatLimitPerQuestion} perguntas para esta questão. Avance para a próxima questão ou faça um upgrade para limites maiores.
                       </p>
                       <Button asChild className="w-full gap-2 rounded-xl font-bold">
                         <Link to="/premium">
@@ -297,7 +329,6 @@ export function QuestionAIChat({
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Input Area */}
               <div className="p-5 bg-white border-t border-border/10 shrink-0 pb-8 md:pb-6 rounded-b-3xl">
                 <div className="flex gap-3 items-center">
                   <div className="flex-1 relative">
@@ -311,14 +342,14 @@ export function QuestionAIChat({
                           sendMessage();
                         }
                       }}
-                      placeholder={limitReached ? "Limite atingido." : "Mande sua dúvida..."}
+                      placeholder={limitReached && !isAdmin ? "Limite atingido para esta questão." : "Mande sua dúvida..."}
                       className="text-[15px] rounded-2xl border-border/20 shadow-sm bg-muted/30 h-12 pr-12 placeholder:text-muted-foreground/50 focus-visible:ring-2 focus-visible:ring-accent/30 transition-all border-none"
-                      disabled={isLoading || limitReached}
+                      disabled={isLoading || (limitReached && !isAdmin)}
                     />
                     <Button 
                       title="Enviar mensagem"
                       onClick={sendMessage} 
-                      disabled={isLoading || !input.trim() || limitReached} 
+                      disabled={isLoading || !input.trim() || (limitReached && !isAdmin)} 
                       size="icon" 
                       className="absolute right-1.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg shadow-primary/20"
                     >

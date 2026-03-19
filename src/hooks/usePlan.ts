@@ -44,10 +44,17 @@ export function usePlan() {
   const canAccessConquistas = hasAccess('solo');
   const canAccessUnlimitedAI = hasAccess('comandante');
 
-  // AI chat limit per question
-  const aiChatLimit = (() => {
+  // AI chat limit PER QUESTION
+  const aiChatLimitPerQuestion = (() => {
     if (currentPlan === 'comandante') return 15;
     if (currentPlan === 'tripulante') return 5;
+    return 0;
+  })();
+
+  // Security cap (total per day) to prevent scraping
+  const aiChatDailySafetyLimit = (() => {
+    if (currentPlan === 'comandante') return 100;
+    if (currentPlan === 'tripulante') return 30;
     return 0;
   })();
 
@@ -66,7 +73,8 @@ export function usePlan() {
     canAccessGuideContent,
     canAccessConquistas,
     canAccessUnlimitedAI,
-    aiChatLimit,
+    aiChatLimitPerQuestion,
+    aiChatDailySafetyLimit,
   };
 }
 
