@@ -25,6 +25,8 @@ import {
   Map,
   BookOpen,
   ChevronRight,
+  Sparkles,
+  Loader2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -33,7 +35,6 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCategories } from '@/hooks/useExams';
-import { Loader2 } from 'lucide-react';
 
 const PLANS = [
   {
