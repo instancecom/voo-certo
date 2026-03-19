@@ -304,6 +304,7 @@ export function QuestionAIChat({
                     <Input
                       value={input}
                       onChange={e => setInput(e.target.value)}
+                      maxLength={1000}
                       onKeyDown={e => {
                         if (e.key === 'Enter') {
                           e.preventDefault();

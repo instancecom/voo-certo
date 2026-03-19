@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { usePlan } from '@/hooks/usePlan';
+import { PageTransition } from '@/components/PageTransition';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { useAuth } from '@/contexts/AuthContext';
@@ -160,8 +162,6 @@ export default function PremiumPage() {
       }
     } catch (err: any) {
       toast.error(`Erro ao iniciar checkout: ${err.message}`);
-    } finally {
-      // Check if we already redirected (loading would be null if we returned early)
       setLoading(null);
     }
   };
@@ -178,15 +178,15 @@ export default function PremiumPage() {
         return;
       }
     } catch (err: any) {
-      toast.error(`Erro: ${err.message}`);
-    } finally {
+      toast.error(`Erro ao acessar portal: ${err.message}`);
       setLoading(null);
     }
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
+    <PageTransition>
+      <div className="min-h-screen bg-background">
+        <Header />
 
       <main className="pt-24 pb-16">
         <div className="container mx-auto px-4">
@@ -397,9 +397,13 @@ export default function PremiumPage() {
             </div>
             
             <div className="relative space-y-4 max-w-sm">
-              <h3 className="text-3xl font-black text-foreground tracking-tight">Em um instante...</h3>
+              <h3 className="text-3xl font-black text-foreground tracking-tight">
+                {loading === 'manage' ? 'Acessando Portal...' : 'Preparando seu plano...'}
+              </h3>
               <p className="text-muted-foreground font-medium text-lg px-4">
-                Estamos preparando o seu acesso seguro e configurando seu ambiente de elite.
+                {loading === 'manage' 
+                  ? 'Estamos preparando o seu portal de assinante seguro.' 
+                  : 'Configurando seu ambiente de elite para sua aprovação na ANAC.'}
               </p>
               
               <div className="flex items-center justify-center gap-2 pt-6">
@@ -420,7 +424,8 @@ export default function PremiumPage() {
         )}
       </AnimatePresence>
 
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </PageTransition>
   );
 }

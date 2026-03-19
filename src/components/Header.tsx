@@ -1,9 +1,11 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Plane, Menu, X, User, Crown, LogOut, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,7 +20,41 @@ export function Header() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, profile, isAdmin, signOut } = useAuth();
+  const queryClient = useQueryClient();
   const isHome = location.pathname === '/';
+
+  const prefetchCategories = () => {
+    queryClient.prefetchQuery({
+      queryKey: ['categories'],
+      queryFn: async () => {
+        const { data, error } = await supabase.from('categories').select('*').eq('is_active', true);
+        if (error) throw error;
+        return data;
+      },
+    });
+  };
+
+  const prefetchMicrocourses = () => {
+    queryClient.prefetchQuery({
+      queryKey: ['microcourses'],
+      queryFn: async () => {
+        const { data, error } = await supabase.from('microcourses').select('*').eq('is_active', true).order('display_order');
+        if (error) throw error;
+        return data;
+      },
+    });
+  };
+
+  const prefetchCareerGuides = () => {
+    queryClient.prefetchQuery({
+      queryKey: ['career-guides'],
+      queryFn: async () => {
+        const { data, error } = await supabase.from('career_guides').select('*').eq('is_active', true).order('display_order');
+        if (error) throw error;
+        return data;
+      },
+    });
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -60,6 +96,7 @@ export function Header() {
           <nav className="hidden md:flex items-center gap-6">
             <Link
               to="/simulados"
+              onMouseEnter={prefetchCategories}
               className={`text-sm font-medium transition-all duration-300 hover:text-accent ${
                 isHome && !isScrolled ? 'text-primary-foreground/80' : 'text-muted-foreground'
               }`}
@@ -68,6 +105,7 @@ export function Header() {
             </Link>
             <Link
               to="/guia-carreira"
+              onMouseEnter={prefetchCareerGuides}
               className={`text-sm font-medium transition-all duration-300 hover:text-accent ${
                 isHome && !isScrolled ? 'text-primary-foreground/80' : 'text-muted-foreground'
               }`}
@@ -76,6 +114,7 @@ export function Header() {
             </Link>
             <Link
               to="/microcursos"
+              onMouseEnter={prefetchMicrocourses}
               className={`text-sm font-medium transition-all duration-300 hover:text-accent ${
                 isHome && !isScrolled ? 'text-primary-foreground/80' : 'text-muted-foreground'
               }`}

@@ -14,6 +14,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePlan } from '@/hooks/usePlan';
+import { PageTransition } from '@/components/PageTransition';
 
 interface Microcourse {
   id: string;
@@ -115,8 +116,9 @@ export default function MicrocoursesPage() {
   const getLessons = (modId: string) => (allLessons || []).filter(l => l.module_id === modId);
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
+    <PageTransition>
+      <div className="min-h-screen bg-background">
+        <Header />
       <main className="pt-24 pb-16">
         <div className="container mx-auto px-4">
           {/* Hero */}
@@ -168,7 +170,19 @@ export default function MicrocoursesPage() {
           {/* Course Grid - Netflix Style */}
           {isLoading ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
-              {Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="aspect-[2/3] rounded-xl" />)}
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                <div key={i} className="aspect-[2/3] rounded-xl bg-card border border-border p-4 flex flex-col justify-end space-y-2">
+                  <Skeleton className="w-full h-full absolute inset-0 rounded-xl" />
+                  <div className="relative z-10 space-y-2">
+                    <Skeleton className="w-full h-4" />
+                    <Skeleton className="w-2/3 h-4" />
+                    <div className="flex gap-2">
+                      <Skeleton className="w-8 h-3" />
+                      <Skeleton className="w-8 h-3" />
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           ) : filtered.length === 0 ? (
             <div className="text-center py-16">
@@ -245,7 +259,8 @@ export default function MicrocoursesPage() {
           )}
         </div>
       </main>
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </PageTransition>
   );
 }

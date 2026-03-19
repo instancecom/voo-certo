@@ -12,6 +12,9 @@ interface Profile {
   premium_expires_at: string | null;
   plan_type: string;
   plan_expires_at: string | null;
+  ai_questions_count?: number;
+  created_at: string;
+  updated_at: string;
 }
 
 interface AuthContextType {
