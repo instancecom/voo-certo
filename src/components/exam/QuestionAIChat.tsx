@@ -133,20 +133,31 @@ export function QuestionAIChat({
 
   return (
     <div className="relative">
-      <button
+      <motion.button
+        whileHover={{ scale: 1.02, translateY: -2 }}
+        whileTap={{ scale: 0.98 }}
         onClick={() => setIsOpen(true)}
-        className="flex items-center justify-between w-full sm:w-auto min-w-[320px] px-4 py-2.5 bg-transparent border border-slate-300 rounded-full hover:bg-slate-50/50 transition-colors group"
+        className="flex items-center justify-between w-full sm:w-auto min-w-[320px] px-5 py-3 rounded-2xl bg-gradient-to-r from-primary/5 via-primary/10 to-accent/10 border border-primary/20 hover:border-accent/40 shadow-sm hover:shadow-md transition-all group overflow-hidden relative"
       >
-        <div className="flex items-center gap-2 text-primary/80 group-hover:text-primary transition-colors">
-          <MessageCircle className="w-4 h-4" />
-          <span className="text-sm font-medium">Pergunte à IA sobre essa questão</span>
-        </div>
-        {aiChatLimit < 999 && (
-          <div className="ml-3 bg-slate-200 text-slate-700 text-xs font-semibold px-2.5 py-0.5 rounded-full">
-            {Math.max(0, aiChatLimit - messages.filter(m => m.role === 'user').length)} msgs
+        {/* Shine Effect */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+        
+        <div className="flex items-center gap-3 text-primary group-hover:text-accent transition-colors relative z-10">
+          <div className="bg-white p-1.5 rounded-full shadow-sm group-hover:shadow group-hover:rotate-12 transition-all">
+            <Sparkles className="w-4 h-4 text-accent animate-pulse" />
           </div>
+          <span className="text-sm font-bold tracking-tight">Pergunte ao Instrutor IA</span>
+        </div>
+
+        {aiChatLimit < 999 && (
+          <Badge 
+            variant="secondary" 
+            className="ml-3 bg-white/80 hover:bg-white text-accent border-accent/20 px-3 py-1 font-bold text-[10px] uppercase tracking-wider relative z-10"
+          >
+            {Math.max(0, aiChatLimit - messages.filter(m => m.role === 'user').length)} msgs
+          </Badge>
         )}
-      </button>
+      </motion.button>
 
       <AnimatePresence>
         {isOpen && (
