@@ -3,6 +3,8 @@ import { CheckCircle2, XCircle, Trophy, AlertTriangle, Home, RotateCcw, Share2 }
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { useEffect } from 'react';
+import { useInsigniaSync } from '@/hooks/useInsigniaSync';
 import { BLOCKS } from './ExamModeSelector';
 
 interface BlockResult {
@@ -37,7 +39,13 @@ export function ExamResults({
   onRetry,
   onHome,
 }: ExamResultsProps) {
+  const { syncBadges } = useInsigniaSync();
   const overallPercentage = (totalCorrect / totalQuestions) * 100;
+
+  // Sync badges on result show
+  useEffect(() => {
+    syncBadges();
+  }, []);
 
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
