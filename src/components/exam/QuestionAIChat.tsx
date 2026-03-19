@@ -146,7 +146,7 @@ export function QuestionAIChat({
           <div className="bg-white p-1.5 rounded-full shadow-sm group-hover:shadow group-hover:rotate-12 transition-all">
             <Sparkles className="w-4 h-4 text-accent animate-pulse" />
           </div>
-          <span className="text-sm font-bold tracking-tight">Pergunte ao Instrutor IA</span>
+          <span className="text-sm font-bold tracking-tight">Pergunte à IA</span>
         </div>
 
         {aiChatLimit < 999 && (
@@ -183,9 +183,9 @@ export function QuestionAIChat({
                     <div className="absolute bottom-0.5 right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
                   </div>
                   <div>
-                    <h3 className="text-base font-bold text-primary leading-tight">Instrutor IA</h3>
-                    <p className="text-xs text-muted-foreground flex items-center gap-1 font-semibold mt-0.5 tracking-wide">
-                      <Sparkles className="w-3.5 h-3.5 text-accent" /> ESPECIALISTA ANAC
+                    <h3 className="text-base font-bold text-primary leading-tight">Assistente IA</h3>
+                    <p className="text-xs text-muted-foreground flex items-center gap-1 font-semibold mt-0.5 tracking-wide uppercase">
+                      <Sparkles className="w-3.5 h-3.5 text-accent" /> Sempre Online
                     </p>
                   </div>
                 </div>
@@ -208,9 +208,9 @@ export function QuestionAIChat({
                         <Sparkles className="w-3 h-3 text-white" />
                       </div>
                     </div>
-                    <h4 className="text-base font-bold text-foreground mb-1">Como posso te ajudar comandante?</h4>
-                    <p className="text-sm text-muted-foreground mb-6">
-                      Tire suas dúvidas sobre essa questão com seu instrutor IA focado no padrão ANAC.
+                    <h4 className="text-base font-bold text-foreground mb-1">Como posso te ajudar hoje?</h4>
+                    <p className="text-sm text-muted-foreground mb-6 text-balance">
+                      Tire suas dúvidas sobre essa questão com nossa IA assistente.
                     </p>
                     <div className="w-full space-y-2">
                       {['Por que essa é a resposta correta?', 'Como isso se aplica na prática?', 'Qual a regulamentação relacionada?'].map((q, i) => (
@@ -237,7 +237,7 @@ export function QuestionAIChat({
                         />
                         <div className="bg-white border border-accent/20 px-4 py-3 rounded-2xl rounded-tl-sm text-[15px] text-foreground shadow-sm">
                           <div className="flex items-center gap-1.5 mb-1.5">
-                            <span className="text-xs text-primary font-bold">Instrutor</span>
+                            <span className="text-xs text-primary font-bold">Assistente</span>
                             {msg.cached && (
                               <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 bg-muted text-muted-foreground font-normal gap-0.5 border-none">
                                 <Clock className="w-2.5 h-2.5" /> Em cache
@@ -277,7 +277,7 @@ export function QuestionAIChat({
                         Limite de perguntas atingido
                       </p>
                       <p className="text-sm text-muted-foreground mb-4">
-                        Atualize seu plano para continuar perguntando ao Instrutor IA.
+                        Atualize seu plano para continuar conversando com a IA.
                       </p>
                       <Button asChild className="w-full gap-2 rounded-xl font-bold">
                         <Link to="/premium">
