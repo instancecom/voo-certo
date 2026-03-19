@@ -151,12 +151,17 @@ export default function PremiumPage() {
         body.promotionCodeId = appliedCoupon.stripe_promotion_code_id;
       }
       const { data, error } = await supabase.functions.invoke('create-checkout', { body });
+      if (error) throw error;
+      
       if (data?.url) {
         window.location.href = data.url;
+        // Do NOT set loading to null here - keep overlay until page redirects
+        return;
       }
     } catch (err: any) {
       toast.error(`Erro ao iniciar checkout: ${err.message}`);
     } finally {
+      // Check if we already redirected (loading would be null if we returned early)
       setLoading(null);
     }
   };
@@ -166,8 +171,11 @@ export default function PremiumPage() {
     try {
       const { data, error } = await supabase.functions.invoke('customer-portal');
       if (error) throw error;
+      
       if (data?.url) {
         window.location.href = data.url;
+        // Keep overlay
+        return;
       }
     } catch (err: any) {
       toast.error(`Erro: ${err.message}`);
