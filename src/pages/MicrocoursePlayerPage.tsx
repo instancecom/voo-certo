@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { VideoPlayer } from '@/components/VideoPlayer';
+import { MicrocourseLanding } from '@/components/MicrocourseLanding';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePlan } from '@/hooks/usePlan';
@@ -270,6 +271,16 @@ export default function MicrocoursePlayerPage() {
     </div>
   );
 
+  if (!canAccessMicrocursos) {
+    return (
+      <MicrocourseLanding 
+        course={course} 
+        modules={modules || []} 
+        getLessons={getLessons} 
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background flex">
       {/* Desktop Sidebar */}
@@ -327,27 +338,7 @@ export default function MicrocoursePlayerPage() {
         {/* Video area */}
         <div className="flex-1 flex flex-col">
           <div className="w-full max-w-5xl mx-auto px-4 pt-4">
-            {!canAccessMicrocursos && selectedLesson ? (
-              <div className="aspect-video bg-card border border-border rounded-xl flex items-center justify-center p-6 relative overflow-hidden shadow-sm">
-                <div className="absolute inset-0 bg-primary/5 backdrop-blur-sm z-0" />
-                <div className="relative z-10 text-center max-w-md bg-card/90 p-8 rounded-2xl shadow-xl border border-accent/20">
-                  <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4 border border-accent/20">
-                    <Lock className="w-8 h-8 text-accent" />
-                  </div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-2">Acesso Restrito</h3>
-                  <p className="text-sm text-muted-foreground mb-6">
-                    Assine o plano <strong className="text-foreground">Tripulante</strong> ou superior para assistir a todas as aulas e baixar os materiais complementares.
-                  </p>
-                  <Button
-                    size="lg"
-                    className="w-full font-bold bg-accent hover:bg-accent/90 text-accent-foreground shadow-md shadow-accent/20"
-                    onClick={() => navigate('/premium')}
-                  >
-                    Assinar Agora
-                  </Button>
-                </div>
-              </div>
-            ) : selectedLesson && currentEmbedUrl ? (
+            {selectedLesson && currentEmbedUrl ? (
               <VideoPlayer
                 videoUrl={currentEmbedUrl}
                 thumbnailUrl={currentVideoId ? `https://img.youtube.com/vi/${currentVideoId}/hqdefault.jpg` : null}
