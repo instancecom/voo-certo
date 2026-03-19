@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
 import { Check, Crown, Plane, Zap, Star, Loader2, ExternalLink, Tag, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -368,6 +368,42 @@ export default function PremiumPage() {
           </motion.div>
         </div>
       </main>
+
+      {/* Checkout Loading Overlay */}
+      <AnimatePresence>
+        {loading && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-background/80 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center"
+          >
+            <div className="relative mb-8">
+              <div className="absolute inset-0 bg-accent/20 rounded-full blur-2xl animate-pulse" />
+              <div className="relative w-24 h-24 rounded-3xl bg-card border border-accent/20 flex items-center justify-center shadow-2xl">
+                <Loader2 className="w-10 h-10 text-accent animate-spin" />
+              </div>
+            </div>
+            
+            <div className="space-y-3 max-w-sm">
+              <h3 className="text-2xl font-black text-foreground tracking-tight">Em um instante...</h3>
+              <p className="text-muted-foreground font-medium">
+                Estamos preparando o seu acesso seguro e configurando seu ambiente de elite.
+              </p>
+              <div className="flex items-center justify-center gap-2 pt-4">
+                <div className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce" style={{ animationDelay: '0ms' }} />
+                <div className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce" style={{ animationDelay: '150ms' }} />
+                <div className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce" style={{ animationDelay: '300ms' }} />
+              </div>
+            </div>
+
+            <div className="absolute bottom-12 flex items-center gap-2 opacity-40">
+              <Check className="w-4 h-4 text-success" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Pagamento Seguro via Stripe</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <Footer />
     </div>
