@@ -172,25 +172,25 @@ export function QuestionAIChat({
 
             <div className="bg-[#F5F7F9] border border-border/40 rounded-t-3xl md:rounded-3xl shadow-2xl flex flex-col h-[85vh] md:h-[500px] md:w-[420px] overflow-hidden">
               {/* Header */}
-              <div className="flex items-center justify-between p-4 bg-white border-b border-border/30 shrink-0 shadow-sm relative z-10">
+              <div className="flex items-center justify-between p-5 bg-white border-b border-border/10 shrink-0 shadow-sm relative z-10">
                 <div className="flex items-center gap-3">
                   <div className="relative">
                     <img 
                       src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=150&h=150" 
                       alt="Instrutor" 
-                      className="w-10 h-10 rounded-full object-cover border-2 border-accent" 
+                      className="w-11 h-11 rounded-full object-cover border-2 border-accent" 
                     />
-                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                    <div className="absolute bottom-0.5 right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
                   </div>
                   <div>
-                    <h3 className="text-[15px] font-bold text-foreground leading-tight">Instrutor IA</h3>
-                    <p className="text-xs text-muted-foreground flex items-center gap-1 font-medium mt-0.5">
-                      <Sparkles className="w-3 h-3 text-accent" /> Especialista ANAC
+                    <h3 className="text-base font-bold text-primary leading-tight">Instrutor IA</h3>
+                    <p className="text-xs text-muted-foreground flex items-center gap-1 font-semibold mt-0.5 tracking-wide">
+                      <Sparkles className="w-3.5 h-3.5 text-accent" /> ESPECIALISTA ANAC
                     </p>
                   </div>
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="h-8 w-8 rounded-full hover:bg-muted text-muted-foreground">
-                  <X className="w-5 h-5" />
+                <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="h-9 w-9 rounded-full hover:bg-muted text-muted-foreground transition-all">
+                  <X className="w-6 h-6" />
                 </Button>
               </div>
 
@@ -292,16 +292,9 @@ export function QuestionAIChat({
               </div>
 
               {/* Input Area */}
-              <div className="p-4 bg-[#F5F7F9] border-t border-border/30 shrink-0 pb-6 md:pb-4 rounded-b-3xl">
-                <div className="flex gap-3 items-start">
-                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border-2 border-accent shrink-0 shadow-sm">
-                    <img 
-                      src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=150&h=150" 
-                      alt="Instrutor" 
-                      className="w-full h-full object-cover" 
-                    />
-                  </div>
-                  <div className="flex-1 flex flex-col gap-2">
+              <div className="p-5 bg-white border-t border-border/10 shrink-0 pb-8 md:pb-6 rounded-b-3xl">
+                <div className="flex gap-3 items-center">
+                  <div className="flex-1 relative">
                     <Input
                       value={input}
                       onChange={e => setInput(e.target.value)}
@@ -311,30 +304,19 @@ export function QuestionAIChat({
                           sendMessage();
                         }
                       }}
-                      placeholder={limitReached ? "Limite atingido. Atualize seu plano." : "Digite sua dúvida sobre essa questão..."}
-                      className="text-sm rounded-2xl border-border/30 shadow-sm bg-white min-h-[44px] placeholder:text-muted-foreground/50 focus-visible:ring-1 focus-visible:ring-accent"
+                      placeholder={limitReached ? "Limite atingido." : "Mande sua dúvida..."}
+                      className="text-[15px] rounded-2xl border-border/20 shadow-sm bg-muted/30 h-12 pr-12 placeholder:text-muted-foreground/50 focus-visible:ring-2 focus-visible:ring-accent/30 transition-all border-none"
                       disabled={isLoading || limitReached}
                     />
-                    <div className="flex items-center justify-between px-1">
-                      <Button 
-                        title="Anexar arquivo/imagem"
-                        type="button" 
-                        variant="ghost" 
-                        size="icon" 
-                        className="w-8 h-8 rounded-full bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary transition-all duration-200 shrink-0"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </Button>
-                      <Button 
-                        title="Enviar mensagem"
-                        onClick={sendMessage} 
-                        disabled={isLoading || !input.trim() || limitReached} 
-                        size="icon" 
-                        className="w-8 h-8 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200 shrink-0 shadow-sm"
-                      >
-                        <ArrowUp className="w-4 h-4" />
-                      </Button>
-                    </div>
+                    <Button 
+                      title="Enviar mensagem"
+                      onClick={sendMessage} 
+                      disabled={isLoading || !input.trim() || limitReached} 
+                      size="icon" 
+                      className="absolute right-1.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg shadow-primary/20"
+                    >
+                      {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <ArrowUp className="w-5 h-5" />}
+                    </Button>
                   </div>
                 </div>
               </div>
