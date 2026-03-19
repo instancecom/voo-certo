@@ -22,6 +22,7 @@ import PremiumPage from "./pages/PremiumPage";
 import ProfessionExamPage from "./pages/ProfessionExamPage";
 import ImportQuestoesPage from "./pages/ImportQuestoesPage";
 import NotFound from "./pages/NotFound";
+import { AdminGuard } from "./components/AdminGuard";
 
 const queryClient = new QueryClient();
 
@@ -40,8 +41,12 @@ const App = () => (
             <Route path="/simulado-anac" element={<ANACExamPage />} />
             <Route path="/simulado/:examId" element={<ExamPage />} />
             <Route path="/resultado/:resultId" element={<ResultPage />} />
-            <Route path="/admin" element={<AdminPage />} />
-            <Route path="/admin/importar-questoes" element={<ImportQuestoesPage />} />
+            {/* Protected Admin Routes */}
+            <Route element={<AdminGuard />}>
+              <Route path="/admin" element={<AdminPage />} />
+              <Route path="/admin/importar-questoes" element={<ImportQuestoesPage />} />
+            </Route>
+
             <Route path="/meu-progresso" element={<ProgressPage />} />
             <Route path="/conquistas" element={<ConquistasPage />} />
             <Route path="/guia-carreira" element={<GuiaCarreiraPage />} />
