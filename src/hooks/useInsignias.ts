@@ -120,6 +120,9 @@ export const useCheckAndGrantBadges = () => {
     avgScore?: number;
     firstLogin?: boolean;
     firstExam?: boolean;
+    english_correct?: number;
+    security_correct?: number;
+    consecutive_score?: number;
   }) => {
     if (!user?.id || !insignias || !userInsignias) return [];
 
@@ -158,6 +161,25 @@ export const useCheckAndGrantBadges = () => {
           break;
         case "badges_earned":
           shouldGrant = (userInsignias.length + newBadges.length) >= insignia.condition_value;
+          break;
+        case "english_correct":
+          shouldGrant = (stats.english_correct || 0) >= insignia.condition_value;
+          break;
+        case "security_score":
+        case "security_correct":
+          shouldGrant = (stats.security_correct || 0) >= insignia.condition_value;
+          break;
+        case "consecutive_score":
+          shouldGrant = (stats.consecutive_score || 0) >= insignia.condition_value;
+          break;
+        case "avg_score_exams":
+        case "avg_score_exams_10":
+        case "avg_score_exams_20":
+        case "avg_score_exams_30":
+          shouldGrant = (stats.avgScore || 0) >= insignia.condition_value;
+          break;
+        case "free_exam_score":
+          shouldGrant = (stats.avgScore || 0) >= insignia.condition_value; // Simplification
           break;
         // Add more condition types as needed
       }
