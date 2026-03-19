@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Plane, Menu, X, User, Crown, LogOut, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   DropdownMenu,
@@ -14,10 +14,19 @@ import {
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, profile, isAdmin, signOut } = useAuth();
   const isHome = location.pathname === '/';
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleSignOut = async () => {
     await signOut();
@@ -26,8 +35,10 @@ export function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 ${
-        isHome ? 'bg-transparent' : 'bg-card/80 backdrop-blur-md border-b border-border'
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isHome && !isScrolled 
+          ? 'bg-transparent py-2' 
+          : 'bg-white/90 dark:bg-card/90 backdrop-blur-md border-b border-border shadow-sm py-0'
       }`}
     >
       <div className="container mx-auto px-4">
@@ -38,7 +49,9 @@ export function Header() {
               <Plane className="w-8 h-8 text-accent transition-transform group-hover:rotate-12" />
               <div className="absolute inset-0 bg-accent/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
-            <span className={`text-xl font-bold ${isHome ? 'text-primary-foreground' : 'text-foreground'}`}>
+            <span className={`text-xl font-bold transition-colors duration-300 ${
+              isHome && !isScrolled ? 'text-primary-foreground' : 'text-foreground'
+            }`}>
               Voo Certo
             </span>
           </Link>
@@ -47,24 +60,24 @@ export function Header() {
           <nav className="hidden md:flex items-center gap-6">
             <Link
               to="/simulados"
-              className={`text-sm font-medium transition-colors hover:text-accent ${
-                isHome ? 'text-primary-foreground/80' : 'text-muted-foreground'
+              className={`text-sm font-medium transition-all duration-300 hover:text-accent ${
+                isHome && !isScrolled ? 'text-primary-foreground/80' : 'text-muted-foreground'
               }`}
             >
               Simulados
             </Link>
             <Link
               to="/guia-carreira"
-              className={`text-sm font-medium transition-colors hover:text-accent ${
-                isHome ? 'text-primary-foreground/80' : 'text-muted-foreground'
+              className={`text-sm font-medium transition-all duration-300 hover:text-accent ${
+                isHome && !isScrolled ? 'text-primary-foreground/80' : 'text-muted-foreground'
               }`}
             >
               Guia de Carreira
             </Link>
             <Link
               to="/microcursos"
-              className={`text-sm font-medium transition-colors hover:text-accent ${
-                isHome ? 'text-primary-foreground/80' : 'text-muted-foreground'
+              className={`text-sm font-medium transition-all duration-300 hover:text-accent ${
+                isHome && !isScrolled ? 'text-primary-foreground/80' : 'text-muted-foreground'
               }`}
             >
               Microcursos
@@ -73,24 +86,24 @@ export function Header() {
               <>
                 <Link
                   to="/conquistas"
-                  className={`text-sm font-medium transition-colors hover:text-accent ${
-                    isHome ? 'text-primary-foreground/80' : 'text-muted-foreground'
+                  className={`text-sm font-medium transition-all duration-300 hover:text-accent ${
+                    isHome && !isScrolled ? 'text-primary-foreground/80' : 'text-muted-foreground'
                   }`}
                 >
                   Conquistas
                 </Link>
                 <Link
                   to="/meu-progresso"
-                  className={`text-sm font-medium transition-colors hover:text-accent ${
-                    isHome ? 'text-primary-foreground/80' : 'text-muted-foreground'
+                  className={`text-sm font-medium transition-all duration-300 hover:text-accent ${
+                    isHome && !isScrolled ? 'text-primary-foreground/80' : 'text-muted-foreground'
                   }`}
                 >
                   Progresso
                 </Link>
                 <Link
                   to="/curriculo"
-                  className={`text-sm font-medium transition-colors hover:text-accent ${
-                    isHome ? 'text-primary-foreground/80' : 'text-muted-foreground'
+                  className={`text-sm font-medium transition-all duration-300 hover:text-accent ${
+                    isHome && !isScrolled ? 'text-primary-foreground/80' : 'text-muted-foreground'
                   }`}
                 >
                   Currículo
@@ -105,7 +118,7 @@ export function Header() {
               <>
                 {isAdmin && (
                   <Button
-                    variant={isHome ? 'glass' : 'ghost'}
+                    variant={isHome && !isScrolled ? 'glass' : 'ghost'}
                     size="sm"
                     asChild
                   >
@@ -118,7 +131,7 @@ export function Header() {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
-                      variant={isHome ? 'glass' : 'outline'}
+                      variant={isHome && !isScrolled ? 'glass' : 'outline'}
                       size="sm"
                       className="flex items-center gap-2"
                     >
@@ -158,7 +171,7 @@ export function Header() {
             ) : (
               <>
                 <Button
-                  variant={isHome ? 'glass' : 'ghost'}
+                  variant={isHome && !isScrolled ? 'glass' : 'ghost'}
                   size="sm"
                   asChild
                 >
@@ -177,12 +190,12 @@ export function Header() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2"
+            className="md:hidden p-2 transition-colors"
           >
             {isMenuOpen ? (
-              <X className={`w-6 h-6 ${isHome ? 'text-primary-foreground' : 'text-foreground'}`} />
+              <X className={`w-6 h-6 ${isHome && !isScrolled ? 'text-primary-foreground' : 'text-foreground'}`} />
             ) : (
-              <Menu className={`w-6 h-6 ${isHome ? 'text-primary-foreground' : 'text-foreground'}`} />
+              <Menu className={`w-6 h-6 ${isHome && !isScrolled ? 'text-primary-foreground' : 'text-foreground'}`} />
             )}
           </button>
         </div>
