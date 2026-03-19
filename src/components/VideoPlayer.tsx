@@ -81,21 +81,35 @@ export function VideoPlayer({ videoUrl, thumbnailUrl, title, hasAccess, autoplay
 
   return (
     <AspectRatio ratio={16 / 9}>
-      <div className="w-full h-full rounded-xl overflow-hidden relative bg-black shadow-lg">
+      <div className="w-full h-full rounded-xl overflow-hidden relative bg-black shadow-lg group/player">
         {isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/60 z-10">
+          <div className="absolute inset-0 flex items-center justify-center bg-black/60 z-10 transition-opacity">
             <Loader2 className="w-8 h-8 text-accent animate-spin" />
           </div>
         )}
+        
+        {/* Anti-YouTube Click Overlays */}
+        {/* Top area - hides title and share */}
+        <div className="absolute top-0 left-0 right-0 h-[60px] z-20 pointer-events-auto" />
+        
+        {/* Bottom right - hides YouTube logo */}
+        <div className="absolute bottom-0 right-0 w-[120px] h-[50px] z-20 pointer-events-auto" />
+        
+        {/* Top left - hides channel avatar */}
+        <div className="absolute top-0 left-0 w-[80px] h-[80px] z-20 pointer-events-auto" />
+
         <iframe
           ref={iframeRef}
-          src={videoUrl}
-          className="w-full h-full"
+          src={`${videoUrl}${videoUrl.includes('?') ? '&' : '?'}iv_load_policy=3&modestbranding=1&rel=0&autohide=1&showinfo=0`}
+          className="w-full h-full relative z-0"
           allowFullScreen
           allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
           title={title}
           onLoad={() => setIsLoading(false)}
         />
+        
+        {/* Subtle protection indicator on hover (optional, but keep it clean) */}
+        <div className="absolute inset-0 pointer-events-none border-2 border-transparent group-hover/player:border-accent/10 transition-colors rounded-xl" />
       </div>
     </AspectRatio>
   );

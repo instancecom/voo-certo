@@ -37,7 +37,7 @@ function extractYouTubeId(url: string | null): string | null {
 }
 
 function getYouTubeEmbedUrl(videoId: string): string {
-  return `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`;
+  return `https://www.youtube.com/embed/${videoId}`;
 }
 
 export default function MicrocoursePlayerPage() {
