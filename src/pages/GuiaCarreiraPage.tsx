@@ -3,35 +3,31 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useCareerGuides } from '@/hooks/useCareerGuides';
 import { useAuth } from '@/contexts/AuthContext';
-import { usePlan } from '@/hooks/usePlan';
 import {
-  ArrowRight, Plane, Loader2, Lock, BookOpen, Crown,
+  ArrowRight, Plane, Loader2, BookOpen, Crown, Target, Star, Sparkles, Map,
 } from 'lucide-react';
 
 export default function GuiaCarreiraPage() {
   const { data: guides, isLoading } = useCareerGuides();
-  const { user, isPremium, isLoading: authLoading } = useAuth();
-  const { canAccessGuideContent } = usePlan();
+  const { user } = useAuth();
   const navigate = useNavigate();
-
-  // Free users can see guide structure but linked content is locked
-  const hasAccess = true; // Everyone can see the guides list
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
 
-      <main className="pt-16 md:pt-20">
-        {/* Hero Section */}
-        <section className="relative py-20 md:py-32 overflow-hidden bg-primary text-primary-foreground min-h-[400px] flex items-center">
-          <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-20">
-            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[60%] rounded-full bg-accent blur-[120px]" />
-            <div className="absolute bottom-[10%] right-[-5%] w-[30%] h-[50%] rounded-full bg-sky-400 blur-[100px]" />
+      <main className="pt-20">
+        {/* Modern Hero Section with Glassmorphism */}
+        <section className="relative py-24 md:py-36 overflow-hidden bg-[#0A192F]">
+          <div className="absolute inset-0 z-0">
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-accent/20 blur-[120px] rounded-full translate-x-1/2 -translate-y-1/2" />
+            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary/20 blur-[100px] rounded-full -translate-x-1/2 translate-y-1/2" />
+            <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:40px_40px]" />
           </div>
 
           <div className="container mx-auto px-4 relative z-10">
@@ -41,110 +37,110 @@ export default function GuiaCarreiraPage() {
               transition={{ duration: 0.8 }}
               className="max-w-4xl mx-auto text-center"
             >
-              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-8 border border-white/20 animate-float">
-                <Plane className="w-5 h-5 text-accent" />
-                <span className="text-primary-foreground/90 text-sm font-semibold tracking-wide">Guia de Carreira Exclusivo</span>
-              </div>
+              <Badge variant="outline" className="mb-6 px-4 py-1.5 rounded-full border-accent/30 bg-accent/10 text-accent text-[10px] font-black tracking-[0.2em] uppercase">
+                <Map className="w-3 h-3 mr-2" /> Sua Rota de Voo
+              </Badge>
 
-              <h1 className="text-4xl md:text-6xl font-black text-primary-foreground mb-8 leading-[1.1] tracking-tight">
-                Trace sua Rota para o{' '}
-                <span className="text-accent underline decoration-accent/30 underline-offset-8">Sucesso Profissional</span>
+              <h1 className="text-5xl md:text-7xl font-black text-white mb-8 leading-tight tracking-tighter">
+                Trace seu caminho para a <br />
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-accent to-amber-300">Carreira dos Sonhos.</span>
               </h1>
 
-              <p className="text-lg md:text-2xl text-primary-foreground/80 mb-10 max-w-2xl mx-auto font-medium">
-                Siga roteiros estruturados com simulados e microcursos focados na sua aprovação e crescimento.
+              <p className="text-lg md:text-2xl text-white/70 mb-10 max-w-2xl mx-auto font-medium">
+                Guias estruturados passo a passo, do zero até a sua primeira contratação em uma linha aérea.
               </p>
 
-              <div className="flex flex-wrap justify-center gap-3">
-                <Badge variant="secondary" className="px-5 py-2.5 text-xs font-bold uppercase tracking-wider bg-white/10 text-white border-white/20">📚 Etapas</Badge>
-                <Badge variant="secondary" className="px-5 py-2.5 text-xs font-bold uppercase tracking-wider bg-white/10 text-white border-white/20">🎯 Simulados</Badge>
-                <Badge variant="secondary" className="px-5 py-2.5 text-xs font-bold uppercase tracking-wider bg-white/10 text-white border-white/20">🎓 Cursos</Badge>
+              <div className="flex flex-wrap justify-center gap-4">
+                <div className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+                  <Target className="w-5 h-5 text-accent" />
+                  <span className="text-white font-bold text-sm tracking-tight">Metas Claras</span>
+                </div>
+                <div className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+                  <Star className="w-5 h-5 text-accent" />
+                  <span className="text-white font-bold text-sm tracking-tight">Checkpoints</span>
+                </div>
+                <div className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+                  <Sparkles className="w-5 h-5 text-accent" />
+                  <span className="text-white font-bold text-sm tracking-tight">Conteúdo Premium</span>
+                </div>
               </div>
             </motion.div>
           </div>
         </section>
 
-        {/* Guides list - visible to all, content links locked for non-Tripulante+ */}
-        <section className="py-16 md:py-24">
-            <div className="container mx-auto px-4">
-              <div className="max-w-4xl mx-auto">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  className="text-center mb-12"
-                >
-                  <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">Guias Disponíveis</h2>
-                  <p className="text-muted-foreground">Escolha um guia e siga o passo a passo</p>
-                </motion.div>
-
-                {isLoading ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {[1, 2, 3, 4].map(i => (
-                      <Skeleton key={i} className="h-64 w-full rounded-3xl" />
-                    ))}
-                  </div>
-                ) : guides?.length === 0 ? (
-                  <div className="text-center py-20 bg-muted/30 rounded-3xl">
-                    <BookOpen className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
-                    <p className="text-muted-foreground font-medium">Nenhum guia disponível no momento.</p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {guides?.filter(g => g.is_active).map((guide, index) => (
-                      <motion.div
-                        key={guide.id}
-                        initial={{ opacity: 0, y: 25 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: index * 0.1 }}
-                      >
-                        <Card 
-                          className="group h-full flex flex-col hover:border-accent shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-all duration-500 cursor-pointer overflow-hidden border-2 rounded-3xl overflow-hidden" 
-                          onClick={() => navigate(`/guia-carreira/${guide.id}`)}
-                        >
-                          <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-10 transition-opacity">
-                            <Plane className="w-24 h-24 -rotate-45" />
-                          </div>
-                          
-                          <CardHeader className="p-8">
-                            <div className="flex items-center gap-4 mb-4">
-                              <div className="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center group-hover:bg-accent group-hover:text-accent-foreground transition-all duration-500 transform group-hover:rotate-6">
-                                <BookOpen className="w-6 h-6 text-accent group-hover:text-current" />
-                              </div>
-                              <div className="flex-1">
-                                <CardTitle className="text-xl md:text-2xl font-bold transition-colors group-hover:text-accent">
-                                  {guide.title}
-                                </CardTitle>
-                                <Badge className="mt-1 bg-primary/5 text-primary border-primary/20 hover:bg-primary/5">Guia Oficial</Badge>
-                              </div>
-                            </div>
-                            {guide.description && (
-                              <CardDescription className="text-base text-muted-foreground line-clamp-2 md:line-clamp-3">
-                                {guide.description}
-                              </CardDescription>
-                            )}
-                          </CardHeader>
-                          
-                          <div className="mt-auto p-8 pt-0">
-                            <div className="h-[2px] w-full bg-muted mb-6 group-hover:bg-accent/20 transition-colors" />
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm font-bold text-muted-foreground group-hover:text-primary transition-colors flex items-center gap-2">
-                                Começar jornada <ArrowRight className="w-4 h-4" />
-                              </span>
-                              <div className="w-10 h-10 rounded-full border-2 border-muted flex items-center justify-center group-hover:border-accent group-hover:bg-accent group-hover:text-accent-foreground transition-all duration-500">
-                                <ArrowRight className="w-5 h-5" />
-                              </div>
-                            </div>
-                          </div>
-                        </Card>
-                      </motion.div>
-                    ))}
-                  </div>
-                )}
-              </div>
+        {/* Guides Grid */}
+        <section className="py-24 bg-background">
+          <div className="container mx-auto px-4">
+            <div className="max-w-6xl mx-auto text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-black text-foreground mb-4 tracking-tight">Escolha seu Destino</h2>
+              <p className="text-muted-foreground text-lg">Selecione o guia ideal para sua fase atual na aviação.</p>
             </div>
-          </section>
+
+            {isLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+                {[1, 2, 3, 4].map(i => (
+                  <Skeleton key={i} className="h-72 w-full rounded-[2.5rem]" />
+                ))}
+              </div>
+            ) : guides?.length === 0 ? (
+              <div className="text-center py-24 bg-slate-50 rounded-[3rem] border-2 border-dashed border-muted">
+                <BookOpen className="w-20 h-20 text-muted-foreground/20 mx-auto mb-6" />
+                <p className="text-muted-foreground font-bold text-xl">Nenhum guia disponível no momento.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+                {guides?.filter(g => g.is_active).map((guide, index) => (
+                  <motion.div
+                    key={guide.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <Card 
+                      className="group relative h-72 rounded-[2.5rem] overflow-hidden border-2 border-muted hover:border-accent transition-all duration-500 cursor-pointer shadow-sm hover:shadow-2xl hover:shadow-accent/10" 
+                      onClick={() => navigate(`/guia-carreira/${guide.id}`)}
+                    >
+                      {/* Background Decoration */}
+                      <div className="absolute top-0 right-0 p-12 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-700">
+                        <Plane className="w-48 h-48 -rotate-45 transform group-hover:translate-x-4 group-hover:-translate-y-4 transition-transform duration-700" />
+                      </div>
+
+                      <div className="relative h-full flex flex-col p-10 z-10">
+                        <div className="flex items-center gap-5 mb-6">
+                          <div className="w-16 h-16 rounded-[1.25rem] bg-accent/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500 shadow-sm">
+                            <BookOpen className="w-8 h-8 text-accent" />
+                          </div>
+                          <div>
+                            <CardTitle className="text-2xl md:text-3xl font-black tracking-tight group-hover:text-accent transition-colors">
+                              {guide.title}
+                            </CardTitle>
+                            <Badge variant="secondary" className="mt-1.5 bg-primary/5 text-primary-foreground/40 border-0 text-[10px] font-black uppercase tracking-widest">
+                              Guia Oficial Voo Certo
+                            </Badge>
+                          </div>
+                        </div>
+
+                        <CardDescription className="text-lg text-muted-foreground leading-relaxed flex-1 line-clamp-2 md:line-clamp-3">
+                          {guide.description}
+                        </CardDescription>
+
+                        <div className="mt-auto pt-6 flex items-center justify-between">
+                          <span className="text-sm font-black uppercase tracking-[0.1em] text-primary group-hover:translate-x-2 transition-transform duration-500 flex items-center gap-2">
+                            Acessar Guia <ArrowRight className="w-4 h-4" />
+                          </span>
+                          <div className="w-12 h-12 rounded-2xl bg-white border border-muted flex items-center justify-center group-hover:bg-accent group-hover:border-accent group-hover:text-white transition-all duration-500 shadow-sm">
+                            <ArrowRight className="w-6 h-6" />
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
       </main>
 
       <Footer />

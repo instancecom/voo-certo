@@ -31,7 +31,7 @@ export function QuestionAIChat({
   correctAnswer,
   explanation,
 }: QuestionAIChatProps) {
-  const { user } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const { canAccessAIChat, aiChatLimit, currentPlan } = usePlan();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -40,12 +40,15 @@ export function QuestionAIChat({
   const [limitReached, setLimitReached] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Remaining messages today
+  const remainingToday = Math.max(0, aiChatLimit - (profile?.ai_questions_count || 0));
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   const sendMessage = async () => {
-    if (!input.trim() || isLoading || limitReached) return;
+    if (!input.trim() || isLoading || limitReached || remainingToday <= 0) return;
 
     const userMessage = input.trim();
     setInput('');
@@ -63,6 +66,9 @@ export function QuestionAIChat({
           userQuestion: userMessage,
         },
       });
+
+      // Refresh the profile to update the daily count
+      refreshProfile();
 
       if (error) {
         // Check for FunctionsFetchError with specific status
@@ -154,7 +160,7 @@ export function QuestionAIChat({
             variant="secondary" 
             className="ml-3 bg-white/80 hover:bg-white text-accent border-accent/20 px-3 py-1 font-bold text-[10px] uppercase tracking-wider relative z-10"
           >
-            {Math.max(0, aiChatLimit - messages.filter(m => m.role === 'user').length)} msgs
+            {remainingToday} {remainingToday === 1 ? 'msg restando' : 'msgs restando'}
           </Badge>
         )}
       </motion.button>
