@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Play, Pause, Loader2, Lock, Crown, Maximize, Volume2, VolumeX,
-  RotateCcw, Rewind, FastForward
+  RotateCcw, Rewind, FastForward, CheckCircle2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -32,6 +32,8 @@ export function VideoPlayer({ videoUrl, thumbnailUrl, title, hasAccess, autoplay
   const [isMuted, setIsMuted] = useState(false);
   const [volume, setVolume] = useState(100);
   const [showControls, setShowControls] = useState(true);
+  
+  const [isEnded, setIsEnded] = useState(false);
   
   const playerRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -72,7 +74,12 @@ export function VideoPlayer({ videoUrl, thumbnailUrl, title, hasAccess, autoplay
           onStateChange: (event: any) => {
             if (event.data === window.YT.PlayerState.PLAYING) {
               setIsPlaying(true);
+              setIsEnded(false);
               startTracking();
+            } else if (event.data === window.YT.PlayerState.ENDED) {
+              setIsPlaying(false);
+              setIsEnded(true);
+              stopTracking();
             } else {
               setIsPlaying(false);
               stopTracking();
@@ -115,14 +122,25 @@ export function VideoPlayer({ videoUrl, thumbnailUrl, title, hasAccess, autoplay
   };
 
   const togglePlay = () => {
+    if (isEnded) {
+      handleRewatch();
+      return;
+    }
     if (isPlaying) playerRef.current.pauseVideo();
     else playerRef.current.playVideo();
+  };
+
+  const handleRewatch = () => {
+    setIsEnded(false);
+    playerRef.current.seekTo(0);
+    playerRef.current.playVideo();
   };
 
   const handleSeek = (value: number[]) => {
     const time = value[0];
     setCurrentTime(time);
     playerRef.current.seekTo(time);
+    if (isEnded && time < duration) setIsEnded(false);
   };
 
   const toggleMute = () => {
@@ -188,7 +206,7 @@ export function VideoPlayer({ videoUrl, thumbnailUrl, title, hasAccess, autoplay
       <div 
         ref={containerRef}
         className="w-full h-full rounded-2xl overflow-hidden relative bg-black shadow-3xl group/player flex flex-col items-center justify-center"
-        onMouseMove={() => { setShowControls(true); window.clearTimeout((window as any)._player_to); (window as any)._player_to = window.setTimeout(() => isPlaying && setShowControls(false), 3000); }}
+        onMouseMove={() => { setShowControls(true); window.clearTimeout((window as any)._player_to); (window as any)._player_to = window.setTimeout(() => (isPlaying || isEnded) && setShowControls(false), 3000); }}
         onMouseLeave={() => isPlaying && setShowControls(false)}
       >
         {/* The YouTube Player Container */}
@@ -203,6 +221,31 @@ export function VideoPlayer({ videoUrl, thumbnailUrl, title, hasAccess, autoplay
             </div>
           </div>
         )}
+
+        {/* End of Video Overlay (Covers Recommended Videos) */}
+        <AnimatePresence>
+          {isEnded && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 z-50 bg-[#0A192F] flex flex-col items-center justify-center p-8 text-center"
+            >
+              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 pointer-events-none" />
+              <div className="w-20 h-20 rounded-full bg-accent/10 flex items-center justify-center mb-6 border border-accent/20 shadow-2xl">
+                <CheckCircle2 className="w-10 h-10 text-accent" />
+              </div>
+              <h3 className="text-white text-3xl font-black mb-2 tracking-tight">Aula Concluída!</h3>
+              <p className="text-white/40 text-sm mb-10 max-w-xs font-medium italic">Parabéns por chegar ao fim. Você está mais próximo da sua aprovação.</p>
+              
+              <div className="flex gap-4">
+                <Button variant="hero" size="lg" className="rounded-xl px-8" onClick={handleRewatch}>
+                  <RotateCcw className="w-4 h-4 mr-2" /> Reassistir Aula
+                </Button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Global Click Layer (For play/pause) */}
         <div className="absolute inset-0 z-10 cursor-pointer" onClick={togglePlay} />
