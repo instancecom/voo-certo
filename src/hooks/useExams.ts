@@ -39,7 +39,6 @@ export interface DbCategory {
   description: string | null;
   icon: string | null;
   is_active: boolean | null;
-  subcategories?: DbSubcategory[];
 }
 
 export interface DbSubcategory {
@@ -79,7 +78,7 @@ export function useCategories() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('categories')
-        .select('*, subcategories(*)')
+        .select('*')
         .eq('is_active', true);
       
       if (error) throw error;

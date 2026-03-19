@@ -1,439 +1,504 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import {
-  ArrowRight,
-  CheckCircle2,
-  Calendar,
-  Clock,
-  LayoutDashboard,
-  MessageCircle,
-  Play,
-  PlayCircle,
-  Star,
-  Users,
-  Brain,
-  Timer,
-  BarChart3,
-  Monitor,
-  Plane,
-  ArrowUpRight,
-  Trophy,
-  ShieldCheck,
-  Zap,
-  Globe,
-  Map,
-  BookOpen,
-  ChevronRight,
-  Sparkles,
-  Loader2,
-} from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import {
+  Plane, BookOpen, Brain, Users, Clock, Award, ArrowRight, Crown,
+  CheckCircle2, Loader2, Zap, Shield, GraduationCap, BarChart3,
+  MessageCircle, Star, Sparkles, Trophy, Map, FileText, Target,
+  Headphones, Globe, Rocket, Heart, TrendingUp, Play, ChevronRight,
+  BadgeCheck, Lightbulb, Timer, Monitor,
+} from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { useCategories, useSubcategories } from '@/hooks/useExams';
 import { useAuth } from '@/contexts/AuthContext';
-import { useCategories } from '@/hooks/useExams';
+
+import heroAttendant from '@/assets/hero-attendant.jpg';
+import studyDesk from '@/assets/study-desk.jpg';
+import airplaneSunset from '@/assets/airplane-sunset.jpg';
+
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  Plane, BookOpen, Brain, Users,
+};
 
 const PLANS = [
   {
-    id: 'free',
+    id: 'solo',
     name: 'Solo',
-    price: '0',
+    price: 'R$ 19,90',
+    period: '/mês',
     icon: Plane,
+    description: 'Para quem está começando na aviação',
+    features: [
+      'Simulados básicos ilimitados',
+      'Relatórios simplificados',
+      'Guia de carreira',
+      'Microcursos gratuitos',
+    ],
     highlight: false,
-    features: ['Simulados limitados (1/dia)', 'Resumos básicos', 'Suporte via e-mail'],
-    cta: 'Começar Grátis',
+    popular: false,
   },
   {
     id: 'tripulante',
-    name: 'Tripulante+',
-    price: '49,90',
+    name: 'Tripulante',
+    price: 'R$ 39,90',
+    period: '/mês',
     icon: Zap,
+    description: 'O mais escolhido pelos futuros comissários',
+    features: [
+      'Tudo do plano Solo',
+      'Simulados ANAC oficiais',
+      'Chat IA por questão',
+      'Relatórios avançados',
+      'Microcursos exclusivos',
+      'Insígnias especiais',
+    ],
     highlight: true,
-    features: ['Simulados ilimitados', 'Instrutor IA (5 msgs/pergunta)', 'Roadmap de Carreira', 'Microcursos ANAC'],
-    cta: 'Escolher Tripulante+',
+    popular: true,
   },
   {
     id: 'comandante',
     name: 'Comandante',
-    price: '89,90',
-    icon: Trophy,
+    price: 'R$ 79,90',
+    period: '/mês',
+    icon: Crown,
+    description: 'Acesso total para quem quer voar alto',
+    features: [
+      'Tudo do Tripulante',
+      'Chat IA ilimitado',
+      'Certificados personalizados',
+      'Gerador de currículo',
+      'Suporte prioritário',
+      'Acesso antecipado',
+    ],
     highlight: false,
-    features: ['Tudo do Tripulante+', 'IA Ilimitada', 'Consultoria de Currículo', 'Mentoria Mensal'],
-    cta: 'Seja Comandante',
+    popular: false,
   },
 ];
 
 const STEPS = [
-  { 
-    title: 'Seu Diagnóstico', 
-    desc: 'Avalie seu nível atual com nosso primeiro simulado gratuito.', 
-    icon: TargetIcon 
-  },
-  { 
-    title: 'Caminho Guiado', 
-    desc: 'Siga o roadmap personalizado baseado no seu objetivo.', 
-    icon: Map 
-  },
-  { 
-    title: 'Estudo Inteligente', 
-    desc: 'Use nossa IA para entender cada erro cometido.', 
-    icon: Brain 
-  },
-  { 
-    title: 'Aprovação ANAC', 
-    desc: 'Chegue na prova com 100% de confiança e decole.', 
-    icon: CheckCircle2 
-  },
+  { icon: GraduationCap, title: 'Estude com simulados', desc: 'Questões baseadas em provas reais da ANAC, organizadas por matéria.' },
+  { icon: BarChart3, title: 'Acompanhe seu progresso', desc: 'Relatórios detalhados mostram onde você precisa melhorar.' },
+  { icon: Trophy, title: 'Conquiste insígnias', desc: 'Ganhe medalhas conforme avança e prove que está pronto.' },
+  { icon: Award, title: 'Passe na prova', desc: 'Chegue preparado e conquiste sua aprovação na ANAC.' },
 ];
 
-function TargetIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-  );
-}
+const TESTIMONIALS = [
+  { name: 'Carla M.', role: 'Comissária aprovada – GOL', text: 'Os simulados do Voo Certo foram essenciais para minha aprovação. A IA me ajudou a entender cada erro!', stars: 5, avatar: '👩🏻‍✈️' },
+  { name: 'Lucas R.', role: 'Estudante de aviação', text: 'Melhor plataforma de simulados ANAC. O cronômetro e os relatórios fazem toda a diferença.', stars: 5, avatar: '👨🏽‍✈️' },
+  { name: 'Ana P.', role: 'Comissária aprovada – LATAM', text: 'Passei de primeira graças ao Voo Certo. O guia de carreira me deu o caminho completo.', stars: 5, avatar: '👩🏾‍✈️' },
+  { name: 'Pedro S.', role: 'Comissário aprovado – Azul', text: 'A plataforma é incrível! Estudei pelo celular e passei com nota acima de 90%.', stars: 5, avatar: '👨🏻‍✈️' },
+  { name: 'Juliana F.', role: 'Aprovada na ANAC', text: 'Os microcursos são excelentes, aprendi meteorologia de um jeito muito mais fácil.', stars: 5, avatar: '👩🏼‍✈️' },
+  { name: 'Rafael T.', role: 'Comissário em treinamento', text: 'O chat com IA é genial. Cada dúvida era respondida na hora com explicação detalhada.', stars: 5, avatar: '👨🏾‍✈️' },
+];
 
-// Media assets (placeholder paths - using generate_image later if needed, but keeping text-based for now)
-const heroAttendant = "https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=2000";
-const studyDesk = "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=1500";
-const airplaneSunset = "https://images.unsplash.com/photo-1517479149777-5f3b1511d5ad?auto=format&fit=crop&q=80&w=2000";
+const FAQ = [
+  { q: 'O Voo Certo substitui o curso de comissário?', a: 'Não. O Voo Certo é uma plataforma de preparação complementar focada nos simulados ANAC e no guia de carreira. Você ainda precisa fazer o curso em uma escola homologada.' },
+  { q: 'Posso cancelar a qualquer momento?', a: 'Sim! Todos os planos podem ser cancelados quando quiser, sem multa ou burocracia. Você mantém o acesso até o fim do período pago.' },
+  { q: 'As questões são iguais às da prova da ANAC?', a: 'Nossas questões são baseadas em provas anteriores e seguem o padrão ANAC. Cobrimos todas as matérias exigidas com o mesmo nível de dificuldade.' },
+  { q: 'Funciona no celular?', a: 'Sim! A plataforma é 100% responsiva e otimizada para celular. Estude de qualquer lugar, a qualquer hora.' },
+  { q: 'O que é o Chat IA?', a: 'É um assistente inteligente que explica cada questão em detalhe. Quando você erra ou tem dúvida, a IA analisa a questão e dá uma explicação personalizada.' },
+  { q: 'Como funciona o período de teste grátis?', a: 'Você tem 7 dias gratuitos em qualquer plano pago. Se não gostar, cancele antes do fim do trial e não será cobrado.' },
+];
 
-const iconMap: Record<string, any> = {
-  Plane,
-  Monitor,
-  Calendar,
-  Brain,
-  Timer,
-  BarChart3,
-};
+const DIFFERENTIALS = [
+  { icon: Brain, title: 'IA Contextual', desc: 'Cada questão tem um chat com IA que explica a resposta, mostra a lógica e tira suas dúvidas em tempo real.' },
+  { icon: Headphones, title: 'Simulados com Áudio', desc: 'Questões de proficiência linguística com áudio real, simulando o que você vai encontrar na prova.' },
+  { icon: Timer, title: 'Cronômetro Real', desc: 'Simule as condições reais da prova com temporizador por bloco e por prova completa.' },
+  { icon: BarChart3, title: 'Relatórios Inteligentes', desc: 'Veja seu desempenho por matéria, identifique pontos fracos e acompanhe sua evolução.' },
+  { icon: Trophy, title: 'Gamificação', desc: 'Insígnias, conquistas e certificados que motivam e comprovam seu progresso.' },
+  { icon: FileText, title: 'Currículo Aviação', desc: 'Gerador de CV específico para companhias aéreas, com template profissional.' },
+  { icon: Map, title: 'Guia de Carreira', desc: 'Roadmap completo: do curso à contratação, passo a passo com dicas práticas.' },
+  { icon: Monitor, title: '100% Online', desc: 'Estude do celular, tablet ou computador. Acesso 24/7 de qualquer lugar.' },
+];
 
 export default function Index() {
+  const { data: categories, isLoading: loadingCategories } = useCategories();
+  const { data: subcategories, isLoading: loadingSubcategories } = useSubcategories();
   const { user } = useAuth();
-  const { data: categories, isLoading } = useCategories();
+
+  const isLoading = loadingCategories || loadingSubcategories;
 
   const categoriesWithSubs = categories?.map(cat => ({
     ...cat,
-    subcategories: cat.subcategories || []
+    subcategories: subcategories?.filter(s => s.category_id === cat.id) || [],
   })) || [];
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
+    <div className="min-h-screen bg-background">
       <Header />
 
-      {/* ═══════ HERO SECTION ═══════ */}
-      <section className="relative min-h-[90vh] lg:min-h-screen flex items-center pt-24 overflow-hidden bg-[#0A192F]">
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-[10%] right-[-5%] w-[40%] h-[70%] bg-accent/20 blur-[140px] rounded-full animate-pulse" />
-          <div className="absolute bottom-[-10%] left-[-5%] w-[30%] h-[60%] bg-primary/20 blur-[120px] rounded-full" />
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10" />
+      {/* ═══════ HERO ═══════ */}
+      <section className="relative min-h-screen flex items-center overflow-hidden" style={{ background: 'var(--gradient-hero)' }}>
+        {/* Background image overlay */}
+        <div className="absolute inset-0">
+          <img src={heroAttendant} alt="Comissária de bordo" className="w-full h-full object-cover opacity-15" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[hsl(215,55%,15%)] via-[hsl(215,55%,15%/0.9)] to-transparent" />
         </div>
 
-        <div className="container mx-auto px-4 relative z-10 py-20 lg:py-0">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <motion.div 
-              initial={{ opacity: 0, x: -40 }} 
-              animate={{ opacity: 1, x: 0 }} 
-              transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2 }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl mb-10 shadow-lg shadow-black/20"
-              >
-                <div className="flex -space-x-3">
-                  {[1,2,3].map(i => (
-                    <div key={i} className="w-8 h-8 rounded-full border-2 border-[#0A192F] bg-accent/30 flex items-center justify-center text-sm shadow-inner overflow-hidden">
-                      <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="User" />
-                    </div>
-                  ))}
-                </div>
-                <span className="text-xs font-black text-white/90 uppercase tracking-[0.2em] ml-2">Líder em Aprovação ANAC</span>
+        <div className="absolute inset-0 overflow-hidden">
+          <motion.div className="absolute top-1/4 left-1/4 w-64 h-64 bg-accent/10 rounded-full blur-3xl"
+            animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+            transition={{ duration: 8, repeat: Infinity }} />
+          <motion.div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary-foreground/5 rounded-full blur-3xl"
+            animate={{ scale: [1.2, 1, 1.2], opacity: [0.2, 0.4, 0.2] }}
+            transition={{ duration: 10, repeat: Infinity }} />
+        </div>
+
+        <motion.div className="absolute top-20 right-10 md:right-20"
+          animate={{ y: [-10, 10, -10], rotate: [0, 2, 0] }}
+          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}>
+          <Plane className="w-16 h-16 md:w-24 md:h-24 text-accent/30" />
+        </motion.div>
+
+        <div className="container mx-auto px-4 py-32 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
+              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: 'spring' }}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-accent/20 backdrop-blur-sm rounded-full text-accent mb-6">
+                <Sparkles className="w-4 h-4" />
+                <span className="text-sm font-medium">Plataforma #1 de Simulados ANAC</span>
               </motion.div>
 
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-8 leading-[0.9] tracking-tighter">
-                Sua rota segura <br />
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-accent via-amber-300 to-accent animate-gradient-x underline decoration-accent/30 underline-offset-8">para Decolar.</span>
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground mb-6 leading-tight">
+                Sua aprovação na ANAC
+                <span className="block text-accent">começa aqui.</span>
               </h1>
 
-              <p className="text-xl md:text-2xl text-white/70 mb-12 max-w-xl leading-relaxed font-medium">
-                Simulados 100% atualizados, instrutor IA disponível 24/7 e o roadmap definitivo para sua contratação na aviação civil.
+              <p className="text-lg md:text-xl text-primary-foreground/80 mb-4 max-w-xl">
+                Simulados realistas com cronômetro, inteligência artificial que explica cada questão e um guia de carreira completo para te levar do zero até a contratação.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-6">
-                <Button variant="hero" size="xl" className="h-16 px-10 text-lg rounded-[1.25rem] shadow-2xl shadow-accent/20 group relative overflow-hidden" asChild>
+              <p className="text-sm text-accent/80 mb-8 flex items-center gap-2">
+                <BadgeCheck className="w-4 h-4" />
+                Mais de 500 questões baseadas em provas reais da ANAC
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button variant="hero" size="xl" asChild>
                   <Link to={user ? '/simulados' : '/auth'}>
-                    <span className="relative z-10 flex items-center">
-                      Começar Jornada <ArrowRight className="w-6 h-6 ml-3 group-hover:translate-x-2 transition-transform duration-500" />
-                    </span>
-                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+                    Começar Grátis por 7 Dias <ArrowRight className="w-5 h-5 ml-2" />
                   </Link>
                 </Button>
-                <Button variant="glass" size="xl" className="h-16 px-10 text-lg rounded-[1.25rem] border-white/10 hover:bg-white/10 transition-all font-bold group" asChild>
-                  <Link to="/premium" className="flex items-center">
-                    Explorar Planos <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                <Button variant="glass" size="xl" asChild>
+                  <Link to="/premium" className="flex items-center gap-2">
+                    <Crown className="w-5 h-5" /> Ver Planos
                   </Link>
                 </Button>
               </div>
 
-              <div className="flex items-center gap-12 mt-20 pt-12 border-t border-white/5">
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
+                className="flex flex-wrap gap-8 mt-12">
                 {[
-                  { value: '5k+', label: 'Questões' },
-                  { value: '98%', label: 'Satisfação' },
-                  { value: '10k+', label: 'Simulados' },
+                  { value: '500+', label: 'Questões' },
+                  { value: '10+', label: 'Simulados' },
+                  { value: '95%', label: 'Aprovação' },
+                  { value: '24/7', label: 'Acesso' },
                 ].map((stat, i) => (
-                  <div key={i}>
-                    <div className="text-3xl font-black text-white tabular-nums tracking-tighter">{stat.value}</div>
-                    <div className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mt-1">{stat.label}</div>
+                  <div key={i} className="text-center">
+                    <div className="text-3xl md:text-4xl font-bold text-accent">{stat.value}</div>
+                    <div className="text-sm text-primary-foreground/60">{stat.label}</div>
                   </div>
                 ))}
-              </div>
+              </motion.div>
             </motion.div>
 
-            {/* Visual Hero Element */}
-            <div className="lg:col-span-1 hidden lg:block relative perspective-1000">
-              <motion.div
-                initial={{ opacity: 0, rotateY: 20, scale: 0.9, x: 50 }}
-                animate={{ opacity: 1, rotateY: 0, scale: 1, x: 0 }}
-                transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-                className="relative z-10"
-              >
-                <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden border border-white/10 shadow-3xl shadow-black/40 group">
-                  <img src={heroAttendant} alt="Aviation Professional" className="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-110" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A192F]/80 via-transparent to-transparent" />
-                  
-                  {/* Floating Action Badge */}
-                  <div className="absolute bottom-10 left-10 right-10 p-8 rounded-[2rem] bg-white/5 backdrop-blur-2xl border border-white/10 flex items-center justify-between shadow-2xl">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center shadow-lg shadow-accent/40">
-                        <Play className="w-6 h-6 fill-white text-white translate-x-0.5" />
-                      </div>
-                      <div>
-                        <p className="text-white font-black text-lg tracking-tight">Prepare-se</p>
-                        <p className="text-white/50 text-xs font-bold uppercase tracking-widest">Para o Sucesso</p>
-                      </div>
+            {/* Right side - floating cards preview */}
+            <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.3 }}
+              className="hidden lg:block relative">
+              <div className="relative">
+                <img src={studyDesk} alt="Estudando para ANAC" className="rounded-2xl shadow-2xl border border-border/20" />
+                {/* Floating card overlay */}
+                <motion.div className="absolute -bottom-6 -left-6 bg-card/95 backdrop-blur-md rounded-xl p-4 shadow-xl border border-border"
+                  animate={{ y: [-5, 5, -5] }} transition={{ duration: 4, repeat: Infinity }}>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-success/20 flex items-center justify-center">
+                      <CheckCircle2 className="w-5 h-5 text-success" />
                     </div>
-                    <ArrowUpRight className="w-8 h-8 text-accent animate-bounce" />
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">Aprovada!</p>
+                      <p className="text-xs text-muted-foreground">Nota: 94% na ANAC</p>
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            </div>
+                </motion.div>
+                <motion.div className="absolute -top-4 -right-4 bg-card/95 backdrop-blur-md rounded-xl p-4 shadow-xl border border-border"
+                  animate={{ y: [5, -5, 5] }} transition={{ duration: 5, repeat: Infinity }}>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
+                      <Brain className="w-5 h-5 text-accent" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">Chat IA</p>
+                      <p className="text-xs text-muted-foreground">Dúvida resolvida!</p>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+        <motion.div className="absolute bottom-8 left-1/2 -translate-x-1/2"
+          animate={{ y: [0, 10, 0] }} transition={{ duration: 2, repeat: Infinity }}>
+          <div className="w-6 h-10 border-2 border-primary-foreground/30 rounded-full flex justify-center pt-2">
+            <motion.div className="w-1.5 h-1.5 bg-accent rounded-full"
+              animate={{ y: [0, 12, 0] }} transition={{ duration: 2, repeat: Infinity }} />
+          </div>
+        </motion.div>
+      </section>
+
+      {/* ═══════ TRUST BAR ═══════ */}
+      <section className="py-6 bg-card border-b border-border">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-muted-foreground">
+            {[
+              { icon: Shield, text: 'Dados protegidos' },
+              { icon: BadgeCheck, text: 'Questões verificadas' },
+              { icon: Heart, text: 'Satisfação garantida' },
+              { icon: Globe, text: '100% online' },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <item.icon className="w-4 h-4 text-accent" />
+                <span>{item.text}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ═══════ HOW IT WORKS (Timeline Section) ═══════ */}
-      <section className="py-32 bg-background relative overflow-hidden">
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-4xl mx-auto text-center mb-24">
-            <Badge variant="outline" className="mb-6 px-4 py-1.5 rounded-full border-accent/30 bg-accent/5 text-accent text-[10px] font-black tracking-[0.2em] uppercase">
-              <Sparkles className="w-3 h-3 mr-2" /> Metodologia Voo Certo
+      {/* ═══════ PROBLEM / SOLUTION ═══════ */}
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="grid lg:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
+            <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+              <Badge variant="outline" className="mb-4 text-destructive border-destructive/30">
+                <Target className="w-3 h-3 mr-1" /> O problema
+              </Badge>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
+                Estudar para a ANAC não deveria ser tão difícil.
+              </h2>
+              <div className="space-y-4">
+                {[
+                  'Material desatualizado e espalhado pela internet',
+                  'Sem saber se está realmente preparado para a prova',
+                  'Estudar sozinho sem feedback ou direcionamento',
+                  'Não saber o que estudar primeiro (ou por onde começar)',
+                  'Medo de reprovar e perder tempo e dinheiro',
+                ].map((problem, i) => (
+                  <motion.div key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                    className="flex items-start gap-3 p-3 rounded-lg bg-destructive/5 border border-destructive/10">
+                    <div className="w-6 h-6 rounded-full bg-destructive/20 flex items-center justify-center shrink-0 mt-0.5">
+                      <span className="text-destructive text-xs font-bold">✕</span>
+                    </div>
+                    <p className="text-foreground text-sm">{problem}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+              <Badge variant="outline" className="mb-4 text-success border-success/30">
+                <Lightbulb className="w-3 h-3 mr-1" /> A solução
+              </Badge>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
+                O Voo Certo resolve tudo isso <span className="text-accent">em um só lugar.</span>
+              </h2>
+              <div className="space-y-4">
+                {[
+                  'Simulados atualizados baseados em provas reais da ANAC',
+                  'Relatórios mostram exatamente onde você precisa melhorar',
+                  'IA que explica cada questão como um professor particular',
+                  'Guia de carreira com o passo a passo completo',
+                  'Cronômetro real para simular as condições da prova',
+                ].map((solution, i) => (
+                  <motion.div key={i} initial={{ opacity: 0, x: 10 }} whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                    className="flex items-start gap-3 p-3 rounded-lg bg-success/5 border border-success/10">
+                    <div className="w-6 h-6 rounded-full bg-success/20 flex items-center justify-center shrink-0 mt-0.5">
+                      <CheckCircle2 className="w-4 h-4 text-success" />
+                    </div>
+                    <p className="text-foreground text-sm">{solution}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ HOW IT WORKS ═══════ */}
+      <section className="py-20 bg-muted/50">
+        <div className="container mx-auto px-4">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
+            <Badge variant="outline" className="mb-4 text-accent border-accent/30">
+              <Map className="w-3 h-3 mr-1" /> Como funciona
             </Badge>
-            <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight">Do zero à aprovação em 4 passos</h2>
-            <p className="text-xl text-slate-500 font-medium max-w-2xl mx-auto italic leading-relaxed">Simplificamos o complexo para você focar apenas no que cai na prova.</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Do zero à aprovação em 4 passos
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Um caminho claro e estruturado para sua carreira na aviação
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+            {STEPS.map((step, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                className="relative text-center">
+                <div className="w-16 h-16 rounded-2xl bg-accent/10 flex items-center justify-center mx-auto mb-4">
+                  <step.icon className="w-8 h-8 text-accent" />
+                </div>
+                <div className="absolute -top-2 -left-2 w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold flex items-center justify-center md:left-auto md:-top-2 md:right-auto">
+                  {i + 1}
+                </div>
+                <h3 className="font-bold text-foreground mb-2">{step.title}</h3>
+                <p className="text-sm text-muted-foreground">{step.desc}</p>
+              </motion.div>
+            ))}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 max-w-6xl mx-auto relative px-6 md:px-0">
-            {/* Background Line for Desktop */}
-            <div className="hidden md:block absolute top-[4.5rem] left-[10%] right-[10%] h-px bg-slate-100 dash-border" />
-            
-            {STEPS.map((step, i) => (
-              <motion.div 
-                key={i} 
-                initial={{ opacity: 0, y: 30 }} 
-                whileInView={{ opacity: 1, y: 0 }} 
-                viewport={{ once: true }} 
-                transition={{ delay: i * 0.15, duration: 0.6 }}
-                className="relative text-center group"
-              >
-                <div className="w-24 h-24 rounded-[2rem] bg-white shadow-xl border border-slate-50 flex items-center justify-center mx-auto mb-8 relative transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-shadow-2xl">
-                  <step.icon className="w-10 h-10 text-accent" />
-                  <div className="absolute -top-3 -right-3 w-10 h-10 rounded-2xl bg-[#0A192F] text-white text-sm font-black flex items-center justify-center shadow-lg group-hover:-translate-y-1 transition-transform">
-                    0{i+1}
-                  </div>
+          {/* CTA mid-section */}
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            className="text-center mt-12">
+            <Button variant="hero" size="lg" asChild>
+              <Link to={user ? '/simulados' : '/auth'}>
+                Quero Começar Agora <ArrowRight className="w-4 h-4 ml-2" />
+              </Link>
+            </Button>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════ DIFFERENTIALS (8 features) ═══════ */}
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
+            <Badge variant="outline" className="mb-4 text-accent border-accent/30">
+              <Rocket className="w-3 h-3 mr-1" /> Diferenciais
+            </Badge>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Por que o Voo Certo é diferente?</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">Recursos exclusivos que nenhuma outra plataforma oferece</p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+            {DIFFERENTIALS.map((f, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }} transition={{ delay: i * 0.06 }}
+                className="p-6 rounded-2xl bg-card border border-border hover:shadow-lg hover:border-accent/30 transition-all duration-300 group">
+                <div className="p-3 rounded-xl bg-accent/10 w-fit mb-4 group-hover:bg-accent/20 transition-colors">
+                  <f.icon className="w-7 h-7 text-accent" />
                 </div>
-                <h3 className="text-xl font-black text-slate-900 mb-3 tracking-tight group-hover:text-accent transition-colors">{step.title}</h3>
-                <p className="text-slate-500 font-medium text-sm leading-relaxed">{step.desc}</p>
+                <h3 className="text-lg font-bold text-foreground mb-2">{f.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ═══════ DIFFERENTIALS (Modern Bento Grid) ═══════ */}
-      <section className="py-32 bg-slate-50/50">
+      {/* ═══════ IMAGE + TEXT SECTION ═══════ */}
+      <section className="py-20 bg-muted/50 overflow-hidden">
         <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-10 mb-20 text-center md:text-left">
-            <div>
-              <Badge variant="secondary" className="mb-6 px-4 py-1.5 rounded-full bg-accent/10 border-accent/20 text-accent text-[10px] font-black tracking-[0.2em] uppercase">
-                <ShieldCheck className="w-3 h-3 mr-2" /> Plataforma Exclusiva
+          <div className="grid lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
+            <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+              className="order-2 lg:order-1">
+              <Badge variant="outline" className="mb-4 text-accent border-accent/30">
+                <Brain className="w-3 h-3 mr-1" /> Inteligência Artificial
               </Badge>
-              <h2 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tight">A tecnologia ao lado <br /><span className="text-accent underline decoration-accent/20 underline-offset-8">do seu Sonho.</span></h2>
-            </div>
-            <p className="text-lg text-slate-500 font-medium max-w-md md:pb-2">Recursos desenvolvidos por quem entende de aviação, para quem quer se tornar profissional.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-6xl mx-auto md:auto-rows-[220px]">
-            {/* Bento Card 1: AI Assistant */}
-            <motion.div 
-              whileHover={{ y: -8 }}
-              className="md:col-span-2 md:row-span-2 bg-[#0A192F] text-white p-12 rounded-[3.5rem] flex flex-col justify-end relative overflow-hidden group shadow-2xl shadow-blue-900/10"
-            >
-              <div className="absolute top-12 left-12 w-20 h-20 rounded-3xl bg-accent flex items-center justify-center shadow-lg shadow-accent/40 group-hover:scale-110 transition-transform duration-500">
-                <Brain className="w-10 h-10 text-white" />
-              </div>
-              <div className="absolute -top-20 -right-20 w-80 h-80 bg-accent/20 blur-[120px] rounded-full group-hover:bg-accent/30 transition-colors" />
-              
-              <div className="relative z-10">
-                <h3 className="text-3xl font-black mb-4 tracking-tight">Experiência de Sala de Aula com IA</h3>
-                <p className="text-slate-400 font-medium text-lg leading-relaxed max-w-sm">Tire dúvidas em tempo real. Nossa IA explica cada questão como um instrutor humano faria.</p>
-              </div>
-            </motion.div>
-
-            {/* Bento Card 2: Roadmap */}
-            <motion.div 
-              whileHover={{ y: -8 }}
-              className="md:col-span-2 md:row-span-1 bg-white border border-slate-100 p-10 rounded-[3rem] flex items-center gap-8 shadow-xl hover:shadow-2xl transition-all"
-            >
-              <div className="w-20 h-20 rounded-[1.5rem] bg-accent/5 flex items-center justify-center shrink-0">
-                <Map className="w-10 h-10 text-accent" />
-              </div>
-              <div>
-                <h3 className="font-black text-2xl text-slate-900 tracking-tight">Roadmap de Carreira</h3>
-                <p className="text-slate-500 font-medium mt-1">Sabemos exatamente o que você precisa em cada etapa, do PP ao PC-IFR.</p>
-              </div>
-            </motion.div>
-
-            {/* Bento Card 3: Performance */}
-            <motion.div 
-              whileHover={{ y: -8 }}
-              className="md:col-span-1 md:row-span-1 bg-white border border-slate-100 p-8 rounded-[3rem] flex flex-col items-center justify-center text-center shadow-xl hover:shadow-2xl transition-all group"
-            >
-              <BarChart3 className="w-12 h-12 text-blue-600 mb-4 group-hover:scale-110 transition-transform" />
-              <h3 className="font-black text-slate-900 tracking-tight">Métricas</h3>
-              <p className="text-slate-400 text-xs mt-1 font-bold uppercase tracking-widest">Acompanhamento Real</p>
-            </motion.div>
-
-            {/* Bento Card 4: Multiplatform */}
-            <motion.div 
-              whileHover={{ y: -8 }}
-              className="md:col-span-1 md:row-span-1 bg-accent p-8 rounded-[3rem] flex flex-col items-start justify-end text-white shadow-2xl shadow-accent/20 relative overflow-hidden group"
-            >
-              <Monitor className="w-8 h-8 mb-4 relative z-10" />
-              <h3 className="font-black text-lg relative z-10 leading-tight">Voe em qualquer dispositivo</h3>
-              <div className="absolute top-[-10%] right-[-10%] w-24 h-24 bg-white/20 blur-2xl rounded-full" />
-            </motion.div>
-
-            {/* Bento Card 5: Smart Timer */}
-            <motion.div 
-              whileHover={{ y: -8 }}
-              className="md:col-span-2 md:row-span-1 bg-white border border-slate-100 p-8 rounded-[3rem] flex items-center justify-between shadow-xl hover:shadow-2xl transition-all"
-            >
-              <div className="flex items-center gap-6">
-                <div className="p-4 bg-primary/5 rounded-2xl"><Timer className="w-8 h-8 text-primary" /></div>
-                <div><h3 className="font-black text-xl text-slate-900">Simulação Sob Medida</h3><p className="text-slate-500 text-sm">Controle seu tempo e melhore seu ritmo.</p></div>
-              </div>
-              <div className="flex gap-1.5">{[1,2,3].map(i => <div key={i} className="w-2 h-2 rounded-full bg-accent animate-bounce" style={{animationDelay: `${i*150}ms`}} />)}</div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════ IA HIGHLIGHT (Modern Tech Section) ═══════ */}
-      <section className="py-32 bg-[#0A192F] text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 pointer-events-none" />
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-24 items-center max-w-6xl mx-auto">
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }}>
-              <div className="relative">
-                <img src={studyDesk} alt="IA Study Experience" className="rounded-[3.5rem] border-4 border-white/5 shadow-3xl grayscale-[0.5] hover:grayscale-0 transition-all duration-1000" />
-                <div className="absolute top-10 right-[-30px] p-6 rounded-[2.5rem] bg-accent shadow-3xl animate-float">
-                  <div className="flex items-center gap-4 text-white">
-                    <Brain className="w-10 h-10 fill-white/20" />
-                    <div><p className="text-xl font-black leading-tight">Explicação Instantânea</p><p className="text-white/50 text-[10px] font-black uppercase tracking-widest">Engine v3.0 Ativa</p></div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }}>
-              <Badge variant="outline" className="mb-6 px-4 py-1.5 rounded-full border-accent/40 bg-accent/10 text-accent text-[10px] font-black tracking-[0.2em] uppercase">
-                <Globe className="w-3 h-3 mr-2" /> Inteligência Integrada
-              </Badge>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-8 leading-tight tracking-tight">O fim das dúvidas sem resposta.</h2>
-              <p className="text-xl text-white/50 mb-12 font-medium leading-relaxed italic">"Não é só sobre saber a correta, é sobre entender o porquê de cada vírgula. É isso que te faz passar no exame da ANAC e ser um piloto melhor."</p>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                Um professor particular com IA em cada questão
+              </h2>
+              <p className="text-muted-foreground mb-6 leading-relaxed">
+                Errou uma questão? Sem problema. Nosso chat com IA analisa a questão, 
+                explica por que a alternativa correta é a certa, detalha os conceitos 
+                envolvidos e ainda sugere o que mais você deve estudar.
+              </p>
+              <ul className="space-y-3 mb-8">
                 {[
-                  { title: 'Conhecimento Profundo', desc: 'Regulamentação e teoria pura.', icon: BookOpen },
-                  { title: 'Lógica Pura', desc: 'Nada de decoreba, aprenda o porquê.', icon: ShieldCheck },
-                ].map((f, i) => (
-                  <div key={i} className="flex gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center shrink-0 border border-white/10"><f.icon className="w-6 h-6 text-accent" /></div>
-                    <div><h4 className="font-black text-lg mb-1">{f.title}</h4><p className="text-white/40 text-sm leading-relaxed">{f.desc}</p></div>
-                  </div>
+                  'Explicações detalhadas e contextualizadas',
+                  'Funciona para todas as matérias ANAC',
+                  'Respostas instantâneas, 24 horas por dia',
+                  'Linguagem simples e direta',
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm text-foreground">
+                    <CheckCircle2 className="w-4 h-4 text-accent shrink-0" />
+                    {item}
+                  </li>
                 ))}
-              </div>
-              <Button variant="hero" size="xl" className="h-16 px-10 rounded-2xl group" asChild>
-                <Link to="/auth">
-                  Testar com uma Questão <ArrowRight className="ml-3 group-hover:translate-x-2 transition-transform" />
+              </ul>
+              <Button variant="hero" asChild>
+                <Link to={user ? '/simulados' : '/auth'}>
+                  Experimentar Grátis <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
               </Button>
             </motion.div>
+            <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+              className="order-1 lg:order-2">
+              <div className="relative">
+                <img src={studyDesk} alt="Estudando com IA" className="rounded-2xl shadow-xl" />
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-[hsl(215,55%,15%/0.4)] to-transparent" />
+                <div className="absolute bottom-6 left-6 right-6 bg-card/90 backdrop-blur-md rounded-xl p-4 border border-border">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Brain className="w-5 h-5 text-accent" />
+                    <span className="text-sm font-semibold text-foreground">Chat IA</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    "A resposta correta é a alternativa C porque segundo a RBAC 121.397, o procedimento de evacuação deve..."
+                  </p>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ═══════ CATEGORIES SECTION ═══════ */}
-      <section className="py-32 bg-background">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <div className="text-center mb-24">
-            <Badge variant="outline" className="mb-6 px-4 py-1.5 rounded-full border-primary/20 text-primary text-[10px] font-black tracking-[0.2em] uppercase">Grade Curricular</Badge>
-            <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight">Matérias Oficiais ANAC</h2>
-            <p className="text-xl text-slate-500 font-medium max-w-xl mx-auto italic leading-relaxed">Conteúdo rigorosamente alinhado com o banco oficial de questões.</p>
-          </div>
+      {/* ═══════ CATEGORIES ═══════ */}
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
+            <Badge variant="outline" className="mb-4 text-accent border-accent/30">
+              <BookOpen className="w-3 h-3 mr-1" /> Simulados
+            </Badge>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Categorias de Simulados</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">Prepare-se para cada matéria do processo seletivo ANAC</p>
+          </motion.div>
 
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-20 gap-4">
-              <Loader2 className="w-12 h-12 animate-spin text-accent" />
-              <p className="text-slate-400 font-black uppercase text-xs tracking-widest">Carregando Banco de Dados</p>
-            </div>
+            <div className="flex items-center justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {categoriesWithSubs.map((cat, i) => {
-                const Icon = iconMap[cat.icon || 'Plane'] || Plane;
-                const isSoon = cat.subcategories.length === 0;
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+              {categoriesWithSubs.map((category, index) => {
+                const Icon = iconMap[category.icon || 'Plane'] || Plane;
+                const isComingSoon = category.subcategories.length === 0;
                 return (
-                  <Link 
-                    key={cat.id} 
-                    to={isSoon ? '#' : '/simulados'} 
-                    className={`group p-10 rounded-[3rem] border-2 border-slate-50 flex items-center gap-8 hover:shadow-2xl hover:border-accent/30 transition-all bg-white relative overflow-hidden ${isSoon ? 'opacity-50 grayscale cursor-not-allowed' : ''}`}
-                  >
-                    <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-700">
-                      <Icon className="w-40 h-40 -rotate-12 transform group-hover:-translate-x-4 transition-transform" />
-                    </div>
-                    
-                    <div className="w-20 h-20 rounded-[1.75rem] bg-slate-50 flex items-center justify-center shrink-0 border border-slate-100 group-hover:bg-accent group-hover:text-white transition-all duration-500 shadow-sm relative z-10">
-                      <Icon className="w-10 h-10" />
-                    </div>
-                    
-                    <div className="flex-1 text-left relative z-10">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-2xl font-black text-slate-900 tracking-tight group-hover:text-accent transition-colors">{cat.name}</h3>
-                        {isSoon && <Badge variant="secondary" className="h-6 rounded-full px-3 text-[9px] font-black uppercase tracking-wider">Em breve</Badge>}
+                  <motion.div key={category.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }} transition={{ delay: index * 0.1 }}>
+                    <Link to={isComingSoon ? '#' : `/simulados`}
+                      className={`block p-6 rounded-2xl border border-border bg-card hover:shadow-lg transition-all duration-300 ${isComingSoon ? 'opacity-60 cursor-not-allowed' : 'hover:border-accent/50'}`}>
+                      <div className="flex items-start gap-4">
+                        <div className="p-3 rounded-xl bg-primary/10"><Icon className="w-8 h-8 text-primary" /></div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <h3 className="text-xl font-bold text-foreground">{category.name}</h3>
+                            {isComingSoon && <span className="px-2 py-1 text-xs bg-muted rounded-full text-muted-foreground">Em breve</span>}
+                          </div>
+                          <p className="text-muted-foreground text-sm mb-4">{category.description}</p>
+                          {category.subcategories.length > 0 && (
+                            <div className="flex flex-wrap gap-2">
+                              {category.subcategories.map(sub => (
+                                <span key={sub.id} className="px-3 py-1 text-xs bg-secondary rounded-full text-secondary-foreground">{sub.name}</span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        {!isComingSoon && <ArrowRight className="w-5 h-5 text-muted-foreground shrink-0" />}
                       </div>
-                      <p className="text-slate-500 text-sm font-medium leading-relaxed max-w-sm line-clamp-2">{cat.description}</p>
-                    </div>
-                    
-                    {!isSoon && (
-                      <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center group-hover:bg-slate-900 group-hover:text-white transition-all duration-500 shrink-0">
-                        <ArrowRight className="w-6 h-6" />
-                      </div>
-                    )}
-                  </Link>
+                    </Link>
+                  </motion.div>
                 );
               })}
             </div>
@@ -441,100 +506,210 @@ export default function Index() {
         </div>
       </section>
 
-      {/* ═══════ PRICING SECTION ═══════ */}
-      <section className="py-32 bg-slate-50 relative overflow-hidden" id="planos">
-        <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-background to-transparent" />
-        <div className="container mx-auto px-4 max-w-6xl relative z-10">
-          <div className="text-center mb-24">
-            <Badge className="bg-accent/10 text-accent border-accent/20 px-6 py-2 rounded-full mb-6 font-black uppercase text-[11px] tracking-widest">Investimento</Badge>
-            <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight">O melhor custo-benefício.</h2>
-            <p className="text-xl text-slate-500 font-medium">Planos desenhados para cada fase da sua trajetória.</p>
+      {/* ═══════ SOCIAL PROOF BANNER ═══════ */}
+      <section className="relative py-24 overflow-hidden">
+        <img src={airplaneSunset} alt="Avião decolando ao pôr do sol" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-[hsl(215,55%,10%/0.85)]" />
+        <div className="container mx-auto px-4 relative z-10 text-center">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <h2 className="text-3xl md:text-5xl font-bold text-primary-foreground mb-6">
+              Milhares de candidatos já estão <br className="hidden md:block" />
+              <span className="text-accent">se preparando com o Voo Certo.</span>
+            </h2>
+            <p className="text-primary-foreground/80 text-lg max-w-2xl mx-auto mb-8">
+              Não fique para trás. Comece hoje e tenha a preparação mais completa do mercado.
+            </p>
+            <div className="flex flex-wrap justify-center gap-12 mb-10">
+              {[
+                { value: '500+', label: 'Questões disponíveis' },
+                { value: '10+', label: 'Simulados completos' },
+                { value: '95%', label: 'Taxa de aprovação' },
+                { value: '4.9★', label: 'Avaliação dos alunos' },
+              ].map((stat, i) => (
+                <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
+                  <div className="text-4xl md:text-5xl font-bold text-accent">{stat.value}</div>
+                  <div className="text-sm text-primary-foreground/60">{stat.label}</div>
+                </motion.div>
+              ))}
+            </div>
+            <Button variant="hero" size="xl" asChild>
+              <Link to={user ? '/simulados' : '/auth'}>
+                Quero Passar na ANAC <ArrowRight className="w-5 h-5 ml-2" />
+              </Link>
+            </Button>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════ PRICING ═══════ */}
+      <section className="py-20" style={{ background: 'var(--gradient-hero)' }}>
+        <div className="container mx-auto px-4">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
+            <Badge className="mb-4 bg-accent/20 text-accent border-0">
+              <Star className="w-3 h-3 mr-1" /> 7 dias grátis em todos os planos
+            </Badge>
+            <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">Invista na sua carreira</h2>
+            <p className="text-primary-foreground/70 max-w-2xl mx-auto">
+              Menos que um café por dia para ter a preparação mais completa para a prova ANAC. Cancele quando quiser.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {PLANS.map((plan, i) => {
+              const Icon = plan.icon;
+              return (
+                <motion.div key={plan.id} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
+                  <Card className={`h-full flex flex-col relative overflow-hidden ${
+                    plan.highlight
+                      ? 'ring-2 ring-accent shadow-glow bg-card'
+                      : 'bg-card/95 backdrop-blur-sm'
+                  }`}>
+                    {plan.popular && (
+                      <div className="absolute top-0 right-0 bg-accent text-accent-foreground text-xs font-bold px-4 py-1.5 rounded-bl-xl">
+                        Mais Popular
+                      </div>
+                    )}
+                    <CardHeader className="text-center pb-4 pt-8">
+                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3 ${
+                        plan.highlight ? 'bg-accent/15' : 'bg-primary/10'
+                      }`}>
+                        <Icon className={`w-7 h-7 ${plan.highlight ? 'text-accent' : 'text-primary'}`} />
+                      </div>
+                      <CardTitle className="text-xl">{plan.name}</CardTitle>
+                      <p className="text-sm text-muted-foreground">{plan.description}</p>
+                      <div className="mt-4">
+                        <span className="text-4xl font-bold text-foreground">{plan.price}</span>
+                        <span className="text-muted-foreground text-sm">{plan.period}</span>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="flex-1 flex flex-col">
+                      <ul className="space-y-3 mb-6 flex-1">
+                        {plan.features.map((f, j) => (
+                          <li key={j} className="flex items-start gap-2 text-sm">
+                            <CheckCircle2 className="w-4 h-4 text-success shrink-0 mt-0.5" />
+                            <span className="text-foreground">{f}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <Button variant={plan.highlight ? 'hero' : 'outline'} className="w-full" asChild>
+                        <Link to="/premium">
+                          {user ? 'Começar Trial Grátis' : 'Assinar Agora'}
+                        </Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
-            {PLANS.map((plan, i) => (
-              <Card 
-                key={plan.id} 
-                className={`group relative flex flex-col rounded-[3.5rem] p-10 transition-all duration-500 border-none hover:translate-y-[-10px] ${
-                  plan.highlight 
-                    ? 'bg-[#0A192F] text-white shadow-3xl shadow-blue-900/30 ring-4 ring-accent' 
-                    : 'bg-white shadow-xl hover:shadow-2xl'
-                }`}
-              >
-                {plan.highlight && (
-                  <div className="absolute top-0 right-10 -translate-y-1/2 bg-accent text-white px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-xl">
-                    Mais Popular
-                  </div>
-                )}
-                
-                <div className="mb-10 text-center">
-                  <div className={`w-20 h-20 rounded-[1.75rem] flex items-center justify-center mx-auto mb-6 shadow-xl relative overflow-hidden transition-transform duration-500 group-hover:scale-110 ${
-                    plan.highlight ? 'bg-accent text-white' : 'bg-primary/5 text-primary'
-                  }`}>
-                    <plan.icon className="w-10 h-10 relative z-10" />
-                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-1000" />
-                  </div>
-                  <h3 className={`text-4xl font-black mb-2 tracking-tighter ${plan.highlight ? 'text-white' : 'text-slate-900'}`}>{plan.name}</h3>
-                  <div className={`flex items-baseline justify-center gap-1 ${plan.highlight ? 'text-white/60' : 'text-slate-500'}`}>
-                    <span className="text-lg font-bold">R$</span>
-                    <span className={`text-5xl font-black tabular-nums tracking-tighter ${plan.highlight ? 'text-white' : 'text-slate-900'}`}>{plan.price}</span>
-                    <span className="text-sm font-bold">/mês</span>
-                  </div>
-                </div>
+          <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+            className="text-center text-primary-foreground/50 text-sm mt-8">
+            Pagamento seguro via Stripe. Cancele a qualquer momento sem multa.
+          </motion.p>
+        </div>
+      </section>
 
-                <div className="space-y-4 mb-10 flex-1">
-                  {plan.features.map((feature, j) => (
-                    <div key={j} className="flex items-center gap-4">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${plan.highlight ? 'bg-accent/20' : 'bg-primary/5'}`}>
-                        <CheckCircle2 className={`w-4 h-4 ${plan.highlight ? 'text-accent' : 'text-primary'}`} />
-                      </div>
-                      <span className={`text-sm font-bold ${plan.highlight ? 'text-white/80 transition-colors group-hover:text-white' : 'text-slate-600'}`}>{feature}</span>
+      {/* ═══════ TESTIMONIALS ═══════ */}
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
+            <Badge variant="outline" className="mb-4 text-accent border-accent/30">
+              <Heart className="w-3 h-3 mr-1" /> Depoimentos
+            </Badge>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">O que dizem nossos alunos</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">Histórias reais de quem conquistou a aprovação com o Voo Certo</p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            {TESTIMONIALS.map((t, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }} transition={{ delay: i * 0.08 }}>
+                <Card className="h-full hover:shadow-lg transition-shadow">
+                  <CardContent className="pt-6">
+                    <div className="flex gap-1 mb-4">
+                      {Array.from({ length: t.stars }).map((_, j) => (
+                        <Star key={j} className="w-4 h-4 text-accent fill-accent" />
+                      ))}
                     </div>
-                  ))}
-                </div>
-
-                <Button 
-                  variant={plan.highlight ? 'hero' : 'outline'} 
-                  size="xl" 
-                  className={`w-full h-16 rounded-2xl font-black text-lg transition-all ${
-                    plan.highlight 
-                      ? 'shadow-xl shadow-accent/20' 
-                      : 'border-2 border-slate-100 hover:border-accent hover:text-accent'
-                  }`} 
-                  asChild
-                >
-                  <Link to="/auth">{plan.cta}</Link>
-                </Button>
-              </Card>
+                    <p className="text-foreground text-sm mb-4 italic leading-relaxed">"{t.text}"</p>
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{t.avatar}</span>
+                      <div>
+                        <p className="font-semibold text-foreground text-sm">{t.name}</p>
+                        <p className="text-xs text-muted-foreground">{t.role}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ═══════ FINAL CALL TO ACTION ═══════ */}
-      <section className="py-24 bg-background">
-        <div className="container mx-auto px-4 max-w-5xl">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            className="p-16 md:p-24 rounded-[4rem] bg-gradient-to-br from-primary to-slate-900 relative overflow-hidden text-center text-white shadow-3xl"
-          >
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 pointer-events-none" />
-            <div className="absolute top-20 right-20 w-80 h-80 bg-accent/20 blur-[130px] rounded-full pointer-events-none" />
-            <div className="relative z-10">
-              <h2 className="text-4xl md:text-7xl font-black mb-10 leading-[0.95] tracking-tighter">Preparado para sua <br /><span className="text-accent underline decoration-accent/30 underline-offset-[12px]">Próxima Decolagem?</span></h2>
-              <p className="text-xl md:text-2xl text-white/50 mb-12 max-w-2xl mx-auto font-medium">Junte-se a milhares de pilotos que usam a melhor tecnologia para conquistar a CHT.</p>
-              <div className="flex flex-col sm:flex-row justify-center gap-6">
-                <Button variant="hero" size="xl" className="h-18 px-12 text-xl rounded-2xl shadow-2xl shadow-accent/30" asChild>
-                  <Link to="/auth">Criar Conta Grátis</Link>
-                </Button>
-                <div className="flex items-center justify-center gap-4 px-6 py-4 rounded-2xl bg-white/5 border border-white/10">
-                  <div className="flex -space-x-3">
-                    {[1,2,3].map(i => <div key={i} className="w-8 h-8 rounded-full border-2 border-primary bg-slate-800" />)}
-                  </div>
-                  <p className="text-sm font-black uppercase tracking-widest text-white/60">Mais de 10k alunos ativos</p>
+      {/* ═══════ FAQ ═══════ */}
+      <section className="py-20 bg-muted/50">
+        <div className="container mx-auto px-4">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
+            <Badge variant="outline" className="mb-4 text-accent border-accent/30">
+              <MessageCircle className="w-3 h-3 mr-1" /> FAQ
+            </Badge>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Perguntas Frequentes</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">Tire suas dúvidas antes de começar</p>
+          </motion.div>
+
+          <div className="max-w-3xl mx-auto space-y-4">
+            {FAQ.map((faq, i) => (
+              <motion.details key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }} transition={{ delay: i * 0.05 }}
+                className="group bg-card border border-border rounded-xl overflow-hidden">
+                <summary className="flex items-center justify-between p-5 cursor-pointer text-foreground font-semibold text-sm hover:text-accent transition-colors list-none">
+                  {faq.q}
+                  <ChevronRight className="w-4 h-4 text-muted-foreground group-open:rotate-90 transition-transform shrink-0 ml-2" />
+                </summary>
+                <div className="px-5 pb-5 text-sm text-muted-foreground leading-relaxed">
+                  {faq.a}
                 </div>
-              </div>
+              </motion.details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ FINAL CTA ═══════ */}
+      <section className="relative py-24 overflow-hidden" style={{ background: 'var(--gradient-primary)' }}>
+        <div className="absolute inset-0 overflow-hidden">
+          <motion.div className="absolute top-1/3 right-1/4 w-80 h-80 bg-accent/10 rounded-full blur-3xl"
+            animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 8, repeat: Infinity }} />
+        </div>
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}>
+            <Plane className="w-16 h-16 text-accent/50 mx-auto mb-6" />
+            <h2 className="text-3xl md:text-5xl font-bold text-primary-foreground mb-4">
+              Sua carreira na aviação <span className="text-accent">começa agora.</span>
+            </h2>
+            <p className="text-primary-foreground/80 max-w-xl mx-auto mb-4 text-lg">
+              Não deixe para amanhã o que pode mudar sua vida hoje. 
+              Comece grátis e descubra por que o Voo Certo é a escolha certa.
+            </p>
+            <p className="text-accent/80 text-sm mb-8 flex items-center justify-center gap-2">
+              <Shield className="w-4 h-4" />
+              7 dias grátis · Sem cartão de crédito · Cancele quando quiser
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button variant="hero" size="xl" asChild>
+                <Link to={user ? '/simulados' : '/auth'}>
+                  Começar Gratuitamente <ArrowRight className="w-5 h-5 ml-2" />
+                </Link>
+              </Button>
+              <Button variant="glass" size="xl" asChild>
+                <Link to="/premium">
+                  <Crown className="w-5 h-5 mr-2" /> Ver Planos Premium
+                </Link>
+              </Button>
             </div>
           </motion.div>
         </div>
