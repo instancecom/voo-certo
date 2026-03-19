@@ -151,8 +151,9 @@ export default function PremiumPage() {
         body.promotionCodeId = appliedCoupon.stripe_promotion_code_id;
       }
       const { data, error } = await supabase.functions.invoke('create-checkout', { body });
-      if (error) throw error;
-      if (data?.url) window.open(data.url, '_blank');
+      if (data?.url) {
+        window.location.href = data.url;
+      }
     } catch (err: any) {
       toast.error(`Erro ao iniciar checkout: ${err.message}`);
     } finally {
@@ -165,7 +166,9 @@ export default function PremiumPage() {
     try {
       const { data, error } = await supabase.functions.invoke('customer-portal');
       if (error) throw error;
-      if (data?.url) window.open(data.url, '_blank');
+      if (data?.url) {
+        window.location.href = data.url;
+      }
     } catch (err: any) {
       toast.error(`Erro: ${err.message}`);
     } finally {
