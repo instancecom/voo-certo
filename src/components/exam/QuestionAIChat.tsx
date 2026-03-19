@@ -143,7 +143,7 @@ export function QuestionAIChat({
         </div>
         {aiChatLimit < 999 && (
           <div className="ml-3 bg-slate-200 text-slate-700 text-xs font-semibold px-2.5 py-0.5 rounded-full">
-            {aiChatLimit} msgs
+            {Math.max(0, aiChatLimit - messages.filter(m => m.role === 'user').length)} msgs
           </div>
         )}
       </button>
