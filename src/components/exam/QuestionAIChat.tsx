@@ -214,24 +214,33 @@ export function QuestionAIChat({
                     />
                     <div className="absolute bottom-0.5 right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
                   </div>
-                  <div>
-                    <h3 className="text-base font-bold text-primary leading-tight">Assistente IA</h3>
-                    <div className="flex items-center gap-2 mt-0.5">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-base font-bold text-primary leading-tight">Assistente IA</h3>
+                    </div>
+                    <div className="flex items-center gap-3 mt-1">
                       <p className="text-[10px] text-muted-foreground flex items-center gap-1 font-semibold tracking-wide uppercase">
                         <Sparkles className="w-3.5 h-3.5 text-accent" /> Sempre Online
                       </p>
-                      {!isAdmin && (
-                        <div className="flex flex-col items-end">
-                          <span className="text-[10px] bg-accent/10 text-accent px-1.5 py-0.5 rounded font-bold whitespace-nowrap shadow-sm border border-accent/10">
-                            {remainingForQuestion}/{aiChatLimitPerQuestion} nesta questão
+                      <div className="h-3 w-[1px] bg-border/40" />
+                      <div className="flex items-center gap-2">
+                        {isAdmin ? (
+                          <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter">
+                            Acesso Ilimitado
                           </span>
-                          {profile?.ai_questions_count !== undefined && (
-                            <span className="text-[9px] text-muted-foreground font-bold mt-0.5 uppercase tracking-tighter opacity-80">
-                              {Math.max(0, (aiChatDailySafetyLimit || 0) - profile.ai_questions_count)} créditos hoje
+                        ) : (
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[10px] bg-accent/10 text-accent px-2 py-0.5 rounded-full font-bold shadow-sm border border-accent/10">
+                              {remainingForQuestion} Questões
                             </span>
-                          )}
-                        </div>
-                      )}
+                            {profile?.ai_questions_count !== undefined && (
+                              <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-tight opacity-70">
+                                {Math.max(0, (aiChatDailySafetyLimit || 0) - profile.ai_questions_count)} CRÉDITOS HOJE
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -336,22 +345,27 @@ export function QuestionAIChat({
                 <div ref={messagesEndRef} />
               </div>
 
-              <div className="p-5 bg-white border-t border-border/10 shrink-0 pb-8 md:pb-6 rounded-b-3xl relative">
-                {!isAdmin && (
-                  <div className="flex items-center justify-between mb-3 px-1">
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                        <MessageCircle className="w-3.5 h-3.5" />
-                        <span>Restam {remainingForQuestion} perguntas</span>
-                      </div>
+              <div className="px-5 py-3 bg-white border-t border-border/10 shrink-0 pb-8 md:pb-6 rounded-b-3xl relative">
+                <div className="flex items-center justify-between mb-3 bg-accent/5 rounded-xl px-3 py-2 border border-accent/10 shadow-sm">
+                  {isAdmin ? (
+                    <div className="flex items-center gap-1.5 text-[10px] font-bold text-primary uppercase tracking-widest">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Modo Admin: Uso Ilimitado</span>
                     </div>
-                    {profile?.ai_questions_count !== undefined && (
-                      <div className="text-[10px] font-bold text-accent/80 uppercase tracking-widest bg-accent/5 px-2 py-0.5 rounded-full border border-accent/10">
-                        {Math.max(0, (aiChatDailySafetyLimit || 0) - profile.ai_questions_count)} créditos diários
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                        <MessageCircle className="w-3.5 h-3.5 text-accent" />
+                        <span>Respostas: {remainingForQuestion}</span>
                       </div>
-                    )}
-                  </div>
-                )}
+                      {profile?.ai_questions_count !== undefined && (
+                        <div className="text-[10px] font-bold text-accent/80 uppercase tracking-widest px-2 py-0.5 rounded-full border border-accent/10">
+                          Créditos hoje: {Math.max(0, (aiChatDailySafetyLimit || 0) - profile.ai_questions_count)}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
                 <div className="flex gap-3 items-center">
                   <div className="flex-1 relative">
                     <Input
