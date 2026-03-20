@@ -462,7 +462,7 @@ export default function ProgressPage() {
                               </div>
                             </div>
                             <Button variant="ghost" className="w-full mt-4 h-9 rounded-xl text-xs gap-2 group" asChild>
-                               <Link to="/simulados">
+                               <Link to={`/simulado-profissao/${sub.category_id}?modo=bloco&bloco_id=${sub.id}&nome_bloco=${encodeURIComponent(sub.name)}`}>
                                  Estudar esta matéria <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                                </Link>
                             </Button>
@@ -549,7 +549,9 @@ export default function ProgressPage() {
                           </div>
                         ))}
                       </div>
-                      <Button className="mt-6 w-full rounded-2xl bg-red-500 hover:bg-red-600 text-white font-black h-12">REVISAR MATÉRIAS</Button>
+                      <Button className="mt-6 w-full rounded-2xl bg-red-500 hover:bg-red-600 text-white font-black h-12 shadow-lg shadow-red-500/20 active:scale-[0.98] transition-all" asChild>
+                        <Link to="/simulados">REVISAR MATÉRIAS</Link>
+                      </Button>
                    </div>
                 )}
 
@@ -561,16 +563,21 @@ export default function ProgressPage() {
                      <CheckCircle2 className="w-6 h-6" /> Suas Fortalezas
                    </h3>
                    <p className="text-sm text-green-500/80 mb-6 font-medium">Excelentes resultados detectados aqui (acima de 85%):</p>
-                   <div className="space-y-4 relative z-10">
-                     {stats.subStats.filter(s => s.avg! >= 85).slice(0, 3).map(sub => (
-                       <div key={sub.id} className="bg-white/50 dark:bg-black/20 p-4 rounded-2xl flex items-center justify-between">
-                         <span className="font-bold text-sm truncate pr-4">{sub.name}</span>
-                         <Badge className="bg-green-500 text-white font-black border-0">{sub.avg}%</Badge>
-                       </div>
-                     ))}
-                     {stats.subStats.filter(s => s.avg! >= 85).length === 0 && (
-                        <p className="italic text-muted-foreground text-center py-4">Continue praticando para atingir a maestria!</p>
-                     )}
+                   <div className="space-y-4 relative z-10 flex-1 flex flex-col">
+                     <div className="space-y-4 flex-1">
+                       {stats.subStats.filter(s => s.avg! >= 85).slice(0, 3).map(sub => (
+                         <div key={sub.id} className="bg-white/50 dark:bg-black/20 p-4 rounded-2xl flex items-center justify-between">
+                           <span className="font-bold text-sm truncate pr-4">{sub.name}</span>
+                           <Badge className="bg-green-500 text-white font-black border-0">{sub.avg}%</Badge>
+                         </div>
+                       ))}
+                       {stats.subStats.filter(s => s.avg! >= 85).length === 0 && (
+                          <p className="italic text-muted-foreground text-center py-4">Continue praticando para atingir a maestria!</p>
+                       )}
+                     </div>
+                     <Button className="mt-6 w-full rounded-2xl bg-green-500 hover:bg-green-600 text-white font-black h-12 shadow-lg shadow-green-500/20 active:scale-[0.98] transition-all" asChild>
+                        <Link to="/simulados">CONTINUAR PRATICANDO</Link>
+                     </Button>
                    </div>
                 </div>
               </div>

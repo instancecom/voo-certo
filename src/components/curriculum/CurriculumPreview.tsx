@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Mail, Phone, MapPin, Linkedin, Globe, Award, GraduationCap, Briefcase, Star, Info } from 'lucide-react';
+import { Mail, Phone, MapPin, Linkedin, Globe, Award, GraduationCap, Briefcase, Star, Info, CheckCircle2 } from 'lucide-react';
 
 interface Experience {
   company: string;
@@ -48,163 +48,209 @@ interface CurriculumPreviewProps {
 }
 
 export function CurriculumPreview({ data }: CurriculumPreviewProps) {
-  const SectionTitle = ({ children, icon: Icon, color }: { children: React.ReactNode, icon: any, color?: string }) => (
-    <div className={`flex items-center gap-2 mb-4 border-b pb-1 ${color || 'border-slate-100'}`}>
-      <Icon className={`w-4 h-4 ${color ? '' : 'text-primary'}`} />
-      <h3 className={`text-[10px] font-black uppercase tracking-[0.2em] ${color ? '' : 'text-primary'}`}>{children}</h3>
+  const isModern = data.template === 'moderno';
+  const isCreative = data.template === 'criativo';
+  const isClassic = data.template === 'classico';
+
+  // Primary color based on template
+  const primaryColor = isModern ? 'text-blue-600' : isCreative ? 'text-purple-600' : 'text-slate-800';
+  const primaryBg = isModern ? 'bg-blue-600' : isCreative ? 'bg-purple-600' : 'bg-slate-800';
+  const accentColor = isModern ? 'text-blue-400' : isCreative ? 'text-purple-400' : 'text-slate-400';
+
+  const SectionTitle = ({ children, icon: Icon }: { children: React.ReactNode, icon: any }) => (
+    <div className="flex items-center gap-2 mb-3 border-b-2 border-slate-100 pb-1">
+      <div className={`p-1 rounded-md ${primaryBg} bg-opacity-10`}>
+        <Icon className={`w-3.5 h-3.5 ${primaryColor}`} />
+      </div>
+      <h3 className={`text-[11px] font-black uppercase tracking-[0.15em] ${primaryColor}`}>{children}</h3>
     </div>
   );
 
-  // Template-specific styles
-  const isModern = data.template === 'moderno';
-  const isCreative = data.template === 'criativo';
-
   return (
-    <Card className="bg-white text-slate-900 shadow-2xl p-6 md:p-10 min-h-[842px] rounded-none border-none animate-fade-in origin-top transition-all duration-500 overflow-hidden relative">
-      {/* Background decoration for modern/creative */}
-      {isModern && <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-16 -mt-16 blur-3xl" />}
-      {isCreative && <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/5 rounded-full -ml-24 -mb-24 blur-3xl" />}
-
-      {/* Header section */}
-      <div className={`mb-10 ${isModern ? 'text-left border-l-8 border-primary pl-6' : 'text-center'}`}>
-        <h1 className="text-3xl font-black tracking-tighter text-slate-900 mb-2 uppercase break-words leading-none">
-          {data.full_name || 'Seu Nome Completo'}
-        </h1>
-        <p className="text-sm font-bold text-primary mb-4 uppercase tracking-widest">{data.profession || 'Cargo Desejado'}</p>
+    <div className="flex justify-center bg-slate-100/50 p-4 md:p-8 min-h-screen">
+      {/* 
+        A4 Container 
+        Width: 210mm (~794px at 96dpi)
+        Height: 297mm (~1123px at 96dpi)
+      */}
+      <Card id="curriculum-content" className={`
+        w-full max-w-[210mm] min-h-[297mm] bg-white text-slate-900 shadow-2xl rounded-none border-none 
+        flex flex-col overflow-hidden relative print:shadow-none print:w-[210mm] print:h-[297mm]
+        ${isCreative ? 'font-sans' : 'font-serif'}
+      `}>
         
-        <div className={`flex flex-wrap ${isModern ? 'justify-start' : 'justify-center'} gap-x-4 gap-y-1.5 text-[10px] font-bold text-slate-400`}>
-          {data.email && (
-            <div className="flex items-center gap-1.5">
-              <Mail className="w-3 h-3 text-slate-300" /> {data.email}
-            </div>
-          )}
-          {data.phone && (
-            <div className="flex items-center gap-1.5">
-              <Phone className="w-3 h-3 text-slate-300" /> {data.phone}
-            </div>
-          )}
-          {data.city && (
-            <div className="flex items-center gap-1.5">
-              <MapPin className="w-3 h-3 text-slate-300" /> {data.city}
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className={`grid grid-cols-1 ${isModern || isCreative ? 'md:grid-cols-12' : 'md:grid-cols-1'} gap-8 md:gap-12`}>
-        {/* Main content column */}
-        <div className={(isModern || isCreative) ? "md:col-span-8 space-y-10" : "space-y-10"}>
-          {/* Summary */}
-          {data.summary && (
-            <div>
-              <SectionTitle icon={Info}>Perfil Profissional</SectionTitle>
-              <p className="text-[11px] leading-relaxed text-slate-600 font-medium whitespace-pre-wrap">
-                {data.summary}
-              </p>
-            </div>
+        {/* Template-specific Header */}
+        <header className={`
+          relative z-10 px-10 pt-12 pb-8
+          ${isModern ? 'bg-slate-50 border-l-[12px] border-blue-600' : ''}
+          ${isCreative ? 'bg-purple-600 text-white overflow-hidden' : ''}
+          ${isClassic ? 'text-center border-b-4 border-slate-800 pb-10' : ''}
+        `}>
+          {isCreative && (
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl" />
           )}
 
-          {/* Experience */}
-          {data.experience.length > 0 && (
-            <div>
-              <SectionTitle icon={Briefcase}>Trajetória Profissional</SectionTitle>
-              <div className="space-y-6">
-                {data.experience.map((exp, i) => (
-                  <div key={i} className="group">
-                    <div className="flex justify-between items-baseline mb-1">
-                      <h4 className="text-xs font-black text-slate-900 tracking-tight uppercase">{exp.role}</h4>
-                      <span className="text-[9px] font-black text-slate-400 tabular-nums">
-                        {exp.start} — {exp.end || 'Atual'}
-                      </span>
+          <h1 className={`
+            text-3xl md:text-4xl font-black tracking-tight uppercase leading-none mb-2
+            ${isCreative ? 'text-white' : 'text-slate-900'}
+          `}>
+            {data.full_name || 'Seu Nome Completo'}
+          </h1>
+          <p className={`
+            text-xs font-black uppercase tracking-[0.3em] mb-4
+            ${isCreative ? 'text-purple-200' : primaryColor}
+          `}>
+            {data.profession || 'Cargo Desejado'}
+          </p>
+
+          <div className={`
+            flex flex-wrap gap-x-6 gap-y-2 text-[10px] font-bold
+            ${isCreative ? 'text-purple-100/80' : 'text-slate-500'}
+            ${isClassic ? 'justify-center' : 'justify-start'}
+          `}>
+            {data.email && <div className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5 opacity-70" /> {data.email}</div>}
+            {data.phone && <div className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5 opacity-70" /> {data.phone}</div>}
+            {data.city && <div className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 opacity-70" /> {data.city}</div>}
+          </div>
+        </header>
+
+        {/* Body Layout */}
+        <div className={`
+          flex-1 grid grid-cols-1 md:grid-cols-12 gap-0 
+          ${isClassic ? 'px-10 py-10' : ''}
+        `}>
+          
+          {/* Main Column */}
+          <div className={`
+            ${(isModern || isCreative) ? 'md:col-span-8 px-10 py-10 order-1' : 'md:col-span-12'}
+            space-y-8
+          `}>
+            {/* Summary */}
+            {data.summary && (
+              <section>
+                <SectionTitle icon={Info}>Perfil Profissional</SectionTitle>
+                <p className="text-[11px] leading-relaxed text-slate-600 font-medium text-justify">
+                  {data.summary}
+                </p>
+              </section>
+            )}
+
+            {/* Experience */}
+            {data.experience.length > 0 && (
+              <section>
+                <SectionTitle icon={Briefcase}>Trajetória Profissional</SectionTitle>
+                <div className="space-y-6">
+                  {data.experience.slice(0, 4).map((exp, i) => (
+                    <div key={i} className="relative pl-4 before:absolute before:left-0 before:top-1.5 before:bottom-1 before:w-[1.5px] before:bg-slate-100 hover:before:bg-blue-200 transition-colors">
+                      <div className="flex justify-between items-baseline mb-1">
+                        <h4 className="text-[11px] font-black text-slate-900 uppercase">{exp.role}</h4>
+                        <span className={`text-[9px] font-black ${accentColor}`}>
+                          {exp.start} — {exp.end || 'Atual'}
+                        </span>
+                      </div>
+                      <p className={`text-[10px] font-black ${primaryColor} mb-2`}>{exp.company}</p>
+                      {exp.description && (
+                        <p className="text-[10px] text-slate-500 leading-snug text-justify break-words">
+                          {exp.description}
+                        </p>
+                      )}
                     </div>
-                    <p className="text-[10px] font-bold text-primary mb-2 opacity-80">{exp.company}</p>
-                    {exp.description && (
-                      <p className="text-[10px] text-slate-500 leading-relaxed font-medium pl-3 border-l-2 border-slate-100 group-hover:border-primary/20 transition-colors">
-                        {exp.description}
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+                  ))}
+                </div>
+              </section>
+            )}
 
-          {/* Education */}
-          {data.education.length > 0 && (
-            <div>
-              <SectionTitle icon={GraduationCap}>Formação Acadêmica</SectionTitle>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {data.education.map((edu, i) => (
-                  <div key={i} className="bg-slate-50/50 p-3 rounded-xl border border-slate-100">
-                    <h4 className="text-[10px] font-black text-slate-800 leading-tight mb-1 uppercase">{edu.degree}</h4>
-                    <p className="text-[9px] font-bold text-slate-500">{edu.institution}</p>
-                    <p className="text-[8px] font-black text-primary/60 mt-1 uppercase">{edu.year}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Sidebar column (only for modern/creative) */}
-        <div className={(isModern || isCreative) ? "md:col-span-4 space-y-10" : "space-y-10 border-t pt-10"}>
-          {/* Skills */}
-          {data.skills.length > 0 && (
-            <div>
-              <SectionTitle icon={Star}>Competências</SectionTitle>
-              <div className="flex flex-wrap gap-1.5">
-                {data.skills.map((skill, i) => (
-                  <Badge 
-                    key={i} 
-                    variant="outline" 
-                    className="border-slate-200 text-slate-600 font-bold px-2 py-0.5 rounded-md text-[8px] uppercase tracking-wider"
-                  >
-                    {skill}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Languages */}
-          {data.languages.length > 0 && (
-            <div>
-              <SectionTitle icon={Globe}>Idiomas</SectionTitle>
-              <div className="space-y-2">
-                {data.languages.map((lang, i) => (
-                  <div key={i} className="flex justify-between items-center px-1">
-                    <span className="text-[10px] font-black text-slate-700 uppercase tracking-tighter">{lang.name}</span>
-                    <div className="h-1 flex-1 mx-3 bg-slate-100 rounded-full relative overflow-hidden">
-                      <div className="absolute inset-y-0 left-0 bg-primary/40 rounded-full" style={{ width: lang.level === 'Fluente' || lang.level === 'Nativo' ? '100%' : lang.level === 'Avançado' ? '80%' : lang.level === 'Intermediário' ? '50%' : '25%' }} />
+            {/* Education */}
+            {data.education.length > 0 && (
+              <section>
+                <SectionTitle icon={GraduationCap}>Formação Acadêmica</SectionTitle>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {data.education.map((edu, i) => (
+                    <div key={i} className="bg-slate-50/50 p-3 rounded-lg border border-slate-100 border-l-4 border-l-slate-200">
+                      <h4 className="text-[10px] font-black text-slate-800 leading-tight mb-1 uppercase">{edu.degree}</h4>
+                      <p className="text-[9px] font-bold text-slate-500">{edu.institution}</p>
+                      <p className={`text-[9px] font-black ${primaryColor} mt-1 opacity-70 uppercase`}>{edu.year}</p>
                     </div>
-                    <span className="text-[8px] font-black text-slate-400">{lang.level}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+                  ))}
+                </div>
+              </section>
+            )}
+          </div>
 
-          {/* Certificates */}
-          {data.certificates.length > 0 && (
-            <div>
-              <SectionTitle icon={Award}>Certificações</SectionTitle>
-              <div className="space-y-3">
-                {data.certificates.map((cert, i) => (
-                  <div key={i} className="relative pl-3 before:absolute before:left-0 before:top-1.5 before:w-1 before:h-1 before:bg-primary/30 before:rounded-full">
-                    <h5 className="text-[9px] font-black text-slate-900 leading-tight uppercase underline decoration-slate-100">{cert.name}</h5>
-                    <p className="text-[8px] font-bold text-slate-400">{cert.issuer} • {cert.year}</p>
+          {/* Sidebar Column */}
+          {(isModern || isCreative) && (
+            <aside className={`
+              md:col-span-4 px-8 py-10 order-2 flex flex-col gap-8
+              ${isModern ? 'bg-slate-50' : 'bg-slate-50/30 border-l border-slate-100'}
+            `}>
+              {/* Skills */}
+              {data.skills.length > 0 && (
+                <section>
+                  <SectionTitle icon={Star}>Competências</SectionTitle>
+                  <div className="flex flex-wrap gap-2">
+                    {data.skills.map((skill, i) => (
+                      <div 
+                        key={i} 
+                        className={`text-[9px] font-bold py-1 px-2 rounded-full flex items-center gap-1 ${primaryBg} bg-opacity-5 ${primaryColor}`}
+                      >
+                        <CheckCircle2 className="w-2.5 h-2.5 opacity-50" /> {skill}
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </div>
+                </section>
+              )}
+
+              {/* Languages */}
+              {data.languages.length > 0 && (
+                <section>
+                  <SectionTitle icon={Globe}>Idiomas</SectionTitle>
+                  <div className="space-y-3">
+                    {data.languages.map((lang, i) => (
+                      <div key={i} className="px-1">
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-[10px] font-black text-slate-700 uppercase tracking-tighter">{lang.name}</span>
+                          <span className="text-[8px] font-black text-slate-400 uppercase">{lang.level}</span>
+                        </div>
+                        <div className="h-1 bg-slate-200 rounded-full overflow-hidden">
+                          <div 
+                            className={`h-full ${primaryBg}`} 
+                            style={{ 
+                              width: lang.level === 'Fluente' || lang.level === 'Nativo' ? '100%' : 
+                                     lang.level === 'Avançado' ? '80%' : 
+                                     lang.level === 'Intermediário' ? '50%' : '25%' 
+                            }} 
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* Certificates */}
+              {data.certificates.length > 0 && (
+                <section>
+                  <SectionTitle icon={Award}>Certificações</SectionTitle>
+                  <div className="space-y-4">
+                    {data.certificates.map((cert, i) => (
+                      <div key={i}>
+                        <h5 className="text-[10px] font-black text-slate-900 leading-tight uppercase">{cert.name}</h5>
+                        <p className="text-[9px] font-bold text-slate-400">{cert.issuer} • {cert.year}</p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+            </aside>
           )}
         </div>
-      </div>
 
-      {/* Footer watermark */}
-      <div className="mt-16 text-center opacity-20 pointer-events-none">
-        <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.5em]">Gerado via voocerto.com.br</p>
-      </div>
-    </Card>
+        {/* Footer */}
+        <footer className="px-10 py-6 border-t border-slate-50 text-center">
+          <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.4em]">Gerado via voocerto.com.br</p>
+        </footer>
+
+      </Card>
+    </div>
   );
 }

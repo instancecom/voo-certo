@@ -179,96 +179,201 @@ export default function CurriculumPage() {
       const { default: jsPDF } = await import('jspdf');
       const pdf = new jsPDF('p', 'mm', 'a4');
       const w = pdf.internal.pageSize.getWidth();
+      const h = pdf.internal.pageSize.getHeight();
       let y = 0;
 
       const template = data.template || 'classico';
+      const isModern = template === 'moderno';
+      const isCreative = template === 'criativo';
+      const isClassic = template === 'classico';
+
       const colors = {
-        classico: { p: [30, 58, 95] as [number, number, number] },
-        moderno: { p: [37, 99, 235] as [number, number, number] },
-        criativo: { p: [124, 58, 237] as [number, number, number] },
+        classico: { p: [30, 41, 59] as [number, number, number], light: [248, 250, 252] as [number, number, number] },
+        moderno: { p: [37, 99, 235] as [number, number, number], light: [239, 246, 255] as [number, number, number] },
+        criativo: { p: [124, 58, 237] as [number, number, number], light: [245, 243, 255] as [number, number, number] },
       };
       const c = colors[template as keyof typeof colors] || colors.classico;
 
-      // Clean simple PDF generator for MVP
-      pdf.setFillColor(...c.p);
-      pdf.rect(0, 0, w, 35, 'F');
-      pdf.setTextColor(255, 255, 255);
-      pdf.setFontSize(22);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text(data.full_name || 'CURRÍCULO', 15, 18);
-      pdf.setFontSize(10);
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(data.profession || '', 15, 26);
-      pdf.setFontSize(8);
-      pdf.text([data.email, data.phone, data.city].filter(Boolean).join(' • '), 15, 31);
-      
-      y = 45;
-      pdf.setTextColor(50, 50, 50);
+      // Header background
+      if (isCreative) {
+        pdf.setFillColor(...c.p);
+        pdf.rect(0, 0, w, 40, 'F');
+        pdf.setTextColor(255, 255, 255);
+      } else if (isModern) {
+        pdf.setFillColor(...c.light);
+        pdf.rect(0, 0, w, 40, 'F');
+        pdf.setFillColor(...c.p);
+        pdf.rect(0, 0, 5, 40, 'F');
+        pdf.setTextColor(30, 41, 59);
+      } else {
+        pdf.setFillColor(30, 41, 59);
+        pdf.rect(15, 38, w - 30, 1.5, 'F');
+        pdf.setTextColor(30, 41, 59);
+      }
 
-      const section = (t: string) => {
-        if (y > 270) { pdf.addPage(); y = 15; }
-        pdf.setFontSize(12);
+      // Sidebar background for Modern
+      if (isModern) {
+        pdf.setFillColor(...c.light);
+        pdf.rect(w * 0.65, 40, w * 0.35, h - 40, 'F');
+      }
+
+      // Name & Profession
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(22);
+      if (isClassic) {
+        pdf.text(data.full_name.toUpperCase(), w / 2, 20, { align: 'center' });
+        pdf.setFontSize(10);
+        pdf.setTextColor(...c.p);
+        pdf.text(data.profession.toUpperCase(), w / 2, 28, { align: 'center' });
+      } else {
+        pdf.text(data.full_name.toUpperCase(), 15, 20);
+        pdf.setFontSize(10);
+        pdf.setTextColor(isCreative ? 220 : c.p[0], isCreative ? 220 : c.p[1], isCreative ? 220 : c.p[2]);
+        pdf.text(data.profession.toUpperCase(), 15, 28);
+      }
+
+      // Contact Info
+      pdf.setFontSize(8);
+      pdf.setTextColor(isCreative ? 230 : 100);
+      const contactStr = [data.email, data.phone, data.city].filter(Boolean).join('  •  ');
+      if (isClassic) pdf.text(contactStr, w / 2, 34, { align: 'center' });
+      else pdf.text(contactStr, 15, 34);
+
+      pdf.setTextColor(50, 50, 50);
+      y = 50;
+
+      // Main content width
+      const contentW = (isModern) ? w * 0.6 : w - 30;
+      const sidebarX = w * 0.68;
+      const sidebarW = w * 0.28;
+
+      const section = (title: string, xPos = 15, width = contentW) => {
+        pdf.setFontSize(11);
         pdf.setFont('helvetica', 'bold');
         pdf.setTextColor(...c.p);
-        pdf.text(t.toUpperCase(), 15, y);
+        pdf.text(title.toUpperCase(), xPos, y);
         y += 2;
-        pdf.setDrawColor(...c.p);
-        pdf.line(15, y, w - 15, y);
+        pdf.setDrawColor(240, 240, 240);
+        pdf.line(xPos, y, xPos + width, y);
         y += 6;
         pdf.setTextColor(50, 50, 50);
       };
 
+      // Summary
       if (data.summary) {
-        section('Perfil');
+        section('Perfil Profissional');
         pdf.setFontSize(9);
-        const lines = pdf.splitTextToSize(data.summary, w - 30);
+        pdf.setFont('helvetica', 'normal');
+        const lines = pdf.splitTextToSize(data.summary, contentW);
         pdf.text(lines, 15, y);
-        y += (lines.length * 4) + 6;
+        y += (lines.length * 4.5) + 8;
       }
 
+      const checkPage = (added: number) => {
+        if (y + added > 280) { pdf.addPage(); y = 20; if (isModern) { pdf.setFillColor(...c.light); pdf.rect(w * 0.65, 0, w * 0.35, h, 'F'); } }
+      };
+
+      // Experience
       if (data.experience.length > 0) {
-        section('Experiência');
-        data.experience.forEach(e => {
-          pdf.setFontSize(10);
+        checkPage(20);
+        section('Trajetória Profissional');
+        data.experience.forEach(exp => {
+          checkPage(25);
           pdf.setFont('helvetica', 'bold');
-          pdf.text(e.role, 15, y);
+          pdf.setFontSize(10);
+          pdf.text(exp.role.toUpperCase(), 15, y);
+          pdf.setFontSize(8);
+          pdf.setTextColor(...c.p);
+          pdf.text(`${exp.company.toUpperCase()} | ${exp.start} - ${exp.end || 'Atual'}`, 15, y + 4);
+          y += 9;
+          if (exp.description) {
+            pdf.setTextColor(70);
+            pdf.setFont('helvetica', 'normal');
+            const descLines = pdf.splitTextToSize(exp.description, contentW - 5);
+            pdf.text(descLines, 15, y);
+            y += (descLines.length * 4) + 4;
+          }
+          y += 2;
+        });
+        y += 6;
+      }
+
+      // Education
+      if (data.education.length > 0) {
+        checkPage(20);
+        section('Formação Acadêmica');
+        data.education.forEach(edu => {
+          checkPage(15);
+          pdf.setFont('helvetica', 'bold');
+          pdf.setFontSize(9);
+          pdf.text(edu.degree.toUpperCase(), 15, y);
           pdf.setFont('helvetica', 'normal');
           pdf.setFontSize(8);
-          pdf.text(`${e.company} | ${e.start} - ${e.end || 'Atual'}`, 15, y + 4);
-          y += 9;
-          if (e.description) {
-            pdf.setFontSize(8);
-            const dl = pdf.splitTextToSize(e.description, w-30);
-            pdf.text(dl, 15, y);
-            y += (dl.length * 4) + 2;
-          }
-          y += 3;
-        });
-      }
-
-      if (data.education.length > 0) {
-        section('Educação');
-        data.education.forEach(e => {
-          pdf.setFontSize(9);
-          pdf.setFont('helvetica', 'bold');
-          pdf.text(e.degree, 15, y);
-          pdf.setFont('helvetica', 'normal');
-          pdf.text(`${e.institution} (${e.year})`, 15, y + 4);
+          pdf.text(`${edu.institution.toUpperCase()} (${edu.year})`, 15, y + 4);
           y += 10;
         });
       }
 
-      if (data.skills.length > 0) {
-        section('Habilidades');
-        pdf.setFontSize(9);
-        pdf.text(data.skills.join(' • '), 15, y);
-        y += 8;
+      // Sidebar content for Modern/Creative
+      if (isModern) {
+        const savedY = y;
+        y = 50;
+        
+        if (data.skills.length > 0) {
+          section('Competências', sidebarX, sidebarW);
+          pdf.setFontSize(8);
+          data.skills.forEach(s => {
+            pdf.text(`• ${s}`, sidebarX, y);
+            y += 4.5;
+          });
+          y += 8;
+        }
+
+        if (data.languages.length > 0) {
+          section('Idiomas', sidebarX, sidebarW);
+          pdf.setFontSize(8);
+          data.languages.forEach(l => {
+            pdf.text(`${l.name}: ${l.level}`, sidebarX, y);
+            y += 4.5;
+          });
+          y += 8;
+        }
+
+        if (data.certificates.length > 0) {
+          section('Certificações', sidebarX, sidebarW);
+          pdf.setFontSize(8);
+          data.certificates.forEach(cert => {
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(cert.name, sidebarX, y);
+            pdf.setFont('helvetica', 'normal');
+            pdf.text(`${cert.issuer} (${cert.year})`, sidebarX, y + 3.5);
+            y += 8;
+          });
+        }
+        
+        y = Math.max(y, savedY);
+      } else {
+        // Simple sequential for others
+        if (data.skills.length > 0) {
+          checkPage(20);
+          section('Competências');
+          pdf.setFontSize(8);
+          pdf.text(data.skills.join('  •  '), 15, y);
+          y += 12;
+        }
+        
+        if (data.languages.length > 0) {
+          checkPage(20);
+          section('Idiomas');
+          pdf.setFontSize(8);
+          pdf.text(data.languages.map(l => `${l.name} (${l.level})`).join('  •  '), 15, y);
+          y += 12;
+        }
       }
 
-      pdf.save(`curriculo-${data.full_name?.replace(/\s+/g, '-').toLowerCase() || 'voocerto'}.pdf`);
-      toast.success('PDF gerado com sucesso!');
-    } catch (err) {
-      console.error(err);
+      pdf.save(`curriculo_${data.full_name.replace(/\s+/g, '_').toLowerCase()}.pdf`);
+    } catch (error) {
+      console.error(error);
       toast.error('Erro ao gerar PDF.');
     } finally {
       setIsGenerating(false);
@@ -293,8 +398,6 @@ export default function CurriculumPage() {
       </div>
     );
   }
-
-  const selectedTemplate = TEMPLATES.find(t => t.id === data.template) || TEMPLATES[0];
 
   return (
     <div className="min-h-screen bg-background bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/5 via-background to-background">
@@ -333,8 +436,25 @@ export default function CurriculumPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
             {/* Editor Sidebar */}
             <div className={`lg:col-span-5 space-y-8 ${mode === 'preview' ? 'hidden lg:block' : ''}`}>
-              <Card className="rounded-[2.5rem] border-2 shadow-sm overflow-hidden bg-card/60 backdrop-blur-xl">
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="p-4 sm:p-6">
+               {/* Controls for Tab switching or other stuff could go here */}
+               <Card className="rounded-[2.5rem] border-2 shadow-sm overflow-hidden bg-white/70 backdrop-blur-xl">
+                 <div className="p-6 border-b">
+                   <h3 className="font-black text-sm uppercase tracking-widest text-primary">Selecione o Modelo</h3>
+                   <div className="grid grid-cols-3 gap-3 mt-4">
+                     {TEMPLATES.map(t => (
+                       <button
+                         key={t.id}
+                         onClick={() => setData(p => ({ ...p, template: t.id }))}
+                         className={`p-3 rounded-xl border-2 transition-all flex flex-col items-center gap-2 ${data.template === t.id ? 'border-primary bg-primary/5 text-primary' : 'border-border hover:border-primary/30 text-muted-foreground'}`}
+                       >
+                         <t.icon className="w-5 h-5" />
+                         <span className="text-[10px] font-black uppercase">{t.name}</span>
+                       </button>
+                     ))}
+                   </div>
+                 </div>
+
+                 <Tabs value={activeTab} onValueChange={setActiveTab} className="p-6">
                   <TabsList className="grid grid-cols-4 mb-8 bg-muted/60 p-1 h-14 rounded-2xl">
                     <TabsTrigger value="dados" className="rounded-xl data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-lg"><User className="w-5 h-5" /></TabsTrigger>
                     <TabsTrigger value="experiencia" className="rounded-xl data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-lg"><Briefcase className="w-5 h-5" /></TabsTrigger>
@@ -342,156 +462,141 @@ export default function CurriculumPage() {
                     <TabsTrigger value="extras" className="rounded-xl data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-lg"><Award className="w-5 h-5" /></TabsTrigger>
                   </TabsList>
 
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={activeTab}
-                      initial={{ opacity: 0, x: 10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -10 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      {/* Dados Content */}
-                      {activeTab === 'dados' && (
-                        <div className="space-y-6">
-                          <div className="space-y-4">
-                            <div className="space-y-2">
-                              <Label className="font-bold text-xs uppercase tracking-widest text-muted-foreground ml-1">Nome Completo</Label>
-                              <Input value={data.full_name} onChange={e => setData(p => ({ ...p, full_name: e.target.value }))} className="h-12 rounded-2xl bg-white border-2 border-primary/5 focus-visible:border-primary/20" />
-                            </div>
-                            <div className="space-y-2">
-                              <Label className="font-bold text-xs uppercase tracking-widest text-muted-foreground ml-1">Cargo Desejado</Label>
-                              <Input value={data.profession} onChange={e => setData(p => ({ ...p, profession: e.target.value }))} className="h-12 rounded-2xl bg-white border-2 border-primary/5 focus-visible:border-primary/20" />
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                              <div className="space-y-2">
-                                <Label className="font-bold text-xs uppercase tracking-widest text-muted-foreground ml-1">E-mail</Label>
-                                <Input value={data.email} onChange={e => setData(p => ({ ...p, email: e.target.value }))} className="h-12 rounded-2xl bg-white border-2 border-primary/5 focus-visible:border-primary/20" />
-                              </div>
-                              <div className="space-y-2">
-                                <Label className="font-bold text-xs uppercase tracking-widest text-muted-foreground ml-1">Telefone</Label>
-                                <Input value={data.phone} onChange={e => setData(p => ({ ...p, phone: e.target.value }))} className="h-12 rounded-2xl bg-white border-2 border-primary/5 focus-visible:border-primary/20" />
-                              </div>
-                            </div>
-                            <div className="space-y-2">
-                              <Label className="font-bold text-xs uppercase tracking-widest text-muted-foreground ml-1">Perfil Profissional</Label>
-                              <Textarea value={data.summary} onChange={e => setData(p => ({ ...p, summary: e.target.value }))} className="rounded-2xl bg-white border-2 border-primary/5 min-h-[150px] resize-none" />
-                            </div>
-                          </div>
+                  <TabsContent value="dados" className="space-y-4">
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="space-y-2">
+                        <Label className="font-black text-[10px] uppercase ml-1 opacity-70">Nome Completo</Label>
+                        <Input placeholder="Seu nome" value={data.full_name} onChange={e => setData(p => ({ ...p, full_name: e.target.value }))} className="h-11 rounded-xl" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="font-black text-[10px] uppercase ml-1 opacity-70">Cargo / Profissão</Label>
+                        <Input placeholder="Ex: Comissário de Voo" value={data.profession} onChange={e => setData(p => ({ ...p, profession: e.target.value }))} className="h-11 rounded-xl" />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label className="font-black text-[10px] uppercase ml-1 opacity-70">E-mail</Label>
+                          <Input placeholder="email@exemplo.com" value={data.email} onChange={e => setData(p => ({ ...p, email: e.target.value }))} className="h-11 rounded-xl" />
                         </div>
-                      )}
+                        <div className="space-y-2">
+                          <Label className="font-black text-[10px] uppercase ml-1 opacity-70">Telefone</Label>
+                          <Input placeholder="(00) 00000-0000" value={data.phone} onChange={e => setData(p => ({ ...p, phone: e.target.value }))} className="h-11 rounded-xl" />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="font-black text-[10px] uppercase ml-1 opacity-70">Cidade/UF</Label>
+                        <Input placeholder="Ex: São Paulo, SP" value={data.city} onChange={e => setData(p => ({ ...p, city: e.target.value }))} className="h-11 rounded-xl" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="font-black text-[10px] uppercase ml-1 opacity-70">Resumo Profissional</Label>
+                        <Textarea placeholder="Breve resumo sobre você..." value={data.summary} onChange={e => setData(p => ({ ...p, summary: e.target.value }))} className="rounded-xl min-h-[120px]" />
+                      </div>
+                    </div>
+                  </TabsContent>
 
-                      {/* Experiência Content */}
-                      {activeTab === 'experiencia' && (
-                        <div className="space-y-6">
-                          <div className="flex items-center justify-between">
-                            <h3 className="font-black text-lg">Experiências</h3>
-                            <Button variant="outline" size="sm" onClick={addExperience} className="rounded-xl border-2"><Plus className="w-4 h-4 mr-2" /> Novo</Button>
+                  <TabsContent value="experiencia" className="space-y-4">
+                    <div className="flex items-center justify-between mb-4">
+                       <h3 className="font-black text-xs uppercase tracking-widest text-primary">Experiências</h3>
+                       <Button variant="outline" size="sm" onClick={addExperience} className="rounded-lg h-8 px-3 border-2"><Plus className="w-3 h-3 mr-1" /> Novo</Button>
+                    </div>
+                    <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+                      {data.experience.map((exp, i) => (
+                        <div key={i} className="p-4 rounded-2xl border-2 bg-white/50 relative group space-y-3">
+                          <Button variant="ghost" size="sm" onClick={() => removeExperience(i)} className="absolute top-2 right-2 h-7 w-7 p-0 rounded-lg text-red-500 hover:bg-red-50"><Trash2 className="w-3.5 h-3.5" /></Button>
+                          <Input placeholder="Empresa" value={exp.company} onChange={e => updateExperience(i, 'company', e.target.value)} className="h-10 rounded-lg" />
+                          <Input placeholder="Cargo" value={exp.role} onChange={e => updateExperience(i, 'role', e.target.value)} className="h-10 rounded-lg" />
+                          <div className="grid grid-cols-2 gap-3">
+                            <Input placeholder="Início" value={exp.start} onChange={e => updateExperience(i, 'start', e.target.value)} className="h-10 rounded-lg" />
+                            <Input placeholder="Fim (ou Atual)" value={exp.end} onChange={e => updateExperience(i, 'end', e.target.value)} className="h-10 rounded-lg" />
                           </div>
-                          <div className="space-y-4">
-                            {data.experience.map((exp, i) => (
-                              <Card key={i} className="p-4 rounded-2xl border-2 border-primary/5 bg-white/50 relative group">
-                                <Button variant="ghost" size="sm" onClick={() => removeExperience(i)} className="absolute top-2 right-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"><Trash2 className="w-4 h-4 text-red-400" /></Button>
-                                <div className="space-y-3">
-                                  <Input placeholder="Empresa" value={exp.company} onChange={e => updateExperience(i, 'company', e.target.value)} className="h-10 rounded-xl" />
-                                  <Input placeholder="Cargo" value={exp.role} onChange={e => updateExperience(i, 'role', e.target.value)} className="h-10 rounded-xl" />
-                                  <div className="grid grid-cols-2 gap-3">
-                                    <Input placeholder="Início" value={exp.start} onChange={e => updateExperience(i, 'start', e.target.value)} className="h-10 rounded-xl" />
-                                    <Input placeholder="Fim" value={exp.end} onChange={e => updateExperience(i, 'end', e.target.value)} className="h-10 rounded-xl" />
-                                  </div>
-                                  <Textarea placeholder="Descrição" value={exp.description} onChange={e => updateExperience(i, 'description', e.target.value)} className="rounded-xl min-h-[80px]" />
-                                </div>
-                              </Card>
-                            ))}
-                          </div>
+                          <Textarea placeholder="Atividades principais..." value={exp.description} onChange={e => updateExperience(i, 'description', e.target.value)} className="rounded-lg min-h-[80px] text-xs" />
                         </div>
-                      )}
+                      ))}
+                    </div>
+                  </TabsContent>
 
-                      {/* Formação Content */}
-                      {activeTab === 'formacao' && (
-                        <div className="space-y-6">
-                          <div className="flex items-center justify-between">
-                            <h3 className="font-black text-lg">Educação</h3>
-                            <Button variant="outline" size="sm" onClick={addEducation} className="rounded-xl border-2"><Plus className="w-4 h-4 mr-2" /> Novo</Button>
-                          </div>
-                          <div className="space-y-4">
-                            {data.education.map((edu, i) => (
-                              <Card key={i} className="p-4 rounded-2xl border-2 border-primary/5 bg-white/50">
-                                <div className="space-y-3">
-                                  <Input placeholder="Instituição" value={edu.institution} onChange={e => updateEducation(i, 'institution', e.target.value)} className="h-10 rounded-xl" />
-                                  <Input placeholder="Curso" value={edu.degree} onChange={e => updateEducation(i, 'degree', e.target.value)} className="h-10 rounded-xl" />
-                                  <Input placeholder="Ano" value={edu.year} onChange={e => updateEducation(i, 'year', e.target.value)} className="h-10 rounded-xl" />
-                                </div>
-                              </Card>
-                            ))}
-                          </div>
+                  <TabsContent value="formacao" className="space-y-4">
+                    <div className="flex items-center justify-between mb-4">
+                       <h3 className="font-black text-xs uppercase tracking-widest text-primary">Educação</h3>
+                       <Button variant="outline" size="sm" onClick={addEducation} className="rounded-lg h-8 px-3 border-2"><Plus className="w-3 h-3 mr-1" /> Novo</Button>
+                    </div>
+                    <div className="space-y-4">
+                      {data.education.map((edu, i) => (
+                        <div key={i} className="p-4 rounded-2xl border-2 bg-white/50 space-y-3">
+                          <Input placeholder="Instituição" value={edu.institution} onChange={e => updateEducation(i, 'institution', e.target.value)} className="h-10 rounded-lg" />
+                          <Input placeholder="Grau / Curso" value={edu.degree} onChange={e => updateEducation(i, 'degree', e.target.value)} className="h-10 rounded-lg" />
+                          <Input placeholder="Ano de Conclusão" value={edu.year} onChange={e => updateEducation(i, 'year', e.target.value)} className="h-10 rounded-lg" />
                         </div>
-                      )}
+                      ))}
+                    </div>
+                  </TabsContent>
 
-                      {/* Extras Content */}
-                      {activeTab === 'extras' && (
-                        <div className="space-y-8">
-                          <div className="space-y-4">
-                            <h4 className="font-black flex items-center gap-2"><Star className="w-4 h-4 text-accent" /> Competências</h4>
-                            <div className="flex gap-2">
-                              <Input placeholder="Liderança, Excel..." value={newSkill} onChange={e => setNewSkill(e.target.value)} onKeyDown={e => e.key === 'Enter' && addSkill()} className="h-11 rounded-xl" />
-                              <Button variant="outline" onClick={addSkill} className="h-11 rounded-xl"><Plus className="w-4 h-4" /></Button>
-                            </div>
-                            <div className="flex flex-wrap gap-2">
-                              {data.skills.map((s, i) => (
-                                <Badge key={i} variant="secondary" className="px-3 py-1 cursor-pointer hover:bg-red-50 hover:text-red-500 transition-colors" onClick={() => setData(p => ({ ...p, skills: p.skills.filter((_, idx) => idx !== i) }))}>{s} ✕</Badge>
-                              ))}
-                            </div>
+                  <TabsContent value="extras" className="space-y-8">
+                    <div className="space-y-4">
+                      <Label className="font-black text-[10px] uppercase ml-1 opacity-70">Competências</Label>
+                      <div className="flex gap-2">
+                        <Input placeholder="Ex: Liderança" value={newSkill} onChange={e => setNewSkill(e.target.value)} onKeyDown={e => e.key === 'Enter' && addSkill()} className="h-11 rounded-xl" />
+                        <Button variant="outline" onClick={addSkill} className="h-11 rounded-xl bg-white"><Plus className="w-4 h-4" /></Button>
+                      </div>
+                      <div className="flex flex-wrap gap-2 pt-2">
+                        {data.skills.map((s, i) => (
+                          <Badge key={i} variant="secondary" className="px-3 py-1.5 rounded-lg font-bold text-[10px] cursor-pointer hover:bg-red-50 hover:text-red-500 border-2" onClick={() => setData(p => ({ ...p, skills: p.skills.filter((_, idx) => idx !== i) }))}>{s} ✕</Badge>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="space-y-4 pt-4 border-t">
+                      <div className="flex items-center justify-between">
+                         <Label className="font-black text-[10px] uppercase ml-1 opacity-70">Idiomas</Label>
+                         <Button variant="ghost" size="sm" onClick={addLanguage} className="h-7 text-xs font-black text-primary"><Plus className="w-3 h-3 mr-1" /> ADICIONAR</Button>
+                      </div>
+                      <div className="space-y-3">
+                        {data.languages.map((l, i) => (
+                          <div key={i} className="flex gap-2">
+                            <Input placeholder="Idioma" value={l.name} onChange={e => setData(p => ({ ...p, languages: p.languages.map((item, idx) => idx === i ? { ...item, name: e.target.value } : item) }))} className="h-10 rounded-lg flex-1" />
+                            <Select value={l.level} onValueChange={v => setData(p => ({ ...p, languages: p.languages.map((item, idx) => idx === i ? { ...item, level: v } : item) }))}>
+                              <SelectTrigger className="w-[120px] h-10 rounded-lg">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="Básico">Básico</SelectItem>
+                                <SelectItem value="Intermediário">Intermediário</SelectItem>
+                                <SelectItem value="Avançado">Avançado</SelectItem>
+                                <SelectItem value="Fluente">Fluente</SelectItem>
+                                <SelectItem value="Nativo">Nativo</SelectItem>
+                              </SelectContent>
+                            </Select>
                           </div>
-                          
-                          <div className="space-y-4">
-                            <h4 className="font-black flex items-center gap-2"><Globe className="w-4 h-4 text-primary" /> Idiomas</h4>
-                            <Button variant="outline" size="sm" onClick={addLanguage} className="rounded-xl"><Plus className="w-4 h-4 mr-2" /> Adicionar Idioma</Button>
-                            {data.languages.map((l, i) => (
-                              <div key={i} className="flex gap-2">
-                                <Input value={l.name} onChange={e => setData(p => ({ ...p, languages: p.languages.map((val, idx) => idx === i ? { ...val, name: e.target.value } : val) }))} className="h-10 rounded-xl" />
-                                <Select value={l.level} onValueChange={v => setData(p => ({ ...p, languages: p.languages.map((val, idx) => idx === i ? { ...val, level: v } : val) }))}>
-                                  <SelectTrigger className="h-10 rounded-xl"><SelectValue /></SelectTrigger>
-                                  <SelectContent>
-                                    {['Básico', 'Intermediário', 'Avançado', 'Fluente', 'Nativo'].map(lv => <SelectItem key={lv} value={lv}>{lv}</SelectItem>)}
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                            ))}
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="space-y-4 pt-4 border-t">
+                      <div className="flex items-center justify-between">
+                         <Label className="font-black text-[10px] uppercase ml-1 opacity-70">Certificações</Label>
+                         <Button variant="ghost" size="sm" onClick={addCertificate} className="h-7 text-xs font-black text-primary"><Plus className="w-3 h-3 mr-1" /> ADICIONAR</Button>
+                      </div>
+                      <div className="space-y-3">
+                        {data.certificates.map((c, i) => (
+                          <div key={i} className="p-3 border-2 rounded-xl bg-white/30 space-y-2">
+                             <Input placeholder="Nome do Certificado" value={c.name} onChange={e => setData(p => ({ ...p, certificates: p.certificates.map((item, idx) => idx === i ? { ...item, name: e.target.value } : item) }))} className="h-9 rounded-lg" />
+                             <div className="grid grid-cols-2 gap-2">
+                               <Input placeholder="Emissor" value={c.issuer} onChange={e => setData(p => ({ ...p, certificates: p.certificates.map((item, idx) => idx === i ? { ...item, issuer: e.target.value } : item) }))} className="h-9 rounded-lg" />
+                               <Input placeholder="Ano" value={c.year} onChange={e => setData(p => ({ ...p, certificates: p.certificates.map((item, idx) => idx === i ? { ...item, year: e.target.value } : item) }))} className="h-9 rounded-lg" />
+                             </div>
                           </div>
-                        </div>
-                      )}
-                    </motion.div>
-                  </AnimatePresence>
+                        ))}
+                      </div>
+                    </div>
+                  </TabsContent>
                 </Tabs>
-              </Card>
-
-              {/* Template Selector Card */}
-              <Card className="p-6 rounded-[2.5rem] border-2 bg-card/60 backdrop-blur-xl">
-                <h3 className="font-black mb-6 flex items-center gap-2"><Layout className="w-5 h-5 text-primary" /> Modelo do Documento</h3>
-                <div className="grid grid-cols-3 gap-3">
-                  {TEMPLATES.map(t => (
-                    <button
-                      key={t.id}
-                      onClick={() => setData(p => ({ ...p, template: t.id }))}
-                      className={`p-4 rounded-3xl border-2 transition-all flex flex-col items-center gap-2 ${data.template === t.id ? 'border-primary bg-primary/5 text-primary ring-4 ring-primary/5' : 'border-primary/5 grayscale opacity-60 hover:opacity-100 hover:grayscale-0'}`}
-                    >
-                      <t.icon className="w-6 h-6" />
-                      <span className="text-[10px] font-black uppercase tracking-wider">{t.name}</span>
-                    </button>
-                  ))}
-                </div>
               </Card>
             </div>
 
-            {/* Desktop Preview / Mobile View Control */}
-            <div className={`lg:col-span-7 space-y-6 ${mode === 'edit' ? 'hidden lg:block' : ''}`}>
-              <div className="flex items-center justify-between mb-4 lg:hidden">
-                <Button variant="ghost" onClick={() => setMode('edit')} className="rounded-xl font-bold"><ArrowLeft className="w-4 h-4 mr-2" /> Voltar para Edição</Button>
-              </div>
-              
+            {/* Preview Column */}
+            <div className={`lg:col-span-7 ${mode === 'edit' ? 'hidden lg:block' : ''}`}>
               <div className="sticky top-24">
-                <div className="bg-slate-300 p-1 rounded-t-[2.5rem] border-x-4 border-t-4 border-white inline-flex items-center px-6 py-2 gap-3 translate-y-1 relative z-10 shadow-sm">
-                  <div className="flex gap-1.5">
+                <div className="bg-slate-200/50 rounded-t-[2.5rem] border-x-4 border-t-4 border-white p-3 flex items-center justify-between">
+                  <div className="flex gap-1.5 px-3">
                     <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
                     <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
                     <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
@@ -507,15 +612,13 @@ export default function CurriculumPage() {
         </div>
       </main>
       <Footer />
-    </div>
-  );
-}
 
-// ArrowLeft re-import or definition if missing in top imports
-function ArrowLeft({ className }: { className?: string }) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>
-    </svg>
+      {/* Mobile Mode Toggle */}
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 lg:hidden z-50">
+        <Button onClick={() => setMode(p => p === 'edit' ? 'preview' : 'edit')} className="rounded-full h-12 px-6 shadow-2xl font-black uppercase tracking-widest text-[10px] gap-2">
+          {mode === 'edit' ? <><Sparkles className="w-4 h-4" /> Visualizar</> : <><Plus className="w-4 h-4" /> Editar Dados</>}
+        </Button>
+      </div>
+    </div>
   );
 }
