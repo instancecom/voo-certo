@@ -233,11 +233,8 @@ export function BlocksManager({ professionId, professionName, onBack, onSelectBl
           {blocks?.map((block, index) => (
             <motion.div
               key={block.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
             >
-              <Card className="hover:border-primary/50 transition-colors">
+              <Card className="transition-colors">
                 <CardContent className="py-4">
                   <div className="flex items-center gap-4">
                     <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-xl">

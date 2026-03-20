@@ -231,11 +231,8 @@ export function ProfessionsManager({ onSelectProfession }: ProfessionsManagerPro
           {professions?.map((profession, index) => (
             <motion.div
               key={profession.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
             >
-              <Card className="hover:border-primary/50 transition-colors">
+              <Card className="transition-colors">
                 <CardContent className="py-4 px-3 sm:px-6">
                   <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                     <div className="flex items-center gap-3 min-w-0">
