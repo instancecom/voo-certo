@@ -59,19 +59,19 @@ export function BlocksManager({ professionId, professionName, onBack, onSelectBl
 
       if (error) throw error;
 
-      // Get question counts per block
-      const { data: questions, error: questionsError } = await supabase
-        .from('questions')
-        .select('subcategory_id')
-        .eq('category_id', professionId)
-        .limit(10000);
-
-      if (questionsError) throw questionsError;
-
-      const questionCountMap = (questions || []).reduce((acc, q) => {
-        acc[q.subcategory_id] = (acc[q.subcategory_id] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>);
+      // Get question counts per block using direct count queries to avoid row limits
+      const questionCountMap: Record<string, number> = {};
+      
+      await Promise.all((blocksData || []).map(async (block) => {
+        const { count, error: countError } = await supabase
+          .from('questions')
+          .select('*', { count: 'exact', head: true })
+          .eq('subcategory_id', block.id);
+        
+        if (!countError) {
+          questionCountMap[block.id] = count || 0;
+        }
+      }));
 
       return (blocksData || []).map(block => ({
         ...block,

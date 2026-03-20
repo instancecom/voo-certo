@@ -51,31 +51,27 @@ export default function SimuladosPage() {
 
       if (error) throw error;
 
-      const { data: blocks } = await supabase.from('subcategories').select('id, name, category_id').order('name').limit(1000);
-      const { data: questions } = await supabase.from('questions').select('category_id').limit(10000);
-
-      const blockCountMap = (blocks || []).reduce((acc, b) => {
-        acc[b.category_id] = (acc[b.category_id] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>);
-
-      const blocksMap = (blocks || []).reduce((acc, b) => {
-        if (!acc[b.category_id]) acc[b.category_id] = [];
-        acc[b.category_id].push({ id: b.id, name: b.name });
-        return acc;
-      }, {} as Record<string, BlockInfo[]>);
-
-      const questionCountMap = (questions || []).reduce((acc, q) => {
-        acc[q.category_id] = (acc[q.category_id] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>);
+      // Get blocks and counts per profession using direct count queries to avoid row limits
+      const resultsMap: Record<string, { blocks: BlockInfo[], questionCount: number }> = {};
+      
+      await Promise.all((cats || []).map(async (cat) => {
+        const [blocksRes, questionsRes] = await Promise.all([
+          supabase.from('subcategories').select('id, name').eq('category_id', cat.id).order('name').limit(100),
+          supabase.from('questions').select('*', { count: 'exact', head: true }).eq('category_id', cat.id)
+        ]);
+        
+        resultsMap[cat.id] = {
+          blocks: (blocksRes.data || []).map(b => ({ id: b.id, name: b.name })),
+          questionCount: questionsRes.count || 0
+        };
+      }));
 
       return (cats || [])
         .map(cat => ({
           ...cat,
-          block_count: blockCountMap[cat.id] || 0,
-          question_count: questionCountMap[cat.id] || 0,
-          blocks: blocksMap[cat.id] || [],
+          block_count: resultsMap[cat.id]?.blocks.length || 0,
+          question_count: resultsMap[cat.id]?.questionCount || 0,
+          blocks: resultsMap[cat.id]?.blocks || [],
         }))
         .filter(cat => cat.question_count > 0) as ProfessionWithBlocks[];
     },
