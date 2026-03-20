@@ -130,7 +130,7 @@ export default function Index() {
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background overflow-x-hidden">
         <Header />
 
         {/* ═══════ HERO ═══════ */}

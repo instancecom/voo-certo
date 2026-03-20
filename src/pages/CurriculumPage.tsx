@@ -401,145 +401,332 @@ export default function CurriculumPage() {
       <Header />
       <main className="pt-24 pb-16">
         <div className="container mx-auto px-4 max-w-5xl">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
-            <h1 className="text-3xl font-bold text-foreground mb-1">Construtor de Currículo</h1>
-            <p className="text-muted-foreground text-sm">Crie seu currículo profissional. Salve os dados e baixe o PDF quando quiser.</p>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            className="mb-8 text-center lg:text-left"
+          >
+            <h1 className="text-3xl lg:text-4xl font-extrabold text-foreground mb-2 tracking-tight">
+              Construtor de Currículo
+            </h1>
+            <p className="text-muted-foreground text-sm max-w-2xl mx-auto lg:mx-0">
+              Crie seu currículo profissional de forma rápida. Salve seus dados com segurança e baixe o PDF pronto para o mercado.
+            </p>
           </motion.div>
 
           {/* Template Selector */}
-          <div className="grid grid-cols-3 gap-3 mb-6">
-            {TEMPLATES.map(t => {
-              const Icon = t.icon;
-              const active = data.template === t.id;
-              return (
-                <button
-                  key={t.id}
-                  onClick={() => setData(p => ({ ...p, template: t.id }))}
-                  className={`relative p-4 rounded-xl border-2 transition-all text-left ${
-                    active
-                      ? 'border-accent bg-accent/10 shadow-md'
-                      : 'border-border bg-card hover:border-muted-foreground/30'
-                  }`}
+          <div className="mb-8">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4 px-1">
+              Escolha seu Modelo
+            </h2>
+            <div className="flex overflow-x-auto pb-4 gap-4 lg:grid lg:grid-cols-3 lg:overflow-x-visible lg:pb-0 scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
+              {TEMPLATES.map(t => {
+                const Icon = t.icon;
+                const active = data.template === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => setData(p => ({ ...p, template: t.id }))}
+                    className={`relative flex-shrink-0 w-[160px] lg:w-full p-5 rounded-2xl border-2 transition-all text-left group ${
+                      active
+                        ? 'border-accent bg-accent/5 shadow-xl shadow-accent/10'
+                        : 'border-border bg-card hover:border-muted-foreground/30'
+                    }`}
+                  >
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-colors ${
+                      active ? 'bg-accent text-accent-foreground' : 'bg-muted text-muted-foreground group-hover:bg-muted/80'
+                    }`}>
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <p className="font-bold text-foreground mb-1">{t.name}</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{t.desc}</p>
+                    {active && (
+                      <motion.div 
+                        layoutId="activeTemplate"
+                        className="absolute top-4 right-4 w-2.5 h-2.5 rounded-full bg-accent shadow-[0_0_10px_rgba(245,158,11,0.5)]" 
+                      />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Action buttons - Improved for mobile */}
+          <div className="flex flex-col sm:flex-row gap-3 mb-8">
+            <div className="flex-1 flex gap-3">
+              <Button size="sm" variant={mode === 'edit' ? 'default' : 'outline'} onClick={() => setMode('edit')} className="flex-1 lg:hidden rounded-xl h-12 font-bold">
+                Editar Dados
+              </Button>
+              <Button size="sm" variant={mode === 'preview' ? 'default' : 'outline'} onClick={() => setMode('preview')} className="flex-1 lg:hidden rounded-xl h-12 font-bold">
+                Preview PDF
+              </Button>
+            </div>
+            
+            <div className="flex gap-3">
+              {canSaveCurriculum ? (
+                <Button 
+                  onClick={() => saveMutation.mutate()} 
+                  disabled={saveMutation.isPending} 
+                  variant="outline"
+                  className="flex-1 sm:flex-none h-12 px-6 rounded-xl font-bold border-2"
                 >
-                  <Icon className={`w-5 h-5 mb-2 ${active ? 'text-accent' : 'text-muted-foreground'}`} />
-                  <p className={`text-sm font-semibold ${active ? 'text-foreground' : 'text-foreground'}`}>{t.name}</p>
-                  <p className="text-xs text-muted-foreground">{t.desc}</p>
-                  {active && <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-accent" />}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Mobile mode toggle */}
-          <div className="flex gap-2 mb-4 lg:hidden">
-            <Button size="sm" variant={mode === 'edit' ? 'default' : 'outline'} onClick={() => setMode('edit')} className="flex-1">
-              Editar
-            </Button>
-            <Button size="sm" variant={mode === 'preview' ? 'default' : 'outline'} onClick={() => setMode('preview')} className="flex-1">
-              Preview
-            </Button>
-          </div>
-
-          {/* Action buttons */}
-          <div className="flex gap-3 mb-6">
-            {canSaveCurriculum ? (
-              <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending} variant="outline">
-                {saveMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-                Salvar
+                  {saveMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                  Salvar
+                </Button>
+              ) : (
+                <Button variant="outline" disabled className="flex-1 sm:flex-none h-12 opacity-60 rounded-xl px-4 border-2">
+                  <Lock className="w-4 h-4 mr-2" />
+                  Salvar Pro
+                </Button>
+              )}
+              <Button 
+                onClick={downloadPDF} 
+                disabled={isGenerating} 
+                variant="accent"
+                className="flex-1 sm:flex-none h-12 px-8 rounded-xl font-extrabold shadow-lg shadow-accent/20"
+              >
+                {isGenerating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
+                Baixar PDF
               </Button>
-            ) : (
-              <Button variant="outline" disabled className="opacity-60">
-                <Lock className="w-4 h-4 mr-2" />
-                Salvar (Plano Tripulante+)
-              </Button>
-            )}
-            <Button onClick={downloadPDF} disabled={isGenerating} variant="accent">
-              {isGenerating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
-              Download PDF
-            </Button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Editor */}
             <div className={mode === 'preview' ? 'hidden lg:block' : ''}>
-              <Tabs value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="grid grid-cols-4 mb-6">
-                  <TabsTrigger value="dados"><User className="w-4 h-4" /></TabsTrigger>
-                  <TabsTrigger value="experiencia"><Briefcase className="w-4 h-4" /></TabsTrigger>
-                  <TabsTrigger value="formacao"><GraduationCap className="w-4 h-4" /></TabsTrigger>
-                  <TabsTrigger value="extras"><Award className="w-4 h-4" /></TabsTrigger>
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="bg-card rounded-2xl border-2 p-2 sm:p-4 shadow-sm">
+                <TabsList className="grid grid-cols-4 mb-8 bg-muted/50 p-1.5 h-14 rounded-xl">
+                  <TabsTrigger value="dados" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-accent data-[state=active]:shadow-sm"><User className="w-5 h-5 md:mr-2" /><span className="hidden md:inline">Dados</span></TabsTrigger>
+                  <TabsTrigger value="experiencia" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-accent data-[state=active]:shadow-sm"><Briefcase className="w-5 h-5 md:mr-2" /><span className="hidden md:inline">Carreira</span></TabsTrigger>
+                  <TabsTrigger value="formacao" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-accent data-[state=active]:shadow-sm"><GraduationCap className="w-5 h-5 md:mr-2" /><span className="hidden md:inline">Educação</span></TabsTrigger>
+                  <TabsTrigger value="extras" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-accent data-[state=active]:shadow-sm"><Award className="w-5 h-5 md:mr-2" /><span className="hidden md:inline">Extras</span></TabsTrigger>
                 </TabsList>
-
-                <TabsContent value="dados" className="space-y-4">
-                  <Card>
-                    <CardHeader><CardTitle className="text-base">Dados Pessoais</CardTitle></CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                          <Label>Nome Completo</Label>
-                          <Input value={data.full_name} onChange={e => setData(p => ({ ...p, full_name: e.target.value }))} placeholder="Seu nome" />
-                        </div>
-                        <div>
-                          <Label>Cargo Desejado</Label>
-                          <Input value={data.profession} onChange={e => setData(p => ({ ...p, profession: e.target.value }))} placeholder="Ex: Desenvolvedor, Analista..." />
-                        </div>
-                        <div>
-                          <Label>E-mail</Label>
-                          <Input value={data.email} onChange={e => setData(p => ({ ...p, email: e.target.value }))} placeholder="seu@email.com" />
-                        </div>
-                        <div>
-                          <Label>Telefone</Label>
-                          <Input value={data.phone} onChange={e => setData(p => ({ ...p, phone: e.target.value }))} placeholder="(11) 99999-9999" />
-                        </div>
-                        <div>
-                          <Label>Cidade / Estado</Label>
-                          <Input value={data.city} onChange={e => setData(p => ({ ...p, city: e.target.value }))} placeholder="São Paulo, SP" />
-                        </div>
+                
+                <TabsContent value="dados" className="mt-0 space-y-6">
+                  <div className="px-1">
+                    <h3 className="text-xl font-bold text-foreground mb-1">Dados Pessoais</h3>
+                    <p className="text-sm text-muted-foreground mb-6">Suas informações de contato básicas.</p>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                      <div className="space-y-2">
+                        <Label className="text-sm font-bold ml-1">Nome Completo</Label>
+                        <Input 
+                          value={data.full_name} 
+                          onChange={e => setData(p => ({ ...p, full_name: e.target.value }))} 
+                          placeholder="Ex: João Silva" 
+                          className="h-12 rounded-xl bg-muted/30 border-2 focus-visible:border-accent"
+                        />
                       </div>
+                      <div className="space-y-2">
+                        <Label className="text-sm font-bold ml-1">Cargo Desejado</Label>
+                        <Input 
+                          value={data.profession} 
+                          onChange={e => setData(p => ({ ...p, profession: e.target.value }))} 
+                          placeholder="Ex: Comissário de Voo" 
+                          className="h-12 rounded-xl bg-muted/30 border-2 focus-visible:border-accent"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-sm font-bold ml-1">E-mail de Contato</Label>
+                        <Input 
+                          value={data.email} 
+                          onChange={e => setData(p => ({ ...p, email: e.target.value }))} 
+                          placeholder="seu@email.com" 
+                          className="h-12 rounded-xl bg-muted/30 border-2 focus-visible:border-accent"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-sm font-bold ml-1">Telefone / WhatsApp</Label>
+                        <Input 
+                          value={data.phone} 
+                          onChange={e => setData(p => ({ ...p, phone: e.target.value }))} 
+                          placeholder="(11) 99999-9999" 
+                          className="h-12 rounded-xl bg-muted/30 border-2 focus-visible:border-accent"
+                        />
+                      </div>
+                      <div className="space-y-2 sm:col-span-2">
+                        <Label className="text-sm font-bold ml-1">Cidade e Estado</Label>
+                        <Input 
+                          value={data.city} 
+                          onChange={e => setData(p => ({ ...p, city: e.target.value }))} 
+                          placeholder="São Paulo, SP" 
+                          className="h-12 rounded-xl bg-muted/30 border-2 focus-visible:border-accent"
+                        />
+                      </div>
+                      <div className="space-y-2 sm:col-span-2">
+                        <Label className="text-sm font-bold ml-1">Objetivo Profissional</Label>
+                        <Textarea 
+                          value={data.summary} 
+                          onChange={e => setData(p => ({ ...p, summary: e.target.value }))} 
+                          placeholder="Conte resumidamente sobre sua carreira e objetivos..." 
+                          rows={5} 
+                          className="rounded-xl bg-muted/30 border-2 focus-visible:border-accent resize-none p-4"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="experiencia" className="mt-0 space-y-6">
+                  <div className="px-1">
+                    <div className="flex items-center justify-between mb-6">
                       <div>
-                        <Label>Resumo Profissional</Label>
-                        <Textarea value={data.summary} onChange={e => setData(p => ({ ...p, summary: e.target.value }))} placeholder="Breve descrição da sua trajetória..." rows={4} />
+                        <h3 className="text-xl font-bold text-foreground mb-1">Experiência Profissional</h3>
+                        <p className="text-sm text-muted-foreground">Adicione suas passagens por empresas.</p>
                       </div>
-                    </CardContent>
-                  </Card>
+                      <Button variant="outline" size="sm" onClick={addExperience} className="rounded-xl border-accent text-accent hover:bg-accent hover:text-white transition-all h-10 shadow-sm">
+                        <Plus className="w-4 h-4 mr-2" /> <span className="hidden sm:inline">Adicionar</span>
+                      </Button>
+                    </div>
+
+                    <div className="space-y-4">
+                      {data.experience.length === 0 && (
+                        <div className="text-center py-10 bg-muted/20 rounded-2xl border-2 border-dashed border-border">
+                          <Briefcase className="w-10 h-10 text-muted-foreground mx-auto mb-3 opacity-20" />
+                          <p className="text-muted-foreground text-sm">Nenhuma experiência adicionada.</p>
+                        </div>
+                      )}
+                      
+                      {data.experience.map((exp, i) => (
+                        <Card key={i} className="rounded-2xl border-2 overflow-hidden hover:border-accent/30 transition-colors bg-card shadow-sm">
+                          <CardContent className="p-4 sm:p-6 space-y-4">
+                            <div className="flex justify-between items-center mb-2">
+                              <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
+                                  <Briefcase className="w-4 h-4 text-accent" />
+                                </div>
+                                <span className="font-bold text-sm text-foreground">Experiência {i + 1}</span>
+                              </div>
+                              <Button variant="ghost" size="sm" onClick={() => removeExperience(i)} className="rounded-lg h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive">
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                            
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              <div className="space-y-1.5">
+                                <Label className="text-[11px] font-bold uppercase text-muted-foreground ml-1">Empresa</Label>
+                                <Input 
+                                  placeholder="Ex: Companhia Aérea X" 
+                                  value={exp.company} 
+                                  onChange={e => updateExperience(i, 'company', e.target.value)} 
+                                  className="h-11 rounded-xl bg-muted/20 border-border focus-visible:border-accent"
+                                />
+                              </div>
+                              <div className="space-y-1.5">
+                                <Label className="text-[11px] font-bold uppercase text-muted-foreground ml-1">Cargo</Label>
+                                <Input 
+                                  placeholder="Ex: Comissário" 
+                                  value={exp.role} 
+                                  onChange={e => updateExperience(i, 'role', e.target.value)} 
+                                  className="h-11 rounded-xl bg-muted/20 border-border focus-visible:border-accent"
+                                />
+                              </div>
+                              <div className="space-y-1.5">
+                                <Label className="text-[11px] font-bold uppercase text-muted-foreground ml-1">Data Início</Label>
+                                <Input 
+                                  placeholder="MM/AAAA" 
+                                  value={exp.start} 
+                                  onChange={e => updateExperience(i, 'start', e.target.value)} 
+                                  className="h-11 rounded-xl bg-muted/20 border-border focus-visible:border-accent"
+                                />
+                              </div>
+                              <div className="space-y-1.5">
+                                <Label className="text-[11px] font-bold uppercase text-muted-foreground ml-1">Data Fim</Label>
+                                <Input 
+                                  placeholder="MM/AAAA ou Atual" 
+                                  value={exp.end} 
+                                  onChange={e => updateExperience(i, 'end', e.target.value)} 
+                                  className="h-11 rounded-xl bg-muted/20 border-border focus-visible:border-accent"
+                                />
+                              </div>
+                              <div className="space-y-1.5 sm:col-span-2">
+                                <Label className="text-[11px] font-bold uppercase text-muted-foreground ml-1">Descrição</Label>
+                                <Textarea 
+                                  placeholder="Descreva suas principais responsabilidades..." 
+                                  rows={3} 
+                                  value={exp.description} 
+                                  onChange={e => updateExperience(i, 'description', e.target.value)} 
+                                  className="rounded-xl bg-muted/20 border-border focus-visible:border-accent resize-none"
+                                />
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
                 </TabsContent>
 
-                <TabsContent value="experiencia" className="space-y-4">
-                  {data.experience.map((exp, i) => (
-                    <Card key={i}>
-                      <CardContent className="pt-4 space-y-3">
-                        <div className="flex justify-between">
-                          <span className="font-medium text-sm">Experiência {i + 1}</span>
-                          <Button variant="ghost" size="sm" onClick={() => removeExperience(i)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
-                        </div>
-                        <Input placeholder="Empresa" value={exp.company} onChange={e => updateExperience(i, 'company', e.target.value)} />
-                        <Input placeholder="Cargo" value={exp.role} onChange={e => updateExperience(i, 'role', e.target.value)} />
-                        <div className="grid grid-cols-2 gap-2">
-                          <Input placeholder="Início" value={exp.start} onChange={e => updateExperience(i, 'start', e.target.value)} />
-                          <Input placeholder="Fim (ou Atual)" value={exp.end} onChange={e => updateExperience(i, 'end', e.target.value)} />
-                        </div>
-                        <Textarea placeholder="Descrição das atividades..." rows={2} value={exp.description} onChange={e => updateExperience(i, 'description', e.target.value)} />
-                      </CardContent>
-                    </Card>
-                  ))}
-                  <Button variant="outline" className="w-full" onClick={addExperience}><Plus className="w-4 h-4 mr-2" /> Adicionar Experiência</Button>
-                </TabsContent>
+                <TabsContent value="formacao" className="mt-0 space-y-6">
+                  <div className="px-1">
+                    <div className="flex items-center justify-between mb-6">
+                      <div>
+                        <h3 className="text-xl font-bold text-foreground mb-1">Formação Acadêmica</h3>
+                        <p className="text-sm text-muted-foreground">Seu histórico educacional.</p>
+                      </div>
+                      <Button variant="outline" size="sm" onClick={() => setData(p => ({ ...p, education: [...p.education, { institution: '', degree: '', year: '' }] }))} className="rounded-xl border-accent text-accent hover:bg-accent hover:text-white h-10 shadow-sm">
+                        <Plus className="w-4 h-4 mr-2" /> <span className="hidden sm:inline">Adicionar</span>
+                      </Button>
+                    </div>
 
-                <TabsContent value="formacao" className="space-y-4">
-                  {data.education.map((edu, i) => (
-                    <Card key={i}>
-                      <CardContent className="pt-4 space-y-3">
-                        <div className="flex justify-between">
-                          <span className="font-medium text-sm">Formação {i + 1}</span>
-                          <Button variant="ghost" size="sm" onClick={() => setData(p => ({ ...p, education: p.education.filter((_, idx) => idx !== i) }))}><Trash2 className="w-4 h-4 text-destructive" /></Button>
+                    <div className="space-y-4">
+                      {data.education.length === 0 && (
+                        <div className="text-center py-10 bg-muted/20 rounded-2xl border-2 border-dashed border-border">
+                          <GraduationCap className="w-10 h-10 text-muted-foreground mx-auto mb-3 opacity-20" />
+                          <p className="text-muted-foreground text-sm">Nenhuma formação adicionada.</p>
                         </div>
-                        <Input placeholder="Instituição" value={edu.institution} onChange={e => setData(p => ({ ...p, education: p.education.map((ed, idx) => idx === i ? { ...ed, institution: e.target.value } : ed) }))} />
-                        <Input placeholder="Curso / Grau" value={edu.degree} onChange={e => setData(p => ({ ...p, education: p.education.map((ed, idx) => idx === i ? { ...ed, degree: e.target.value } : ed) }))} />
-                        <Input placeholder="Ano de conclusão" value={edu.year} onChange={e => setData(p => ({ ...p, education: p.education.map((ed, idx) => idx === i ? { ...ed, year: e.target.value } : ed) }))} />
-                      </CardContent>
-                    </Card>
-                  ))}
-                  <Button variant="outline" className="w-full" onClick={() => setData(p => ({ ...p, education: [...p.education, { institution: '', degree: '', year: '' }] }))}><Plus className="w-4 h-4 mr-2" /> Adicionar Formação</Button>
+                      )}
+
+                      {data.education.map((edu, i) => (
+                        <Card key={i} className="rounded-2xl border-2 hover:border-accent/30 transition-colors bg-card shadow-sm">
+                          <CardContent className="p-4 sm:p-6 space-y-4">
+                            <div className="flex justify-between items-center">
+                              <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
+                                  <GraduationCap className="w-4 h-4 text-accent" />
+                                </div>
+                                <span className="font-bold text-sm text-foreground">Formação {i + 1}</span>
+                              </div>
+                              <Button variant="ghost" size="sm" onClick={() => setData(p => ({ ...p, education: p.education.filter((_, idx) => idx !== i) }))} className="rounded-lg h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive">
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              <div className="space-y-1.5 sm:col-span-2">
+                                <Label className="text-[11px] font-bold uppercase text-muted-foreground ml-1">Instituição</Label>
+                                <Input 
+                                  placeholder="Ex: Universidade de São Paulo" 
+                                  value={edu.institution} 
+                                  onChange={e => setData(p => ({ ...p, education: p.education.map((ed, idx) => idx === i ? { ...ed, institution: e.target.value } : ed) }))} 
+                                  className="h-11 rounded-xl bg-muted/20 border-border focus-visible:border-accent"
+                                />
+                              </div>
+                              <div className="space-y-1.5">
+                                <Label className="text-[11px] font-bold uppercase text-muted-foreground ml-1">Curso / Grau</Label>
+                                <Input 
+                                  placeholder="Ex: Bacharelado em Aviação" 
+                                  value={edu.degree} 
+                                  onChange={e => setData(p => ({ ...p, education: p.education.map((ed, idx) => idx === i ? { ...ed, degree: e.target.value } : ed) }))} 
+                                  className="h-11 rounded-xl bg-muted/20 border-border focus-visible:border-accent"
+                                />
+                              </div>
+                              <div className="space-y-1.5">
+                                <Label className="text-[11px] font-bold uppercase text-muted-foreground ml-1">Ano Conclusão</Label>
+                                <Input 
+                                  placeholder="Ex: 2023" 
+                                  value={edu.year} 
+                                  onChange={e => setData(p => ({ ...p, education: p.education.map((ed, idx) => idx === i ? { ...ed, year: e.target.value } : ed) }))} 
+                                  className="h-11 rounded-xl bg-muted/20 border-border focus-visible:border-accent"
+                                />
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
                 </TabsContent>
 
                 <TabsContent value="extras" className="space-y-4">
@@ -599,11 +786,27 @@ export default function CurriculumPage() {
 
             {/* Preview */}
             <div className={mode === 'edit' ? 'hidden lg:block' : ''}>
-              <div className="sticky top-24">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-foreground text-sm">Preview — {selectedTemplate.name}</h3>
+              <div className="sticky top-24 space-y-4">
+                <div className="flex items-center justify-between px-1">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+                    <h3 className="font-bold text-foreground text-sm uppercase tracking-wider">Visualização Real</h3>
+                  </div>
+                  <Badge variant="outline" className="bg-accent/5 text-accent border-accent/20 px-3 py-1 rounded-full text-[10px] font-bold">
+                    Modelo: {selectedTemplate.name}
+                  </Badge>
                 </div>
-                <CurriculumPreview data={data} />
+                
+                <div className="relative group">
+                  <div className="absolute -inset-1 bg-gradient-to-b from-accent/20 to-transparent rounded-[2rem] blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
+                  <div className="relative">
+                    <CurriculumPreview data={data} />
+                  </div>
+                </div>
+
+                <p className="text-center text-[10px] text-muted-foreground italic">
+                  * Este é um preview simplificado. O PDF final terá formatação profissional.
+                </p>
               </div>
             </div>
           </div>

@@ -133,40 +133,52 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-card border-b border-border">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-accent" />
-                <div>
-                  <h1 className="text-sm font-semibold text-foreground">
-                    Simulado Modo Bloco
+      <header className="fixed top-0 left-0 right-0 z-50 bg-card border-b border-border shadow-sm">
+        <div className="container mx-auto px-3 sm:px-4">
+          <div className="flex items-center justify-between h-14 md:h-16">
+            <div className="flex items-center gap-2 md:gap-4 min-w-0">
+              <div className="flex items-center gap-2 min-w-0">
+                <BookOpen className="w-4 h-4 md:w-5 md:h-5 text-accent shrink-0" />
+                <div className="min-w-0">
+                  <h1 className="text-[10px] md:text-sm font-bold text-foreground leading-tight truncate">
+                    MODO BLOCO
                   </h1>
-                  <p className="text-xs text-muted-foreground">{blockName}</p>
+                  <p className="text-[11px] md:text-xs text-muted-foreground truncate max-w-[120px] md:max-w-none">
+                    {blockName}
+                  </p>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent/10 text-accent">
-              <span className="text-sm font-medium">Sem limite de tempo</span>
-            </div>
+            <div className="flex items-center gap-1.5 md:gap-2">
+              <div className="flex items-center gap-1.5 px-2 md:px-4 py-1.5 rounded-full bg-accent/10 text-accent">
+                <BookOpen className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                <span className="text-[10px] md:text-sm font-bold whitespace-nowrap hidden xs:inline">
+                  ILIMITADO
+                </span>
+              </div>
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowFinishDialog(true)}
-            >
-              <Flag className="w-4 h-4 mr-2" />
-              Finalizar
-            </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowFinishDialog(true)}
+                className="h-8 md:h-9 px-2 md:px-4 rounded-full text-[10px] md:text-sm border-border hover:bg-muted"
+              >
+                <Flag className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
+                Finalizar
+              </Button>
+            </div>
           </div>
 
-          <div className="pb-2">
-            <Progress value={progress} className="h-1" />
-            <div className="flex justify-between text-xs text-muted-foreground mt-1">
-              <span>Questão {currentQuestionIndex + 1} de {shuffledQuestions.length}</span>
-              <span>{Object.keys(answers).length} respondidas</span>
+          <div className="pb-3 px-1">
+            <Progress value={progress} className="h-1 bg-muted" />
+            <div className="flex justify-between text-[10px] md:text-xs font-medium text-muted-foreground mt-1.5">
+              <span className="flex items-center gap-1">
+                QUESTÃO <span className="text-foreground">{currentQuestionIndex + 1}</span> / {shuffledQuestions.length}
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="text-foreground">{Object.keys(answers).length}</span> RESPONDIDAS
+              </span>
             </div>
           </div>
         </div>
@@ -316,33 +328,47 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
       </main>
 
       {/* Footer Navigation */}
-      <footer className="fixed bottom-0 left-0 right-0 bg-card border-t border-border">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+      <footer className="fixed bottom-0 left-0 right-0 bg-card border-t border-border shadow-[0_-4px_10px_rgba(0,0,0,0.03)]">
+        <div className="container mx-auto px-4 py-3 md:py-4">
+          <div className="flex items-center justify-between gap-2">
             <Button
               variant="outline"
+              size="sm"
               onClick={prevQuestion}
               disabled={currentQuestionIndex === 0}
+              className="h-9 md:h-10 px-2 md:px-4 rounded-xl text-xs md:text-sm"
             >
-              <ChevronLeft className="w-4 h-4 mr-2" />
-              Anterior
+              <ChevronLeft className="w-4 h-4 md:mr-2" />
+              <span className="hidden sm:inline">Anterior</span>
             </Button>
 
-            <div className="text-center">
-              <span className="text-sm text-muted-foreground">
-                {currentQuestionIndex + 1} / {shuffledQuestions.length}
+            <div className="text-center bg-muted/50 px-3 py-1 rounded-full border border-border/50">
+              <span className="text-[11px] md:text-sm font-bold text-muted-foreground whitespace-nowrap">
+                {currentQuestionIndex + 1} <span className="opacity-40 font-normal">/ {shuffledQuestions.length}</span>
               </span>
             </div>
 
             {currentQuestionIndex === shuffledQuestions.length - 1 ? (
-              <Button variant="hero" onClick={() => setShowFinishDialog(true)}>
-                Ver Resultado
-                <Flag className="w-4 h-4 ml-2" />
+              <Button 
+                variant="hero" 
+                size="sm" 
+                onClick={() => setShowFinishDialog(true)}
+                className="h-9 md:h-10 px-4 md:px-6 rounded-xl text-xs md:text-sm shadow-md"
+              >
+                <span className="hidden sm:inline mr-2">Ver Resultado</span>
+                <span className="sm:hidden mr-1">Finalizar</span>
+                <Flag className="w-4 h-4" />
               </Button>
             ) : (
-              <Button variant="default" onClick={nextQuestion} disabled={!showAnswer && !isAnswered}>
-                Próxima
-                <ChevronRight className="w-4 h-4 ml-2" />
+              <Button 
+                variant="default" 
+                size="sm" 
+                onClick={nextQuestion} 
+                disabled={!showAnswer && !isAnswered}
+                className="h-9 md:h-10 px-4 md:px-6 rounded-xl text-xs md:text-sm shadow-md"
+              >
+                <span className="hidden sm:inline mr-2">Próxima</span>
+                <ChevronRight className="w-4 h-4" />
               </Button>
             )}
           </div>
