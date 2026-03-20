@@ -762,28 +762,20 @@ export function MicrocoursesManager() {
 
   return (
     <div className="space-y-6">
-      {/* Connection Status */}
-      <Card className="border-accent/30 bg-accent/5">
-        <CardContent className="py-4">
-          <div className="flex items-center justify-between flex-wrap gap-3">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <div className={`w-2 h-2 rounded-full ${driveConnected ? 'bg-success' : 'bg-muted-foreground'}`} />
-                <span className="text-xs font-medium">Drive {driveConnected ? '✓' : '✗'}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className={`w-2 h-2 rounded-full ${youtubeConnected ? 'bg-success' : 'bg-muted-foreground'}`} />
-                <span className="text-xs font-medium">YouTube {youtubeConnected ? '✓' : '✗'}</span>
-              </div>
-            </div>
-            {!driveConnected && (
-              <Button size="sm" onClick={handleConnectDrive} disabled={checkingConnections} className="gap-2 text-xs">
-                <FolderOpen className="w-3.5 h-3.5" /> Conectar Drive
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Connection Status - Ultra Minimalist Pill */}
+      <div className="flex items-center gap-3 px-2.5 py-1 rounded-full bg-muted/10 border border-border/30 w-fit backdrop-blur-sm">
+        <div className="flex items-center gap-2">
+          <div className={`w-1.5 h-1.5 rounded-full ${driveConnected ? 'bg-success shadow-[0_0_6px_rgba(34,197,94,0.4)]' : 'bg-muted-foreground/20'}`} />
+          <span className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-widest">DRIVE</span>
+        </div>
+        
+        <div className="w-[1px] h-2.5 bg-border/50" />
+
+        <div className="flex items-center gap-2">
+          <div className={`w-1.5 h-1.5 rounded-full ${youtubeConnected ? 'bg-success shadow-[0_0_6px_rgba(34,197,94,0.4)]' : 'bg-muted-foreground/20'}`} />
+          <span className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-widest">YOUTUBE</span>
+        </div>
+      </div>
 
       <div className="flex items-center justify-between">
         <div>
