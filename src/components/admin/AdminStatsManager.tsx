@@ -5,7 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import {
   Users, TrendingUp, Target, Brain, Award, BarChart3,
   BookOpen, GraduationCap, Clock, DollarSign, Calendar, Percent,
-  CheckCircle2, ShieldCheck, Star
+  CheckCircle2, ShieldCheck, Star, Search, Filter, History, MousePointer2
 } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -20,6 +20,8 @@ export function AdminStatsManager() {
   const [timeRange, setTimeRange] = useState<TimeRange>('total');
   const [selectedMicrocourse, setSelectedMicrocourse] = useState<string | 'all'>('all');
   const [selectedInsignia, setSelectedInsignia] = useState<string | 'all'>('all');
+  const [selectedPlan, setSelectedPlan] = useState<string | 'all'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const {
     isLoading,
@@ -38,7 +40,7 @@ export function AdminStatsManager() {
     userInsignias,
     questionsCount,
     badgeVerifications,
-  } = useAdminStats(timeRange, selectedMicrocourse, selectedInsignia);
+  } = useAdminStats(timeRange, selectedMicrocourse, selectedInsignia, selectedPlan, searchQuery);
 
   // Filtered microcourse completions
   const courseCompletions = useMemo(() => {
@@ -56,27 +58,9 @@ export function AdminStatsManager() {
           courseTitle: course?.title || 'Curso Removido',
           completedAt: new Date().toLocaleDateString(),
         };
-      });
+      })
+      .slice(0, 10);
   }, [microcourseProgress, microcourses, selectedMicrocourse, userStatsList]);
-
-  // Filtered insignia earners
-  const insigniaEarners = useMemo(() => {
-    if (!userInsignias || !insignias || !userStatsList) return [];
-    
-    return userInsignias
-      .filter(ui => selectedInsignia === 'all' || ui.insignia_id === selectedInsignia)
-      .map(ui => {
-        const insignia = insignias.find(i => i.id === ui.insignia_id);
-        const user = userStatsList.find(u => u.user_id === ui.user_id);
-        return {
-          id: ui.id,
-          userName: user?.full_name || 'Desconhecido',
-          userEmail: user?.email,
-          insigniaName: insignia?.name || 'Insígnia Removida',
-          earnedAt: new Date(ui.earned_at).toLocaleDateString(),
-        };
-      });
-  }, [userInsignias, insignias, selectedInsignia, userStatsList]);
 
   if (isLoading) {
     return (
@@ -91,11 +75,17 @@ export function AdminStatsManager() {
   }
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto py-6">
+    <div className="space-y-6 max-w-7xl mx-auto py-6 pb-20">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Admin Dashboard</h1>
-          <p className="text-muted-foreground text-sm">Acompanhamento de métricas e usuários.</p>
+          <h1 className="text-2xl font-bold text-foreground">Dashboard do Administrador</h1>
+          <p className="text-muted-foreground text-sm">Controle total de alunos, vendas e performance global.</p>
+        </div>
+        <div className="flex items-center gap-2">
+           <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 px-3 py-1">
+             <ShieldCheck className="w-3.5 h-3.5 mr-1.5" />
+             Acesso Admin Confirmado
+           </Badge>
         </div>
       </div>
 
@@ -108,81 +98,120 @@ export function AdminStatsManager() {
         insignias={insignias || []}
         selectedInsignia={selectedInsignia}
         setSelectedInsignia={setSelectedInsignia}
+        selectedPlan={selectedPlan}
+        setSelectedPlan={setSelectedPlan}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatsCard 
-          title="Total de Alunos" 
-          value={totalUsers || 0} 
-          icon={Users} 
-          description="Alunos cadastrados" 
-        />
-        <StatsCard 
-          title="Faturamento Est." 
+          title="Faturamento MRR" 
           value={`R$ ${(totalRevenue || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`} 
           icon={DollarSign} 
-          description="Estimativa mensal" 
+          description="Faturamento recorrente atual" 
         />
         <StatsCard 
-          title="Simulados Realizados" 
+          title="Alunos Filtradros" 
+          value={userStatsList.length} 
+          icon={Users} 
+          description={`De ${totalUsers} cadastrados`} 
+        />
+        <StatsCard 
+          title="Simulados" 
           value={totalExams || 0} 
           icon={Target} 
-          description="Atividade no período"
+          description="Executados no período"
         />
         <StatsCard 
-          title="Nota Média Geral" 
-          value={`${avgScore || 0}%`} 
-          icon={Percent} 
-          description="Média entre todos alunos" 
+          title="Uso de IA" 
+          value={aiQuestionsTotal || 0} 
+          icon={Brain} 
+          description="Perguntas feitas ao chat" 
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="shadow-none border">
-          <CardHeader>
-             <CardTitle className="text-sm font-medium">Cronograma de Atividade</CardTitle>
+      {/* Meta Metrics Row */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-card p-4 rounded-xl border flex items-center justify-between">
+           <div>
+             <p className="text-[10px] font-bold text-muted-foreground uppercase opacity-70">Taxa de Conversão</p>
+             <p className="text-xl font-bold">{totalUsers > 0 ? Math.round(((totalUsers - (plansDistribution.find(p => p.name === 'Gratuito')?.value || 0)) / totalUsers) * 100) : 0}%</p>
+           </div>
+           <MousePointer2 className="w-5 h-5 text-accent opacity-20" />
+        </div>
+        <div className="bg-card p-4 rounded-xl border flex items-center justify-between">
+           <div>
+             <p className="text-[10px] font-bold text-muted-foreground uppercase opacity-70">Nota Média Global</p>
+             <p className="text-xl font-bold">{avgScore || 0}%</p>
+           </div>
+           <TrendingUp className="w-5 h-5 text-green-500 opacity-20" />
+        </div>
+        <div className="bg-card p-4 rounded-xl border flex items-center justify-between">
+           <div>
+             <p className="text-[10px] font-bold text-muted-foreground uppercase opacity-70">Banco de Dados</p>
+             <p className="text-xl font-bold">{questionsCount || 0} Questões</p>
+           </div>
+           <History className="w-5 h-5 text-primary opacity-20" />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="shadow-none border lg:col-span-2">
+          <CardHeader className="pb-0">
+             <CardTitle className="text-sm font-bold flex items-center gap-2">
+               <History className="w-4 h-4 text-primary" /> Atividade dos Alunos
+             </CardTitle>
           </CardHeader>
-          <CardContent className="h-[250px] mt-4">
+          <CardContent className="h-[300px] mt-4">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData || []}>
+                <defs>
+                   <linearGradient id="colorAdminExams" x1="0" y1="0" x2="0" y2="1">
+                     <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.1}/>
+                     <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                   </linearGradient>
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.1} />
                 <XAxis dataKey="date" tick={{fontSize: 10}} axisLine={false} tickLine={false} />
                 <YAxis tick={{fontSize: 10}} axisLine={false} tickLine={false} />
                 <Tooltip />
-                <Area type="monotone" dataKey="count" stroke="hsl(var(--primary))" fill="hsl(var(--primary)/0.1)" strokeWidth={2} />
+                <Area type="monotone" dataKey="count" stroke="hsl(var(--primary))" fill="url(#colorAdminExams)" strokeWidth={2.5} />
               </AreaChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
         <Card className="shadow-none border">
-          <CardHeader>
-             <CardTitle className="text-sm font-medium">Assinantes por Plano</CardTitle>
+          <CardHeader className="pb-0">
+             <CardTitle className="text-sm font-bold flex items-center gap-2">
+               <Percent className="w-4 h-4 text-accent" /> Composição por Plano
+             </CardTitle>
           </CardHeader>
-          <CardContent className="h-[250px] flex items-center">
-            <ResponsiveContainer width="100%" height="100%">
+          <CardContent className="h-[300px] flex flex-col items-center justify-center">
+            <ResponsiveContainer width="100%" height={200}>
               <PieChart>
                 <Pie
                   data={plansDistribution || []}
                   cx="50%"
                   cy="50%"
-                  innerRadius={50}
-                  outerRadius={70}
+                  innerRadius={60}
+                  outerRadius={80}
                   paddingAngle={5}
                   dataKey="value"
                 >
                   {(plansDistribution || []).map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+                    <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
                   ))}
                 </Pie>
                 <Tooltip />
               </PieChart>
             </ResponsiveContainer>
-            <div className="flex flex-col gap-2 min-w-[120px]">
+            <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 mt-4">
               {(plansDistribution || []).map((p, i) => (
-                <div key={i} className="flex items-center gap-2 text-xs font-medium">
-                  <div className="w-2.5 h-2.5 rounded-full" style={{ background: p.color }} />
-                  <span className="truncate">{p.name}</span>
+                <div key={i} className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground uppercase">
+                  <div className="w-2 h-2 rounded-full" style={{ background: p.color }} />
+                  {p.name} ({p.value})
                 </div>
               ))}
             </div>
@@ -191,6 +220,64 @@ export function AdminStatsManager() {
       </div>
 
       <UserStatsTable userStats={userStatsList || []} />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+         {/* Completions */}
+         <Card className="border shadow-none overflow-hidden">
+            <CardHeader className="bg-muted/30 border-b py-3">
+              <CardTitle className="text-xs font-bold flex items-center gap-2">
+                <GraduationCap className="w-4 h-4 text-primary" /> Últimas Conclusões de Microcursos
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+               {courseCompletions.length > 0 ? (
+                 <div className="divide-y">
+                   {courseCompletions.map(c => (
+                     <div key={c.id} className="p-3 flex items-center justify-between hover:bg-muted/20">
+                        <div className="min-w-0">
+                          <p className="text-xs font-bold truncate">{c.userName}</p>
+                          <p className="text-[10px] text-primary font-medium">{c.courseTitle}</p>
+                        </div>
+                        <span className="text-[10px] text-muted-foreground font-medium">{c.completedAt}</span>
+                     </div>
+                   ))}
+                 </div>
+               ) : (
+                 <div className="p-8 text-center text-xs text-muted-foreground italic">
+                   Nenhuma conclusão registrada.
+                 </div>
+               )}
+            </CardContent>
+         </Card>
+
+         {/* Verifications */}
+         <Card className="border shadow-none overflow-hidden">
+            <CardHeader className="bg-muted/30 border-b py-3">
+              <CardTitle className="text-xs font-bold flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-green-500" /> Verificações de Licença Pendentes
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+               {(badgeVerifications || []).filter(v => v.status === 'pending').length > 0 ? (
+                 <div className="divide-y">
+                   {(badgeVerifications || []).filter(v => v.status === 'pending').map(v => (
+                     <div key={v.id} className="p-3 flex items-center justify-between hover:bg-muted/20">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" />
+                          <p className="text-xs font-bold">Solicitação #{v.id.slice(0, 6)}</p>
+                        </div>
+                        <Button variant="ghost" size="sm" className="h-7 text-[10px] text-primary">Ver Documentos</Button>
+                     </div>
+                   ))}
+                 </div>
+               ) : (
+                 <div className="p-8 text-center text-xs text-muted-foreground italic">
+                    Tudo em dia! Nenhuma verificação pendente.
+                 </div>
+               )}
+            </CardContent>
+         </Card>
+      </div>
     </div>
   );
 }

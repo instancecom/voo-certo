@@ -63,7 +63,13 @@ const DEFAULT_STATS = {
   badgeVerifications: [] as any[],
 };
 
-export function useAdminStats(timeRange: TimeRange, selectedMicrocourse: string | 'all' = 'all', selectedInsignia: string | 'all' = 'all') {
+export function useAdminStats(
+  timeRange: TimeRange, 
+  selectedMicrocourse: string | 'all' = 'all', 
+  selectedInsignia: string | 'all' = 'all',
+  selectedPlan: string | 'all' = 'all',
+  searchQuery: string = ''
+) {
   const { data: profiles, isLoading: profilesLoading } = useQuery({
     queryKey: ['admin-stats-profiles'],
     queryFn: async () => {
@@ -163,28 +169,36 @@ export function useAdminStats(timeRange: TimeRange, selectedMicrocourse: string 
   const stats = useMemo(() => {
     if (!profiles || !examResults) return DEFAULT_STATS;
 
-    const userStatsList: UserStat[] = profiles.map(profile => {
-      const results = (examResults || []).filter(r => r.user_id === profile.user_id && isWithinRange(r.completed_at));
-      const exam_count = results.length;
-      const avg_score = exam_count
-        ? Math.round(results.reduce((a, r) => a + r.score, 0) / exam_count)
-        : 0;
-      const total_time = results.reduce((a, r) => a + r.time_spent, 0);
-      const approved_count = results.filter(r => r.score >= 70).length;
+    const userStatsList: UserStat[] = profiles
+      .filter(p => {
+        const matchesPlan = selectedPlan === 'all' || p.plan_type === selectedPlan;
+        const matchesSearch = !searchQuery || 
+          p.email?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+          p.full_name?.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesPlan && matchesSearch;
+      })
+      .map(profile => {
+        const results = (examResults || []).filter(r => r.user_id === profile.user_id && isWithinRange(r.completed_at));
+        const exam_count = results.length;
+        const avg_score = exam_count
+          ? Math.round(results.reduce((a, r) => a + r.score, 0) / exam_count)
+          : 0;
+        const total_time = results.reduce((a, r) => a + r.time_spent, 0);
+        const approved_count = results.filter(r => r.score >= 70).length;
 
-      return {
-        user_id: profile.user_id,
-        email: profile.email,
-        full_name: profile.full_name,
-        plan_type: profile.plan_type || 'free',
-        ai_questions_count: profile.ai_questions_count || 0,
-        exam_count,
-        avg_score,
-        total_time,
-        approved_count,
-        created_at: profile.created_at,
-      };
-    });
+        return {
+          user_id: profile.user_id,
+          email: profile.email,
+          full_name: profile.full_name,
+          plan_type: profile.plan_type || 'free',
+          ai_questions_count: profile.ai_questions_count || 0,
+          exam_count,
+          avg_score,
+          total_time,
+          approved_count,
+          created_at: profile.created_at,
+        };
+      });
 
     const totalUsers = userStatsList.length;
     const activeUsers = userStatsList.filter(u => u.exam_count > 0).length;
