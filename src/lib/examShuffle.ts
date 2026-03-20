@@ -44,7 +44,8 @@ function shuffleQuestionOptions(question: DbQuestion): ShuffledQuestion {
  */
 export function prepareExamQuestions(
   questions: DbQuestion[],
-  selectedBlock?: number
+  selectedBlock?: number,
+  limitPerBlock?: number
 ): ShuffledQuestion[] {
   // Filter by selected block if specified
   const filtered = selectedBlock
@@ -65,7 +66,13 @@ export function prepareExamQuestions(
   // Shuffle within each block, then shuffle options
   const result: ShuffledQuestion[] = [];
   for (const blockNum of sortedBlocks) {
-    const blockQuestions = shuffleArray(blockMap.get(blockNum)!);
+    let blockQuestions = shuffleArray(blockMap.get(blockNum)!);
+    
+    // Apply optional limit per block
+    if (limitPerBlock && limitPerBlock > 0) {
+      blockQuestions = blockQuestions.slice(0, limitPerBlock);
+    }
+
     for (const q of blockQuestions) {
       result.push(shuffleQuestionOptions(q));
     }
@@ -79,18 +86,19 @@ export function prepareExamQuestions(
  */
 export function prepareBancaQuestions(questions: DbQuestion[]): ShuffledQuestion[] {
   const hasBlockNumbers = questions.some(q => q.block_number !== null && q.block_number !== undefined);
+  const QUESTIONS_PER_BLOCK = 20;
 
   if (hasBlockNumbers) {
-    return prepareExamQuestions(questions);
+    // Pass 20 as the limit per block
+    return prepareExamQuestions(questions, undefined, QUESTIONS_PER_BLOCK);
   }
 
   // Auto-distribute into 4 blocks of 20
-  const QUESTIONS_PER_BLOCK = 20;
   const shuffled = shuffleArray(questions);
-  const withBlocks: DbQuestion[] = shuffled.map((q, i) => ({
+  const withBlocks: DbQuestion[] = shuffled.slice(0, 80).map((q, i) => ({
     ...q,
     block_number: Math.floor(i / QUESTIONS_PER_BLOCK) + 1,
   }));
 
-  return prepareExamQuestions(withBlocks);
+  return prepareExamQuestions(withBlocks, undefined, QUESTIONS_PER_BLOCK);
 }

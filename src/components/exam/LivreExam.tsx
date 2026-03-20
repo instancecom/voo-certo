@@ -21,6 +21,7 @@ interface BlockResult {
 interface LivreExamProps {
   questions: DbQuestion[];
   selectedBlock?: number;
+  questionLimit?: number;
   onFinish: (results: {
     blockResults: BlockResult[];
     totalCorrect: number;
@@ -31,20 +32,20 @@ interface LivreExamProps {
   onExit: () => void;
 }
 
-export function LivreExam({ questions, selectedBlock, onFinish, onExit }: LivreExamProps) {
+export function LivreExam({ questions, selectedBlock, questionLimit, onFinish, onExit }: LivreExamProps) {
   const [shuffledQuestions, setShuffledQuestions] = useState<ShuffledQuestion[] | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [showAnswer, setShowAnswer] = useState(false);
   const [showFinishDialog, setShowFinishDialog] = useState(false);
-
+ 
   // Shuffle on mount
   useEffect(() => {
     const timer = setTimeout(() => {
-      setShuffledQuestions(prepareExamQuestions(questions, selectedBlock));
+      setShuffledQuestions(prepareExamQuestions(questions, selectedBlock, questionLimit));
     }, 800);
     return () => clearTimeout(timer);
-  }, [questions, selectedBlock]);
+  }, [questions, selectedBlock, questionLimit]);
 
   if (!shuffledQuestions) {
     return <ExamLoadingScreen />;

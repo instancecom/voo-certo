@@ -50,7 +50,7 @@ export default function ProfessionExamPage() {
   const submitResult = useSubmitResult();
 
   const { data: questions, isLoading } = useQuery({
-    queryKey: ['profession-questions', professionId],
+    queryKey: ['profession-questions', professionId, modo, blocoId],
     queryFn: async () => {
       let query = supabase
         .from('questions')
@@ -71,6 +71,22 @@ export default function ProfessionExamPage() {
       })) as DbQuestion[];
     },
     enabled: !!professionId,
+  });
+
+  const { data: subcategory } = useQuery({
+    queryKey: ['admin-subcategory', blocoId],
+    queryFn: async () => {
+      if (!blocoId) return null;
+      const { data, error } = await supabase
+        .from('subcategories')
+        .select('*')
+        .eq('id', blocoId)
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!blocoId && modo === 'bloco',
   });
 
   const { data: exam } = useQuery({
@@ -230,6 +246,9 @@ export default function ProfessionExamPage() {
   }
 
   if (phase === 'in_progress' && questions) {
+    const defaultLimit = 20;
+    const currentLimit = modo === 'bloco' ? (subcategory?.num_questions_expected || defaultLimit) : defaultLimit;
+
     if (modo === 'banca_anac') {
       return (
         <BancaANACExam
@@ -245,6 +264,7 @@ export default function ProfessionExamPage() {
         <BlockExam
           questions={questions}
           blockName={nomeBloco}
+          questionLimit={currentLimit}
           onFinish={handleFinish}
           onExit={() => navigate('/simulados')}
         />
@@ -254,6 +274,7 @@ export default function ProfessionExamPage() {
     return (
       <LivreExam
         questions={questions}
+        questionLimit={currentLimit}
         onFinish={handleFinish}
         onExit={() => navigate('/simulados')}
       />
