@@ -59,7 +59,7 @@ export function CurriculumPreview({ data }: CurriculumPreviewProps) {
 
   const SectionTitle = ({ children, icon: Icon }: { children: React.ReactNode, icon: any }) => (
     <div className="flex items-center gap-2 mb-3 border-b-2 border-slate-100 pb-1">
-      <div className={`p-1 rounded-md ${primaryBg} bg-opacity-10`}>
+      <div className={`p-1 rounded-[5px] ${primaryBg} bg-opacity-10`}>
         <Icon className={`w-3.5 h-3.5 ${primaryColor}`} />
       </div>
       <h3 className={`text-[11px] font-black uppercase tracking-[0.15em] ${primaryColor}`}>{children}</h3>
@@ -166,7 +166,7 @@ export function CurriculumPreview({ data }: CurriculumPreviewProps) {
                 <SectionTitle icon={GraduationCap}>Formação Acadêmica</SectionTitle>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {data.education.map((edu, i) => (
-                    <div key={i} className="bg-slate-50/50 p-3 rounded-lg border border-slate-100 border-l-4 border-l-slate-200">
+                    <div key={i} className="bg-slate-50/50 p-3 rounded-[5px] border border-slate-100 border-l-4 border-l-slate-200">
                       <h4 className="text-[10px] font-black text-slate-800 leading-tight mb-1 uppercase">{edu.degree}</h4>
                       <p className="text-[9px] font-bold text-slate-500">{edu.institution}</p>
                       <p className={`text-[9px] font-black ${primaryColor} mt-1 opacity-70 uppercase`}>{edu.year}</p>
@@ -191,7 +191,7 @@ export function CurriculumPreview({ data }: CurriculumPreviewProps) {
                     {data.skills.map((skill, i) => (
                       <div 
                         key={i} 
-                        className={`text-[9px] font-bold py-1 px-2 rounded-full flex items-center gap-1 ${primaryBg} bg-opacity-5 ${primaryColor}`}
+                        className={`text-[9px] font-bold py-1 px-2 rounded-[5px] flex items-center gap-1 ${primaryBg} bg-opacity-5 ${primaryColor}`}
                       >
                         <CheckCircle2 className="w-2.5 h-2.5 opacity-50" /> {skill}
                       </div>
@@ -211,7 +211,7 @@ export function CurriculumPreview({ data }: CurriculumPreviewProps) {
                           <span className="text-[10px] font-black text-slate-700 uppercase tracking-tighter">{lang.name}</span>
                           <span className="text-[8px] font-black text-slate-400 uppercase">{lang.level}</span>
                         </div>
-                        <div className="h-1 bg-slate-200 rounded-full overflow-hidden">
+                        <div className="h-1 bg-slate-200 rounded-[5px] overflow-hidden">
                           <div 
                             className={`h-full ${primaryBg}`} 
                             style={{ 

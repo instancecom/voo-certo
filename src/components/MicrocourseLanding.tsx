@@ -73,19 +73,19 @@ export function MicrocourseLanding({ course, modules, getLessons }: MicrocourseL
 
                 <div className="flex flex-wrap gap-6 pt-2">
                   <div className="flex items-center gap-2 text-sm text-foreground/80">
-                    <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
+                    <div className="w-8 h-8 rounded-[5px] bg-white flex items-center justify-center shadow-sm">
                       <Layers className="w-4 h-4 text-accent" />
                     </div>
                     <span><strong>{modules.length}</strong> Módulos</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-foreground/80">
-                    <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
+                    <div className="w-8 h-8 rounded-[5px] bg-white flex items-center justify-center shadow-sm">
                       <Play className="w-4 h-4 text-accent" />
                     </div>
                     <span><strong>{totalLessons}</strong> Aulas de vídeo</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-foreground/80">
-                    <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
+                    <div className="w-8 h-8 rounded-[5px] bg-white flex items-center justify-center shadow-sm">
                       <Clock className="w-4 h-4 text-accent" />
                     </div>
                     <span><strong>{course.duration_minutes}min</strong> de Conteúdo</span>
@@ -106,10 +106,10 @@ export function MicrocourseLanding({ course, modules, getLessons }: MicrocourseL
                   {modules.map((mod, i) => {
                     const lessons = getLessons(mod.id);
                     return (
-                      <div key={mod.id} className="bg-white rounded-2xl border border-border/50 p-4 shadow-sm">
+                      <div key={mod.id} className="bg-white rounded-[5px] border border-border/50 p-4 shadow-sm">
                         <div className="flex items-center justify-between mb-3 border-b border-muted pb-3">
                           <h3 className="font-bold text-sm flex items-center gap-2">
-                            <span className="w-6 h-6 rounded-md bg-muted flex items-center justify-center text-[10px]">{i + 1}</span>
+                            <span className="w-6 h-6 rounded-[5px] bg-muted flex items-center justify-center text-[10px]">{i + 1}</span>
                             {mod.title}
                           </h3>
                           <span className="text-xs text-muted-foreground">{lessons.length} aulas</span>
@@ -139,10 +139,10 @@ export function MicrocourseLanding({ course, modules, getLessons }: MicrocourseL
               transition={{ delay: 0.1 }}
               className="w-full lg:w-[400px] sticky top-28"
             >
-              <div className="bg-white rounded-3xl border border-accent/20 shadow-2xl overflow-hidden">
+              <div className="bg-white rounded-[5px] border border-accent/20 shadow-2xl overflow-hidden">
                 <div className="p-8 space-y-6">
                   <div className="space-y-2">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-accent/10 rounded-full text-accent text-xs font-bold uppercase tracking-wider">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-accent/10 rounded-[5px] text-accent text-xs font-bold uppercase tracking-wider">
                       Oferta Exclusiva
                     </div>
                     <h3 className="text-2xl font-bold text-foreground">Tenha Acesso Total</h3>
@@ -170,7 +170,7 @@ export function MicrocourseLanding({ course, modules, getLessons }: MicrocourseL
                     <Button 
                       size="lg" 
                       onClick={() => navigate('/premium')}
-                      className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-bold text-lg h-14 rounded-2xl shadow-lg shadow-accent/20 group"
+                      className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-bold text-lg h-14 rounded-[5px] shadow-lg shadow-accent/20 group"
                     >
                       Assinar Plano Tripulante
                       <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -182,7 +182,7 @@ export function MicrocourseLanding({ course, modules, getLessons }: MicrocourseL
                 </div>
 
                 <div className="bg-muted/50 p-6 flex items-center justify-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-lg">
+                  <div className="w-10 h-10 rounded-[5px] bg-white flex items-center justify-center text-lg">
                     🛡️
                   </div>
                   <div className="text-left">

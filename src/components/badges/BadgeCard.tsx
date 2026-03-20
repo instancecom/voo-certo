@@ -76,7 +76,7 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.98 }}
         className={cn(
-          "relative rounded-xl border-2 cursor-pointer transition-all duration-300 overflow-hidden",
+          "relative rounded-[5px] border-2 cursor-pointer transition-all duration-300 overflow-hidden",
           large ? "p-6" : "p-4",
           earned ? `bg-white ${colors.border} ${colors.glow} shadow-md` : "bg-[#EAEFF5] border-transparent opacity-80",
           hasPendingVerification && "opacity-90 grayscale-0 border-yellow-500/50"
@@ -85,7 +85,7 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
       >
         {/* Rarity badge */}
         <div className={cn(
-          "absolute -top-1.5 -right-1.5 text-[0.65rem] font-bold px-2 py-0.5 rounded-full shadow-sm z-10",
+          "absolute -top-1.5 -right-1.5 text-[0.65rem] font-bold px-2 py-0.5 rounded-[5px] shadow-sm z-10",
           earned ? "bg-white" : "bg-[#F5F7F9]",
           earned ? colors.text : "text-muted-foreground",
           earned ? `border ${colors.border}` : "border border-border"
@@ -95,7 +95,7 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
 
         {/* Icon or Model Image */}
         <div className={cn(
-          "mx-auto mb-3 rounded-2xl flex items-center justify-center overflow-hidden drop-shadow-sm",
+          "mx-auto mb-3 rounded-[5px] flex items-center justify-center overflow-hidden drop-shadow-sm",
           large ? "w-20 h-20" : "w-14 h-14",
           earned ? "bg-[#F5F7F9]" : "bg-muted-foreground/5",
           !earned && "grayscale opacity-70"
@@ -161,12 +161,12 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
         {!earned && !hasPendingVerification && (
           <div className="absolute inset-x-0 bottom-0 top-1/2 flex flex-col items-center justify-end pb-3 bg-gradient-to-t from-background/90 to-transparent">
             {isAnacBadge ? (
-               <span className="text-[10px] text-muted-foreground font-medium flex items-center gap-1 bg-[#F5F7F9] px-2 py-0.5 rounded-full border border-border">
+               <span className="text-[10px] text-muted-foreground font-medium flex items-center gap-1 bg-[#F5F7F9] px-2 py-0.5 rounded-[5px] border border-border">
                  <Upload size={12} />
                  Enviar Doc
                </span>
             ) : (
-                <span className="text-[10px] text-muted-foreground font-medium flex items-center gap-1 bg-[#F5F7F9] px-2 py-0.5 rounded-full border border-border">
+                <span className="text-[10px] text-muted-foreground font-medium flex items-center gap-1 bg-[#F5F7F9] px-2 py-0.5 rounded-[5px] border border-border">
                  <Lock size={12} />
                  Bloqueada
                </span>
@@ -176,7 +176,7 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
 
         {/* Pending verification overlay */}
         {hasPendingVerification && !earned && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center rounded-xl bg-yellow-500/10">
+          <div className="absolute inset-0 flex flex-col items-center justify-center rounded-[5px] bg-yellow-500/10">
             <span className="text-[10px] text-yellow-600 font-medium">Aguardando aprovação</span>
           </div>
         )}

@@ -41,7 +41,7 @@ export default function GuiaCarreiraPage() {
               transition={{ duration: 0.8 }}
               className="max-w-4xl mx-auto text-center"
             >
-              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-8 border border-white/20 animate-float">
+              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-[5px] px-4 py-2 mb-8 border border-white/20 animate-float">
                 <Plane className="w-5 h-5 text-accent" />
                 <span className="text-primary-foreground/90 text-sm font-semibold tracking-wide">Guia de Carreira Exclusivo</span>
               </div>
@@ -81,11 +81,11 @@ export default function GuiaCarreiraPage() {
                 {isLoading ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {[1, 2, 3, 4].map(i => (
-                      <Skeleton key={i} className="h-64 w-full rounded-3xl" />
+                      <Skeleton key={i} className="h-64 w-full rounded-[5px]" />
                     ))}
                   </div>
                 ) : guides?.length === 0 ? (
-                  <div className="text-center py-20 bg-muted/30 rounded-3xl">
+                  <div className="text-center py-20 bg-muted/30 rounded-[5px]">
                     <BookOpen className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
                     <p className="text-muted-foreground font-medium">Nenhum guia disponível no momento.</p>
                   </div>
@@ -100,7 +100,7 @@ export default function GuiaCarreiraPage() {
                         transition={{ delay: index * 0.1 }}
                       >
                         <Card 
-                          className="group h-full flex flex-col hover:border-accent shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-all duration-500 cursor-pointer overflow-hidden border-2 rounded-3xl overflow-hidden" 
+                          className="group h-full flex flex-col hover:border-accent shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-all duration-500 cursor-pointer overflow-hidden border-2 rounded-[5px] overflow-hidden" 
                           onClick={() => navigate(`/guia-carreira/${guide.id}`)}
                         >
                           <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-10 transition-opacity">
@@ -109,7 +109,7 @@ export default function GuiaCarreiraPage() {
                           
                           <CardHeader className="p-8">
                             <div className="flex items-center gap-4 mb-4">
-                              <div className="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center group-hover:bg-accent group-hover:text-accent-foreground transition-all duration-500 transform group-hover:rotate-6">
+                              <div className="w-14 h-14 rounded-[5px] bg-accent/10 flex items-center justify-center group-hover:bg-accent group-hover:text-accent-foreground transition-all duration-500 transform group-hover:rotate-6">
                                 <BookOpen className="w-6 h-6 text-accent group-hover:text-current" />
                               </div>
                               <div className="flex-1">
@@ -132,7 +132,7 @@ export default function GuiaCarreiraPage() {
                               <span className="text-sm font-bold text-muted-foreground group-hover:text-primary transition-colors flex items-center gap-2">
                                 Começar jornada <ArrowRight className="w-4 h-4" />
                               </span>
-                              <div className="w-10 h-10 rounded-full border-2 border-muted flex items-center justify-center group-hover:border-accent group-hover:bg-accent group-hover:text-accent-foreground transition-all duration-500">
+                              <div className="w-10 h-10 rounded-[5px] border-2 border-muted flex items-center justify-center group-hover:border-accent group-hover:bg-accent group-hover:text-accent-foreground transition-all duration-500">
                                 <ArrowRight className="w-5 h-5" />
                               </div>
                             </div>

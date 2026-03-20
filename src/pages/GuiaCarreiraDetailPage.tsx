@@ -122,7 +122,7 @@ export default function GuiaCarreiraDetailPage() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3 }}
-              className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 flex flex-col items-center justify-center text-center min-w-[200px]"
+              className="bg-white/10 backdrop-blur-md border border-white/20 rounded-[5px] p-6 flex flex-col items-center justify-center text-center min-w-[200px]"
             >
               <div className="relative w-20 h-20 mb-3 flex items-center justify-center">
                 <svg className="w-full h-full transform -rotate-90">
@@ -166,7 +166,7 @@ export default function GuiaCarreiraDetailPage() {
         <div className="container mx-auto px-4 max-w-4xl">
           {isLoading ? (
             <div className="space-y-6">
-              {[1, 2, 3].map(i => <Skeleton key={i} className="h-32 w-full rounded-2xl" />)}
+              {[1, 2, 3].map(i => <Skeleton key={i} className="h-32 w-full rounded-[5px]" />)}
             </div>
           ) : (
             <div className="relative">
@@ -192,7 +192,7 @@ export default function GuiaCarreiraDetailPage() {
                         <div 
                           onClick={() => toggleProgress.mutate({ stepId: step.id, guideId: guideId!, completed: !isCompleted })}
                           className={`
-                            w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 ring-offset-background
+                            w-10 h-10 md:w-12 md:h-12 rounded-[5px] flex items-center justify-center cursor-pointer transition-all duration-300 ring-offset-background
                             ${isCompleted ? 'bg-success text-white scale-100 shadow-lg shadow-success/20' : 
                               isCurrent ? 'bg-accent text-accent-foreground ring-4 ring-accent/20 scale-110' : 
                               'bg-card border-2 border-muted-foreground/20 text-muted-foreground hover:border-primary/40'}
@@ -227,8 +227,8 @@ export default function GuiaCarreiraDetailPage() {
                           {(step.simulado_ids?.length > 0 || step.microcourse_ids?.length > 0) && (
                             <CardContent className="p-4 md:p-6 pt-0">
                               {!canAccessGuideContent ? (
-                                <div className="mt-4 flex flex-col md:flex-row md:items-center gap-3 p-4 rounded-xl bg-primary/5 border border-primary/10">
-                                  <div className="bg-primary/10 p-2 rounded-lg shrink-0">
+                                <div className="mt-4 flex flex-col md:flex-row md:items-center gap-3 p-4 rounded-[5px] bg-primary/5 border border-primary/10">
+                                  <div className="bg-primary/10 p-2 rounded-[5px] shrink-0">
                                     <Lock className="w-5 h-5 text-primary" />
                                   </div>
                                   <div className="flex-1">
@@ -247,9 +247,9 @@ export default function GuiaCarreiraDetailPage() {
                                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     {step.simulado_ids?.map(id => (
                                       <Link key={id} to={getSimuladoLink(id)} className="block group/link">
-                                        <div className="flex items-center justify-between p-3 rounded-xl border border-border/50 bg-background/50 hover:bg-white hover:border-accent shadow-sm transition-all">
+                                        <div className="flex items-center justify-between p-3 rounded-[5px] border border-border/50 bg-background/50 hover:bg-white hover:border-accent shadow-sm transition-all">
                                           <div className="flex items-center gap-3 overflow-hidden">
-                                            <div className="bg-accent/10 p-2 rounded-lg group-hover/link:bg-accent group-hover/link:text-accent-foreground transition-colors shrink-0">
+                                            <div className="bg-accent/10 p-2 rounded-[5px] group-hover/link:bg-accent group-hover/link:text-accent-foreground transition-colors shrink-0">
                                               <Plane className="w-4 h-4" />
                                             </div>
                                             <span className="text-sm font-medium truncate group-hover/link:text-accent transition-colors">
@@ -262,9 +262,9 @@ export default function GuiaCarreiraDetailPage() {
                                     ))}
                                     {step.microcourse_ids?.map(id => (
                                       <Link key={id} to="/microcursos" className="block group/link">
-                                        <div className="flex items-center justify-between p-3 rounded-xl border border-border/50 bg-background/50 hover:bg-white hover:border-primary shadow-sm transition-all">
+                                        <div className="flex items-center justify-between p-3 rounded-[5px] border border-border/50 bg-background/50 hover:bg-white hover:border-primary shadow-sm transition-all">
                                           <div className="flex items-center gap-3 overflow-hidden">
-                                            <div className="bg-primary/10 p-2 rounded-lg group-hover/link:bg-primary group-hover/link:text-primary-foreground transition-colors shrink-0">
+                                            <div className="bg-primary/10 p-2 rounded-[5px] group-hover/link:bg-primary group-hover/link:text-primary-foreground transition-colors shrink-0">
                                               <GraduationCap className="w-4 h-4" />
                                             </div>
                                             <span className="text-sm font-medium truncate group-hover/link:text-primary transition-colors">

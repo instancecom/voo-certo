@@ -47,7 +47,7 @@ function ScrollRow({ rarity, badges, earnedIds, earnedMap }: {
       {/* Row header */}
       <div className="flex items-center justify-between mb-4 px-1">
         <div className="flex items-center gap-3">
-          <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center", cfg.bgColor)}>
+          <div className={cn("w-10 h-10 rounded-[5px] flex items-center justify-center", cfg.bgColor)}>
             <Icon className={cn("w-5 h-5", cfg.color)} />
           </div>
           <div>
@@ -58,10 +58,10 @@ function ScrollRow({ rarity, badges, earnedIds, earnedMap }: {
           </div>
         </div>
         <div className="flex items-center gap-1 opacity-0 group-hover/row:opacity-100 transition-opacity">
-          <button onClick={() => scroll(-1)} className="p-2 rounded-full bg-card border border-border hover:bg-muted transition-colors shadow-sm">
+          <button onClick={() => scroll(-1)} className="p-2 rounded-[5px] bg-card border border-border hover:bg-muted transition-colors shadow-sm">
             <ChevronLeft className="w-4 h-4 text-foreground" />
           </button>
-          <button onClick={() => scroll(1)} className="p-2 rounded-full bg-card border border-border hover:bg-muted transition-colors shadow-sm">
+          <button onClick={() => scroll(1)} className="p-2 rounded-[5px] bg-card border border-border hover:bg-muted transition-colors shadow-sm">
             <ChevronRight className="w-4 h-4 text-foreground" />
           </button>
         </div>
@@ -158,7 +158,7 @@ const ConquistasPage = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="relative overflow-hidden rounded-2xl bg-white border border-yellow-500/30 shadow-sm p-6 sm:p-8 mb-10"
+            className="relative overflow-hidden rounded-[5px] bg-white border border-yellow-500/30 shadow-sm p-6 sm:p-8 mb-10"
           >
             {/* Decorative elements */}
             <div className="absolute top-0 right-0 w-48 h-48 bg-yellow-500/5 rounded-full -translate-y-1/2 translate-x-1/4" />
@@ -166,7 +166,7 @@ const ConquistasPage = () => {
 
             <div className="relative z-10 flex flex-col sm:flex-row items-center gap-6">
               {/* Trophy visual */}
-              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center shrink-0">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-[5px] bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center shrink-0">
                 <Trophy className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
               </div>
 
@@ -184,12 +184,12 @@ const ConquistasPage = () => {
                     <span className="font-medium">{stats.earned} de {stats.total} insígnias conquistadas</span>
                     <span className="font-bold text-yellow-600">{progressPct}%</span>
                   </div>
-                  <div className="h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                  <div className="h-2.5 bg-gray-200 rounded-[5px] overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${progressPct}%` }}
                       transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
-                      className="h-full bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full"
+                      className="h-full bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-[5px]"
                     />
                   </div>
                 </div>
@@ -204,7 +204,7 @@ const ConquistasPage = () => {
                   return (
                     <div
                       key={rarity}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-yellow-500/10 border border-yellow-500/20"
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-[5px] bg-yellow-500/10 border border-yellow-500/20"
                     >
                       <cfg.icon className="w-3.5 h-3.5 text-yellow-600" />
                       <span className="text-xs font-semibold text-[#1A233A]">

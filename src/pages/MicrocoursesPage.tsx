@@ -132,7 +132,7 @@ export default function MicrocoursesPage() {
         <div className="container mx-auto px-4">
           {/* Hero */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 rounded-full text-accent mb-4">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 rounded-[5px] text-accent mb-4">
               <Zap className="w-4 h-4" />
               <span className="text-sm font-semibold">Aprenda em minutos</span>
             </div>
@@ -145,7 +145,7 @@ export default function MicrocoursesPage() {
           {/* Progress */}
           {user && displayCourses.length > 0 && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
-              className="mb-8 p-4 rounded-xl bg-card border border-border">
+              className="mb-8 p-4 rounded-[5px] bg-card border border-border">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-foreground">Seu Progresso</span>
                 <span className="text-sm text-muted-foreground">{completedCount}/{displayCourses.length} concluídos</span>
@@ -160,7 +160,7 @@ export default function MicrocoursesPage() {
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
               <Input 
                 placeholder="Buscar microcurso..." 
-                className="pl-10 h-11 bg-card/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 transition-all rounded-xl" 
+                className="pl-10 h-11 bg-card/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 transition-all rounded-[5px]" 
                 value={search} 
                 onChange={e => setSearch(e.target.value)} 
               />
@@ -171,7 +171,7 @@ export default function MicrocoursesPage() {
                 <Button 
                   variant="outline" 
                   size="icon" 
-                  className={`h-11 w-11 rounded-xl transition-all ${
+                  className={`h-11 w-11 rounded-[5px] transition-all ${
                     selectedCategory !== 'all' 
                     ? 'border-primary bg-primary/10 text-primary hover:bg-primary/20' 
                     : 'bg-card/50 border-border/50 hover:bg-card/80'
@@ -179,11 +179,11 @@ export default function MicrocoursesPage() {
                 >
                   <Filter className="w-5 h-5" />
                   {selectedCategory !== 'all' && (
-                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full border-2 border-background" />
+                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-[5px] border-2 border-background" />
                   )}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 p-2 rounded-xl border-border/50 backdrop-blur-md bg-card/95">
+              <DropdownMenuContent align="end" className="w-56 p-2 rounded-[5px] border-border/50 backdrop-blur-md bg-card/95">
                 <DropdownMenuLabel className="px-2 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                   Filtrar por Categoria
                 </DropdownMenuLabel>
@@ -193,7 +193,7 @@ export default function MicrocoursesPage() {
                     <DropdownMenuItem
                       key={cat.value}
                       onClick={() => setSelectedCategory(cat.value)}
-                      className={`flex items-center gap-3 cursor-pointer py-2.5 px-3 rounded-lg transition-colors ${
+                      className={`flex items-center gap-3 cursor-pointer py-2.5 px-3 rounded-[5px] transition-colors ${
                         selectedCategory === cat.value 
                         ? 'bg-primary/10 text-primary font-medium focus:bg-primary/20 focus:text-primary' 
                         : 'text-foreground/80 focus:bg-accent focus:text-accent-foreground'
@@ -229,8 +229,8 @@ export default function MicrocoursesPage() {
           {isLoading ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
               {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                <div key={i} className="aspect-[2/3] rounded-xl bg-card border border-border p-4 flex flex-col justify-end space-y-2">
-                  <Skeleton className="w-full h-full absolute inset-0 rounded-xl" />
+                <div key={i} className="aspect-[2/3] rounded-[5px] bg-card border border-border p-4 flex flex-col justify-end space-y-2">
+                  <Skeleton className="w-full h-full absolute inset-0 rounded-[5px]" />
                   <div className="relative z-10 space-y-2">
                     <Skeleton className="w-full h-4" />
                     <Skeleton className="w-2/3 h-4" />
@@ -266,7 +266,7 @@ export default function MicrocoursesPage() {
                     className="group relative"
                   >
                     <div
-                      className="relative aspect-[2/3] rounded-xl overflow-hidden cursor-pointer transition-all duration-300 group-hover:scale-[1.03] group-hover:shadow-xl group-hover:shadow-primary/10 border border-transparent hover:border-accent/40"
+                      className="relative aspect-[2/3] rounded-[5px] overflow-hidden cursor-pointer transition-all duration-300 group-hover:scale-[1.03] group-hover:shadow-xl group-hover:shadow-primary/10 border border-transparent hover:border-accent/40"
                       onClick={() => navigate(`/microcursos/${course.id}`)}
                     >
                       {/* Background */}
@@ -281,21 +281,21 @@ export default function MicrocoursesPage() {
 
                       {/* Completed badge */}
                       {isCompleted && (
-                        <div className="absolute top-2 right-2 bg-success/90 text-white rounded-full p-1.5">
+                        <div className="absolute top-2 right-2 bg-success/90 text-white rounded-[5px] p-1.5">
                           <CheckCircle2 className="w-3.5 h-3.5" />
                         </div>
                       )}
 
                       {/* Category badge */}
                       <div className="absolute top-2 left-2">
-                        <span className="px-2 py-0.5 rounded-full bg-black/50 backdrop-blur-sm text-white text-[10px] font-medium">
+                        <span className="px-2 py-0.5 rounded-[5px] bg-black/50 backdrop-blur-sm text-white text-[10px] font-medium">
                           {catInfo?.emoji} {catInfo?.label}
                         </span>
                       </div>
 
                       {/* Play icon on hover */}
                       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div className="w-12 h-12 rounded-full bg-primary/90 backdrop-blur-sm flex items-center justify-center shadow-lg">
+                        <div className="w-12 h-12 rounded-[5px] bg-primary/90 backdrop-blur-sm flex items-center justify-center shadow-lg">
                           <Play className="w-5 h-5 text-primary-foreground ml-0.5" />
                         </div>
                       </div>

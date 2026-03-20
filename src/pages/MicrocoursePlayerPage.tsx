@@ -189,9 +189,9 @@ export default function MicrocoursePlayerPage() {
               <div key={mod.id} className="mb-1">
                 <button
                   onClick={() => toggleModule(mod.id)}
-                  className="w-full flex items-center gap-2 p-2.5 rounded-lg hover:bg-muted/60 transition-colors text-left"
+                  className="w-full flex items-center gap-2 p-2.5 rounded-[5px] hover:bg-muted/60 transition-colors text-left"
                 >
-                  <div className="w-6 h-6 rounded-md bg-primary/10 text-primary flex items-center justify-center text-xs font-bold shrink-0">
+                  <div className="w-6 h-6 rounded-[5px] bg-primary/10 text-primary flex items-center justify-center text-xs font-bold shrink-0">
                     {modIndex + 1}
                   </div>
                   <span className="text-sm font-medium text-foreground flex-1 line-clamp-2">{mod.title}</span>
@@ -218,14 +218,14 @@ export default function MicrocoursePlayerPage() {
                               key={lesson.id}
                               onClick={() => handleSelectLesson(lesson)}
                               className={cn(
-                                "w-full flex items-center gap-2 p-2 rounded-lg text-left transition-all text-sm",
+                                "w-full flex items-center gap-2 p-2 rounded-[5px] text-left transition-all text-sm",
                                 isActive
                                   ? "bg-primary/10 text-primary font-medium"
                                   : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                               )}
                             >
                               <div className={cn(
-                                "w-5 h-5 rounded-full flex items-center justify-center shrink-0 text-[10px] font-medium border",
+                                "w-5 h-5 rounded-[5px] flex items-center justify-center shrink-0 text-[10px] font-medium border",
                                 isActive ? "border-primary bg-primary text-primary-foreground" : "border-border"
                               )}>
                                 {hasVideo ? <Play className="w-2.5 h-2.5" /> : <span>{lIdx + 1}</span>}
@@ -321,7 +321,7 @@ export default function MicrocoursePlayerPage() {
         <header className="h-14 border-b border-border flex items-center px-4 gap-3 bg-card/80 backdrop-blur-sm shrink-0">
           <button
             onClick={() => { if (window.innerWidth < 1024) setMobileSidebarOpen(true); else setSidebarOpen(!sidebarOpen); }}
-            className="p-2 hover:bg-muted rounded-lg transition-colors"
+            className="p-2 hover:bg-muted rounded-[5px] transition-colors"
           >
             <Menu className="w-5 h-5 text-muted-foreground" />
           </button>
@@ -346,7 +346,7 @@ export default function MicrocoursePlayerPage() {
                 hasAccess={canAccessMicrocursos}
               />
             ) : (
-              <div className="aspect-video bg-muted rounded-xl flex items-center justify-center">
+              <div className="aspect-video bg-muted rounded-[5px] flex items-center justify-center">
                 <div className="text-center">
                   <GraduationCap className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
                   <p className="text-muted-foreground text-sm">Selecione uma aula para começar</p>
@@ -381,7 +381,7 @@ export default function MicrocoursePlayerPage() {
 
               {/* Material Download */}
               {selectedLesson.material_url && (
-                <div className="p-4 rounded-xl bg-muted/50 border border-border mt-4">
+                <div className="p-4 rounded-[5px] bg-muted/50 border border-border mt-4">
                   <p className="text-sm font-bold mb-2 flex items-center gap-2 text-foreground">
                     <FileText className="w-4 h-4 text-primary" /> Material Complementar
                   </p>
@@ -397,9 +397,9 @@ export default function MicrocoursePlayerPage() {
                       {selectedLesson.material_name || 'Baixar material PDF'}
                     </a>
                   ) : (
-                    <div className="flex items-center justify-between bg-card p-3 rounded-lg border border-border">
+                    <div className="flex items-center justify-between bg-card p-3 rounded-[5px] border border-border">
                       <div className="flex items-center gap-3">
-                         <div className="p-2 bg-muted rounded-md text-muted-foreground"><FileText className="w-4 h-4"/></div>
+                         <div className="p-2 bg-muted rounded-[5px] text-muted-foreground"><FileText className="w-4 h-4"/></div>
                          <span className="text-sm font-medium text-muted-foreground line-through">{selectedLesson.material_name || 'Material PDF Restrito'}</span>
                       </div>
                       <Badge variant="outline" className="text-accent border-accent/30 bg-accent/5">

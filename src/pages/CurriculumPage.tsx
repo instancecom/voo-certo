@@ -385,13 +385,13 @@ export default function CurriculumPage() {
       <div className="min-h-screen bg-background">
         <Header />
         <main className="pt-24 pb-12 flex items-center justify-center">
-          <Card className="max-w-md p-10 text-center border-2 rounded-[2rem] shadow-xl">
-            <div className="w-20 h-20 rounded-3xl bg-muted flex items-center justify-center mx-auto mb-6">
+          <Card className="max-w-md p-10 text-center border-2 rounded-[5px] shadow-xl">
+            <div className="w-20 h-20 rounded-[5px] bg-muted flex items-center justify-center mx-auto mb-6">
               <Lock className="w-10 h-10 text-muted-foreground opacity-30" />
             </div>
             <h2 className="text-2xl font-black mb-2">Acesso Restrito</h2>
             <p className="text-muted-foreground mb-8">Faça login para criar seu currículo profissional na aviação.</p>
-            <Button asChild className="h-12 px-8 rounded-xl font-bold"><Link to="/auth">Fazer Login</Link></Button>
+            <Button asChild className="h-12 px-8 rounded-[5px] font-bold"><Link to="/auth">Fazer Login</Link></Button>
           </Card>
         </main>
         <Footer />
@@ -407,7 +407,7 @@ export default function CurriculumPage() {
           <header className="mb-12 text-center lg:text-left flex flex-col lg:flex-row lg:items-end justify-between gap-6">
             <div className="space-y-2">
               <div className="flex items-center gap-2 justify-center lg:justify-start">
-                <Badge className="bg-primary/10 text-primary border-none font-black px-3 py-1 rounded-lg text-[10px]">CAREER BUILDER</Badge>
+                <Badge className="bg-primary/10 text-primary border-none font-black px-3 py-1 rounded-[5px] text-[10px]">CAREER BUILDER</Badge>
               </div>
               <h1 className="text-4xl lg:text-5xl font-black text-foreground tracking-tighter">
                 Construtor de Currículo
@@ -419,14 +419,14 @@ export default function CurriculumPage() {
             
             <div className="flex flex-wrap items-center justify-center gap-3">
               {canSaveCurriculum ? (
-                <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending} variant="outline" className="h-12 px-6 rounded-xl border-2 font-bold bg-white/50 backdrop-blur-sm">
+                <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending} variant="outline" className="h-12 px-6 rounded-[5px] border-2 font-bold bg-white/50 backdrop-blur-sm">
                   {saveMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
                   Salvar Progresso
                 </Button>
               ) : (
-                <Button variant="outline" disabled className="h-12 px-6 rounded-xl border-2 opacity-50"><Lock className="w-4 h-4 mr-2" /> Salvar Pro</Button>
+                <Button variant="outline" disabled className="h-12 px-6 rounded-[5px] border-2 opacity-50"><Lock className="w-4 h-4 mr-2" /> Salvar Pro</Button>
               )}
-              <Button onClick={downloadPDF} disabled={isGenerating} variant="accent" className="h-12 px-8 rounded-xl font-black shadow-xl shadow-accent/20">
+              <Button onClick={downloadPDF} disabled={isGenerating} variant="accent" className="h-12 px-8 rounded-[5px] font-black shadow-xl shadow-accent/20">
                 {isGenerating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
                 Baixar PDF
               </Button>
@@ -437,7 +437,7 @@ export default function CurriculumPage() {
             {/* Editor Sidebar */}
             <div className={`lg:col-span-5 space-y-8 ${mode === 'preview' ? 'hidden lg:block' : ''}`}>
                {/* Controls for Tab switching or other stuff could go here */}
-               <Card className="rounded-[2.5rem] border-2 shadow-sm overflow-hidden bg-white/70 backdrop-blur-xl">
+               <Card className="rounded-[5px] border-2 shadow-sm overflow-hidden bg-white/70 backdrop-blur-xl">
                  <div className="p-6 border-b">
                    <h3 className="font-black text-sm uppercase tracking-widest text-primary">Selecione o Modelo</h3>
                    <div className="grid grid-cols-3 gap-3 mt-4">
@@ -445,7 +445,7 @@ export default function CurriculumPage() {
                        <button
                          key={t.id}
                          onClick={() => setData(p => ({ ...p, template: t.id }))}
-                         className={`p-3 rounded-xl border-2 transition-all flex flex-col items-center gap-2 ${data.template === t.id ? 'border-primary bg-primary/5 text-primary' : 'border-border hover:border-primary/30 text-muted-foreground'}`}
+                         className={`p-3 rounded-[5px] border-2 transition-all flex flex-col items-center gap-2 ${data.template === t.id ? 'border-primary bg-primary/5 text-primary' : 'border-border hover:border-primary/30 text-muted-foreground'}`}
                        >
                          <t.icon className="w-5 h-5" />
                          <span className="text-[10px] font-black uppercase">{t.name}</span>
@@ -455,40 +455,40 @@ export default function CurriculumPage() {
                  </div>
 
                  <Tabs value={activeTab} onValueChange={setActiveTab} className="p-6">
-                  <TabsList className="grid grid-cols-4 mb-8 bg-muted/60 p-1 h-14 rounded-2xl">
-                    <TabsTrigger value="dados" className="rounded-xl data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-lg"><User className="w-5 h-5" /></TabsTrigger>
-                    <TabsTrigger value="experiencia" className="rounded-xl data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-lg"><Briefcase className="w-5 h-5" /></TabsTrigger>
-                    <TabsTrigger value="formacao" className="rounded-xl data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-lg"><GraduationCap className="w-5 h-5" /></TabsTrigger>
-                    <TabsTrigger value="extras" className="rounded-xl data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-lg"><Award className="w-5 h-5" /></TabsTrigger>
+                  <TabsList className="grid grid-cols-4 mb-8 bg-muted/60 p-1 h-14 rounded-[5px]">
+                    <TabsTrigger value="dados" className="rounded-[5px] data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-lg"><User className="w-5 h-5" /></TabsTrigger>
+                    <TabsTrigger value="experiencia" className="rounded-[5px] data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-lg"><Briefcase className="w-5 h-5" /></TabsTrigger>
+                    <TabsTrigger value="formacao" className="rounded-[5px] data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-lg"><GraduationCap className="w-5 h-5" /></TabsTrigger>
+                    <TabsTrigger value="extras" className="rounded-[5px] data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-lg"><Award className="w-5 h-5" /></TabsTrigger>
                   </TabsList>
 
                   <TabsContent value="dados" className="space-y-4">
                     <div className="grid grid-cols-1 gap-4">
                       <div className="space-y-2">
                         <Label className="font-black text-[10px] uppercase ml-1 opacity-70">Nome Completo</Label>
-                        <Input placeholder="Seu nome" value={data.full_name} onChange={e => setData(p => ({ ...p, full_name: e.target.value }))} className="h-11 rounded-xl" />
+                        <Input placeholder="Seu nome" value={data.full_name} onChange={e => setData(p => ({ ...p, full_name: e.target.value }))} className="h-11 rounded-[5px]" />
                       </div>
                       <div className="space-y-2">
                         <Label className="font-black text-[10px] uppercase ml-1 opacity-70">Cargo / Profissão</Label>
-                        <Input placeholder="Ex: Comissário de Voo" value={data.profession} onChange={e => setData(p => ({ ...p, profession: e.target.value }))} className="h-11 rounded-xl" />
+                        <Input placeholder="Ex: Comissário de Voo" value={data.profession} onChange={e => setData(p => ({ ...p, profession: e.target.value }))} className="h-11 rounded-[5px]" />
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label className="font-black text-[10px] uppercase ml-1 opacity-70">E-mail</Label>
-                          <Input placeholder="email@exemplo.com" value={data.email} onChange={e => setData(p => ({ ...p, email: e.target.value }))} className="h-11 rounded-xl" />
+                          <Input placeholder="email@exemplo.com" value={data.email} onChange={e => setData(p => ({ ...p, email: e.target.value }))} className="h-11 rounded-[5px]" />
                         </div>
                         <div className="space-y-2">
                           <Label className="font-black text-[10px] uppercase ml-1 opacity-70">Telefone</Label>
-                          <Input placeholder="(00) 00000-0000" value={data.phone} onChange={e => setData(p => ({ ...p, phone: e.target.value }))} className="h-11 rounded-xl" />
+                          <Input placeholder="(00) 00000-0000" value={data.phone} onChange={e => setData(p => ({ ...p, phone: e.target.value }))} className="h-11 rounded-[5px]" />
                         </div>
                       </div>
                       <div className="space-y-2">
                         <Label className="font-black text-[10px] uppercase ml-1 opacity-70">Cidade/UF</Label>
-                        <Input placeholder="Ex: São Paulo, SP" value={data.city} onChange={e => setData(p => ({ ...p, city: e.target.value }))} className="h-11 rounded-xl" />
+                        <Input placeholder="Ex: São Paulo, SP" value={data.city} onChange={e => setData(p => ({ ...p, city: e.target.value }))} className="h-11 rounded-[5px]" />
                       </div>
                       <div className="space-y-2">
                         <Label className="font-black text-[10px] uppercase ml-1 opacity-70">Resumo Profissional</Label>
-                        <Textarea placeholder="Breve resumo sobre você..." value={data.summary} onChange={e => setData(p => ({ ...p, summary: e.target.value }))} className="rounded-xl min-h-[120px]" />
+                        <Textarea placeholder="Breve resumo sobre você..." value={data.summary} onChange={e => setData(p => ({ ...p, summary: e.target.value }))} className="rounded-[5px] min-h-[120px]" />
                       </div>
                     </div>
                   </TabsContent>
@@ -496,19 +496,19 @@ export default function CurriculumPage() {
                   <TabsContent value="experiencia" className="space-y-4">
                     <div className="flex items-center justify-between mb-4">
                        <h3 className="font-black text-xs uppercase tracking-widest text-primary">Experiências</h3>
-                       <Button variant="outline" size="sm" onClick={addExperience} className="rounded-lg h-8 px-3 border-2"><Plus className="w-3 h-3 mr-1" /> Novo</Button>
+                       <Button variant="outline" size="sm" onClick={addExperience} className="rounded-[5px] h-8 px-3 border-2"><Plus className="w-3 h-3 mr-1" /> Novo</Button>
                     </div>
                     <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
                       {data.experience.map((exp, i) => (
-                        <div key={i} className="p-4 rounded-2xl border-2 bg-white/50 relative group space-y-3">
-                          <Button variant="ghost" size="sm" onClick={() => removeExperience(i)} className="absolute top-2 right-2 h-7 w-7 p-0 rounded-lg text-red-500 hover:bg-red-50"><Trash2 className="w-3.5 h-3.5" /></Button>
-                          <Input placeholder="Empresa" value={exp.company} onChange={e => updateExperience(i, 'company', e.target.value)} className="h-10 rounded-lg" />
-                          <Input placeholder="Cargo" value={exp.role} onChange={e => updateExperience(i, 'role', e.target.value)} className="h-10 rounded-lg" />
+                        <div key={i} className="p-4 rounded-[5px] border-2 bg-white/50 relative group space-y-3">
+                          <Button variant="ghost" size="sm" onClick={() => removeExperience(i)} className="absolute top-2 right-2 h-7 w-7 p-0 rounded-[5px] text-red-500 hover:bg-red-50"><Trash2 className="w-3.5 h-3.5" /></Button>
+                          <Input placeholder="Empresa" value={exp.company} onChange={e => updateExperience(i, 'company', e.target.value)} className="h-10 rounded-[5px]" />
+                          <Input placeholder="Cargo" value={exp.role} onChange={e => updateExperience(i, 'role', e.target.value)} className="h-10 rounded-[5px]" />
                           <div className="grid grid-cols-2 gap-3">
-                            <Input placeholder="Início" value={exp.start} onChange={e => updateExperience(i, 'start', e.target.value)} className="h-10 rounded-lg" />
-                            <Input placeholder="Fim (ou Atual)" value={exp.end} onChange={e => updateExperience(i, 'end', e.target.value)} className="h-10 rounded-lg" />
+                            <Input placeholder="Início" value={exp.start} onChange={e => updateExperience(i, 'start', e.target.value)} className="h-10 rounded-[5px]" />
+                            <Input placeholder="Fim (ou Atual)" value={exp.end} onChange={e => updateExperience(i, 'end', e.target.value)} className="h-10 rounded-[5px]" />
                           </div>
-                          <Textarea placeholder="Atividades principais..." value={exp.description} onChange={e => updateExperience(i, 'description', e.target.value)} className="rounded-lg min-h-[80px] text-xs" />
+                          <Textarea placeholder="Atividades principais..." value={exp.description} onChange={e => updateExperience(i, 'description', e.target.value)} className="rounded-[5px] min-h-[80px] text-xs" />
                         </div>
                       ))}
                     </div>
@@ -517,14 +517,14 @@ export default function CurriculumPage() {
                   <TabsContent value="formacao" className="space-y-4">
                     <div className="flex items-center justify-between mb-4">
                        <h3 className="font-black text-xs uppercase tracking-widest text-primary">Educação</h3>
-                       <Button variant="outline" size="sm" onClick={addEducation} className="rounded-lg h-8 px-3 border-2"><Plus className="w-3 h-3 mr-1" /> Novo</Button>
+                       <Button variant="outline" size="sm" onClick={addEducation} className="rounded-[5px] h-8 px-3 border-2"><Plus className="w-3 h-3 mr-1" /> Novo</Button>
                     </div>
                     <div className="space-y-4">
                       {data.education.map((edu, i) => (
-                        <div key={i} className="p-4 rounded-2xl border-2 bg-white/50 space-y-3">
-                          <Input placeholder="Instituição" value={edu.institution} onChange={e => updateEducation(i, 'institution', e.target.value)} className="h-10 rounded-lg" />
-                          <Input placeholder="Grau / Curso" value={edu.degree} onChange={e => updateEducation(i, 'degree', e.target.value)} className="h-10 rounded-lg" />
-                          <Input placeholder="Ano de Conclusão" value={edu.year} onChange={e => updateEducation(i, 'year', e.target.value)} className="h-10 rounded-lg" />
+                        <div key={i} className="p-4 rounded-[5px] border-2 bg-white/50 space-y-3">
+                          <Input placeholder="Instituição" value={edu.institution} onChange={e => updateEducation(i, 'institution', e.target.value)} className="h-10 rounded-[5px]" />
+                          <Input placeholder="Grau / Curso" value={edu.degree} onChange={e => updateEducation(i, 'degree', e.target.value)} className="h-10 rounded-[5px]" />
+                          <Input placeholder="Ano de Conclusão" value={edu.year} onChange={e => updateEducation(i, 'year', e.target.value)} className="h-10 rounded-[5px]" />
                         </div>
                       ))}
                     </div>
@@ -534,12 +534,12 @@ export default function CurriculumPage() {
                     <div className="space-y-4">
                       <Label className="font-black text-[10px] uppercase ml-1 opacity-70">Competências</Label>
                       <div className="flex gap-2">
-                        <Input placeholder="Ex: Liderança" value={newSkill} onChange={e => setNewSkill(e.target.value)} onKeyDown={e => e.key === 'Enter' && addSkill()} className="h-11 rounded-xl" />
-                        <Button variant="outline" onClick={addSkill} className="h-11 rounded-xl bg-white"><Plus className="w-4 h-4" /></Button>
+                        <Input placeholder="Ex: Liderança" value={newSkill} onChange={e => setNewSkill(e.target.value)} onKeyDown={e => e.key === 'Enter' && addSkill()} className="h-11 rounded-[5px]" />
+                        <Button variant="outline" onClick={addSkill} className="h-11 rounded-[5px] bg-white"><Plus className="w-4 h-4" /></Button>
                       </div>
                       <div className="flex flex-wrap gap-2 pt-2">
                         {data.skills.map((s, i) => (
-                          <Badge key={i} variant="secondary" className="px-3 py-1.5 rounded-lg font-bold text-[10px] cursor-pointer hover:bg-red-50 hover:text-red-500 border-2" onClick={() => setData(p => ({ ...p, skills: p.skills.filter((_, idx) => idx !== i) }))}>{s} ✕</Badge>
+                          <Badge key={i} variant="secondary" className="px-3 py-1.5 rounded-[5px] font-bold text-[10px] cursor-pointer hover:bg-red-50 hover:text-red-500 border-2" onClick={() => setData(p => ({ ...p, skills: p.skills.filter((_, idx) => idx !== i) }))}>{s} ✕</Badge>
                         ))}
                       </div>
                     </div>
@@ -552,9 +552,9 @@ export default function CurriculumPage() {
                       <div className="space-y-3">
                         {data.languages.map((l, i) => (
                           <div key={i} className="flex gap-2">
-                            <Input placeholder="Idioma" value={l.name} onChange={e => setData(p => ({ ...p, languages: p.languages.map((item, idx) => idx === i ? { ...item, name: e.target.value } : item) }))} className="h-10 rounded-lg flex-1" />
+                            <Input placeholder="Idioma" value={l.name} onChange={e => setData(p => ({ ...p, languages: p.languages.map((item, idx) => idx === i ? { ...item, name: e.target.value } : item) }))} className="h-10 rounded-[5px] flex-1" />
                             <Select value={l.level} onValueChange={v => setData(p => ({ ...p, languages: p.languages.map((item, idx) => idx === i ? { ...item, level: v } : item) }))}>
-                              <SelectTrigger className="w-[120px] h-10 rounded-lg">
+                              <SelectTrigger className="w-[120px] h-10 rounded-[5px]">
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
@@ -577,11 +577,11 @@ export default function CurriculumPage() {
                       </div>
                       <div className="space-y-3">
                         {data.certificates.map((c, i) => (
-                          <div key={i} className="p-3 border-2 rounded-xl bg-white/30 space-y-2">
-                             <Input placeholder="Nome do Certificado" value={c.name} onChange={e => setData(p => ({ ...p, certificates: p.certificates.map((item, idx) => idx === i ? { ...item, name: e.target.value } : item) }))} className="h-9 rounded-lg" />
+                          <div key={i} className="p-3 border-2 rounded-[5px] bg-white/30 space-y-2">
+                             <Input placeholder="Nome do Certificado" value={c.name} onChange={e => setData(p => ({ ...p, certificates: p.certificates.map((item, idx) => idx === i ? { ...item, name: e.target.value } : item) }))} className="h-9 rounded-[5px]" />
                              <div className="grid grid-cols-2 gap-2">
-                               <Input placeholder="Emissor" value={c.issuer} onChange={e => setData(p => ({ ...p, certificates: p.certificates.map((item, idx) => idx === i ? { ...item, issuer: e.target.value } : item) }))} className="h-9 rounded-lg" />
-                               <Input placeholder="Ano" value={c.year} onChange={e => setData(p => ({ ...p, certificates: p.certificates.map((item, idx) => idx === i ? { ...item, year: e.target.value } : item) }))} className="h-9 rounded-lg" />
+                               <Input placeholder="Emissor" value={c.issuer} onChange={e => setData(p => ({ ...p, certificates: p.certificates.map((item, idx) => idx === i ? { ...item, issuer: e.target.value } : item) }))} className="h-9 rounded-[5px]" />
+                               <Input placeholder="Ano" value={c.year} onChange={e => setData(p => ({ ...p, certificates: p.certificates.map((item, idx) => idx === i ? { ...item, year: e.target.value } : item) }))} className="h-9 rounded-[5px]" />
                              </div>
                           </div>
                         ))}
@@ -595,7 +595,7 @@ export default function CurriculumPage() {
             {/* Preview Column */}
             <div className={`lg:col-span-7 ${mode === 'edit' ? 'hidden lg:block' : ''}`}>
               <div className="sticky top-24">
-                <div className="bg-slate-200/50 rounded-t-[2.5rem] border-x-4 border-t-4 border-white p-3 flex items-center justify-between">
+                <div className="bg-slate-200/50 rounded-t-[5px] border-x-4 border-t-4 border-white p-3 flex items-center justify-between">
                   <div className="flex gap-1.5 px-3">
                     <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
                     <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
@@ -603,7 +603,7 @@ export default function CurriculumPage() {
                   </div>
                   <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-2">Voo Certo Previewer v2.0</span>
                 </div>
-                <div className="shadow-2xl rounded-b-[2.5rem] overflow-hidden border-4 border-white shadow-primary/5 transform-gpu transition-all duration-700">
+                <div className="shadow-2xl rounded-b-[5px] overflow-hidden border-4 border-white shadow-primary/5 transform-gpu transition-all duration-700">
                   <CurriculumPreview data={data} />
                 </div>
               </div>
@@ -615,7 +615,7 @@ export default function CurriculumPage() {
 
       {/* Mobile Mode Toggle */}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 lg:hidden z-50">
-        <Button onClick={() => setMode(p => p === 'edit' ? 'preview' : 'edit')} className="rounded-full h-12 px-6 shadow-2xl font-black uppercase tracking-widest text-[10px] gap-2">
+        <Button onClick={() => setMode(p => p === 'edit' ? 'preview' : 'edit')} className="rounded-[5px] h-12 px-6 shadow-2xl font-black uppercase tracking-widest text-[10px] gap-2">
           {mode === 'edit' ? <><Sparkles className="w-4 h-4" /> Visualizar</> : <><Plus className="w-4 h-4" /> Editar Dados</>}
         </Button>
       </div>

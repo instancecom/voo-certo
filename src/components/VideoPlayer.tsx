@@ -180,19 +180,19 @@ export function VideoPlayer({ videoUrl, thumbnailUrl, title, hasAccess, autoplay
   if (!hasAccess) {
     return (
       <AspectRatio ratio={16 / 9}>
-        <div className="w-full h-full bg-[#0A192F]/80 rounded-2xl overflow-hidden relative flex items-center justify-center border border-white/5">
+        <div className="w-full h-full bg-[#0A192F]/80 rounded-[5px] overflow-hidden relative flex items-center justify-center border border-white/5">
           {thumbnailUrl && (
             <img src={thumbnailUrl} alt={title} className="absolute inset-0 w-full h-full object-cover opacity-20 blur-sm" />
           )}
           <div className="relative z-10 text-center px-6 space-y-6">
-            <div className="w-20 h-20 rounded-3xl bg-white/5 backdrop-blur-xl flex items-center justify-center mx-auto border border-accent/20 shadow-2xl">
+            <div className="w-20 h-20 rounded-[5px] bg-white/5 backdrop-blur-xl flex items-center justify-center mx-auto border border-accent/20 shadow-2xl">
               <Lock className="w-8 h-8 text-accent" />
             </div>
             <div>
               <h3 className="text-white font-black text-2xl tracking-tight">Conteúdo de Elite</h3>
               <p className="text-white/40 text-sm mt-2 font-medium">Assine o plano Comandante para desbloquear</p>
             </div>
-            <Button variant="hero" size="xl" className="rounded-2xl px-10 shadow-xl shadow-accent/20" asChild>
+            <Button variant="hero" size="xl" className="rounded-[5px] px-10 shadow-xl shadow-accent/20" asChild>
               <Link to="/premium"><Crown className="w-5 h-5 mr-3" /> Assinar agora</Link>
             </Button>
           </div>
@@ -205,7 +205,7 @@ export function VideoPlayer({ videoUrl, thumbnailUrl, title, hasAccess, autoplay
     <AspectRatio ratio={16 / 9}>
       <div 
         ref={containerRef}
-        className="w-full h-full rounded-2xl overflow-hidden relative bg-black shadow-3xl group/player flex flex-col items-center justify-center"
+        className="w-full h-full rounded-[5px] overflow-hidden relative bg-black shadow-3xl group/player flex flex-col items-center justify-center"
         onMouseMove={() => { setShowControls(true); window.clearTimeout((window as any)._player_to); (window as any)._player_to = window.setTimeout(() => (isPlaying || isEnded) && setShowControls(false), 3000); }}
         onMouseLeave={() => isPlaying && setShowControls(false)}
       >
@@ -232,14 +232,14 @@ export function VideoPlayer({ videoUrl, thumbnailUrl, title, hasAccess, autoplay
               className="absolute inset-0 z-50 bg-[#0A192F] flex flex-col items-center justify-center p-8 text-center"
             >
               <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 pointer-events-none" />
-              <div className="w-20 h-20 rounded-full bg-accent/10 flex items-center justify-center mb-6 border border-accent/20 shadow-2xl">
+              <div className="w-20 h-20 rounded-[5px] bg-accent/10 flex items-center justify-center mb-6 border border-accent/20 shadow-2xl">
                 <CheckCircle2 className="w-10 h-10 text-accent" />
               </div>
               <h3 className="text-white text-3xl font-black mb-2 tracking-tight">Aula Concluída!</h3>
               <p className="text-white/40 text-sm mb-10 max-w-xs font-medium italic">Parabéns por chegar ao fim. Você está mais próximo da sua aprovação.</p>
               
               <div className="flex gap-4">
-                <Button variant="hero" size="lg" className="rounded-xl px-8" onClick={handleRewatch}>
+                <Button variant="hero" size="lg" className="rounded-[5px] px-8" onClick={handleRewatch}>
                   <RotateCcw className="w-4 h-4 mr-2" /> Reassistir Aula
                 </Button>
               </div>
@@ -302,7 +302,7 @@ export function VideoPlayer({ videoUrl, thumbnailUrl, title, hasAccess, autoplay
 
                 <div className="flex items-center gap-4">
                   {/* Branding inside controls */}
-                  <div className="px-3 py-1.5 bg-accent/10 border border-accent/20 rounded-full hidden sm:block">
+                  <div className="px-3 py-1.5 bg-accent/10 border border-accent/20 rounded-[5px] hidden sm:block">
                     <span className="text-[9px] font-black text-accent uppercase tracking-[0.2em]">Voo Certo</span>
                   </div>
 
@@ -318,7 +318,7 @@ export function VideoPlayer({ videoUrl, thumbnailUrl, title, hasAccess, autoplay
         {/* Play Icon Hint on hover/pause */}
         {!isPlaying && !isLoading && !showControls && (
           <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-            <div className="w-16 h-16 rounded-full bg-accent/10 backdrop-blur-md border border-accent/20 flex items-center justify-center">
+            <div className="w-16 h-16 rounded-[5px] bg-accent/10 backdrop-blur-md border border-accent/20 flex items-center justify-center">
               <Play className="w-8 h-8 text-accent fill-accent ml-1" />
             </div>
           </div>
