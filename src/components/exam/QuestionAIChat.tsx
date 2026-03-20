@@ -156,7 +156,7 @@ export function QuestionAIChat({
 
   if (!canAccessAIChat) {
     return (
-      <div className="flex items-center gap-2 p-3 rounded-xl bg-muted/50 border border-border text-sm">
+      <div className="flex items-center gap-2 p-3 rounded-[5px] bg-muted/50 border border-border text-sm">
         <Lock className="w-4 h-4 text-muted-foreground shrink-0" />
         <span className="text-muted-foreground flex-1">Chat IA disponível no plano Tripulante+</span>
         <Button variant="outline" size="sm" asChild>
@@ -172,7 +172,7 @@ export function QuestionAIChat({
         whileHover={{ scale: 1.02, translateY: -2 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => setIsOpen(true)}
-        className="flex items-center justify-between w-full sm:w-auto min-w-[320px] px-5 py-3 rounded-2xl bg-gradient-to-r from-primary/5 via-primary/10 to-accent/10 border border-primary/20 hover:border-accent/40 shadow-sm hover:shadow-md transition-all group overflow-hidden relative"
+        className="flex items-center justify-between w-full sm:w-auto min-w-[320px] px-5 py-3 rounded-[5px] bg-gradient-to-r from-primary/5 via-primary/10 to-accent/10 border border-primary/20 hover:border-accent/40 shadow-sm hover:shadow-md transition-all group overflow-hidden relative"
       >
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
         
@@ -203,7 +203,7 @@ export function QuestionAIChat({
           >
             <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[-1] md:hidden" onClick={() => setIsOpen(false)} />
 
-            <div className="bg-[#F5F7F9] border border-border/40 rounded-t-3xl md:rounded-3xl shadow-2xl flex flex-col h-[85vh] md:h-[500px] md:w-[420px] overflow-hidden">
+            <div className="bg-[#F5F7F9] border border-border/40 rounded-[5px] shadow-2xl flex flex-col h-[85vh] md:h-[500px] md:w-[420px] overflow-hidden">
               <div className="flex items-center justify-between p-5 bg-white border-b border-border/10 shrink-0 shadow-sm relative z-10">
                 <div className="flex items-center gap-3">
                   <div className="relative">
@@ -271,7 +271,7 @@ export function QuestionAIChat({
                         <button
                           key={i}
                           onClick={() => { setInput(q); }}
-                          className="w-full text-left px-4 py-3 rounded-2xl bg-white border border-border/50 hover:border-accent/40 shadow-sm text-sm text-muted-foreground hover:text-foreground transition-all duration-200"
+                          className="w-full text-left px-4 py-3 rounded-[5px] bg-white border border-border/50 hover:border-accent/40 shadow-sm text-sm text-muted-foreground hover:text-foreground transition-all duration-200"
                         >
                           {q}
                         </button>
@@ -289,7 +289,7 @@ export function QuestionAIChat({
                           alt="IA"
                           className="w-8 h-8 rounded-full object-cover border border-accent/50 shrink-0 mt-1 shadow-sm"
                         />
-                        <div className="bg-white border border-accent/20 px-4 py-3 rounded-2xl rounded-tl-sm text-[15px] text-foreground shadow-sm">
+                        <div className="bg-white border border-accent/20 px-4 py-3 rounded-[5px] rounded-tl-sm text-[15px] text-foreground shadow-sm">
                           <div className="flex items-center gap-1.5 mb-1.5">
                             <span className="text-xs text-primary font-bold">Assistente</span>
                             {msg.cached && (
@@ -302,7 +302,7 @@ export function QuestionAIChat({
                         </div>
                       </div>
                     ) : (
-                      <div className="max-w-[85%] px-4 py-3 rounded-2xl rounded-tr-sm text-[15px] bg-primary/90 text-primary-foreground shadow-sm">
+                      <div className="max-w-[85%] px-4 py-3 rounded-[5px] rounded-tr-sm text-[15px] bg-primary/90 text-primary-foreground shadow-sm">
                         <p className="leading-relaxed whitespace-pre-wrap">{msg.content}</p>
                       </div>
                     )}
@@ -317,7 +317,7 @@ export function QuestionAIChat({
                         alt="IA"
                         className="w-8 h-8 rounded-full object-cover border border-accent/50 shrink-0 mt-1 shadow-sm opacity-70"
                       />
-                      <div className="bg-white border border-border/50 rounded-2xl rounded-tl-sm px-4 py-3 flex items-center justify-center shadow-sm">
+                      <div className="bg-white border border-border/50 rounded-[5px] rounded-tl-sm px-4 py-3 flex items-center justify-center shadow-sm">
                         <Loader2 className="w-4 h-4 animate-spin text-primary" />
                       </div>
                     </div>
@@ -326,14 +326,14 @@ export function QuestionAIChat({
 
                 {limitReached && !isAdmin && (
                   <div className="text-center py-4 space-y-3">
-                    <div className="bg-destructive/5 border border-destructive/20 rounded-2xl p-5 mb-2 shadow-sm bg-white text-left">
+                    <div className="bg-destructive/5 border border-destructive/20 rounded-[5px] p-5 mb-2 shadow-sm bg-white text-left">
                       <p className="text-base text-destructive font-bold mb-1">
                         Limite por questão atingido
                       </p>
                       <p className="text-sm text-muted-foreground mb-4">
                         Você já enviou {aiChatLimitPerQuestion} perguntas para esta questão. Avance para a próxima questão ou faça um upgrade para limites maiores.
                       </p>
-                      <Button asChild className="w-full gap-2 rounded-xl font-bold">
+                      <Button asChild className="w-full gap-2 rounded-[5px] font-bold">
                         <Link to="/premium">
                           Fazer Upgrade <ArrowUpRight className="w-4 h-4" />
                         </Link>
@@ -345,8 +345,8 @@ export function QuestionAIChat({
                 <div ref={messagesEndRef} />
               </div>
 
-              <div className="px-5 py-3 bg-white border-t border-border/10 shrink-0 pb-8 md:pb-6 rounded-b-3xl relative">
-                <div className="flex items-center justify-between mb-3 bg-accent/5 rounded-xl px-3 py-2 border border-accent/10 shadow-sm">
+              <div className="px-5 py-3 bg-white border-t border-border/10 shrink-0 pb-8 md:pb-6 rounded-[5px] relative">
+                <div className="flex items-center justify-between mb-3 bg-accent/5 rounded-[5px] px-3 py-2 border border-accent/10 shadow-sm">
                   {isAdmin ? (
                     <div className="flex items-center gap-1.5 text-[10px] font-bold text-primary uppercase tracking-widest">
                       <Sparkles className="w-3.5 h-3.5" />
@@ -379,7 +379,7 @@ export function QuestionAIChat({
                         }
                       }}
                       placeholder={limitReached && !isAdmin ? "Limite atingido para esta questão." : "Mande sua dúvida..."}
-                      className="text-[15px] rounded-2xl border-border/20 shadow-sm bg-muted/30 h-12 pr-12 placeholder:text-muted-foreground/50 focus-visible:ring-2 focus-visible:ring-accent/30 transition-all border-none"
+                      className="text-[15px] rounded-[5px] border-border/20 shadow-sm bg-muted/30 h-12 pr-12 placeholder:text-muted-foreground/50 focus-visible:ring-2 focus-visible:ring-accent/30 transition-all border-none"
                       disabled={isLoading || (limitReached && !isAdmin)}
                     />
                     <Button 
@@ -387,7 +387,7 @@ export function QuestionAIChat({
                       onClick={sendMessage} 
                       disabled={isLoading || !input.trim() || (limitReached && !isAdmin)} 
                       size="icon" 
-                      className="absolute right-1.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg shadow-primary/20"
+                      className="absolute right-1.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-[5px] bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg shadow-primary/20"
                     >
                       {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <ArrowUp className="w-5 h-5" />}
                     </Button>

@@ -139,7 +139,7 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex items-center justify-between h-16 md:h-20">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-accent/10 flex items-center justify-center shadow-inner">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-[5px] bg-accent/10 flex items-center justify-center shadow-inner">
                  <Target className="w-5 h-5 md:w-6 md:h-6 text-accent" />
               </div>
               <div className="min-w-0">
@@ -153,7 +153,7 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-50 border border-slate-100 text-slate-500">
+              <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-[5px] bg-slate-50 border border-slate-100 text-slate-500">
                 <Target className="w-4 h-4" />
                 <span className="text-xs font-bold uppercase tracking-wider">Simulado Localizado</span>
               </div>
@@ -204,7 +204,7 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
                 <span className="px-3 py-1 rounded-[5px] bg-accent/10 text-accent text-[10px] font-bold uppercase tracking-widest border border-accent/10">
                   Questão {currentQuestionIndex + 1}
                 </span>
-                <h2 className="text-xl md:text-3xl font-black text-slate-900 leading-tight tracking-tight">
+                <h2 className="text-[20px] font-black text-slate-900 leading-tight tracking-tight">
                   {currentQuestion.text}
                 </h2>
               </div>
@@ -231,7 +231,7 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
                       key={index}
                       onClick={() => submitAnswer(currentQuestion.id, index)}
                       disabled={showAnswer}
-                      className={`w-full p-5 md:p-6 rounded-[5px] border-2 text-left transition-all duration-300 relative group overflow-hidden ${optionStyle} ${showAnswer ? 'cursor-default' : ''}`}
+                      className={`w-full p-3 md:p-4 rounded-[5px] border-2 text-left transition-all duration-300 relative group overflow-hidden ${optionStyle} ${showAnswer ? 'cursor-default' : ''}`}
                       whileHover={!showAnswer ? { scale: 1.005 } : {}}
                       whileTap={!showAnswer ? { scale: 0.995 } : {}}
                     >
@@ -276,7 +276,7 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
                     animate={{ opacity: 1, y: 0 }}
                     className="space-y-6 pt-6"
                   >
-                    <div className="p-6 rounded-3xl bg-white border-2 border-slate-100 shadow-sm">
+                    <div className="p-6 rounded-[5px] bg-white border-2 border-slate-100 shadow-sm">
                       <div className="flex items-center gap-3 mb-4">
                         <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
                           <BookOpen className="w-4 h-4 text-accent" />
@@ -312,7 +312,7 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
               size="lg"
               onClick={prevQuestion}
               disabled={currentQuestionIndex === 0}
-              className="h-12 md:h-14 px-4 md:px-8 rounded-2xl font-black uppercase text-[10px] md:text-xs tracking-widest border-2 hover:bg-slate-50 transition-all shrink-0"
+              className="h-12 md:h-14 px-4 md:px-8 rounded-[5px] font-black uppercase text-[10px] md:text-xs tracking-widest border-2 hover:bg-slate-50 transition-all shrink-0"
             >
               <ChevronLeft className="w-4 h-4 mr-2" />
               <span className="hidden xs:inline">Questão Anterior</span>
@@ -320,7 +320,7 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
             </Button>
 
             <div className="flex-1 flex justify-center">
-              <div className="px-5 py-2.5 rounded-2xl bg-slate-900 text-white font-black text-xs md:text-sm shadow-xl shadow-slate-200">
+              <div className="px-5 py-2.5 rounded-[5px] bg-slate-900 text-white font-black text-xs md:text-sm shadow-xl shadow-slate-200">
                 {currentQuestionIndex + 1} <span className="opacity-40 font-normal mx-1">/</span> {shuffledQuestions.length}
               </div>
             </div>
@@ -330,7 +330,7 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
               size="lg" 
               onClick={nextQuestion} 
               disabled={!showAnswer && !isAnswered}
-              className="h-12 md:h-14 px-4 md:px-10 rounded-2xl font-black uppercase text-[10px] md:text-xs tracking-widest shadow-xl shadow-primary/20 transition-all shrink-0"
+              className="h-12 md:h-14 px-4 md:px-10 rounded-[5px] font-black uppercase text-[10px] md:text-xs tracking-widest shadow-xl shadow-primary/20 transition-all shrink-0"
             >
               <span className="hidden xs:inline mr-2">
                 {currentQuestionIndex === shuffledQuestions.length - 1 ? 'Finalizar' : 'Próxima Questão'}
@@ -346,9 +346,9 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
 
       {/* Finish Dialog */}
       <Dialog open={showFinishDialog} onOpenChange={setShowFinishDialog}>
-        <DialogContent className="rounded-[2rem] border-none shadow-2xl p-8">
+        <DialogContent className="rounded-[5px] border-none shadow-2xl p-8">
           <DialogHeader>
-            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 mx-auto">
+            <div className="w-16 h-16 rounded-[5px] bg-primary/10 flex items-center justify-center mb-6 mx-auto">
                <Target className="w-8 h-8 text-primary" />
             </div>
             <DialogTitle className="text-2xl font-black text-center">Concluir Simulado?</DialogTitle>
@@ -367,10 +367,10 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex-col sm:flex-row gap-3 mt-6">
-            <Button variant="outline" onClick={() => setShowFinishDialog(false)} className="rounded-xl h-12 flex-1 font-bold">
+            <Button variant="outline" onClick={() => setShowFinishDialog(false)} className="rounded-[5px] h-12 flex-1 font-bold">
               Continuar
             </Button>
-            <Button onClick={handleFinish} className="rounded-xl h-12 flex-1 font-black bg-primary">
+            <Button onClick={handleFinish} className="rounded-[5px] h-12 flex-1 font-black bg-primary">
               Ver Meu Resultado
             </Button>
           </DialogFooter>
