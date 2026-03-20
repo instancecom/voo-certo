@@ -35,9 +35,9 @@ export function NavigationControls({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-6 md:gap-8 bg-card/60 backdrop-blur-md p-6 md:p-8 rounded-3xl border-2 border-primary/5 shadow-xl relative overflow-hidden group">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-6 md:gap-8 bg-card/60 backdrop-blur-md p-6 md:p-8 rounded-[5px] border-2 border-primary/5 shadow-xl relative overflow-hidden group">
       {/* Decorative background element */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-primary/10 transition-colors" />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-[5px] -mr-16 -mt-16 blur-2xl group-hover:bg-primary/10 transition-colors" />
       
       <div className="flex items-center gap-6 relative z-10">
         <div className="flex flex-col">
@@ -53,7 +53,7 @@ export function NavigationControls({
         )}
         
         {timeLeft !== undefined && (
-          <div className={`flex items-center gap-2.5 px-4 py-2.5 rounded-2xl border-2 transition-all duration-300 ${
+          <div className={`flex items-center gap-2.5 px-4 py-2.5 rounded-[5px] border-2 transition-all duration-300 ${
             timeLeft < 60 ? 'bg-red-500/10 border-red-500/30 text-red-500' : 'bg-primary/5 border-primary/10 text-primary'
           }`}>
             <Clock className={`w-4 h-4 ${timeLeft < 60 ? 'animate-pulse' : ''}`} />
@@ -68,7 +68,7 @@ export function NavigationControls({
           size="lg"
           onClick={onPrev}
           disabled={isFirst || isFinished || disablePrev}
-          className="flex-1 sm:flex-none h-14 px-6 rounded-2xl border-2 border-primary/10 hover:border-primary/40 text-primary font-bold transition-all disabled:opacity-30 disabled:grayscale"
+          className="flex-1 sm:flex-none h-14 px-6 rounded-[5px] border-2 border-primary/10 hover:border-primary/40 text-primary font-bold transition-all disabled:opacity-30 disabled:grayscale"
         >
           <ChevronLeft className="w-5 h-5 mr-2" />
           <span className="hidden md:inline">Anterior</span>
@@ -79,7 +79,7 @@ export function NavigationControls({
             size="lg"
             onClick={onNext}
             disabled={isFinished || disableNext}
-            className="flex-1 sm:flex-none h-14 px-8 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black shadow-lg shadow-primary/20 transition-all hover:translate-x-1"
+            className="flex-1 sm:flex-none h-14 px-8 rounded-[5px] bg-primary hover:bg-primary/90 text-white font-black shadow-lg shadow-primary/20 transition-all hover:translate-x-1"
           >
             <span>Próxima</span>
             <ChevronRight className="w-5 h-5 ml-2" />
@@ -89,7 +89,7 @@ export function NavigationControls({
             size="lg"
             onClick={onFinish}
             disabled={isFinished}
-            className="flex-1 sm:flex-none h-14 px-10 rounded-2xl bg-accent hover:bg-accent/90 text-slate-900 font-black shadow-xl shadow-accent/20 transition-all hover:scale-105 active:scale-95"
+            className="flex-1 sm:flex-none h-14 px-10 rounded-[5px] bg-accent hover:bg-accent/90 text-slate-900 font-black shadow-xl shadow-accent/20 transition-all hover:scale-105 active:scale-95"
           >
             <span>Finalizar</span>
             <CheckCircle className="w-5 h-5 ml-2" />

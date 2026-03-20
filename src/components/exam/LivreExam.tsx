@@ -247,7 +247,7 @@ export function LivreExam({ questions, selectedBlock, questionLimit, onFinish, o
                       whileTap={!showAnswer ? { scale: 0.995 } : {}}
                     >
                       <div className="flex items-start gap-4">
-                        <span className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center font-semibold ${
+                        <span className={`flex-shrink-0 w-8 h-8 rounded-[5px] flex items-center justify-center font-semibold ${
                           showAnswer
                             ? isCorrectOption
                               ? 'bg-success text-success-foreground'
@@ -280,7 +280,7 @@ export function LivreExam({ questions, selectedBlock, questionLimit, onFinish, o
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mt-6 p-4 rounded-xl bg-muted border border-border"
+                  className="mt-6 p-4 rounded-[5px] bg-muted border border-border"
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <BookOpen className="w-4 h-4 text-accent" />
@@ -295,7 +295,7 @@ export function LivreExam({ questions, selectedBlock, questionLimit, onFinish, o
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className={`mt-4 p-4 rounded-xl ${isCorrect ? 'bg-success/10 border border-success' : 'bg-destructive/10 border border-destructive'}`}
+                  className={`mt-4 p-4 rounded-[5px] ${isCorrect ? 'bg-success/10 border border-success' : 'bg-destructive/10 border border-destructive'}`}
                 >
                   <div className="flex items-center gap-2">
                     {isCorrect ? (
@@ -346,13 +346,13 @@ export function LivreExam({ questions, selectedBlock, questionLimit, onFinish, o
               size="sm"
               onClick={prevQuestion}
               disabled={currentQuestionIndex === 0}
-              className="h-9 md:h-10 px-2 md:px-4 rounded-xl text-xs md:text-sm"
+              className="h-9 md:h-10 px-2 md:px-4 rounded-[5px] text-xs md:text-sm"
             >
               <ChevronLeft className="w-4 h-4 md:mr-2" />
               <span className="hidden sm:inline">Anterior</span>
             </Button>
 
-            <div className="text-center bg-muted/50 px-3 py-1 rounded-full border border-border/50">
+            <div className="text-center bg-muted/50 px-3 py-1 rounded-[5px] border border-border/50">
               <span className="text-[11px] md:text-sm font-bold text-muted-foreground whitespace-nowrap">
                 {currentQuestionIndex + 1} <span className="opacity-40 font-normal">/ {shuffledQuestions.length}</span>
               </span>
@@ -363,7 +363,7 @@ export function LivreExam({ questions, selectedBlock, questionLimit, onFinish, o
                 variant="hero" 
                 size="sm" 
                 onClick={() => setShowFinishDialog(true)}
-                className="h-9 md:h-10 px-4 md:px-6 rounded-xl text-xs md:text-sm shadow-md"
+                className="h-9 md:h-10 px-4 md:px-6 rounded-[5px] text-xs md:text-sm shadow-md"
               >
                 <span className="hidden sm:inline mr-2">Ver Resultado</span>
                 <span className="sm:hidden mr-1">Finalizar</span>
@@ -375,7 +375,7 @@ export function LivreExam({ questions, selectedBlock, questionLimit, onFinish, o
                 size="sm" 
                 onClick={nextQuestion} 
                 disabled={!showAnswer && !isAnswered}
-                className="h-9 md:h-10 px-4 md:px-6 rounded-xl text-xs md:text-sm shadow-md"
+                className="h-9 md:h-10 px-4 md:px-6 rounded-[5px] text-xs md:text-sm shadow-md"
               >
                 <span className="hidden sm:inline mr-2">Próxima</span>
                 <ChevronRight className="w-4 h-4" />

@@ -259,7 +259,7 @@ function BancaExamInner({
               </div>
             </div>
 
-            <div className={`flex items-center gap-1.5 md:gap-2 px-2.5 md:px-4 py-1.5 rounded-full ${
+            <div className={`flex items-center gap-1.5 md:gap-2 px-2.5 md:px-4 py-1.5 rounded-[5px] ${
               isTimeWarning ? 'bg-destructive/10 text-destructive animate-pulse' : 'bg-muted border border-border/50'
             }`}>
               <Clock className="w-3.5 h-3.5 md:w-4 md:h-4" />
@@ -273,7 +273,7 @@ function BancaExamInner({
                 variant="outline"
                 size="sm"
                 onClick={() => setShowExitDialog(true)}
-                className="h-8 md:h-9 px-2 md:px-4 rounded-full text-[10px] md:text-sm border-border hover:bg-muted"
+                className="h-8 md:h-9 px-2 md:px-4 rounded-[5px] text-[10px] md:text-sm border-border hover:bg-muted"
               >
                 <Flag className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
                 <span className="hidden xs:inline">Sair</span>
@@ -325,7 +325,7 @@ function BancaExamInner({
                     <motion.button
                       key={index}
                       onClick={() => submitAnswer(currentQuestion.id, index)}
-                      className={`w-full p-4 rounded-xl border-2 text-left transition-all duration-200 ${
+                      className={`w-full p-4 rounded-[5px] border-2 text-left transition-all duration-200 ${
                         isSelected
                           ? 'border-accent bg-accent/10'
                           : 'border-border bg-card hover:border-accent/50 hover:bg-accent/5'
@@ -334,7 +334,7 @@ function BancaExamInner({
                       whileTap={{ scale: 0.99 }}
                     >
                       <div className="flex items-start gap-4">
-                        <span className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center font-semibold ${
+                        <span className={`flex-shrink-0 w-8 h-8 rounded-[5px] flex items-center justify-center font-semibold ${
                           isSelected
                             ? 'bg-accent text-accent-foreground'
                             : 'bg-muted text-muted-foreground'
@@ -367,7 +367,7 @@ function BancaExamInner({
                   <button
                     key={q.id}
                     onClick={() => goToQuestion(index)}
-                    className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
+                    className={`w-8 h-8 rounded-[5px] text-sm font-medium transition-colors ${
                       isCurrent
                         ? 'bg-primary text-primary-foreground'
                         : isAnswered
@@ -382,7 +382,7 @@ function BancaExamInner({
             </div>
 
             <div className="md:hidden flex-1">
-              <div className="inline-flex items-center bg-muted/50 px-3 py-1.5 rounded-full border border-border/50">
+              <div className="inline-flex items-center bg-muted/50 px-3 py-1.5 rounded-[5px] border border-border/50">
                 <span className="text-[11px] font-bold text-muted-foreground whitespace-nowrap">
                   {currentQuestionIndex + 1} <span className="opacity-40 font-normal">/ {blockQuestions.length}</span>
                 </span>
@@ -395,7 +395,7 @@ function BancaExamInner({
                 size="sm"
                 onClick={() => setCurrentQuestionIndex(prev => Math.max(0, prev - 1))}
                 disabled={currentQuestionIndex === 0}
-                className="h-9 md:h-10 px-2 md:px-4 rounded-xl text-xs md:text-sm"
+                className="h-9 md:h-10 px-2 md:px-4 rounded-[5px] text-xs md:text-sm"
               >
                 <ChevronLeft className="w-4 h-4 md:mr-2" />
                 <span className="hidden sm:inline">Anterior</span>
@@ -406,7 +406,7 @@ function BancaExamInner({
                   variant="hero" 
                   size="sm" 
                   onClick={finishCurrentBlock}
-                  className="h-9 md:h-10 px-4 md:px-6 rounded-xl text-xs md:text-sm shadow-md"
+                  className="h-9 md:h-10 px-4 md:px-6 rounded-[5px] text-xs md:text-sm shadow-md"
                 >
                   <span className="hidden sm:inline mr-2">
                     {currentBlock === 4 ? 'Finalizar Simulado' : 'Finalizar Bloco'}
@@ -419,7 +419,7 @@ function BancaExamInner({
                   variant="default" 
                   size="sm" 
                   onClick={nextQuestion}
-                  className="h-9 md:h-10 px-4 md:px-6 rounded-xl text-xs md:text-sm shadow-md"
+                  className="h-9 md:h-10 px-4 md:px-6 rounded-[5px] text-xs md:text-sm shadow-md"
                 >
                   <span className="hidden sm:inline mr-2">Próxima</span>
                   <ChevronRight className="w-4 h-4" />
@@ -466,7 +466,7 @@ function BancaExamInner({
               </Card>
 
               {!lastBlockResult.passed && (
-                <div className="flex items-center gap-2 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
+                <div className="flex items-center gap-2 p-3 rounded-[5px] bg-destructive/10 text-destructive text-sm">
                   <AlertTriangle className="w-4 h-4" />
                   <span>Para ser aprovado no simulado, é necessário 70% em todos os blocos.</span>
                 </div>
