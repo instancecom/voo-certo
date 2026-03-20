@@ -304,7 +304,7 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
       </main>
 
       {/* Footer Navigation */}
-      <footer className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4 md:p-6 shadow-[0_-10px_40px_rgba(0,0,0,0.02)] z-50">
+      <footer className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 p-4 md:p-6 shadow-[0_-10px_40px_rgba(0,0,0,0.03)] z-50">
         <div className="container mx-auto max-w-4xl">
           <div className="flex items-center justify-between gap-4">
             <Button
@@ -312,33 +312,32 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
               size="lg"
               onClick={prevQuestion}
               disabled={currentQuestionIndex === 0}
-              className="h-12 md:h-14 px-4 md:px-8 rounded-[5px] font-black uppercase text-[10px] md:text-xs tracking-widest border-2 hover:bg-slate-50 transition-all shrink-0"
+              className="h-10 md:h-12 px-6 md:px-10 rounded-[5px] border-slate-300 text-slate-400 font-bold uppercase text-[10px] md:text-xs tracking-widest hover:bg-slate-50 transition-all shrink-0 shadow-sm"
             >
               <ChevronLeft className="w-4 h-4 mr-2" />
-              <span className="hidden xs:inline">Questão Anterior</span>
-              <span className="xs:hidden">Anterior</span>
+              <span>Anterior</span>
             </Button>
 
             <div className="flex-1 flex justify-center">
-              <div className="px-5 py-2.5 rounded-[5px] bg-slate-900 text-white font-black text-xs md:text-sm shadow-xl shadow-slate-200">
+              <div className="px-6 py-2.5 rounded-[5px] bg-[#0F172A] text-white font-bold text-xs md:text-sm shadow-xl shadow-slate-200 ring-4 ring-white">
                 {currentQuestionIndex + 1} <span className="opacity-40 font-normal mx-1">/</span> {shuffledQuestions.length}
               </div>
             </div>
 
             <Button 
-              variant={currentQuestionIndex === shuffledQuestions.length - 1 ? "hero" : "default"}
               size="lg" 
               onClick={nextQuestion} 
               disabled={!showAnswer && !isAnswered}
-              className="h-12 md:h-14 px-4 md:px-10 rounded-[5px] font-black uppercase text-[10px] md:text-xs tracking-widest shadow-xl shadow-primary/20 transition-all shrink-0"
+              className={`h-10 md:h-12 px-6 md:px-10 rounded-[5px] font-bold uppercase text-[10px] md:text-xs tracking-widest transition-all shrink-0 shadow-lg ${
+                currentQuestionIndex === shuffledQuestions.length - 1 
+                  ? 'bg-accent hover:bg-accent/90 text-slate-900' 
+                  : 'bg-[#8E9AAF] hover:bg-[#7F8C9F] text-white'
+              }`}
             >
-              <span className="hidden xs:inline mr-2">
-                {currentQuestionIndex === shuffledQuestions.length - 1 ? 'Finalizar' : 'Próxima Questão'}
-              </span>
-              <span className="xs:hidden mr-1">
+              <span>
                 {currentQuestionIndex === shuffledQuestions.length - 1 ? 'Finalizar' : 'Próxima'}
               </span>
-              {currentQuestionIndex === shuffledQuestions.length - 1 ? <Flag className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+              {currentQuestionIndex === shuffledQuestions.length - 1 ? <Flag className="w-4 h-4 ml-2" /> : <ChevronRight className="w-4 h-4 ml-2" />}
             </Button>
           </div>
         </div>
