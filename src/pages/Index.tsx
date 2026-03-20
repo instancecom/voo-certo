@@ -134,7 +134,7 @@ export default function Index() {
         <Header />
 
         {/* ═══════ HERO ═══════ */}
-        <section className="relative min-h-screen flex items-center overflow-hidden" style={{ background: 'var(--gradient-hero)' }}>
+        <section className="relative min-h-[90vh] md:min-h-screen flex items-center overflow-hidden" style={{ background: 'var(--gradient-hero)' }}>
           {/* Background image overlay */}
           <div className="absolute inset-0">
             <img src={heroAttendant} alt="Comissária de bordo" className="w-full h-full object-cover opacity-15" loading="lazy" decoding="async" />
@@ -389,9 +389,9 @@ export default function Index() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
               {DIFFERENTIALS.map((f, i) => (
-                <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
                   viewport={{ once: true }} transition={{ delay: i * 0.06 }}
-                  className="p-6 rounded-2xl bg-card border border-border hover:shadow-lg hover:border-accent/30 transition-all duration-300 group">
+                  className="p-6 rounded-2xl bg-card border border-border transition-all duration-300 group">
                   <div className="p-3 rounded-xl bg-accent/10 w-fit mb-4 group-hover:bg-accent/20 transition-colors">
                     <f.icon className="w-7 h-7 text-accent" />
                   </div>
