@@ -110,6 +110,7 @@ export function AdminStatsManager() {
           value={`R$ ${(totalRevenue || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`} 
           icon={DollarSign} 
           description="Faturamento recorrente atual" 
+          className="rounded-[5px] border shadow-sm"
         />
         <StatsCard 
           title="Alunos Filtradros" 
@@ -133,7 +134,7 @@ export function AdminStatsManager() {
 
       {/* Meta Metrics Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-card p-4 rounded-xl border flex items-center justify-between">
+        <div className="bg-card p-4 rounded-[5px] border flex items-center justify-between">
            <div>
              <p className="text-[10px] font-bold text-muted-foreground uppercase opacity-70">Taxa de Conversão</p>
              <p className="text-xl font-bold">{totalUsers > 0 ? Math.round(((totalUsers - (plansDistribution.find(p => p.name === 'Gratuito')?.value || 0)) / totalUsers) * 100) : 0}%</p>
@@ -157,7 +158,7 @@ export function AdminStatsManager() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="shadow-none border lg:col-span-2">
+        <Card className="shadow-none border lg:col-span-2 rounded-[5px]">
           <CardHeader className="pb-0">
              <CardTitle className="text-sm font-bold flex items-center gap-2">
                <History className="w-4 h-4 text-primary" /> Atividade dos Alunos

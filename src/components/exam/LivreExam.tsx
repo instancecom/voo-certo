@@ -158,10 +158,10 @@ export function LivreExam({ questions, selectedBlock, questionLimit, onFinish, o
             </div>
 
             <div className="flex items-center gap-1.5 md:gap-2">
-              <div className="flex items-center gap-1.5 px-2 md:px-4 py-1.5 rounded-full bg-accent/10 text-accent">
+              <div className="flex items-center gap-1.5 px-2 md:px-4 py-1.5 rounded-[5px] bg-accent/10 text-accent">
                 <BookOpen className="w-3.5 h-3.5 md:w-4 md:h-4" />
                 <span className="text-[10px] md:text-sm font-bold whitespace-nowrap hidden xs:inline">
-                  ILIMITADO
+                  PADRÃO ANAC
                 </span>
               </div>
 
@@ -169,7 +169,7 @@ export function LivreExam({ questions, selectedBlock, questionLimit, onFinish, o
                 variant="outline"
                 size="sm"
                 onClick={() => setShowFinishDialog(true)}
-                className="h-8 md:h-9 px-2 md:px-4 rounded-full text-[10px] md:text-sm border-border hover:bg-muted"
+                className="h-8 md:h-9 px-2 md:px-4 rounded-[5px] text-[10px] md:text-sm border-border hover-yellow"
               >
                 <Flag className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
                 Finalizar
@@ -242,9 +242,9 @@ export function LivreExam({ questions, selectedBlock, questionLimit, onFinish, o
                       key={index}
                       onClick={() => submitAnswer(currentQuestion.id, index)}
                       disabled={showAnswer}
-                      className={`w-full p-4 rounded-xl border-2 text-left transition-all duration-200 ${optionStyle} ${showAnswer ? 'cursor-default' : ''}`}
-                      whileHover={!showAnswer ? { scale: 1.01 } : {}}
-                      whileTap={!showAnswer ? { scale: 0.99 } : {}}
+                      className={`w-full p-4 rounded-[5px] border-2 text-left transition-all duration-200 ${optionStyle} ${showAnswer ? 'cursor-default' : 'hover-yellow'}`}
+                      whileHover={!showAnswer ? { scale: 1.005 } : {}}
+                      whileTap={!showAnswer ? { scale: 0.995 } : {}}
                     >
                       <div className="flex items-start gap-4">
                         <span className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center font-semibold ${

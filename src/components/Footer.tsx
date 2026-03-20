@@ -1,67 +1,75 @@
 import { Link } from 'react-router-dom';
-import { Plane, Instagram, Linkedin, Youtube, Mail } from 'lucide-react';
+import { Plane, Instagram, Linkedin, Youtube, Mail, ShieldCheck } from 'lucide-react';
 
 export function Footer() {
   return (
     <footer className="bg-primary text-primary-foreground">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="container mx-auto px-4 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="md:col-span-1">
-            <Link to="/" className="flex items-center gap-2 mb-4">
+            <Link to="/" className="flex items-center gap-2 mb-6">
               <Plane className="w-8 h-8 text-accent" />
-              <span className="text-xl font-bold">Voo Certo</span>
+              <span className="text-2xl font-bold tracking-tight">Voo Certo</span>
             </Link>
-            <p className="text-primary-foreground/70 text-sm">
-              Plataforma de simulados realistas para concursos. Prepare-se para decolar na sua carreira.
+            <p className="text-primary-foreground/70 text-sm leading-relaxed">
+              Plataforma de simulados baseados em padrões reais do mercado aeronáutico. Prepare-se para decolar na sua carreira com inteligência e estratégia.
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-semibold mb-4">Simulados</h4>
-            <ul className="space-y-2 text-sm text-primary-foreground/70">
-              <li><Link to="/simulados/anac" className="hover:text-accent transition-colors">ANAC</Link></li>
-              <li><Link to="/simulados/oab" className="hover:text-accent transition-colors">OAB (Em breve)</Link></li>
-              <li><Link to="/simulados/enem" className="hover:text-accent transition-colors">ENEM (Em breve)</Link></li>
+            <h4 className="font-bold text-sm uppercase tracking-wider mb-6">Simulados</h4>
+            <ul className="space-y-3 text-sm text-primary-foreground/70">
+              <li><Link to="/simulados/anac" className="hover:text-accent transition-colors">Padrão ANAC</Link></li>
+              <li><Link to="/simulados/oab" className="hover:text-accent transition-colors opacity-50 cursor-not-allowed">OAB (Em breve)</Link></li>
+              <li><Link to="/simulados/enem" className="hover:text-accent transition-colors opacity-50 cursor-not-allowed">ENEM (Em breve)</Link></li>
             </ul>
           </div>
 
           {/* Resources */}
           <div>
-            <h4 className="font-semibold mb-4">Recursos</h4>
-            <ul className="space-y-2 text-sm text-primary-foreground/70">
-              <li><Link to="/meu-progresso" className="hover:text-accent transition-colors">Meu Progresso</Link></li>
-              <li><Link to="/premium" className="hover:text-accent transition-colors">Plano Premium</Link></li>
-              <li><Link to="/ajuda" className="hover:text-accent transition-colors">Central de Ajuda</Link></li>
+            <h4 className="font-bold text-sm uppercase tracking-wider mb-6">Recursos</h4>
+            <ul className="space-y-3 text-sm text-primary-foreground/70">
+              <li><Link to="/meu-progresso" className="hover:text-accent transition-colors">Painel de Performance</Link></li>
+              <li><Link to="/premium" className="hover:text-accent transition-colors">Assinatura Premium</Link></li>
+              <li><Link to="/ajuda" className="hover:text-accent transition-colors">Suporte ao Aluno</Link></li>
             </ul>
           </div>
 
           {/* Contact */}
           <div>
-            <h4 className="font-semibold mb-4">Contato</h4>
-            <div className="flex gap-3 mb-4">
-              <a href="#" className="p-2 bg-primary-foreground/10 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors">
+            <h4 className="font-bold text-sm uppercase tracking-wider mb-6">Conecte-se</h4>
+            <div className="flex gap-2 mb-6">
+              <a href="#" className="p-2.5 bg-primary-foreground/10 rounded-[5px] hover:bg-accent hover:text-accent-foreground transition-all">
                 <Instagram className="w-5 h-5" />
               </a>
-              <a href="#" className="p-2 bg-primary-foreground/10 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors">
+              <a href="#" className="p-2.5 bg-primary-foreground/10 rounded-[5px] hover:bg-accent hover:text-accent-foreground transition-all">
                 <Linkedin className="w-5 h-5" />
               </a>
-              <a href="#" className="p-2 bg-primary-foreground/10 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors">
+              <a href="#" className="p-2.5 bg-primary-foreground/10 rounded-[5px] hover:bg-accent hover:text-accent-foreground transition-all">
                 <Youtube className="w-5 h-5" />
               </a>
-              <a href="mailto:contato@voocerto.com.br" className="p-2 bg-primary-foreground/10 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors">
+              <a href="mailto:contato@voocerto.com.br" className="p-2.5 bg-primary-foreground/10 rounded-[5px] hover:bg-accent hover:text-accent-foreground transition-all">
                 <Mail className="w-5 h-5" />
               </a>
             </div>
-            <p className="text-sm text-primary-foreground/70">
-              contato@voocerto.com.br
-            </p>
+            <div className="flex items-center gap-2 text-xs text-primary-foreground/50">
+               <ShieldCheck className="w-4 h-4" />
+               <span>Pagamento 100% Seguro</span>
+            </div>
           </div>
         </div>
 
-        <div className="border-t border-primary-foreground/10 mt-8 pt-8 text-center text-sm text-primary-foreground/50">
-          <p>&copy; {new Date().getFullYear()} Voo Certo. Todos os direitos reservados.</p>
+        <div className="border-t border-primary-foreground/10 mt-12 pt-12">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <p className="text-[10px] md:text-xs text-primary-foreground/40 max-w-2xl text-center md:text-left leading-normal italic">
+              <strong>Aviso Legal:</strong> O Voo Certo é uma plataforma independente de estudos. Nossos simulados são baseados em padrões históricos e padrões de avaliação da Agência Nacional de Aviação Civil (ANAC), mas não possuímos qualquer vínculo oficial com o órgão regulador.
+            </p>
+            <div className="text-[10px] md:text-xs text-primary-foreground/40 whitespace-nowrap">
+              &copy; {new Date().getFullYear()} Voo Certo. CNPJ: 00.000.000/0001-00
+            </div>
+          </div>
         </div>
       </div>
     </footer>

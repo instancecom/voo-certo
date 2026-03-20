@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { UserStat, PLAN_BADGE, PLAN_LABEL } from '@/hooks/useAdminStats';
-import { Users, Target, Clock, Award, Star, TrendingUp, Calendar, MousePointer2, Search } from 'lucide-react';
+import { Users, Star, Search } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -12,10 +12,10 @@ interface UserStatsTableProps {
 
 export function UserStatsTable({ userStats }: UserStatsTableProps) {
   return (
-    <Card className="bg-card border overflow-hidden shadow-none">
+    <Card className="bg-card border rounded-[5px] overflow-hidden shadow-none">
       <CardHeader className="bg-muted/10 pb-4 border-b">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-[5px] bg-primary/5 flex items-center justify-center">
             <Users className="w-5 h-5 text-primary" />
           </div>
           <div>
@@ -50,7 +50,7 @@ export function UserStatsTable({ userStats }: UserStatsTableProps) {
                       </div>
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <Badge variant="outline" className={`${PLAN_BADGE[u.plan_type as keyof typeof PLAN_BADGE]} border-transparent font-bold h-5`}>
+                      <Badge variant="outline" className={`${PLAN_BADGE[u.plan_type as keyof typeof PLAN_BADGE]} border-transparent font-bold h-5 rounded-[5px]`}>
                         {PLAN_LABEL[u.plan_type as keyof typeof PLAN_LABEL] || 'Gratuito'}
                       </Badge>
                     </td>
@@ -60,17 +60,17 @@ export function UserStatsTable({ userStats }: UserStatsTableProps) {
                        </span>
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <div className="inline-flex items-center justify-center px-2 py-0.5 rounded-md bg-blue-500/5 text-blue-600 font-bold text-[11px] border border-blue-500/10">
+                      <div className="inline-flex items-center justify-center px-2 py-0.5 rounded-[5px] bg-blue-500/5 text-blue-600 font-bold text-[11px] border border-blue-500/10">
                         {u.exam_count}
                       </div>
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <div className="inline-flex items-center justify-center px-2 py-0.5 rounded-md bg-accent/5 text-accent font-bold text-[11px] border border-accent/10">
+                      <div className="inline-flex items-center justify-center px-2 py-0.5 rounded-[5px] bg-accent/5 text-accent font-bold text-[11px] border border-accent/10">
                         {u.ai_questions_count}
                       </div>
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <span className={`font-bold text-[11px] px-2 py-0.5 rounded-md ${u.avg_score >= 70 ? 'bg-green-500/10 text-green-600' : 'bg-red-500/10 text-red-600'}`}>
+                      <span className={`font-bold text-[11px] px-2 py-0.5 rounded-[5px] ${u.avg_score >= 70 ? 'bg-green-500/10 text-green-600' : 'bg-red-500/10 text-red-600'}`}>
                         {u.avg_score}%
                       </span>
                     </td>

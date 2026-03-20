@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
-import { Check, Crown, Plane, Zap, Star, Loader2, ExternalLink, Tag, X } from 'lucide-react';
+import { Check, Crown, Plane, Zap, Star, Loader2, ExternalLink, Tag, X, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { usePlan } from '@/hooks/usePlan';
 import { PageTransition } from '@/components/PageTransition';
@@ -29,7 +28,7 @@ const PLANS = [
       'Guia de carreira',
       'Microcursos gratuitos',
     ],
-    color: 'bg-blue-50 border-blue-200 dark:bg-blue-950/30 dark:border-blue-800',
+    color: 'bg-card border-border',
     buttonVariant: 'outline' as const,
   },
   {
@@ -43,13 +42,13 @@ const PLANS = [
     popular: true,
     features: [
       'Tudo do plano Solo',
-      'Simulados ANAC oficiais',
+      'Simulados padrão ANAC',
       'Chat IA contextual por questão',
       'Relatórios avançados com gráficos',
       'Microcursos exclusivos',
       'Insígnias especiais',
     ],
-    color: 'bg-primary/5 border-primary/30',
+    color: 'bg-primary/5 border-primary/20',
     buttonVariant: 'default' as const,
   },
   {
@@ -68,7 +67,7 @@ const PLANS = [
       'Suporte prioritário',
       'Acesso antecipado a novos conteúdos',
     ],
-    color: 'bg-accent/5 border-accent/30',
+    color: 'bg-accent/5 border-accent/20',
     buttonVariant: 'hero' as const,
   },
 ];
@@ -157,7 +156,6 @@ export default function PremiumPage() {
       
       if (data?.url) {
         window.location.href = data.url;
-        // Do NOT set loading to null here - keep overlay until page redirects
         return;
       }
     } catch (err: any) {
@@ -174,7 +172,6 @@ export default function PremiumPage() {
       
       if (data?.url) {
         window.location.href = data.url;
-        // Keep overlay
         return;
       }
     } catch (err: any) {
@@ -188,51 +185,42 @@ export default function PremiumPage() {
       <div className="min-h-screen bg-background">
         <Header />
 
-      <main className="pt-24 pb-16">
+      <main className="pt-32 pb-24">
         <div className="container mx-auto px-4">
           {/* Hero */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 rounded-full text-accent mb-4">
-              <Star className="w-4 h-4" />
-              <span className="text-sm font-semibold">7 dias grátis</span>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 rounded-[5px] text-accent mb-6">
+              <Star className="w-4 h-4 fill-accent/20" />
+              <span className="text-sm font-bold uppercase tracking-wider">Investimento Profissional</span>
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-4">Escolha seu Plano</h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-              Invista na sua carreira na aviação. Cancele quando quiser.
+            <h1 className="text-4xl md:text-6xl font-black text-foreground mb-6 tracking-tight">Decole sua Aprovação</h1>
+            <p className="text-muted-foreground max-w-2xl mx-auto text-lg font-medium leading-relaxed">
+              Planos desenvolvidos com base nos padrões reais da banca ANAC.
+              7 dias gratuitos para você testar a elite da preparação.
             </p>
           </motion.div>
 
           {/* Current Plan */}
           {user && currentPlan !== 'free' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-8">
-              <Card className="border-success/30 bg-success/5 max-w-md mx-auto">
-                <CardContent className="py-4 space-y-3">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-12">
+              <Card className="border-success/30 bg-success/5 max-w-md mx-auto rounded-[5px] shadow-none">
+                <CardContent className="py-6 space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-foreground">Plano atual</p>
-                      <p className="text-lg font-bold text-success capitalize">{currentPlan}</p>
+                      <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Status da Assinatura</p>
+                      <p className="text-xl font-bold text-success capitalize">{currentPlan}</p>
                     </div>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={handleManageSubscription}
                       disabled={loading === 'manage'}
-                      className="gap-2"
+                      className="gap-2 rounded-[5px] border-success/20 hover:bg-success/10"
                     >
                       {loading === 'manage' ? <Loader2 className="w-4 h-4 animate-spin" /> : <ExternalLink className="w-4 h-4" />}
-                      Gerenciar
+                      Portal Financeiro
                     </Button>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleManageSubscription}
-                    disabled={loading === 'manage'}
-                    className="w-full text-destructive hover:text-destructive hover:bg-destructive/10 gap-2"
-                  >
-                    {loading === 'manage' ? <Loader2 className="w-4 h-4 animate-spin" /> : <X className="w-4 h-4" />}
-                    Cancelar Assinatura
-                  </Button>
                 </CardContent>
               </Card>
             </motion.div>
@@ -240,36 +228,36 @@ export default function PremiumPage() {
 
           {/* Coupon Input */}
           {user && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-8 max-w-md mx-auto">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-12 max-w-md mx-auto">
               {appliedCoupon ? (
-                <div className="flex items-center gap-3 p-3 rounded-lg border border-success/30 bg-success/5">
+                <div className="flex items-center gap-3 p-4 rounded-[5px] border border-success/30 bg-success/5">
                   <Tag className="w-5 h-5 text-success shrink-0" />
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-foreground">
-                      Cupom <span className="font-mono">{appliedCoupon.code}</span> aplicado
+                    <p className="text-sm font-bold text-foreground">
+                      Cupom <span className="font-mono text-success">{appliedCoupon.code}</span>
                     </p>
-                    <p className="text-xs text-muted-foreground">
-                      {appliedCoupon.type === 'percent' ? `${appliedCoupon.value}% de desconto` : `R$ ${appliedCoupon.value} de desconto`}
+                    <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">
+                      {appliedCoupon.type === 'percent' ? `${appliedCoupon.value}% OFF` : `R$ ${appliedCoupon.value} OFF`}
                     </p>
                   </div>
-                  <Button variant="ghost" size="icon" onClick={removeCoupon}>
+                  <Button variant="ghost" size="icon" onClick={removeCoupon} className="hover:bg-destructive/10 hover:text-destructive">
                     <X className="w-4 h-4" />
                   </Button>
                 </div>
               ) : (
                 <div className="flex gap-2">
                   <Input
-                    placeholder="Tem um cupom? Digite aqui"
+                    placeholder="Código Promocional"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                     onKeyDown={(e) => e.key === 'Enter' && handleApplyCoupon()}
-                    className="flex-1"
+                    className="flex-1 rounded-[5px] h-11 font-bold tracking-widest"
                   />
                   <Button
                     variant="outline"
                     onClick={handleApplyCoupon}
                     disabled={couponLoading || !couponCode.trim()}
-                    className="gap-2 shrink-0"
+                    className="gap-2 shrink-0 rounded-[5px] h-11 px-6 font-bold hover-yellow"
                   >
                     {couponLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Tag className="w-4 h-4" />}
                     Aplicar
@@ -280,7 +268,7 @@ export default function PremiumPage() {
           )}
 
           {/* Plans Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch">
             {PLANS.map((plan, index) => {
               const Icon = plan.icon;
               const isCurrent = currentPlan === plan.id;
@@ -292,61 +280,62 @@ export default function PremiumPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <Card className={`h-full flex flex-col relative overflow-hidden ${plan.color} ${
-                    plan.popular ? 'ring-2 ring-primary shadow-lg' : ''
-                  } ${isCurrent ? 'ring-2 ring-success' : ''}`}>
+                  <Card className={`h-full flex flex-col relative overflow-hidden rounded-[5px] border-2 shadow-none transition-all duration-300 ${plan.color} ${
+                    plan.popular ? 'border-primary' : 'border-border'
+                  } ${isCurrent ? 'opacity-70 grayscale-[0.5]' : 'hover:border-primary/40'}`}>
                     {plan.popular && (
-                      <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-bl-xl">
-                        Mais Popular
+                      <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-[10px] font-bold px-4 py-1.5 uppercase tracking-widest rounded-bl-[5px]">
+                        Mais Escolhido
                       </div>
                     )}
-                    {isCurrent && (
-                      <div className="absolute top-0 left-0 bg-success text-success-foreground text-xs font-bold px-3 py-1 rounded-br-xl">
-                        Seu Plano
+                    <CardHeader className="text-center pb-6 pt-10">
+                      <div className="w-16 h-16 rounded-[5px] bg-white border shadow-sm flex items-center justify-center mx-auto mb-4">
+                        <Icon className="w-8 h-8 text-primary" />
                       </div>
-                    )}
-                    <CardHeader className="text-center pb-4 pt-6">
-                      <div className="w-14 h-14 rounded-2xl bg-background flex items-center justify-center mx-auto mb-3">
-                        <Icon className="w-7 h-7 text-primary" />
-                      </div>
-                      <CardTitle className="text-xl">{plan.name}</CardTitle>
-                      <p className="text-sm text-muted-foreground">{plan.description}</p>
-                      <div className="mt-3">
+                      <CardTitle className="text-2xl font-black">{plan.name}</CardTitle>
+                      <p className="text-xs font-bold text-muted-foreground uppercase mt-1 tracking-tight">{plan.description}</p>
+                      <div className="mt-8">
                         {discountedPrice !== null ? (
-                          <>
-                            <span className="text-lg line-through text-muted-foreground mr-2">{plan.priceLabel}</span>
-                            <span className="text-3xl font-bold text-success">
-                              R$ {discountedPrice.toFixed(2).replace('.', ',')}
-                            </span>
-                          </>
+                          <div className="flex flex-col items-center">
+                            <span className="text-sm line-through text-muted-foreground font-bold">R$ {plan.price.toFixed(2).replace('.', ',')}</span>
+                            <div className="flex items-baseline gap-1">
+                              <span className="text-4xl font-black text-success">
+                                R$ {discountedPrice.toFixed(2).replace('.', ',')}
+                              </span>
+                              <span className="text-muted-foreground text-xs font-bold uppercase">/mês</span>
+                            </div>
+                          </div>
                         ) : (
-                          <span className="text-3xl font-bold text-foreground">{plan.priceLabel}</span>
+                          <div className="flex items-baseline justify-center gap-1">
+                            <span className="text-4xl font-black text-foreground tracking-tighter">{plan.priceLabel}</span>
+                            <span className="text-muted-foreground text-xs font-bold uppercase">/mês</span>
+                          </div>
                         )}
-                        <span className="text-muted-foreground text-sm">/mês</span>
                       </div>
                     </CardHeader>
-                    <CardContent className="flex-1 flex flex-col">
-                      <ul className="space-y-3 mb-6 flex-1">
+                    <CardContent className="flex-1 flex flex-col px-8">
+                      <div className="h-px bg-border/50 w-full mb-8" />
+                      <ul className="space-y-4 mb-10 flex-1">
                         {plan.features.map((feature, i) => (
-                          <li key={i} className="flex items-start gap-2 text-sm">
+                          <li key={i} className="flex items-start gap-3 text-sm font-medium">
                             <Check className="w-4 h-4 text-success shrink-0 mt-0.5" />
-                            <span className="text-foreground">{feature}</span>
+                            <span className="text-foreground leading-snug">{feature}</span>
                           </li>
                         ))}
                       </ul>
                       {isCurrent ? (
-                        <Button variant="outline" className="w-full" disabled>
-                          Plano Atual
-                        </Button>
+                        <div className="w-full h-12 rounded-[5px] bg-success/10 text-success text-sm font-bold flex items-center justify-center gap-2 border border-success/20">
+                          <ShieldCheck className="w-5 h-5" /> Plano Ativo
+                        </div>
                       ) : (
                         <Button
                           variant={plan.buttonVariant as any}
-                          className="w-full"
+                          className="w-full h-12 rounded-[5px] font-bold text-sm hover-yellow hover:text-foreground transition-all"
                           onClick={() => handleCheckout(plan.priceId, plan.id)}
                           disabled={!!loading}
                         >
-                          {loading === plan.id ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                          {user ? 'Começar Trial Grátis' : 'Fazer Login para Assinar'}
+                          {loading === plan.id ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
+                          {user ? 'Iniciar Período Grátis' : 'Login para Assinar'}
                         </Button>
                       )}
                     </CardContent>
@@ -356,19 +345,19 @@ export default function PremiumPage() {
             })}
           </div>
 
-          {/* FAQ */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="mt-16 max-w-2xl mx-auto text-center">
-            <h2 className="text-xl font-bold text-foreground mb-6">Dúvidas frequentes</h2>
-            <div className="space-y-4 text-left">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="mt-24 max-w-3xl mx-auto">
+            <h2 className="text-2xl font-black text-foreground mb-12 text-center uppercase tracking-tighter">Perguntas Frequentes</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
-                { q: 'Posso cancelar quando quiser?', a: 'Sim! Sem multa ou fidelidade. Cancele direto pelo painel de assinatura.' },
-                { q: 'O trial de 7 dias é realmente grátis?', a: 'Sim! Você só é cobrado após os 7 dias. Se cancelar antes, não paga nada.' },
-                { q: 'Posso trocar de plano?', a: 'Sim, você pode fazer upgrade ou downgrade a qualquer momento no painel de assinatura.' },
+                { q: 'Posso cancelar quando quiser?', a: 'Sim! A gestão é 100% autônoma através do portal Stripe no seu perfil. Sem multas.' },
+                { q: 'O trial de 7 dias é realmente grátis?', a: 'Completamente. O primeiro pagamento ocorre apenas no 8º dia caso não cancele antes.' },
+                { q: 'Quais os métodos de pagamento?', a: 'Aceitamos cartões de crédito e PIX via Stripe, garantindo total segurança.' },
+                { q: 'As questões são atualizadas?', a: 'Nossa equipe revisa o banco de questões constantemente com base nos exames da ANAC.' },
               ].map((faq, i) => (
-                <Card key={i}>
-                  <CardContent className="py-4">
-                    <p className="font-semibold text-foreground text-sm">{faq.q}</p>
-                    <p className="text-sm text-muted-foreground mt-1">{faq.a}</p>
+                <Card key={i} className="rounded-[5px] bg-muted/20 border-border/50 shadow-none">
+                  <CardContent className="py-5">
+                    <p className="font-bold text-foreground text-sm mb-2">{faq.q}</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed font-medium">{faq.a}</p>
                   </CardContent>
                 </Card>
               ))}
@@ -384,41 +373,21 @@ export default function PremiumPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[9999] bg-background/95 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center"
+            className="fixed inset-0 z-[9999] bg-background/98 flex flex-col items-center justify-center p-6 text-center"
           >
-            <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-accent/5 pointer-events-none" />
-            
-            <div className="relative mb-10">
-              {/* Spinning Loader with Glow */}
-              <div className="absolute inset-0 bg-accent/30 rounded-full blur-[40px] animate-pulse" />
-              <div className="relative w-28 h-28 rounded-[2.5rem] bg-card border border-accent/20 flex items-center justify-center shadow-[0_20px_50px_rgba(0,0,0,0.1)]">
-                <Loader2 className="w-12 h-12 text-accent animate-spin" />
+            <div className="relative mb-12">
+              <div className="w-24 h-24 rounded-[5px] bg-card border-2 border-primary/20 flex items-center justify-center shadow-2xl">
+                <Loader2 className="w-10 h-10 text-primary animate-spin" />
               </div>
             </div>
             
-            <div className="relative space-y-4 max-w-sm">
+            <div className="space-y-4 max-w-sm">
               <h3 className="text-3xl font-black text-foreground tracking-tight">
-                {loading === 'manage' ? 'Acessando Portal...' : 'Preparando seu plano...'}
+                {loading === 'manage' ? 'Acessando Portal Seguro' : 'Processando sua Escolha'}
               </h3>
-              <p className="text-muted-foreground font-medium text-lg px-4">
-                {loading === 'manage' 
-                  ? 'Estamos preparando o seu portal de assinante seguro.' 
-                  : 'Configurando seu ambiente de elite para sua aprovação na ANAC.'}
+              <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest px-8">
+                Transferindo você para o ambiente de faturamento seguro da Stripe.
               </p>
-              
-              <div className="flex items-center justify-center gap-2 pt-6">
-                <div className="w-2 h-2 rounded-full bg-accent animate-bounce" style={{ animationDelay: '0ms' }} />
-                <div className="w-2 h-2 rounded-full bg-accent animate-bounce" style={{ animationDelay: '200ms' }} />
-                <div className="w-2 h-2 rounded-full bg-accent animate-bounce" style={{ animationDelay: '400ms' }} />
-              </div>
-            </div>
-
-            <div className="absolute bottom-16 flex flex-col items-center gap-3">
-              <div className="flex items-center gap-2 px-4 py-2 bg-success/5 border border-success/10 rounded-full shadow-sm">
-                <Check className="w-4 h-4 text-success" />
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-success/80">Pagamento Seguro via Stripe</span>
-              </div>
-              <p className="text-[9px] text-muted-foreground/60 font-medium">Você será redirecionado para a página oficial de pagamento</p>
             </div>
           </motion.div>
         )}

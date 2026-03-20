@@ -162,7 +162,7 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
                 variant="outline"
                 size="sm"
                 onClick={() => setShowFinishDialog(true)}
-                className="h-10 md:h-12 px-4 md:px-6 rounded-2xl font-black uppercase text-[10px] md:text-xs tracking-widest bg-white hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all shadow-sm"
+                className="h-10 md:h-12 px-4 md:px-6 rounded-[5px] font-bold uppercase text-[10px] md:text-xs tracking-widest bg-white hover-yellow text-foreground border-border transition-all shadow-sm"
               >
                 <Flag className="w-4 h-4 mr-2" />
                 Finalizar
@@ -201,7 +201,7 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
               className="space-y-8"
             >
               <div className="space-y-4">
-                <span className="px-3 py-1 rounded-full bg-accent/10 text-accent text-[10px] font-black uppercase tracking-widest border border-accent/10">
+                <span className="px-3 py-1 rounded-[5px] bg-accent/10 text-accent text-[10px] font-bold uppercase tracking-widest border border-accent/10">
                   Questão {currentQuestionIndex + 1}
                 </span>
                 <h2 className="text-xl md:text-3xl font-black text-slate-900 leading-tight tracking-tight">
@@ -215,15 +215,15 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
                   const isCorrectOption = index === currentQuestion.shuffledCorrectAnswer;
                   const optionLetter = String.fromCharCode(65 + index);
 
-                  let optionStyle = 'border-slate-200 bg-white hover:border-accent hover:shadow-lg hover:shadow-accent/5';
+                  let optionStyle = 'border-slate-200 bg-white hover-yellow shadow-sm';
                   if (showAnswer) {
                     if (isCorrectOption) {
-                      optionStyle = 'border-green-500 bg-green-50 shadow-md shadow-green-500/10';
+                      optionStyle = 'border-green-500 bg-green-50 shadow-sm';
                     } else if (isSelected && !isCorrectOption) {
-                      optionStyle = 'border-red-500 bg-red-50 shadow-md shadow-red-500/10';
+                      optionStyle = 'border-red-500 bg-red-50 shadow-sm';
                     }
                   } else if (isSelected) {
-                    optionStyle = 'border-accent bg-accent/5 shadow-lg shadow-accent/10';
+                    optionStyle = 'border-accent bg-accent/5 shadow-sm';
                   }
 
                   return (
@@ -231,12 +231,12 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
                       key={index}
                       onClick={() => submitAnswer(currentQuestion.id, index)}
                       disabled={showAnswer}
-                      className={`w-full p-5 md:p-6 rounded-2xl border-2 text-left transition-all duration-300 relative group overflow-hidden ${optionStyle} ${showAnswer ? 'cursor-default' : ''}`}
-                      whileHover={!showAnswer ? { scale: 1.01 } : {}}
-                      whileTap={!showAnswer ? { scale: 0.99 } : {}}
+                      className={`w-full p-5 md:p-6 rounded-[5px] border-2 text-left transition-all duration-300 relative group overflow-hidden ${optionStyle} ${showAnswer ? 'cursor-default' : ''}`}
+                      whileHover={!showAnswer ? { scale: 1.005 } : {}}
+                      whileTap={!showAnswer ? { scale: 0.995 } : {}}
                     >
                       <div className="flex items-center gap-5 relative z-10">
-                        <span className={`flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center font-black text-sm md:text-lg transition-colors ${
+                        <span className={`flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-[5px] flex items-center justify-center font-bold text-sm md:text-lg transition-colors ${
                           showAnswer
                             ? isCorrectOption
                               ? 'bg-green-500 text-white'

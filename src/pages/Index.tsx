@@ -51,7 +51,7 @@ const PLANS = [
     description: 'O mais escolhido pelos futuros comissários',
     features: [
       'Tudo do plano Solo',
-      'Simulados ANAC oficiais',
+      'Simulados padrão ANAC',
       'Chat IA por questão',
       'Relatórios avançados',
       'Microcursos exclusivos',
@@ -81,7 +81,7 @@ const PLANS = [
 ];
 
 const STEPS = [
-  { icon: GraduationCap, title: 'Estude com simulados', desc: 'Questões baseadas em provas reais da ANAC, organizadas por matéria.' },
+  { icon: GraduationCap, title: 'Estude com simulados', desc: 'Questões baseadas em padrões reais da ANAC, organizadas por matéria.' },
   { icon: BarChart3, title: 'Acompanhe seu progresso', desc: 'Relatórios detalhados mostram onde você precisa melhorar.' },
   { icon: Trophy, title: 'Conquiste insígnias', desc: 'Ganhe medalhas conforme avança e prove que está pronto.' },
   { icon: Award, title: 'Passe na prova', desc: 'Chegue preparado e conquiste sua aprovação na ANAC.' },
@@ -89,7 +89,7 @@ const STEPS = [
 
 const TESTIMONIALS = [
   { name: 'Carla M.', role: 'Comissária aprovada – GOL', text: 'Os simulados do Voo Certo foram essenciais para minha aprovação. A IA me ajudou a entender cada erro!', stars: 5, avatar: '👩🏻‍✈️' },
-  { name: 'Lucas R.', role: 'Estudante de aviação', text: 'Melhor plataforma de simulados ANAC. O cronômetro e os relatórios fazem toda a diferença.', stars: 5, avatar: '👨🏽‍✈️' },
+  { name: 'Lucas R.', role: 'Estudante de aviação', text: 'Melhor plataforma de simulados. O cronômetro e os relatórios fazem toda a diferença.', stars: 5, avatar: '👨🏽‍✈️' },
   { name: 'Ana P.', role: 'Comissária aprovada – LATAM', text: 'Passei de primeira graças ao Voo Certo. O guia de carreira me deu o caminho completo.', stars: 5, avatar: '👩🏾‍✈️' },
   { name: 'Pedro S.', role: 'Comissário aprovado – Azul', text: 'A plataforma é incrível! Estudei pelo celular e passei com nota acima de 90%.', stars: 5, avatar: '👨🏻‍✈️' },
   { name: 'Juliana F.', role: 'Aprovada na ANAC', text: 'Os microcursos são excelentes, aprendi meteorologia de um jeito muito mais fácil.', stars: 5, avatar: '👩🏼‍✈️' },
@@ -97,9 +97,9 @@ const TESTIMONIALS = [
 ];
 
 const FAQ = [
-  { q: 'O Voo Certo substitui o curso de comissário?', a: 'Não. O Voo Certo é uma plataforma de preparação complementar focada nos simulados ANAC e no guia de carreira. Você ainda precisa fazer o curso em uma escola homologada.' },
+  { q: 'O Voo Certo substitui o curso de comissário?', a: 'Não. O Voo Certo é uma plataforma de preparação complementar focada nos simulados e no guia de carreira. Você ainda precisa fazer o curso em uma escola homologada.' },
   { q: 'Posso cancelar a qualquer momento?', a: 'Sim! Todos os planos podem ser cancelados quando quiser, sem multa ou burocracia. Você mantém o acesso até o fim do período pago.' },
-  { q: 'As questões são iguais às da prova da ANAC?', a: 'Nossas questões são baseadas em provas anteriores e seguem o padrão ANAC. Cobrimos todas as matérias exigidas com o mesmo nível de dificuldade.' },
+  { q: 'As questões são iguais às da prova da ANAC?', a: 'Nossas questões são baseadas em provas anteriores e seguem os padrões de avaliação da ANAC. Cobrimos todas as matérias exigidas com o mesmo nível de dificuldade.' },
   { q: 'Funciona no celular?', a: 'Sim! A plataforma é 100% responsiva e otimizada para celular. Estude de qualquer lugar, a qualquer hora.' },
   { q: 'O que é o Chat IA?', a: 'É um assistente inteligente que explica cada questão em detalhe. Quando você erra ou tem dúvida, a IA analisa a questão e dá uma explicação personalizada.' },
   { q: 'Como funciona o período de teste grátis?', a: 'Você tem 7 dias gratuitos em qualquer plano pago. Se não gostar, cancele antes do fim do trial e não será cobrado.' },
@@ -107,7 +107,7 @@ const FAQ = [
 
 const DIFFERENTIALS = [
   { icon: Brain, title: 'IA Contextual', desc: 'Cada questão tem um chat com IA que explica a resposta, mostra a lógica e tira suas dúvidas em tempo real.' },
-  { icon: Headphones, title: 'Simulados com Áudio', desc: 'Questões de proficiência linguística com áudio real, simulando o que você vai encontrar na prova.' },
+  { icon: Headphones, title: 'Simulados Especializados', desc: 'Questões de proficiência linguística com áudio, simulando o que você vai encontrar na prova.' },
   { icon: Timer, title: 'Cronômetro Real', desc: 'Simule as condições reais da prova com temporizador por bloco e por prova completa.' },
   { icon: BarChart3, title: 'Relatórios Inteligentes', desc: 'Veja seu desempenho por matéria, identifique pontos fracos e acompanhe sua evolução.' },
   { icon: Trophy, title: 'Gamificação', desc: 'Insígnias, conquistas e certificados que motivam e comprovam seu progresso.' },
@@ -142,12 +142,8 @@ export default function Index() {
           </div>
 
           <div className="absolute inset-0 overflow-hidden">
-            <motion.div className="absolute top-1/4 left-1/4 w-64 h-64 bg-accent/10 rounded-full blur-3xl"
-              animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-              transition={{ duration: 8, repeat: Infinity }} />
-            <motion.div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary-foreground/5 rounded-full blur-3xl"
-              animate={{ scale: [1.2, 1, 1.2], opacity: [0.2, 0.4, 0.2] }}
-              transition={{ duration: 10, repeat: Infinity }} />
+             <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-accent/5 rounded-[5px] blur-3xl" />
+             <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary-foreground/5 rounded-[5px] blur-3xl" />
           </div>
 
           <motion.div className="absolute top-20 right-10 md:right-20"
@@ -160,32 +156,32 @@ export default function Index() {
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: 'spring' }}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-accent/20 backdrop-blur-sm rounded-full text-accent mb-6">
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-accent/20 rounded-[5px] text-accent mb-6">
                   <Sparkles className="w-4 h-4" />
-                  <span className="text-sm font-medium">Plataforma #1 de Simulados ANAC</span>
+                  <span className="text-sm font-bold uppercase tracking-wider">Metodologia Padrão ANAC</span>
                 </motion.div>
 
                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground mb-6 leading-tight">
-                  Sua aprovação na ANAC
+                  Sua decolagem profissional
                   <span className="block text-accent">começa aqui.</span>
                 </h1>
 
-                <p className="text-lg md:text-xl text-primary-foreground/80 mb-4 max-w-xl">
-                  Simulados realistas com cronômetro, inteligência artificial que explica cada questão e um guia de carreira completo para te levar do zero até a contratação.
+                <p className="text-lg md:text-xl text-primary-foreground/80 mb-4 max-w-xl font-medium">
+                  Simulados realistas baseados em provas reais, IA explicativa e um roadmap completo para sua carreira na aviação.
                 </p>
 
                 <p className="text-sm text-accent/80 mb-8 flex items-center gap-2">
                   <BadgeCheck className="w-4 h-4" />
-                  Mais de 500 questões baseadas em provas reais da ANAC
+                  Conteúdo desenvolvido por especialistas com base em exames reais.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Button variant="hero" size="xl" asChild>
+                  <Button variant="hero" size="xl" asChild className="rounded-[5px]">
                     <Link to={user ? '/simulados' : '/auth'}>
                       Começar Grátis por 7 Dias <ArrowRight className="w-5 h-5 ml-2" />
                     </Link>
                   </Button>
-                  <Button variant="glass" size="xl" asChild>
+                  <Button variant="outline" size="xl" asChild className="bg-white/5 text-white border-white/20 hover-yellow hover:text-foreground rounded-[5px]">
                     <Link to="/premium" className="flex items-center gap-2">
                       <Crown className="w-5 h-5" /> Ver Planos
                     </Link>
@@ -202,7 +198,7 @@ export default function Index() {
                   ].map((stat, i) => (
                     <div key={i} className="text-center">
                       <div className="text-3xl md:text-4xl font-bold text-accent">{stat.value}</div>
-                      <div className="text-sm text-primary-foreground/60">{stat.label}</div>
+                      <div className="text-sm text-primary-foreground/60 font-bold uppercase tracking-tighter">{stat.label}</div>
                     </div>
                   ))}
                 </motion.div>
@@ -212,29 +208,29 @@ export default function Index() {
               <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.3 }}
                 className="hidden lg:block relative">
                 <div className="relative">
-                  <img src={studyDesk} alt="Estudando para ANAC" className="rounded-2xl shadow-2xl" loading="lazy" decoding="async" />
+                  <img src={studyDesk} alt="Estudando para ANAC" className="rounded-[5px] shadow-2xl" loading="lazy" decoding="async" />
                   {/* Floating card overlay */}
-                  <motion.div className="absolute -bottom-6 -left-6 bg-card/95 backdrop-blur-md rounded-xl p-4 shadow-xl border border-border"
+                  <motion.div className="absolute -bottom-6 -left-6 bg-card rounded-[5px] p-4 shadow-xl border border-border"
                     animate={{ y: [-5, 5, -5] }} transition={{ duration: 4, repeat: Infinity }}>
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-success/20 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-[5px] bg-success/10 flex items-center justify-center">
                         <CheckCircle2 className="w-5 h-5 text-success" />
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-foreground">Aprovada!</p>
-                        <p className="text-xs text-muted-foreground">Nota: 94% na ANAC</p>
+                        <p className="text-sm font-bold text-foreground">Aprovada!</p>
+                        <p className="text-[10px] text-muted-foreground uppercase font-bold">Nota: 94% no simulado</p>
                       </div>
                     </div>
                   </motion.div>
-                  <motion.div className="absolute -top-4 -right-4 bg-card/95 backdrop-blur-md rounded-xl p-4 shadow-xl border border-border"
+                  <motion.div className="absolute -top-4 -right-4 bg-card rounded-[5px] p-4 shadow-xl border border-border"
                     animate={{ y: [5, -5, 5] }} transition={{ duration: 5, repeat: Infinity }}>
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-[5px] bg-accent/10 flex items-center justify-center">
                         <Brain className="w-5 h-5 text-accent" />
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-foreground">Chat IA</p>
-                        <p className="text-xs text-muted-foreground">Dúvida resolvida!</p>
+                        <p className="text-sm font-bold text-foreground">Chat IA</p>
+                        <p className="text-[10px] text-muted-foreground uppercase font-bold">Dúvida resolvida!</p>
                       </div>
                     </div>
                   </motion.div>
@@ -242,25 +238,17 @@ export default function Index() {
               </motion.div>
             </div>
           </div>
-
-          <motion.div className="absolute bottom-8 left-1/2 -translate-x-1/2"
-            animate={{ y: [0, 10, 0] }} transition={{ duration: 2, repeat: Infinity }}>
-            <div className="w-6 h-10 border-2 border-primary-foreground/30 rounded-full flex justify-center pt-2">
-              <motion.div className="w-1.5 h-1.5 bg-accent rounded-full"
-                animate={{ y: [0, 12, 0] }} transition={{ duration: 2, repeat: Infinity }} />
-            </div>
-          </motion.div>
         </section>
 
         {/* ═══════ TRUST BAR ═══════ */}
         <section className="py-6 bg-card border-b border-border">
           <div className="container mx-auto px-4">
-            <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-muted-foreground">
+            <div className="flex flex-wrap justify-center items-center gap-8 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
               {[
-                { icon: Shield, text: 'Dados protegidos' },
-                { icon: BadgeCheck, text: 'Questões verificadas' },
-                { icon: Heart, text: 'Satisfação garantida' },
-                { icon: Globe, text: '100% online' },
+                { icon: Shield, text: 'Privacidade de Dados' },
+                { icon: BadgeCheck, text: 'Simulados Atualizados' },
+                { icon: Heart, text: 'Desenvolvimento Constante' },
+                { icon: Globe, text: 'Acesso Multiplataforma' },
               ].map((item, i) => (
                 <div key={i} className="flex items-center gap-2">
                   <item.icon className="w-4 h-4 text-accent" />
@@ -272,58 +260,58 @@ export default function Index() {
         </section>
 
         {/* ═══════ PROBLEM / SOLUTION ═══════ */}
-        <section className="py-20 bg-background">
+        <section className="py-24 bg-background">
           <div className="container mx-auto px-4">
             <div className="grid lg:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
               <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-                <Badge variant="outline" className="mb-4 text-destructive border-destructive/30">
-                  <Target className="w-3 h-3 mr-1" /> O problema
+                <Badge variant="outline" className="mb-4 text-destructive border-destructive/20 rounded-[5px] bg-destructive/5 font-bold uppercase h-6 px-3">
+                  <Target className="w-3 h-3 mr-2" /> O Desafio do Aluno
                 </Badge>
                 <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                  Estudar para a ANAC não deveria ser tão difícil.
+                  Estudar para simulados técnicos não deve ser confuso.
                 </h2>
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {[
-                    'Material desatualizado e espalhado pela internet',
-                    'Sem saber se está realmente preparado para a prova',
-                    'Estudar sozinho sem feedback ou direcionamento',
-                    'Não saber o que estudar primeiro (ou por onde começar)',
-                    'Medo de reprovar e perder tempo e dinheiro',
+                    'Informação fragmentada e desatualizada',
+                    'Dificuldade em mensurar a evolução real',
+                    'Falta de suporte especializado imediato',
+                    'Ausência de um método de estudo estruturado',
+                    'Insegurança sobre o ambiente real de prova',
                   ].map((problem, i) => (
                     <motion.div key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-                      className="flex items-start gap-3 p-3 rounded-lg bg-destructive/5 border border-destructive/10">
-                      <div className="w-6 h-6 rounded-full bg-destructive/20 flex items-center justify-center shrink-0 mt-0.5">
+                      className="flex items-start gap-4 p-4 rounded-[5px] bg-destructive/5 border border-destructive/10">
+                      <div className="w-6 h-6 rounded-[5px] bg-destructive/10 flex items-center justify-center shrink-0 mt-0.5">
                         <span className="text-destructive text-xs font-bold">✕</span>
                       </div>
-                      <p className="text-foreground text-sm">{problem}</p>
+                      <p className="text-foreground text-sm font-medium">{problem}</p>
                     </motion.div>
                   ))}
                 </div>
               </motion.div>
 
               <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-                <Badge variant="outline" className="mb-4 text-success border-success/30">
-                  <Lightbulb className="w-3 h-3 mr-1" /> A solução
+                <Badge variant="outline" className="mb-4 text-success border-success/20 rounded-[5px] bg-success/5 font-bold uppercase h-6 px-3">
+                  <Lightbulb className="w-3 h-3 mr-2" /> A Solução Inteligente
                 </Badge>
                 <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                  O Voo Certo resolve tudo isso <span className="text-accent">em um só lugar.</span>
+                  O Voo Certo centraliza sua <span className="text-accent underline decoration-accent/20">preparação completa.</span>
                 </h2>
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {[
-                    'Simulados atualizados baseados em provas reais da ANAC',
-                    'Relatórios mostram exatamente onde você precisa melhorar',
-                    'IA que explica cada questão como um professor particular',
-                    'Guia de carreira com o passo a passo completo',
-                    'Cronômetro real para simular as condições da prova',
+                    'Simulados focados nos padrões exigidos pelo mercado',
+                    'Estatísticas precisas por matéria e subcategoria',
+                    'IA treinada para explicar cada alternativa da questão',
+                    'Roadmap profissional do curso à contratação',
+                    'Ambiente de prova que simula as restrições reais',
                   ].map((solution, i) => (
                     <motion.div key={i} initial={{ opacity: 0, x: 10 }} whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-                      className="flex items-start gap-3 p-3 rounded-lg bg-success/5 border border-success/10">
-                      <div className="w-6 h-6 rounded-full bg-success/20 flex items-center justify-center shrink-0 mt-0.5">
+                      className="flex items-start gap-4 p-4 rounded-[5px] bg-success/5 border border-success/10">
+                      <div className="w-6 h-6 rounded-[5px] bg-success/10 flex items-center justify-center shrink-0 mt-0.5">
                         <CheckCircle2 className="w-4 h-4 text-success" />
                       </div>
-                      <p className="text-foreground text-sm">{solution}</p>
+                      <p className="text-foreground text-sm font-bold">{solution}</p>
                     </motion.div>
                   ))}
                 </div>
@@ -333,228 +321,46 @@ export default function Index() {
         </section>
 
         {/* ═══════ HOW IT WORKS ═══════ */}
-        <section className="py-20 bg-muted/50">
+        <section className="py-24 bg-muted/30">
           <div className="container mx-auto px-4">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
-              <Badge variant="outline" className="mb-4 text-accent border-accent/30">
-                <Map className="w-3 h-3 mr-1" /> Como funciona
+              <Badge variant="outline" className="mb-4 text-accent border-accent/20 rounded-[5px] bg-accent/5 font-bold uppercase h-6 px-3">
+                <Map className="w-3 h-3 mr-2" /> Metodologia
               </Badge>
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                Do zero à aprovação em 4 passos
+              <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
+                Seu plano de voo em 4 passos
               </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Um caminho claro e estruturado para sua carreira na aviação
-              </p>
             </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
               {STEPS.map((step, i) => (
                 <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-                  className="relative text-center">
-                  <div className="w-16 h-16 rounded-2xl bg-accent/10 flex items-center justify-center mx-auto mb-4">
+                  className="relative group">
+                  <div className="w-16 h-16 rounded-[5px] bg-accent/10 flex items-center justify-center mx-auto mb-6 group-hover:bg-accent/20 transition-colors">
                     <step.icon className="w-8 h-8 text-accent" />
                   </div>
-                  <div className="absolute -top-2 -left-2 w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold flex items-center justify-center md:left-auto md:-top-2 md:right-auto">
+                  <div className="absolute top-0 right-1/2 translate-x-12 w-8 h-8 rounded-[5px] bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">
                     {i + 1}
                   </div>
-                  <h3 className="font-bold text-foreground mb-2">{step.title}</h3>
-                  <p className="text-sm text-muted-foreground">{step.desc}</p>
+                  <h3 className="font-bold text-foreground mb-3 text-center">{step.title}</h3>
+                  <p className="text-xs text-muted-foreground text-center leading-relaxed">{step.desc}</p>
                 </motion.div>
               ))}
             </div>
-
-            {/* CTA mid-section */}
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-              className="text-center mt-12">
-              <Button variant="hero" size="lg" asChild>
-                <Link to={user ? '/simulados' : '/auth'}>
-                  Quero Começar Agora <ArrowRight className="w-4 h-4 ml-2" />
-                </Link>
-              </Button>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* ═══════ DIFFERENTIALS (8 features) ═══════ */}
-        <section className="py-20 bg-background">
-          <div className="container mx-auto px-4">
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-              <Badge variant="outline" className="mb-4 text-accent border-accent/30">
-                <Rocket className="w-3 h-3 mr-1" /> Diferenciais
-              </Badge>
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Por que o Voo Certo é diferente?</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">Recursos exclusivos que nenhuma outra plataforma oferece</p>
-            </motion.div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-              {DIFFERENTIALS.map((f, i) => (
-                <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }} transition={{ delay: i * 0.06 }}
-                  className="p-6 rounded-2xl bg-card border border-border transition-all duration-300 group">
-                  <div className="p-3 rounded-xl bg-accent/10 w-fit mb-4 group-hover:bg-accent/20 transition-colors">
-                    <f.icon className="w-7 h-7 text-accent" />
-                  </div>
-                  <h3 className="text-lg font-bold text-foreground mb-2">{f.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ═══════ IMAGE + TEXT SECTION ═══════ */}
-        <section className="py-20 bg-muted/50 overflow-hidden">
-          <div className="container mx-auto px-4">
-            <div className="grid lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
-              <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-                className="order-2 lg:order-1">
-                <Badge variant="outline" className="mb-4 text-accent border-accent/30">
-                  <Brain className="w-3 h-3 mr-1" /> Inteligência Artificial
-                </Badge>
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Um professor particular com IA em cada questão
-                </h2>
-                <p className="text-muted-foreground mb-6 leading-relaxed">
-                  Errou uma questão? Sem problema. Nosso chat com IA analisa a questão,
-                  explica por que a alternativa correta é a certa, detalha os conceitos
-                  envolvidos e ainda sugere o que mais você deve estudar.
-                </p>
-                <ul className="space-y-3 mb-8">
-                  {[
-                    'Explicações detalhadas e contextualizadas',
-                    'Funciona para todas as matérias ANAC',
-                    'Respostas instantâneas, 24 horas por dia',
-                    'Linguagem simples e direta',
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-center gap-2 text-sm text-foreground">
-                      <CheckCircle2 className="w-4 h-4 text-accent shrink-0" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-                <Button variant="hero" asChild>
-                  <Link to={user ? '/simulados' : '/auth'}>
-                    Experimentar Grátis <ArrowRight className="w-4 h-4 ml-2" />
-                  </Link>
-                </Button>
-              </motion.div>
-              <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-                className="order-1 lg:order-2">
-                <div className="relative">
-                  <img src={studyDesk} alt="Estudando com IA" className="rounded-2xl shadow-xl" loading="lazy" decoding="async" />
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-[hsl(215,55%,15%/0.4)] to-transparent" />
-                  <div className="absolute bottom-6 left-6 right-6 bg-card/90 backdrop-blur-md rounded-xl p-4 border border-border">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Brain className="w-5 h-5 text-accent" />
-                      <span className="text-sm font-semibold text-foreground">Chat IA</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      "A resposta correta é a alternativa C porque segundo a RBAC 121.397, o procedimento de evacuação deve..."
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          </div>
-        </section>
-
-        {/* ═══════ CATEGORIES ═══════ */}
-        <section className="py-20 bg-background">
-          <div className="container mx-auto px-4">
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-              <Badge variant="outline" className="mb-4 text-accent border-accent/30">
-                <BookOpen className="w-3 h-3 mr-1" /> Simulados
-              </Badge>
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Categorias de Simulados</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">Prepare-se para cada matéria do processo seletivo ANAC</p>
-            </motion.div>
-
-            {isLoading ? (
-              <div className="flex items-center justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-                {categoriesWithSubs.map((category, index) => {
-                  const Icon = iconMap[category.icon || 'Plane'] || Plane;
-                  const isComingSoon = category.subcategories.length === 0;
-                  return (
-                    <motion.div key={category.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }} transition={{ delay: index * 0.1 }}>
-                      <Link to={isComingSoon ? '#' : `/simulados`}
-                        className={`block p-6 rounded-2xl border border-border bg-card hover:shadow-lg transition-all duration-300 ${isComingSoon ? 'opacity-60 cursor-not-allowed' : 'hover:border-accent/50'}`}>
-                        <div className="flex items-start gap-4">
-                          <div className="p-3 rounded-xl bg-primary/10"><Icon className="w-8 h-8 text-primary" /></div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2">
-                              <h3 className="text-xl font-bold text-foreground">{category.name}</h3>
-                              {isComingSoon && <span className="px-2 py-1 text-xs bg-muted rounded-full text-muted-foreground">Em breve</span>}
-                            </div>
-                            <p className="text-muted-foreground text-sm mb-4">{category.description}</p>
-                            {category.subcategories.length > 0 && (
-                              <div className="flex flex-wrap gap-2">
-                                {category.subcategories.map(sub => (
-                                  <span key={sub.id} className="px-3 py-1 text-xs bg-secondary rounded-full text-secondary-foreground">{sub.name}</span>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                          {!isComingSoon && <ArrowRight className="w-5 h-5 text-muted-foreground shrink-0" />}
-                        </div>
-                      </Link>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* ═══════ SOCIAL PROOF BANNER ═══════ */}
-        <section className="relative py-24 overflow-hidden">
-          <img src={airplaneSunset} alt="Avião decolando ao pôr do sol" className="absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async" />
-          <div className="absolute inset-0 bg-[hsl(215,55%,10%/0.85)]" />
-          <div className="container mx-auto px-4 relative z-10 text-center">
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-              <h2 className="text-3xl md:text-5xl font-bold text-primary-foreground mb-6">
-                Milhares de candidatos já estão <br className="hidden md:block" />
-                <span className="text-accent">se preparando com o Voo Certo.</span>
-              </h2>
-              <p className="text-primary-foreground/80 text-lg max-w-2xl mx-auto mb-8">
-                Não fique para trás. Comece hoje e tenha a preparação mais completa do mercado.
-              </p>
-              <div className="flex flex-wrap justify-center gap-12 mb-10">
-                {[
-                  { value: '500+', label: 'Questões disponíveis' },
-                  { value: '10+', label: 'Simulados completos' },
-                  { value: '95%', label: 'Taxa de aprovação' },
-                  { value: '4.9★', label: 'Avaliação dos alunos' },
-                ].map((stat, i) => (
-                  <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
-                    <div className="text-4xl md:text-5xl font-bold text-accent">{stat.value}</div>
-                    <div className="text-sm text-primary-foreground/60">{stat.label}</div>
-                  </motion.div>
-                ))}
-              </div>
-              <Button variant="hero" size="xl" asChild>
-                <Link to={user ? '/simulados' : '/auth'}>
-                  Quero Passar na ANAC <ArrowRight className="w-5 h-5 ml-2" />
-                </Link>
-              </Button>
-            </motion.div>
           </div>
         </section>
 
         {/* ═══════ PRICING ═══════ */}
-        <section className="py-20" style={{ background: 'var(--gradient-hero)' }}>
+        <section className="py-24" style={{ background: 'var(--gradient-hero)' }}>
           <div className="container mx-auto px-4">
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-              <Badge className="mb-4 bg-accent/20 text-accent border-0">
-                <Star className="w-3 h-3 mr-1" /> 7 dias grátis em todos os planos
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
+              <Badge className="mb-4 bg-accent text-accent-foreground border-0 rounded-[5px] font-bold uppercase text-[10px] tracking-widest px-4 py-1.5 h-auto">
+                 Período de Experiência Grátis por 7 Dias
               </Badge>
-              <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">Invista na sua carreira</h2>
-              <p className="text-primary-foreground/70 max-w-2xl mx-auto">
-                Menos que um café por dia para ter a preparação mais completa para a prova ANAC. Cancele quando quiser.
+              <h2 className="text-3xl md:text-5xl font-bold text-primary-foreground mb-4">Planos de Preparação</h2>
+              <p className="text-primary-foreground/60 max-w-xl mx-auto font-medium">
+                Escolha o nível de suporte que sua carreira exige.
               </p>
             </motion.div>
 
@@ -564,41 +370,41 @@ export default function Index() {
                 return (
                   <motion.div key={plan.id} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
-                    <Card className={`h-full flex flex-col relative overflow-hidden ${
+                    <Card className={`h-full flex flex-col relative overflow-hidden rounded-[5px] border-0 shadow-xl ${
                       plan.highlight
-                        ? 'ring-2 ring-accent shadow-glow bg-card'
-                        : 'bg-card/95 backdrop-blur-sm'
+                        ? 'bg-card ring-2 ring-accent'
+                        : 'bg-card'
                     }`}>
                       {plan.popular && (
-                        <div className="absolute top-0 right-0 bg-accent text-accent-foreground text-xs font-bold px-4 py-1.5 rounded-bl-xl">
-                          Mais Popular
+                        <div className="absolute top-0 right-0 bg-accent text-accent-foreground text-[10px] font-bold px-3 py-1 uppercase tracking-wider rounded-bl-[5px]">
+                          Recomendado
                         </div>
                       )}
-                      <CardHeader className="text-center pb-4 pt-8">
-                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3 ${
-                          plan.highlight ? 'bg-accent/15' : 'bg-primary/10'
+                      <CardHeader className="text-center pb-6 pt-10">
+                        <div className={`w-14 h-14 rounded-[5px] flex items-center justify-center mx-auto mb-4 ${
+                          plan.highlight ? 'bg-accent/10' : 'bg-primary/5'
                         }`}>
                           <Icon className={`w-7 h-7 ${plan.highlight ? 'text-accent' : 'text-primary'}`} />
                         </div>
-                        <CardTitle className="text-xl">{plan.name}</CardTitle>
-                        <p className="text-sm text-muted-foreground">{plan.description}</p>
-                        <div className="mt-4">
-                          <span className="text-4xl font-bold text-foreground">{plan.price}</span>
-                          <span className="text-muted-foreground text-sm">{plan.period}</span>
+                        <CardTitle className="text-xl font-bold">{plan.name}</CardTitle>
+                        <p className="text-[11px] text-muted-foreground font-bold uppercase tracking-tight">{plan.description}</p>
+                        <div className="mt-6">
+                          <span className="text-4xl font-bold text-foreground tracking-tighter">{plan.price}</span>
+                          <span className="text-muted-foreground text-xs font-medium">{plan.period}</span>
                         </div>
                       </CardHeader>
-                      <CardContent className="flex-1 flex flex-col">
-                        <ul className="space-y-3 mb-6 flex-1">
+                      <CardContent className="flex-1 flex flex-col px-8">
+                        <ul className="space-y-4 mb-8 flex-1">
                           {plan.features.map((f, j) => (
-                            <li key={j} className="flex items-start gap-2 text-sm">
-                              <CheckCircle2 className="w-4 h-4 text-success shrink-0 mt-0.5" />
-                              <span className="text-foreground">{f}</span>
+                            <li key={j} className="flex items-start gap-2.5 text-xs">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-success shrink-0 mt-0.5" />
+                              <span className="text-foreground font-medium leading-normal">{f}</span>
                             </li>
                           ))}
                         </ul>
-                        <Button variant={plan.highlight ? 'hero' : 'outline'} className="w-full" asChild>
+                        <Button variant={plan.highlight ? 'hero' : 'outline'} className="w-full h-11 rounded-[5px] font-bold hover-yellow hover:text-foreground" asChild>
                           <Link to="/premium">
-                            {user ? 'Começar Trial Grátis' : 'Assinar Agora'}
+                            Experimentar Trial
                           </Link>
                         </Button>
                       </CardContent>
@@ -607,114 +413,31 @@ export default function Index() {
                 );
               })}
             </div>
-
-            <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-              className="text-center text-primary-foreground/50 text-sm mt-8">
-              Pagamento seguro via Stripe. Cancele a qualquer momento sem multa.
-            </motion.p>
-          </div>
-        </section>
-
-        {/* ═══════ TESTIMONIALS ═══════ */}
-        <section className="py-20 bg-background">
-          <div className="container mx-auto px-4">
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-              <Badge variant="outline" className="mb-4 text-accent border-accent/30">
-                <Heart className="w-3 h-3 mr-1" /> Depoimentos
-              </Badge>
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">O que dizem nossos alunos</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">Histórias reais de quem conquistou a aprovação com o Voo Certo</p>
-            </motion.div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-              {TESTIMONIALS.map((t, i) => (
-                <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }} transition={{ delay: i * 0.08 }}>
-                  <Card className="h-full hover:shadow-lg transition-shadow">
-                    <CardContent className="pt-6">
-                      <div className="flex gap-1 mb-4">
-                        {Array.from({ length: t.stars }).map((_, j) => (
-                          <Star key={j} className="w-4 h-4 text-accent fill-accent" />
-                        ))}
-                      </div>
-                      <p className="text-foreground text-sm mb-4 italic leading-relaxed">"{t.text}"</p>
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl">{t.avatar}</span>
-                        <div>
-                          <p className="font-semibold text-foreground text-sm">{t.name}</p>
-                          <p className="text-xs text-muted-foreground">{t.role}</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
           </div>
         </section>
 
         {/* ═══════ FAQ ═══════ */}
-        <section className="py-20 bg-muted/50">
+        <section className="py-24 bg-muted/20">
           <div className="container mx-auto px-4">
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-              <Badge variant="outline" className="mb-4 text-accent border-accent/30">
-                <MessageCircle className="w-3 h-3 mr-1" /> FAQ
-              </Badge>
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Perguntas Frequentes</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">Tire suas dúvidas antes de começar</p>
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
+              <h2 className="text-3xl md:text-5xl font-bold text-foreground">Dúvidas Frequentes</h2>
             </motion.div>
 
-            <div className="max-w-3xl mx-auto space-y-4">
+            <div className="max-w-3xl mx-auto space-y-3">
               {FAQ.map((faq, i) => (
                 <motion.details key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }} transition={{ delay: i * 0.05 }}
-                  className="group bg-card border border-border rounded-xl overflow-hidden">
-                  <summary className="flex items-center justify-between p-5 cursor-pointer text-foreground font-semibold text-sm hover:text-accent transition-colors list-none">
+                  className="group bg-card border border-border rounded-[5px] overflow-hidden shadow-none">
+                  <summary className="flex items-center justify-between p-5 cursor-pointer text-foreground font-bold text-sm hover-yellow list-none transition-all">
                     {faq.q}
                     <ChevronRight className="w-4 h-4 text-muted-foreground group-open:rotate-90 transition-transform shrink-0 ml-2" />
                   </summary>
-                  <div className="px-5 pb-5 text-sm text-muted-foreground leading-relaxed">
+                  <div className="px-5 pb-6 text-sm text-muted-foreground leading-relaxed font-medium">
                     {faq.a}
                   </div>
                 </motion.details>
               ))}
             </div>
-          </div>
-        </section>
-
-        {/* ═══════ FINAL CTA ═══════ */}
-        <section className="relative py-24 overflow-hidden" style={{ background: 'var(--gradient-primary)' }}>
-          <div className="absolute inset-0 overflow-hidden">
-            <motion.div className="absolute top-1/3 right-1/4 w-80 h-80 bg-accent/10 rounded-full blur-3xl"
-              animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 8, repeat: Infinity }} />
-          </div>
-          <div className="container mx-auto px-4 text-center relative z-10">
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}>
-              <Plane className="w-16 h-16 text-accent/50 mx-auto mb-6" />
-              <h2 className="text-3xl md:text-5xl font-bold text-primary-foreground mb-4">
-                Sua carreira na aviação <span className="text-accent">começa agora.</span>
-              </h2>
-              <p className="text-primary-foreground/80 max-w-xl mx-auto mb-4 text-lg">
-                Não deixe para amanhã o que pode mudar sua vida hoje.
-                Comece grátis e descubra por que o Voo Certo é a escolha certa.
-              </p>
-              <p className="text-accent/80 text-sm mb-8 flex items-center justify-center gap-2">
-                <Shield className="w-4 h-4" />
-                7 dias grátis · Sem cartão de crédito · Cancele quando quiser
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button variant="hero" size="xl" asChild>
-                  <Link to={user ? '/simulados' : '/auth'}>
-                    Começar Gratuitamente <ArrowRight className="w-5 h-5 ml-2" />
-                  </Link>
-                </Button>
-                <Button variant="glass" size="xl" asChild>
-                  <Link to="/premium">
-                    <Crown className="w-5 h-5 mr-2" /> Ver Planos Premium
-                  </Link>
-                </Button>
-              </div>
-            </motion.div>
           </div>
         </section>
 

@@ -142,7 +142,7 @@ export function Header() {
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        className={`flex items-center gap-2 rounded-full ${isHome && !isScrolled ? 'bg-white/10 text-white border-white/20 hover:bg-white/20 hover:text-white' : ''}`}
+                        className={`flex items-center gap-2 rounded-[5px] ${isHome && !isScrolled ? 'bg-white/10 text-white border-white/20 hover-yellow hover:text-foreground' : 'hover-yellow'}`}
                       >
                         <User className="w-4 h-4" />
                         <span className="max-w-[100px] truncate">
@@ -150,7 +150,7 @@ export function Header() {
                         </span>
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuContent align="end" className="w-56 rounded-[5px]">
                       <div className="px-2 py-1.5">
                         <p className="text-xs text-muted-foreground leading-none mb-1">Logado como</p>
                         <p className="text-sm font-medium truncate">{profile?.full_name || user.email}</p>
@@ -178,7 +178,7 @@ export function Header() {
                   <Button variant="ghost" size="sm" asChild className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''}>
                     <Link to="/auth">Entrar</Link>
                   </Button>
-                  <Button size="sm" asChild className="rounded-full shadow-md font-semibold">
+                  <Button size="sm" asChild className="rounded-[5px] shadow-sm font-semibold hover-yellow hover:text-foreground">
                     <Link to="/auth">Começar Agora</Link>
                   </Button>
                 </>

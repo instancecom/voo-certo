@@ -174,7 +174,9 @@ export default function ProgressPage() {
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="mb-10">
             <h1 className="text-2xl font-bold text-foreground mb-1">Central de Performance</h1>
-            <p className="text-muted-foreground text-sm">Analise métricas detalhadas de sua jornada de estudos.</p>
+            <p className="text-muted-foreground text-sm">
+              Sua evolução baseada em padrões reais da ANAC.
+            </p>
           </div>
 
           {!stats || stats.totalExams === 0 ? (
@@ -190,7 +192,7 @@ export default function ProgressPage() {
             <div className="space-y-8">
               {/* Primary KPIs */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <Card className="shadow-none border">
+                <Card className="shadow-none border rounded-[5px]">
                    <CardContent className="p-5 flex items-center gap-4">
                       <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
                         <Target className="w-5 h-5" />
@@ -241,26 +243,21 @@ export default function ProgressPage() {
 
               {/* Charts Row */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <Card className="lg:col-span-2 shadow-none border">
-                  <CardHeader className="pb-0">
-                    <CardTitle className="text-sm font-bold flex items-center gap-2">
-                       <TrendingUp className="w-4 h-4 text-primary" /> Curva de Aprendizado
+                <Card className="lg:col-span-2 rounded-[5px] shadow-sm">
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <TrendingUp className="w-5 h-5 text-primary" /> Curva de Aprendizado
                     </CardTitle>
+                    <CardDescription>Desempenho nos últimos 15 simulados</CardDescription>
                   </CardHeader>
                   <CardContent className="h-[300px] mt-4">
                     <ResponsiveContainer width="100%" height="100%">
                       <AreaChart data={stats.evolutionData}>
-                        <defs>
-                          <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.1}/>
-                            <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
-                          </linearGradient>
-                        </defs>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.1} />
                         <XAxis dataKey="date" axisLine={false} tickLine={false} fontSize={10} />
                         <YAxis axisLine={false} tickLine={false} fontSize={10} domain={[0, 100]} />
                         <Tooltip />
-                        <Area type="monotone" dataKey="score" stroke="hsl(var(--primary))" fill="url(#colorScore)" strokeWidth={2.5} />
+                        <Area type="monotone" dataKey="score" stroke="hsl(var(--primary))" fill="hsl(var(--primary)/0.05)" strokeWidth={2} />
                         <ReferenceLine y={70} stroke="hsl(var(--success))" strokeDasharray="3 3" opacity={0.5} />
                       </AreaChart>
                     </ResponsiveContainer>

@@ -46,7 +46,7 @@
     --input: 214 30% 88%;
     --ring: 215 55% 25%;
 
-    --radius: 0.75rem;
+    --radius: 5px;
 
     /* Custom gradients */
     --gradient-primary: linear-gradient(135deg, hsl(215 55% 25%) 0%, hsl(205 65% 35%) 100%);
@@ -149,27 +149,11 @@
 
 @layer components {
   .glass-card {
-    @apply bg-card/80 backdrop-blur-md border border-border/50 shadow-lg;
+    @apply bg-card border border-border/50 shadow-sm;
   }
 
-  .gradient-text {
-    @apply bg-clip-text text-transparent;
-    background-image: var(--gradient-primary);
-  }
-
-  .btn-glow {
-    @apply relative overflow-hidden;
-  }
-
-  .btn-glow::before {
-    content: '';
-    @apply absolute inset-0 opacity-0 transition-opacity duration-300;
-    background: var(--gradient-accent);
-    filter: blur(20px);
-  }
-
-  .btn-glow:hover::before {
-    @apply opacity-50;
+  .hover-yellow {
+    @apply hover:bg-[#FFFBCC] transition-colors;
   }
 }
 
