@@ -51,8 +51,8 @@ export default function SimuladosPage() {
 
       if (error) throw error;
 
-      const { data: blocks } = await supabase.from('subcategories').select('id, name, category_id').order('name');
-      const { data: questions } = await supabase.from('questions').select('category_id');
+      const { data: blocks } = await supabase.from('subcategories').select('id, name, category_id').order('name').limit(1000);
+      const { data: questions } = await supabase.from('questions').select('category_id').limit(10000);
 
       const blockCountMap = (blocks || []).reduce((acc, b) => {
         acc[b.category_id] = (acc[b.category_id] || 0) + 1;

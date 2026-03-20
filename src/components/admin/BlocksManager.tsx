@@ -63,7 +63,8 @@ export function BlocksManager({ professionId, professionName, onBack, onSelectBl
       const { data: questions, error: questionsError } = await supabase
         .from('questions')
         .select('subcategory_id')
-        .eq('category_id', professionId);
+        .eq('category_id', professionId)
+        .limit(10000);
 
       if (questionsError) throw questionsError;
 

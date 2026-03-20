@@ -60,7 +60,8 @@ export function ProfessionsManager({ onSelectProfession }: ProfessionsManagerPro
       // Get block counts per profession
       const { data: blocks, error: blocksError } = await supabase
         .from('subcategories')
-        .select('category_id');
+        .select('category_id')
+        .limit(1000);
 
       if (blocksError) throw blocksError;
 
@@ -72,7 +73,8 @@ export function ProfessionsManager({ onSelectProfession }: ProfessionsManagerPro
       // Get question counts per profession
       const { data: questions, error: questionsError } = await supabase
         .from('questions')
-        .select('category_id');
+        .select('category_id')
+        .limit(10000);
 
       if (questionsError) throw questionsError;
 

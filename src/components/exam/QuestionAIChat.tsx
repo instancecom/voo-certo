@@ -32,7 +32,7 @@ export function QuestionAIChat({
   explanation,
 }: QuestionAIChatProps) {
   const { user, profile, refreshProfile, isAdmin } = useAuth();
-  const { canAccessAIChat, aiChatLimitPerQuestion, currentPlan } = usePlan();
+  const { canAccessAIChat, aiChatLimitPerQuestion, aiChatDailySafetyLimit, currentPlan } = usePlan();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -47,7 +47,7 @@ export function QuestionAIChat({
 
     const fetchUsage = async () => {
       try {
-        const { data, error } = await supabase.rpc('get_ai_usage_for_question', {
+        const { data, error } = await (supabase as any).rpc('get_ai_usage_for_question', {
           p_user_id: user.id,
           p_question_id: questionId
         });
@@ -221,9 +221,16 @@ export function QuestionAIChat({
                         <Sparkles className="w-3.5 h-3.5 text-accent" /> Sempre Online
                       </p>
                       {!isAdmin && (
-                        <span className="text-[10px] bg-accent/10 text-accent px-1.5 py-0.5 rounded font-bold">
-                          {remainingForQuestion}/{aiChatLimitPerQuestion} para esta questão
-                        </span>
+                        <div className="flex flex-col items-end">
+                          <span className="text-[10px] bg-accent/10 text-accent px-1.5 py-0.5 rounded font-bold whitespace-nowrap shadow-sm border border-accent/10">
+                            {remainingForQuestion}/{aiChatLimitPerQuestion} nesta questão
+                          </span>
+                          {profile?.ai_questions_count !== undefined && (
+                            <span className="text-[9px] text-muted-foreground font-bold mt-0.5 uppercase tracking-tighter opacity-80">
+                              {Math.max(0, (aiChatDailySafetyLimit || 0) - profile.ai_questions_count)} créditos hoje
+                            </span>
+                          )}
+                        </div>
                       )}
                     </div>
                   </div>
@@ -329,7 +336,22 @@ export function QuestionAIChat({
                 <div ref={messagesEndRef} />
               </div>
 
-              <div className="p-5 bg-white border-t border-border/10 shrink-0 pb-8 md:pb-6 rounded-b-3xl">
+              <div className="p-5 bg-white border-t border-border/10 shrink-0 pb-8 md:pb-6 rounded-b-3xl relative">
+                {!isAdmin && (
+                  <div className="flex items-center justify-between mb-3 px-1">
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                        <MessageCircle className="w-3.5 h-3.5" />
+                        <span>Restam {remainingForQuestion} perguntas</span>
+                      </div>
+                    </div>
+                    {profile?.ai_questions_count !== undefined && (
+                      <div className="text-[10px] font-bold text-accent/80 uppercase tracking-widest bg-accent/5 px-2 py-0.5 rounded-full border border-accent/10">
+                        {Math.max(0, (aiChatDailySafetyLimit || 0) - profile.ai_questions_count)} créditos diários
+                      </div>
+                    )}
+                  </div>
+                )}
                 <div className="flex gap-3 items-center">
                   <div className="flex-1 relative">
                     <Input

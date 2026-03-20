@@ -3,10 +3,19 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
-  BookOpen, Play, Clock, CheckCircle2, Search,
+  BookOpen, Play, Clock, CheckCircle2, Search, Filter,
   Zap, Layers,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
 import { Progress } from '@/components/ui/progress';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
@@ -145,27 +154,76 @@ export default function MicrocoursesPage() {
             </motion.div>
           )}
 
-          {/* Filters */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-6">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input placeholder="Buscar microcurso..." className="pl-10" value={search} onChange={e => setSearch(e.target.value)} />
+          {/* Unified Filters */}
+          <div className="flex items-center gap-3 mb-10 max-w-2xl mx-auto">
+            <div className="relative flex-1 group">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
+              <Input 
+                placeholder="Buscar microcurso..." 
+                className="pl-10 h-11 bg-card/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 transition-all rounded-xl" 
+                value={search} 
+                onChange={e => setSearch(e.target.value)} 
+              />
             </div>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  className={`h-11 w-11 rounded-xl transition-all ${
+                    selectedCategory !== 'all' 
+                    ? 'border-primary bg-primary/10 text-primary hover:bg-primary/20' 
+                    : 'bg-card/50 border-border/50 hover:bg-card/80'
+                  }`}
+                >
+                  <Filter className="w-5 h-5" />
+                  {selectedCategory !== 'all' && (
+                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full border-2 border-background" />
+                  )}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 p-2 rounded-xl border-border/50 backdrop-blur-md bg-card/95">
+                <DropdownMenuLabel className="px-2 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Filtrar por Categoria
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-border/50" />
+                <div className="mt-1 space-y-1">
+                  {CATEGORIES.map(cat => (
+                    <DropdownMenuItem
+                      key={cat.value}
+                      onClick={() => setSelectedCategory(cat.value)}
+                      className={`flex items-center gap-3 cursor-pointer py-2.5 px-3 rounded-lg transition-colors ${
+                        selectedCategory === cat.value 
+                        ? 'bg-primary/10 text-primary font-medium focus:bg-primary/20 focus:text-primary' 
+                        : 'text-foreground/80 focus:bg-accent focus:text-accent-foreground'
+                      }`}
+                    >
+                      <span className="text-lg">{cat.emoji}</span>
+                      <span className="flex-1 text-sm">{cat.label}</span>
+                      {selectedCategory === cat.value && (
+                        <CheckCircle2 className="w-4 h-4 text-primary" />
+                      )}
+                    </DropdownMenuItem>
+                  ))}
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
-          <div className="flex gap-2 flex-wrap mb-8 overflow-x-auto pb-2">
-            {CATEGORIES.map(cat => (
-              <button
-                key={cat.value}
-                onClick={() => setSelectedCategory(cat.value)}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
-                  selectedCategory === cat.value ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                }`}
-              >
-                {cat.emoji} {cat.label}
-              </button>
-            ))}
-          </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
           {/* Course Grid - Netflix Style */}
           {isLoading ? (
