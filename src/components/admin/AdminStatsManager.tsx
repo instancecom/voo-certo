@@ -47,12 +47,18 @@ const PLAN_LABEL: Record<string, string> = {
 };
 
 const PLAN_PRICE: Record<string, number> = {
+  free: 0,
   solo: 19.90,
   tripulante: 39.90,
   comandante: 79.90,
 };
 
+type TimeRange = 'total' | '30days' | '7days' | 'today';
+
 export function AdminStatsManager() {
+  const [timeRange, setTimeRange] = useState<TimeRange>('total');
+  const [selectedMicrocourse, setSelectedMicrocourse] = useState<string | 'all'>('all');
+  const [selectedInsignia, setSelectedInsignia] = useState<string | 'all'>('all');
   const { data: profiles, isLoading: profilesLoading } = useQuery({
     queryKey: ['admin-stats-profiles'],
     queryFn: async () => {
@@ -144,9 +150,24 @@ export function AdminStatsManager() {
 
   const isLoading = profilesLoading || resultsLoading;
 
+  // Filter utility
+  const isWithinRange = (dateStr: string | null) => {
+    if (!dateStr) return false;
+    if (timeRange === 'total') return true;
+    
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffDays = (now.getTime() - date.getTime()) / (1000 * 3600 * 24);
+    
+    if (timeRange === '30days') return diffDays <= 30;
+    if (timeRange === '7days') return diffDays <= 7;
+    if (timeRange === 'today') return date.toDateString() === now.toDateString();
+    return true;
+  };
+
   // Per-user stats
   const userStats: UserStat[] = (profiles || []).map(profile => {
-    const results = (examResults || []).filter(r => r.user_id === profile.user_id);
+    const results = (examResults || []).filter(r => r.user_id === profile.user_id && isWithinRange(r.completed_at));
     const exam_count = results.length;
     const avg_score = exam_count
       ? Math.round(results.reduce((a, r) => a + r.score, 0) / exam_count)
@@ -154,6 +175,11 @@ export function AdminStatsManager() {
     const total_time = results.reduce((a, r) => a + r.time_spent, 0);
     const approved_count = results.filter(r => r.score >= 70).length;
 
+    // AI questions usage within range is tricky because profile has a total counter.
+    // For now we use the total but in a real app we'd need a usage history table.
+    // However, for the user's immediate needs, showing the totals based on the overall count is fine,
+    // or we can simulate it for now if we don't have a history table.
+    
     return {
       user_id: profile.user_id,
       email: profile.email,
@@ -275,9 +301,27 @@ export function AdminStatsManager() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-foreground">Estatísticas da Plataforma</h2>
-        <p className="text-muted-foreground">Visão geral completa do desempenho, engajamento e receita.</p>
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-bold text-foreground">Estatísticas da Plataforma</h2>
+          <p className="text-muted-foreground">Visão geral completa do desempenho, engajamento e receita.</p>
+        </div>
+        
+        <div className="flex bg-muted/50 p-1 rounded-xl border border-border/50">
+          {(['total', '30days', '7days', 'today'] as TimeRange[]).map((range) => (
+            <button
+              key={range}
+              onClick={() => setTimeRange(range)}
+              className={`px-4 py-2 text-xs font-bold rounded-lg transition-all ${
+                timeRange === range
+                  ? 'bg-white text-primary shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {range === 'total' ? 'Total' : range === '30days' ? '30 Dias' : range === '7days' ? '7 Dias' : 'Hoje'}
+            </button>
+          ))}
+        </div>
       </div>
 
       {isLoading ? (
@@ -499,6 +543,7 @@ export function AdminStatsManager() {
               </div>
               <div className="space-y-1 max-h-[500px] overflow-y-auto">
                 {userStats
+                  .filter(u => timeRange === 'total' || u.exam_count > 0 || isWithinRange(u.created_at))
                   .sort((a, b) => b.exam_count - a.exam_count)
                   .map(u => (
                     <div key={u.user_id} className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto_auto_auto_auto] gap-2 md:gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/60 transition-colors items-center">
@@ -532,6 +577,78 @@ export function AdminStatsManager() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Microcourses Detailed Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader className="pb-3 border-b mb-4">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <BookOpen className="w-5 h-5 text-accent" />
+                    Microcursos Concluídos
+                  </CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+                  {(microcourseProgress || []).filter(p => p.completed).map(progress => {
+                    const course = (microcourses || []).find(m => m.id === progress.microcourse_id);
+                    const userData = (profiles || []).find(p => p.user_id === progress.user_id);
+                    return (
+                      <div key={progress.id} className="flex items-start justify-between p-3 rounded-xl bg-muted/30 border border-border/50">
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold text-foreground truncate">{course?.title || 'Curso Removido'}</p>
+                          <p className="text-xs text-muted-foreground truncate">{userData?.full_name || userData?.email || 'Usuário Desconhecido'}</p>
+                        </div>
+                        <Badge variant="secondary" className="bg-success/10 text-success border-none text-[10px] h-5">CONCLUÍDO</Badge>
+                      </div>
+                    );
+                  })}
+                  {!(microcourseProgress || []).some(p => p.completed) && (
+                    <div className="text-center py-10 text-muted-foreground">
+                      Nenhuma conclusão registrada ainda.
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-3 border-b mb-4">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Award className="w-5 h-5 text-warning" />
+                    Histórico de Insígnias
+                  </CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+                  {(userInsignias || []).sort((a,b) => new Date(b.earned_at).getTime() - new Date(a.earned_at).getTime()).map(earned => {
+                    const insignia = (insignias || []).find(i => i.id === earned.insignia_id);
+                    const userData = (profiles || []).find(p => p.user_id === earned.user_id);
+                    return (
+                      <div key={earned.id} className="flex items-start justify-between p-3 rounded-xl bg-muted/30 border border-border/50">
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold text-foreground truncate">{insignia?.name || 'Insígnia Removida'}</p>
+                          <p className="text-xs text-muted-foreground truncate">{userData?.full_name || userData?.email || 'Usuário Desconhecido'}</p>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <p className="text-[10px] font-bold text-muted-foreground uppercase">{new Date(earned.earned_at).toLocaleDateString('pt-BR')}</p>
+                          <p className="text-[10px] text-muted-foreground opacity-60">{new Date(earned.earned_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {(userInsignias || []).length === 0 && (
+                    <div className="text-center py-10 text-muted-foreground">
+                      Nenhuma insígnia conquistada ainda.
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </>
       )}
     </div>
