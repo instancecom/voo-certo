@@ -55,11 +55,8 @@ export function NotificationBell({ className }: NotificationBellProps) {
     if (open && user?.id) {
       const now = new Date().toISOString();
       localStorage.setItem(`voocerto_notifications_last_viewed_${user.id}`, now);
-      // We don't update setLastViewed immediately to keep the "new" indicator during the current open session
-      // or we can update it after a small delay or when it closes.
-      // Let's update it when it CLOSES so the user can see what's new while it's open.
-    } else if (!open && user?.id) {
-      setLastViewed(localStorage.getItem(`voocerto_notifications_last_viewed_${user.id}`));
+      // Immediately update state so the badges and counts update
+      setLastViewed(now);
     }
   };
 
