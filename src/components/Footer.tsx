@@ -1,16 +1,25 @@
 import { Link } from 'react-router-dom';
 import { Plane, Instagram, Linkedin, Youtube, Mail, ShieldCheck } from 'lucide-react';
+import { useBranding } from '@/contexts/BrandingContext';
 
 export function Footer() {
+  const { settings: branding } = useBranding();
+
   return (
     <footer className="bg-primary text-primary-foreground">
       <div className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="md:col-span-1">
-            <Link to="/" className="flex items-center gap-2 mb-6">
-              <Plane className="w-8 h-8 text-accent" />
-              <span className="text-2xl font-bold tracking-tight">Voo Certo</span>
+            <Link to="/" className="flex items-center gap-2 mb-6 group">
+              {branding.logo_url ? (
+                <img src={branding.logo_url} alt={branding.site_name} className="h-10 w-auto object-contain brightness-0 invert" />
+              ) : (
+                <>
+                  <Plane className="w-8 h-8 text-accent" />
+                  <span className="text-2xl font-bold tracking-tight">{branding.site_name}</span>
+                </>
+              )}
             </Link>
             <p className="text-primary-foreground/70 text-sm leading-relaxed">
               Plataforma de simulados baseados em padrões reais do mercado aeronáutico. Prepare-se para decolar na sua carreira com inteligência e estratégia.
@@ -67,7 +76,7 @@ export function Footer() {
               <strong>Aviso Legal:</strong> O Voo Certo é uma plataforma independente de estudos. Nossos simulados são baseados em padrões históricos e padrões de avaliação da Agência Nacional de Aviação Civil (ANAC), mas não possuímos qualquer vínculo oficial com o órgão regulador.
             </p>
             <div className="text-[10px] md:text-xs text-primary-foreground/40 whitespace-nowrap">
-              &copy; {new Date().getFullYear()} Voo Certo. CNPJ: 00.000.000/0001-00
+              &copy; {new Date().getFullYear()} {branding.site_name}. CNPJ: 00.000.000/0001-00
             </div>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { BrandingProvider } from "@/contexts/BrandingContext";
 import Index from "./pages/Index";
 import AuthPage from "./pages/AuthPage";
 import SimuladosPage from "./pages/SimuladosPage";
@@ -29,37 +30,39 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<AuthPage />} />
-            <Route path="/simulados" element={<SimuladosPage />} />
-            <Route path="/simulados/:category" element={<SimuladosPage />} />
-            <Route path="/simulado-anac" element={<ANACExamPage />} />
-            <Route path="/simulado/:examId" element={<ExamPage />} />
-            <Route path="/resultado/:resultId" element={<ResultPage />} />
-            {/* Protected Admin Routes */}
-            <Route element={<AdminGuard />}>
-              <Route path="/admin" element={<AdminPage />} />
-              <Route path="/admin/importar-questoes" element={<ImportQuestoesPage />} />
-            </Route>
-
-            <Route path="/meu-progresso" element={<ProgressPage />} />
-            <Route path="/conquistas" element={<ConquistasPage />} />
-            <Route path="/guia-carreira" element={<GuiaCarreiraPage />} />
-            <Route path="/guia-carreira/:guideId" element={<GuiaCarreiraDetailPage />} />
-            <Route path="/microcursos" element={<MicrocoursesPage />} />
-            <Route path="/microcursos/:courseId" element={<MicrocoursePlayerPage />} />
-            <Route path="/curriculo" element={<CurriculumPage />} />
-            <Route path="/premium" element={<PremiumPage />} />
-            <Route path="/simulado-profissao/:professionId" element={<ProfessionExamPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+      <BrandingProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<AuthPage />} />
+              <Route path="/simulados" element={<SimuladosPage />} />
+              <Route path="/simulados/:category" element={<SimuladosPage />} />
+              <Route path="/simulado-anac" element={<ANACExamPage />} />
+              <Route path="/simulado/:examId" element={<ExamPage />} />
+              <Route path="/resultado/:resultId" element={<ResultPage />} />
+              {/* Protected Admin Routes */}
+              <Route element={<AdminGuard />}>
+                <Route path="/admin" element={<AdminPage />} />
+                <Route path="/admin/importar-questoes" element={<ImportQuestoesPage />} />
+              </Route>
+  
+              <Route path="/meu-progresso" element={<ProgressPage />} />
+              <Route path="/conquistas" element={<ConquistasPage />} />
+              <Route path="/guia-carreira" element={<GuiaCarreiraPage />} />
+              <Route path="/guia-carreira/:guideId" element={<GuiaCarreiraDetailPage />} />
+              <Route path="/microcursos" element={<MicrocoursesPage />} />
+              <Route path="/microcursos/:courseId" element={<MicrocoursePlayerPage />} />
+              <Route path="/curriculo" element={<CurriculumPage />} />
+              <Route path="/premium" element={<PremiumPage />} />
+              <Route path="/simulado-profissao/:professionId" element={<ProfessionExamPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </BrandingProvider>
     </AuthProvider>
   </QueryClientProvider>
 );

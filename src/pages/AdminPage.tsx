@@ -37,6 +37,8 @@ import { InsigniasModelManager } from '@/components/admin/InsigniasModelManager'
 import { AdminStatsManager } from '@/components/admin/AdminStatsManager';
 import { PlansAndCouponsManager } from '@/components/admin/PlansAndCouponsManager';
 import { ConnectionsManager } from '@/components/admin/ConnectionsManager';
+import { BrandingManager } from '@/components/admin/BrandingManager';
+import { Palette } from 'lucide-react';
 
 type AdminView = 'professions' | 'blocks' | 'questions';
 
@@ -196,6 +198,7 @@ export default function AdminPage() {
                 { value: 'stats', label: 'Estatísticas', icon: BarChart3 },
                 { value: 'plans', label: 'Planos & Cupons', icon: Tag },
                 { value: 'connections', label: 'Conexões', icon: Plug },
+                { value: 'branding', label: 'Branding', icon: Palette },
               ];
 
               const currentTab = tabs.find(t => t.value === activeTab);
@@ -257,6 +260,7 @@ export default function AdminPage() {
                   case 'stats': return <AdminStatsManager />;
                   case 'plans': return <PlansAndCouponsManager />;
                   case 'connections': return <ConnectionsManager />;
+                  case 'branding': return <BrandingManager />;
                   default: return null;
                 }
               };

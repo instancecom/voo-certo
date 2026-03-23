@@ -18,13 +18,16 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { NotificationBell } from './notifications/NotificationBell';
+import { useBranding } from '@/contexts/BrandingContext';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, profile, isAdmin, signOut, isLoading } = useAuth();
+  const { user, profile, isAdmin, signOut, isLoading: authLoading } = useAuth();
+  const { settings: branding, isLoading: brandingLoading } = useBranding();
+  const isLoading = authLoading || brandingLoading;
   const queryClient = useQueryClient();
   const isHome = location.pathname === '/';
 
@@ -96,12 +99,22 @@ export function Header() {
         <div className="flex items-center justify-between h-14">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <Plane className="w-8 h-8 text-accent" />
-            <span className={`text-xl font-bold tracking-tight ${
-              isHome && !isScrolled ? 'text-white' : 'text-foreground'
-            }`}>
-              Voo Certo
-            </span>
+            {branding.logo_url ? (
+              <img 
+                src={branding.logo_url} 
+                alt={branding.site_name} 
+                className="h-8 md:h-10 w-auto object-contain transition-transform group-hover:scale-105" 
+              />
+            ) : (
+              <>
+                <Plane className="w-8 h-8 text-accent transition-transform group-hover:rotate-12" />
+                <span className={`text-xl font-bold tracking-tight ${
+                  isHome && !isScrolled ? 'text-white' : 'text-foreground'
+                }`}>
+                  {branding.site_name}
+                </span>
+              </>
+            )}
           </Link>
 
           {/* Desktop Navigation */}
