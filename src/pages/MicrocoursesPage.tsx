@@ -252,7 +252,7 @@ export default function MicrocoursesPage() {
                     className="group relative"
                   >
                     <div
-                      className="relative aspect-[2/3] rounded-[5px] overflow-hidden cursor-pointer transition-all duration-300 group-hover:scale-[1.03] shadow-lg group-hover:shadow-[#F9A91F]/30 border border-transparent hover:border-[#F9A91F]/40"
+                      className="relative aspect-[2/3] rounded-[5px] overflow-hidden cursor-pointer transition-all duration-300 group-hover:scale-[1.03] shadow-lg group-hover:shadow-[#F7CE87]/30 border border-transparent hover:border-[#F7CE87]"
                       onClick={() => navigate(`/microcursos/${course.id}`)}
                     >
                       {/* Background */}
@@ -281,8 +281,8 @@ export default function MicrocoursesPage() {
 
                       {/* Play icon on hover */}
                       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div className="w-12 h-12 rounded-[5px] bg-[#F9A91F] backdrop-blur-sm flex items-center justify-center shadow-[0_0_20px_rgba(249,169,31,0.4)]">
-                          <Play className="w-5 h-5 text-white fill-current" />
+                        <div className="w-12 h-12 rounded-[5px] bg-[#F5F2EE] backdrop-blur-sm flex items-center justify-center shadow-[0_0_20px_rgba(247,206,135,0.4)] border border-[#F7CE87]">
+                          <Play className="w-5 h-5 text-[#F7CE87] fill-current" />
                         </div>
                       </div>
 
