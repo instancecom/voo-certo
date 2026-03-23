@@ -61,7 +61,7 @@ export function NotificationBell({ className }: NotificationBellProps) {
           variant="ghost" 
           size="icon" 
           className={cn(
-            "relative rounded-full hover:bg-muted/50 transition-colors",
+            "relative rounded-full hover:bg-muted/50 transition-colors focus-visible:ring-0 focus-visible:ring-offset-0 ring-0 outline-none border-none",
             className
           )}
         >
