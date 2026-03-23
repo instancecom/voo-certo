@@ -65,13 +65,13 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt }: Ba
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-md bg-[#F5F7F9] border border-yellow-500/20 rounded-2xl shadow-2xl overflow-hidden"
+            className="relative w-full max-w-md bg-[#F5F7F9] border border-yellow-500/20 rounded-[5px] shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
             <div className="bg-white border-b border-border/40 p-5 flex items-center justify-between">
               <div>
-                <div className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mb-1 bg-gradient-to-r ${colors.bg} text-white shadow-sm`}>
+                <div className={`inline-block px-2 py-0.5 rounded-[5px] text-[10px] font-bold uppercase tracking-wider mb-1 bg-gradient-to-r ${colors.bg} text-white shadow-sm`}>
                   {rarityLabels[insignia.rarity]}
                 </div>
                 <h2 className="text-xl font-extrabold text-[#1A233A] leading-tight">{insignia.name}</h2>
@@ -90,8 +90,8 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt }: Ba
             <div className="p-6 space-y-6">
               {/* Image / Icon - Large preview */}
               <div className="flex justify-center relative">
-                {isLocked && <div className="absolute inset-0 bg-white/40 z-10 rounded-2xl" />}
-                <div className={`w-48 h-48 sm:w-56 sm:h-56 rounded-2xl bg-white border ${colors.border} flex items-center justify-center overflow-hidden shadow-[0_0_30px_rgba(212,175,55,0.15)]`}>
+                {isLocked && <div className="absolute inset-0 bg-white/40 z-10 rounded-[5px]" />}
+                <div className={`w-48 h-48 sm:w-56 sm:h-56 rounded-[5px] bg-white border ${colors.border} flex items-center justify-center overflow-hidden shadow-[0_0_30px_rgba(212,175,55,0.15)]`}>
                   {imageUrl ? (
                     <img
                       src={imageUrl}
@@ -122,7 +122,7 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt }: Ba
                   </p>
                   
                   {versoTexto && (
-                    <div className="relative rounded-xl border border-yellow-500/20 bg-white p-5 mt-2 shadow-sm">
+                    <div className="relative rounded-[5px] border border-yellow-500/20 bg-white p-5 mt-2 shadow-sm">
                       <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#F5F7F9] px-3 font-bold text-xs text-yellow-600 uppercase tracking-widest border border-yellow-500/20 rounded-full">
                         Significado
                       </div>
@@ -133,7 +133,7 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt }: Ba
                   )}
                 </>
               ) : (
-                <div className="rounded-xl border border-yellow-500/30 bg-yellow-500/5 p-5 text-center shadow-[inset_0_1px_10px_rgba(212,175,55,0.05)] mt-4">
+                <div className="rounded-[5px] border border-yellow-500/30 bg-yellow-500/5 p-5 text-center shadow-[inset_0_1px_10px_rgba(212,175,55,0.05)] mt-4">
                   <Lock className="w-6 h-6 mx-auto text-yellow-600 mb-2" />
                   <h3 className="text-base font-bold text-[#1A233A] mb-1">
                     Conquiste esta insígnia

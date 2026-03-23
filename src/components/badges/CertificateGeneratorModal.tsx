@@ -158,9 +158,9 @@ export const CertificateGeneratorModal = ({
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-xl p-6 border border-primary/30 text-center"
+            className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-[5px] p-6 border border-primary/30 text-center"
           >
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-yellow-500/20 flex items-center justify-center">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-[5px] bg-yellow-500/20 flex items-center justify-center">
               <Award className="w-8 h-8 text-yellow-500" />
             </div>
             
@@ -176,7 +176,7 @@ export const CertificateGeneratorModal = ({
               Verificado em {formattedDate}
             </div>
             
-            <div className="bg-slate-900/50 rounded-lg py-2 px-4 inline-block">
+            <div className="bg-slate-900/50 rounded-[5px] py-2 px-4 inline-block">
               <span className="text-xs text-muted-foreground">ID: </span>
               <span className="font-mono text-primary text-sm">{approvalId}</span>
             </div>

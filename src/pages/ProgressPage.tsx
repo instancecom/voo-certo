@@ -310,15 +310,27 @@ export default function ProgressPage() {
                        </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                       {stats.weakPoints.length > 0 ? stats.weakPoints.map(wp => (
-                         <div key={wp.id} className="space-y-1">
-                            <div className="flex justify-between text-xs font-medium">
-                               <span className="truncate">{wp.name}</span>
-                               <span className="text-red-500 font-bold">{wp.avg}%</span>
-                            </div>
-                            <Progress value={wp.avg || 0} className="h-1 [&>div]:bg-red-500" />
-                         </div>
-                       )) : <p className="text-xs text-muted-foreground italic">Nenhum ponto fraco detectado ainda.</p>}
+                        {stats.weakPoints.length > 0 ? stats.weakPoints.map(wp => (
+                          <div key={wp.id} className="group flex items-center gap-4 p-2.5 rounded-[5px] hover:bg-red-50 transition-all duration-300 border border-transparent hover:border-red-100">
+                             <div className="flex-1 space-y-2">
+                                <div className="flex justify-between text-xs font-bold">
+                                   <span className="truncate">{wp.name}</span>
+                                   <span className="text-red-500">{wp.avg}%</span>
+                                </div>
+                                <Progress value={wp.avg || 0} className="h-1.5 [&>div]:bg-red-500 bg-red-100" />
+                             </div>
+                             <Button 
+                               size="sm" 
+                               variant="outline" 
+                               className="h-8 px-2.5 text-[10px] font-bold uppercase border-red-200 text-red-600 hover:bg-red-500 hover:text-white hover:border-red-500 shrink-0 gap-1.5 shadow-sm"
+                               asChild
+                             >
+                               <Link to={`/simulado-profissao/${wp.category_id}?modo=bloco&bloco_id=${wp.id}&nome_bloco=${encodeURIComponent(wp.name)}`}>
+                                 <Zap className="w-3 h-3 fill-current" /> Treinar
+                               </Link>
+                             </Button>
+                          </div>
+                        )) : <p className="text-xs text-muted-foreground italic p-4 text-center">Nenhum ponto fraco detectado ainda.</p>}
                     </CardContent>
                  </Card>
 

@@ -34,12 +34,14 @@ export function VideoPlayer({ videoUrl, thumbnailUrl, title, hasAccess, autoplay
   const [showControls, setShowControls] = useState(true);
   
   const [isEnded, setIsEnded] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
   
   const playerRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<number>();
 
   useEffect(() => {
+    setHasStarted(false);
     if (!hasAccess) return;
 
     // Load YouTube API if not already loaded
@@ -74,6 +76,7 @@ export function VideoPlayer({ videoUrl, thumbnailUrl, title, hasAccess, autoplay
           onStateChange: (event: any) => {
             if (event.data === window.YT.PlayerState.PLAYING) {
               setIsPlaying(true);
+              setHasStarted(true);
               setIsEnded(false);
               startTracking();
             } else if (event.data === window.YT.PlayerState.ENDED) {
@@ -211,6 +214,45 @@ export function VideoPlayer({ videoUrl, thumbnailUrl, title, hasAccess, autoplay
       >
         {/* The YouTube Player Container */}
         <div id={`yt-player-${extractYouTubeId(videoUrl)}`} className="w-full h-full pointer-events-none" />
+
+        {/* Initial Custom Play Button Overlay */}
+        {!hasStarted && !isLoading && (
+          <div 
+            className="absolute inset-0 z-30 flex items-center justify-center cursor-pointer group/start"
+            onClick={togglePlay}
+          >
+            {thumbnailUrl && (
+              <img 
+                src={thumbnailUrl} 
+                alt={title} 
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover/start:scale-105" 
+              />
+            )}
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] transition-colors group-hover/start:bg-black/20" />
+            
+            <div className="relative z-10 flex flex-col items-center gap-6">
+              <div className="w-20 h-20 rounded-[5px] bg-accent/20 backdrop-blur-xl flex items-center justify-center border border-accent/40 shadow-2xl group-hover/start:scale-110 group-hover/start:bg-accent/30 transition-all duration-500">
+                <Play className="w-10 h-10 text-accent fill-accent ml-2" />
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <p className="text-white font-black text-xl tracking-tight drop-shadow-lg uppercase italic">{title}</p>
+                <div className="h-[2px] w-12 bg-accent rounded-full transition-all duration-500 group-hover/start:w-24" />
+                <p className="text-accent text-[10px] font-black uppercase tracking-[0.4em] mt-2 animate-pulse">Clique para Iniciar a Aula</p>
+              </div>
+            </div>
+
+            {/* Premium badge indicator if applicable */}
+            <div className="absolute top-6 left-6 flex items-center gap-3">
+               <div className="w-10 h-10 rounded-[5px] bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-center">
+                  <Play className="w-4 h-4 text-white/40" />
+               </div>
+               <div>
+                  <p className="text-[10px] font-black text-white/40 uppercase tracking-widest leading-none">AULA COMPLETA</p>
+                  <p className="text-[9px] font-medium text-accent uppercase tracking-widest mt-1">VOO CERTO EDUCATION</p>
+               </div>
+            </div>
+          </div>
+        )}
 
         {/* Loading Overlay */}
         {isLoading && (

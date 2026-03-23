@@ -160,7 +160,7 @@ export const VerificationSubmitModal = ({
                     <div className="mt-2">
                       <label
                         htmlFor="proof-file"
-                        className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
+                        className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-[5px] cursor-pointer hover:bg-muted/50 transition-colors"
                       >
                         {file ? (
                           <div className="flex items-center gap-2 text-sm">
@@ -172,7 +172,7 @@ export const VerificationSubmitModal = ({
                                 e.preventDefault();
                                 setFile(null);
                               }}
-                              className="p-1 hover:bg-muted rounded"
+                              className="p-1 hover:bg-muted rounded-[5px]"
                             >
                               <X className="w-4 h-4" />
                             </button>
