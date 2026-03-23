@@ -9,6 +9,18 @@ import { Palette, Globe, AlertCircle, Save, RotateCcw, Upload, Loader2, CheckCir
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { supabase } from '@/integrations/supabase/client';
 import { useEffect, useRef } from 'react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+interface DriveFolder {
+  id: string;
+  name: string;
+}
 
 export function BrandingManager() {
   const { settings, updateSettings, isLoading } = useBranding();
@@ -18,6 +30,9 @@ export function BrandingManager() {
   const [isUploading, setIsUploading] = useState(false);
   const [driveConnected, setDriveConnected] = useState(false);
   const [isLoadingDrive, setIsLoadingDrive] = useState(true);
+  const [folders, setFolders] = useState<DriveFolder[]>([]);
+  const [selectedFolderId, setSelectedFolderId] = useState<string>('');
+  const [isFetchingFolders, setIsFetchingFolders] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const getDriveImageUrl = (url: string | null): string | null => {
@@ -33,6 +48,43 @@ export function BrandingManager() {
   useEffect(() => {
     checkDriveStatus();
   }, []);
+
+  useEffect(() => {
+    if (driveConnected) {
+      fetchFolders();
+    }
+  }, [driveConnected]);
+
+  const fetchFolders = async () => {
+    setIsFetchingFolders(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+      const resp = await fetch(
+        `https://${projectId}.supabase.co/functions/v1/google-drive?action=list_folders`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+        }
+      );
+      const data = await resp.json();
+      if (data.folders) {
+        setFolders(data.folders);
+        // If there's a folder, select the first one by default if none selected
+        if (data.folders.length > 0 && !selectedFolderId) {
+          setSelectedFolderId(data.folders[0].id);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching folders:', error);
+    } finally {
+      setIsFetchingFolders(false);
+    }
+  };
 
   const checkDriveStatus = async () => {
     try {
@@ -76,6 +128,9 @@ export function BrandingManager() {
       const formData = new FormData();
       formData.append('file', file);
       formData.append('fileName', `logo-${Date.now()}-${file.name}`);
+      if (selectedFolderId) {
+        formData.append('folderId', selectedFolderId);
+      }
 
       const resp = await fetch(
         `https://${projectId}.supabase.co/functions/v1/google-drive?action=upload`,
@@ -227,8 +282,33 @@ CREATE POLICY "Escrita para admins" ON public.site_settings
                     <CheckCircle2 className="w-4 h-4 text-success" />
                     <span className="text-xs font-medium text-success">Google Drive Conectado</span>
                   </div>
-                  
-                  <div className="flex flex-col gap-3">
+                                   <div className="flex flex-col gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-xs text-muted-foreground">Pasta no Google Drive</Label>
+                      {isFetchingFolders ? (
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground p-2 border rounded-md bg-muted/20">
+                          <Loader2 className="w-3 h-3 animate-spin" /> Carregando pastas...
+                        </div>
+                      ) : (
+                        <Select 
+                          value={selectedFolderId} 
+                          onValueChange={setSelectedFolderId}
+                          disabled={isUploading || folders.length === 0}
+                        >
+                          <SelectTrigger className="h-9">
+                            <SelectValue placeholder={folders.length === 0 ? "Nenhuma pasta encontrada" : "Selecionar pasta"} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {folders.map(folder => (
+                              <SelectItem key={folder.id} value={folder.id}>
+                                {folder.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    </div>
+
                     <div className="flex gap-2">
                       <Button
                         type="button"
@@ -236,7 +316,7 @@ CREATE POLICY "Escrita para admins" ON public.site_settings
                         size="sm"
                         className="flex-1"
                         onClick={() => fileInputRef.current?.click()}
-                        disabled={isUploading}
+                        disabled={isUploading || !selectedFolderId}
                       >
                         {isUploading ? (
                           <Loader2 className="w-4 h-4 animate-spin mr-2" />
