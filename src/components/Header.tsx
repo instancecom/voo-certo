@@ -17,6 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { NotificationBell } from './notifications/NotificationBell';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -137,6 +138,8 @@ export function Header() {
                     </Button>
                   )}
                   
+                  <NotificationBell className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''} />
+                  
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button 
@@ -185,15 +188,17 @@ export function Header() {
               )}
             </div>
 
-            {/* Mobile Menu Toggle */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className={`md:hidden ${isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''}`}
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              {isMenuOpen ? <X /> : <Menu />}
-            </Button>
+            <div className="flex items-center gap-2 md:hidden">
+              {user && <NotificationBell className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''} />}
+              <Button
+                variant="ghost"
+                size="icon"
+                className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''}
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+              >
+                {isMenuOpen ? <X /> : <Menu />}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
