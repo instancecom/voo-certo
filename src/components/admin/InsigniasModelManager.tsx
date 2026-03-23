@@ -28,6 +28,7 @@ interface Insignia {
   model_url: string | null;
   is_active: boolean | null;
   display_order: number | null;
+  verso_texto: string | null;
 }
 
 interface DriveFolder {
@@ -68,6 +69,7 @@ export function InsigniasModelManager() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editName, setEditName] = useState('');
   const [editDescription, setEditDescription] = useState('');
+  const [editVerso, setEditVerso] = useState('');
   const [editActive, setEditActive] = useState(true);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
@@ -216,6 +218,7 @@ export function InsigniasModelManager() {
     setEditingInsignia(insignia);
     setEditName(insignia.name);
     setEditDescription(insignia.description);
+    setEditVerso(insignia.verso_texto || '');
     setEditActive(insignia.is_active !== false);
     setSelectedFile(null);
     setFilePreview(null);
@@ -230,6 +233,7 @@ export function InsigniasModelManager() {
     setEditingInsignia(null);
     setEditName('');
     setEditDescription('');
+    setEditVerso('');
     setEditActive(true);
     setSelectedFile(null);
     setFilePreview(null);
@@ -308,6 +312,7 @@ export function InsigniasModelManager() {
           updates: {
             name: editName.trim(),
             description: editDescription.trim(),
+            verso_texto: editVerso.trim(),
             is_active: editActive,
             ...(modelUrl !== editingInsignia.model_url ? { model_url: modelUrl } : {}),
           },
@@ -317,6 +322,7 @@ export function InsigniasModelManager() {
         const { error } = await supabase.from('insignias').insert({
           name: editName.trim(),
           description: editDescription.trim(),
+          verso_texto: editVerso.trim(),
           is_active: editActive,
           model_url: modelUrl,
           icon: 'Award',
@@ -605,11 +611,21 @@ export function InsigniasModelManager() {
               )}
 
               <div>
-                <Label className="text-xs">Descrição / Mensagem do verso</Label>
+                <Label className="text-xs">Descrição (Requisito)</Label>
                 <Textarea
                   value={editDescription}
                   onChange={e => setEditDescription(e.target.value)}
-                  placeholder="Descrição da insígnia..."
+                  placeholder="Ex: Complete seu primeiro simulado"
+                  className="text-sm min-h-[60px]"
+                />
+              </div>
+
+              <div>
+                <Label className="text-xs">Mensagem do Verso (Motivacional)</Label>
+                <Textarea
+                  value={editVerso}
+                  onChange={e => setEditVerso(e.target.value)}
+                  placeholder="Mensagem motivacional que aparece ao virar a insígnia..."
                   className="text-sm min-h-[60px]"
                 />
               </div>
