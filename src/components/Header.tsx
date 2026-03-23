@@ -24,7 +24,7 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, profile, isAdmin, signOut } = useAuth();
+  const { user, profile, isAdmin, signOut, isLoading } = useAuth();
   const queryClient = useQueryClient();
   const isHome = location.pathname === '/';
 
@@ -126,8 +126,9 @@ export function Header() {
 
           {/* User Actions */}
           <div className="flex items-center gap-4">
-            <div className="hidden md:flex items-center gap-4">
+            <div className="hidden md:flex items-center gap-4 min-w-[124px] justify-end">
               {user ? (
+                /* Session found - show user UI immediately (profile data may fill in later) */
                 <>
                   {isAdmin && (
                     <Button variant="ghost" size="sm" asChild className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''}>
@@ -176,7 +177,11 @@ export function Header() {
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </>
+              ) : isLoading ? (
+                /* Still checking auth state - show pulse to avoid flickering guest buttons */
+                <div className="w-24 h-8 bg-muted/20 animate-pulse rounded-[5px]" />
               ) : (
+                /* Confirmed guest - show login/register */
                 <>
                   <Button variant="ghost" size="sm" asChild className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''}>
                     <Link to="/auth">Entrar</Link>
@@ -189,15 +194,30 @@ export function Header() {
             </div>
 
             <div className="flex items-center gap-2 md:hidden">
-              {user && <NotificationBell className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''} />}
-              <Button
-                variant="ghost"
-                size="icon"
-                className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''}
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-              >
-                {isMenuOpen ? <X /> : <Menu />}
-              </Button>
+              {user ? (
+                <>
+                  <NotificationBell className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''} />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''}
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  >
+                    {isMenuOpen ? <X /> : < Menu />}
+                  </Button>
+                </>
+              ) : isLoading ? (
+                <div className="w-8 h-8 rounded-full bg-muted/20 animate-pulse" />
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''}
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                >
+                  {isMenuOpen ? <X /> : <Menu />}
+                </Button>
+              )}
             </div>
           </div>
         </div>
