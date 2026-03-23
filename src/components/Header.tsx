@@ -130,14 +130,17 @@ export function Header() {
               {user ? (
                 /* Session found - show user UI immediately (profile data may fill in later) */
                 <>
-                  {isAdmin && (
+                  {/* Admin button area with stabilizer to prevent flicker */}
+                  {user && isLoading ? (
+                    <div className="w-20 h-8 mr-2 bg-muted/20 animate-pulse rounded-[5px]" />
+                  ) : isAdmin ? (
                     <Button variant="ghost" size="sm" asChild className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''}>
                       <Link to="/admin" className="flex items-center gap-2">
                         <Settings className="w-4 h-4" />
                         Admin
                       </Link>
                     </Button>
-                  )}
+                  ) : null}
                   
                   <NotificationBell className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''} />
                   
