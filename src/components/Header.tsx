@@ -31,6 +31,16 @@ export function Header() {
   const queryClient = useQueryClient();
   const isHome = location.pathname === '/';
 
+  const getDriveImageUrl = (url: string | null): string | null => {
+    if (!url) return null;
+    if (url.includes('lh3.googleusercontent.com')) return url;
+    const ucMatch = url.match(/drive\.google\.com\/uc\?export=view&id=([^&]+)/);
+    if (ucMatch) return `https://lh3.googleusercontent.com/d/${ucMatch[1]}`;
+    const fileMatch = url.match(/drive\.google\.com\/file\/d\/([^/]+)/);
+    if (fileMatch) return `https://lh3.googleusercontent.com/d/${fileMatch[1]}`;
+    return url;
+  };
+
   const prefetchCategories = () => {
     queryClient.prefetchQuery({
       queryKey: ['categories'],
@@ -101,7 +111,7 @@ export function Header() {
           <Link to="/" className="flex items-center gap-2 group">
             {branding.logo_url ? (
               <img 
-                src={branding.logo_url} 
+                src={getDriveImageUrl(branding.logo_url) || ''} 
                 alt={branding.site_name} 
                 className="h-8 md:h-10 w-auto object-contain transition-transform group-hover:scale-105" 
               />

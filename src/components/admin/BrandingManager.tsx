@@ -5,14 +5,128 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { Palette, Globe, AlertCircle, Save, RotateCcw } from 'lucide-react';
+import { Palette, Globe, AlertCircle, Save, RotateCcw, Upload, Loader2, CheckCircle2, Cloud } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { supabase } from '@/integrations/supabase/client';
+import { useEffect, useRef } from 'react';
 
 export function BrandingManager() {
   const { settings, updateSettings, isLoading } = useBranding();
   const [logoUrl, setLogoUrl] = useState(settings.logo_url || '');
   const [siteName, setSiteName] = useState(settings.site_name || '');
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [driveConnected, setDriveConnected] = useState(false);
+  const [isLoadingDrive, setIsLoadingDrive] = useState(true);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const getDriveImageUrl = (url: string | null): string | null => {
+    if (!url) return null;
+    if (url.includes('lh3.googleusercontent.com')) return url;
+    const ucMatch = url.match(/drive\.google\.com\/uc\?export=view&id=([^&]+)/);
+    if (ucMatch) return `https://lh3.googleusercontent.com/d/${ucMatch[1]}`;
+    const fileMatch = url.match(/drive\.google\.com\/file\/d\/([^/]+)/);
+    if (fileMatch) return `https://lh3.googleusercontent.com/d/${fileMatch[1]}`;
+    return url;
+  };
+
+  useEffect(() => {
+    checkDriveStatus();
+  }, []);
+
+  const checkDriveStatus = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+      const resp = await fetch(
+        `https://${projectId}.supabase.co/functions/v1/google-drive?action=status`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+        }
+      );
+      const data = await resp.json();
+      setDriveConnected(data.connected);
+    } catch (error) {
+      console.error('Error checking drive status:', error);
+    } finally {
+      setIsLoadingDrive(false);
+    }
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!driveConnected) {
+      toast.error('Conecte o Google Drive primeiro.');
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Não autenticado');
+
+      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('fileName', `logo-${Date.now()}-${file.name}`);
+
+      const resp = await fetch(
+        `https://${projectId}.supabase.co/functions/v1/google-drive?action=upload`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+          body: formData,
+        }
+      );
+
+      const result = await resp.json();
+      if (result.error) throw new Error(result.error);
+
+      if (result.directUrl) {
+        setLogoUrl(result.directUrl);
+        toast.success('Logo enviada para o Drive com sucesso!');
+      }
+    } catch (error: any) {
+      console.error('Upload error:', error);
+      toast.error(error.message || 'Erro ao enviar arquivo para o Drive');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleConnectDrive = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      
+      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+      const resp = await fetch(
+        `https://${projectId}.supabase.co/functions/v1/google-drive?action=auth_url`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+        }
+      );
+      const data = await resp.json();
+      if (data.url) {
+        window.open(data.url, 'drive_oauth', 'width=600,height=700');
+      }
+    } catch (error) {
+      toast.error('Erro ao conectar ao Google Drive');
+    }
+  };
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -86,14 +200,74 @@ CREATE POLICY "Escrita para admins" ON public.site_settings
                 placeholder="Ex: Voo Certo"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="logoUrl">URL do Logotipo (Imagem)</Label>
-              <Input 
-                id="logoUrl" 
-                value={logoUrl} 
-                onChange={(e) => setLogoUrl(e.target.value)}
-                placeholder="https://exemplo.com/logo.png"
-              />
+            <div className="space-y-4">
+              <Label>Logotipo da Plataforma</Label>
+              
+              {!driveConnected ? (
+                <div className="p-4 border border-dashed border-border rounded-lg bg-muted/30 flex flex-col items-center gap-3 text-center">
+                  <Cloud className="w-8 h-8 text-muted-foreground" />
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium">Google Drive não conectado</p>
+                    <p className="text-xs text-muted-foreground">Conecte o Drive para fazer upload da logo diretamente.</p>
+                  </div>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleConnectDrive}
+                    disabled={isLoadingDrive}
+                  >
+                    {isLoadingDrive ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Cloud className="w-4 h-4 mr-2 text-accent" />}
+                    Conectar Google Drive
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 p-3 bg-success/5 border border-success/20 rounded-lg">
+                    <CheckCircle2 className="w-4 h-4 text-success" />
+                    <span className="text-xs font-medium text-success">Google Drive Conectado</span>
+                  </div>
+                  
+                  <div className="flex flex-col gap-3">
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        variant="hero"
+                        size="sm"
+                        className="flex-1"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={isUploading}
+                      >
+                        {isUploading ? (
+                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                        ) : (
+                          <Upload className="w-4 h-4 mr-2" />
+                        )}
+                        {isUploading ? 'Enviando...' : 'Selecionar e Enviar Logo'}
+                      </Button>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={handleFileUpload}
+                      />
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <Label htmlFor="logoUrl" className="text-[10px] text-muted-foreground">URL da Imagem (Preenchida automaticamente)</Label>
+                      <Input 
+                        id="logoUrl" 
+                        value={logoUrl} 
+                        onChange={(e) => setLogoUrl(e.target.value)}
+                        placeholder="A URL aparecerá aqui após o upload"
+                        className="h-8 text-[11px] font-mono"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+              
               <p className="text-[10px] text-muted-foreground">
                 Se deixado vazio, o sistema usará o ícone de avião padrão e o nome do site.
               </p>
@@ -130,7 +304,7 @@ CREATE POLICY "Escrita para admins" ON public.site_settings
           <CardContent className="flex items-center justify-center p-12 bg-white/5 rounded-xl border border-dashed border-border">
             <div className="flex items-center gap-2">
               {logoUrl ? (
-                <img src={logoUrl} alt="Preview" className="h-12 w-auto object-contain" />
+                <img src={getDriveImageUrl(logoUrl) || ''} alt="Preview" className="h-12 w-auto object-contain" />
               ) : (
                 <>
                   <div className="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center">
