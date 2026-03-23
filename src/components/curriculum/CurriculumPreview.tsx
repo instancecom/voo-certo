@@ -67,14 +67,8 @@ export function CurriculumPreview({ data }: CurriculumPreviewProps) {
   );
 
   return (
-    <div className="flex justify-center bg-slate-100/50 p-4 md:p-8 min-h-screen">
-      {/* 
-        A4 Container 
-        Width: 210mm (~794px at 96dpi)
-        Height: 297mm (~1123px at 96dpi)
-      */}
-      <Card id="curriculum-content" className={`
-        w-full max-w-[210mm] min-h-[297mm] bg-white text-slate-900 shadow-2xl rounded-none border-none 
+    <Card id="curriculum-content" className={`
+      w-full max-w-[210mm] mx-auto min-h-[297mm] bg-white text-slate-900 shadow-none rounded-none border-none 
         flex flex-col overflow-hidden relative print:shadow-none print:w-[210mm] print:h-[297mm]
         ${isCreative ? 'font-sans' : 'font-serif'}
       `}>
@@ -250,7 +244,6 @@ export function CurriculumPreview({ data }: CurriculumPreviewProps) {
           <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.4em]">Gerado via voocerto.com.br</p>
         </footer>
 
-      </Card>
-    </div>
+    </Card>
   );
 }

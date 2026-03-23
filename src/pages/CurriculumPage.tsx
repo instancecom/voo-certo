@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   User, Briefcase, GraduationCap, Award, Plus, Trash2,
-  Download, Save, Loader2, Lock, FileText, Sparkles, Layout, Globe, Star
+  Download, Save, Loader2, Lock, FileText, Sparkles, Layout, Globe, Star, ArrowRight
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -418,51 +418,58 @@ export default function CurriculumPage() {
             </div>
             
             <div className="flex flex-wrap items-center justify-center gap-3">
-              {canSaveCurriculum ? (
-                <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending} variant="outline" className="h-12 px-6 rounded-[5px] border-2 font-bold bg-white/50 backdrop-blur-sm">
-                  {saveMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-                  Salvar Progresso
-                </Button>
-              ) : (
-                <Button variant="outline" disabled className="h-12 px-6 rounded-[5px] border-2 opacity-50"><Lock className="w-4 h-4 mr-2" /> Salvar Pro</Button>
-              )}
-              <Button onClick={downloadPDF} disabled={isGenerating} variant="accent" className="h-12 px-8 rounded-[5px] font-black shadow-xl shadow-accent/20">
-                {isGenerating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
-                Baixar PDF
+              <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending} variant="outline" className="h-12 px-6 rounded-[5px] border-2 font-bold bg-white/50 backdrop-blur-sm hover:bg-white transition-all">
+                {saveMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                Salvar Progresso
+              </Button>
+              <Button onClick={downloadPDF} disabled={isGenerating} variant="accent" className="h-12 px-8 rounded-[5px] font-black shadow-xl shadow-accent/20 group hover:scale-105 transition-all">
+                {isGenerating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2 group-hover:bounce" />}
+                Baixar PDF agora
               </Button>
             </div>
           </header>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* Editor Sidebar */}
-            <div className={`lg:col-span-5 space-y-8 ${mode === 'preview' ? 'hidden lg:block' : ''}`}>
-               {/* Controls for Tab switching or other stuff could go here */}
-               <Card className="rounded-[5px] border-2 shadow-sm overflow-hidden bg-white/70 backdrop-blur-xl">
-                 <div className="p-6 border-b">
-                   <h3 className="font-black text-sm uppercase tracking-widest text-primary">Selecione o Modelo</h3>
-                   <div className="grid grid-cols-3 gap-3 mt-4">
-                     {TEMPLATES.map(t => (
-                       <button
-                         key={t.id}
-                         onClick={() => setData(p => ({ ...p, template: t.id }))}
-                         className={`p-3 rounded-[5px] border-2 transition-all flex flex-col items-center gap-2 ${data.template === t.id ? 'border-primary bg-primary/5 text-primary' : 'border-border hover:border-primary/30 text-muted-foreground'}`}
-                       >
-                         <t.icon className="w-5 h-5" />
-                         <span className="text-[10px] font-black uppercase">{t.name}</span>
-                       </button>
-                     ))}
-                   </div>
-                 </div>
+            <div className={`lg:col-span-5 space-y-6 ${mode === 'preview' ? 'hidden lg:block' : ''}`}>
+               <Card className="rounded-[5px] border-2 shadow-sm overflow-hidden bg-white/80 backdrop-blur-xl border-slate-200">
+                  <Tabs value={activeTab} onValueChange={setActiveTab}>
+                    <TabsList className="grid grid-cols-5 bg-muted/30 p-1 h-14 rounded-none border-b">
+                      <TabsTrigger value="modelo" title="Modelo" className="rounded-[5px] data-[state=active]:bg-white data-[state=active]:shadow-md transition-all"><Layout className="w-4 h-4" /></TabsTrigger>
+                      <TabsTrigger value="dados" title="Dados" className="rounded-[5px] data-[state=active]:bg-white data-[state=active]:shadow-md transition-all"><User className="w-4 h-4" /></TabsTrigger>
+                      <TabsTrigger value="experiencia" title="Experiências" className="rounded-[5px] data-[state=active]:bg-white data-[state=active]:shadow-md transition-all"><Briefcase className="w-4 h-4" /></TabsTrigger>
+                      <TabsTrigger value="formacao" title="Formação" className="rounded-[5px] data-[state=active]:bg-white data-[state=active]:shadow-md transition-all"><GraduationCap className="w-4 h-4" /></TabsTrigger>
+                      <TabsTrigger value="extras" title="Extras" className="rounded-[5px] data-[state=active]:bg-white data-[state=active]:shadow-md transition-all"><Award className="w-4 h-4" /></TabsTrigger>
+                    </TabsList>
 
-                 <Tabs value={activeTab} onValueChange={setActiveTab} className="p-6">
-                  <TabsList className="grid grid-cols-4 mb-8 bg-muted/60 p-1 h-14 rounded-[5px]">
-                    <TabsTrigger value="dados" className="rounded-[5px] data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-lg"><User className="w-5 h-5" /></TabsTrigger>
-                    <TabsTrigger value="experiencia" className="rounded-[5px] data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-lg"><Briefcase className="w-5 h-5" /></TabsTrigger>
-                    <TabsTrigger value="formacao" className="rounded-[5px] data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-lg"><GraduationCap className="w-5 h-5" /></TabsTrigger>
-                    <TabsTrigger value="extras" className="rounded-[5px] data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-lg"><Award className="w-5 h-5" /></TabsTrigger>
-                  </TabsList>
+                    <div className="p-6">
+                      <TabsContent value="modelo" className="mt-0 space-y-4">
+                        <div className="space-y-1 mb-6">
+                          <h3 className="font-black text-sm uppercase tracking-widest text-primary">1. Escolha o Estilo</h3>
+                          <p className="text-xs text-muted-foreground">O layout ideal para seu momento de carreira.</p>
+                        </div>
+                        <div className="grid grid-cols-1 gap-3">
+                          {TEMPLATES.map(t => (
+                            <button
+                              key={t.id}
+                              onClick={() => setData(p => ({ ...p, template: t.id }))}
+                              className={`p-4 rounded-[5px] border-2 transition-all flex items-center gap-4 text-left ${data.template === t.id ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'border-slate-100 hover:border-primary/20 bg-slate-50/50'}`}
+                            >
+                              <div className={`w-10 h-10 rounded-[5px] flex items-center justify-center ${data.template === t.id ? 'bg-primary text-white' : 'bg-white text-slate-400 border'}`}>
+                                <t.icon className="w-5 h-5" />
+                              </div>
+                              <div className="flex-1">
+                                <span className={`text-xs font-black uppercase block ${data.template === t.id ? 'text-primary' : 'text-slate-600'}`}>{t.name}</span>
+                                <span className="text-[10px] text-muted-foreground font-medium">{t.desc}</span>
+                              </div>
+                              {data.template === t.id && <Star className="w-4 h-4 text-primary fill-primary" />}
+                            </button>
+                          ))}
+                        </div>
+                        <Button className="w-full mt-6 rounded-[5px] font-bold h-11" onClick={() => setActiveTab('dados')}>Próximo Passo: Dados Pessoais <ArrowRight className="w-4 h-4 ml-2" /></Button>
+                      </TabsContent>
 
-                  <TabsContent value="dados" className="space-y-4">
+                  <TabsContent value="dados" className="mt-0 space-y-4">
                     <div className="grid grid-cols-1 gap-4">
                       <div className="space-y-2">
                         <Label className="font-black text-[10px] uppercase ml-1 opacity-70">Nome Completo</Label>
@@ -493,7 +500,7 @@ export default function CurriculumPage() {
                     </div>
                   </TabsContent>
 
-                  <TabsContent value="experiencia" className="space-y-4">
+                  <TabsContent value="experiencia" className="mt-0 space-y-4">
                     <div className="flex items-center justify-between mb-4">
                        <h3 className="font-black text-xs uppercase tracking-widest text-primary">Experiências</h3>
                        <Button variant="outline" size="sm" onClick={addExperience} className="rounded-[5px] h-8 px-3 border-2"><Plus className="w-3 h-3 mr-1" /> Novo</Button>
@@ -514,7 +521,7 @@ export default function CurriculumPage() {
                     </div>
                   </TabsContent>
 
-                  <TabsContent value="formacao" className="space-y-4">
+                  <TabsContent value="formacao" className="mt-0 space-y-4">
                     <div className="flex items-center justify-between mb-4">
                        <h3 className="font-black text-xs uppercase tracking-widest text-primary">Educação</h3>
                        <Button variant="outline" size="sm" onClick={addEducation} className="rounded-[5px] h-8 px-3 border-2"><Plus className="w-3 h-3 mr-1" /> Novo</Button>
@@ -530,7 +537,7 @@ export default function CurriculumPage() {
                     </div>
                   </TabsContent>
 
-                  <TabsContent value="extras" className="space-y-8">
+                  <TabsContent value="extras" className="mt-0 space-y-8">
                     <div className="space-y-4">
                       <Label className="font-black text-[10px] uppercase ml-1 opacity-70">Competências</Label>
                       <div className="flex gap-2">
@@ -588,23 +595,22 @@ export default function CurriculumPage() {
                       </div>
                     </div>
                   </TabsContent>
-                </Tabs>
+                    </div>
+                  </Tabs>
               </Card>
             </div>
 
             {/* Preview Column */}
             <div className={`lg:col-span-7 ${mode === 'edit' ? 'hidden lg:block' : ''}`}>
               <div className="sticky top-24">
-                <div className="bg-slate-200/50 rounded-t-[5px] border-x-4 border-t-4 border-white p-3 flex items-center justify-between">
-                  <div className="flex gap-1.5 px-3">
-                    <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
-                  </div>
-                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-2">Voo Certo Previewer v2.0</span>
+                <div className="bg-white rounded-[5px] shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden transition-all duration-700 transform hover:scale-[1.01]">
+                   <CurriculumPreview data={data} />
                 </div>
-                <div className="shadow-2xl rounded-b-[5px] overflow-hidden border-4 border-white shadow-primary/5 transform-gpu transition-all duration-700">
-                  <CurriculumPreview data={data} />
+                <div className="mt-4 flex items-center justify-center gap-2">
+                   <div className="flex items-center gap-1.5 px-3 py-1 bg-slate-100 rounded-full border border-slate-200">
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                      <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Preview em tempo real</span>
+                   </div>
                 </div>
               </div>
             </div>
