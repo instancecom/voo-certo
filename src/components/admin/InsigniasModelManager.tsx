@@ -12,6 +12,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription,
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 import {
   Loader2, Upload, ImageIcon, CheckCircle2, CloudIcon, Plus, Pencil, Trash2, Search, Award, FolderPlus,
 } from 'lucide-react';
