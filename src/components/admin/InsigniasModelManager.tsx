@@ -41,6 +41,16 @@ const RARITY_COLORS: Record<string, string> = {
   platinum: 'text-cyan-300 bg-cyan-900/20 border-cyan-600/40',
 };
 
+const getDriveImageUrl = (url: string | null): string | null => {
+  if (!url) return null;
+  if (url.includes('lh3.googleusercontent.com')) return url;
+  const ucMatch = url.match(/drive\.google\.com\/uc\?export=view&id=([^&]+)/);
+  if (ucMatch) return `https://lh3.googleusercontent.com/d/${ucMatch[1]}`;
+  const fileMatch = url.match(/drive\.google\.com\/file\/d\/([^/]+)/);
+  if (fileMatch) return `https://lh3.googleusercontent.com/d/${fileMatch[1]}`;
+  return url;
+};
+
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
 export function InsigniasModelManager() {
@@ -394,16 +404,18 @@ export function InsigniasModelManager() {
               >
                 {/* Preview 40x40 */}
                 <div className="w-10 h-10 rounded-md border border-border bg-muted/30 flex items-center justify-center overflow-hidden shrink-0">
-                  {insignia.model_url ? (
+                   {insignia.model_url ? (
                     <img
-                      src={insignia.model_url}
+                      src={getDriveImageUrl(insignia.model_url) || ''}
                       alt={insignia.name}
                       className="w-full h-full object-contain"
-                      onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                      onError={e => { 
+                        (e.target as HTMLImageElement).style.display = 'none';
+                        (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
+                      }}
                     />
-                  ) : (
-                    <ImageIcon className="w-4 h-4 text-muted-foreground" />
-                  )}
+                  ) : null}
+                  <ImageIcon className={cn("w-4 h-4 text-muted-foreground", insignia.model_url ? "hidden" : "")} />
                 </div>
 
                 {/* Name + rarity */}
@@ -491,7 +503,7 @@ export function InsigniasModelManager() {
                 {filePreview ? (
                   <img src={filePreview} alt="Preview" className="w-full h-full object-contain" />
                 ) : editingInsignia?.model_url ? (
-                  <img src={editingInsignia.model_url} alt={editingInsignia.name} className="w-full h-full object-contain" />
+                  <img src={getDriveImageUrl(editingInsignia.model_url) || ''} alt={editingInsignia.name} className="w-full h-full object-contain" />
                 ) : (
                   <div className="flex flex-col items-center gap-1 text-muted-foreground">
                     <ImageIcon className="w-8 h-8" />

@@ -48,6 +48,16 @@ const rarityLabels: Record<BadgeRarity, string> = {
   platinum: "Platina",
 };
 
+const getDriveImageUrl = (url: string | null): string | null => {
+  if (!url) return null;
+  if (url.includes('lh3.googleusercontent.com')) return url;
+  const ucMatch = url.match(/drive\.google\.com\/uc\?export=view&id=([^&]+)/);
+  if (ucMatch) return `https://lh3.googleusercontent.com/d/${ucMatch[1]}`;
+  const fileMatch = url.match(/drive\.google\.com\/file\/d\/([^/]+)/);
+  if (fileMatch) return `https://lh3.googleusercontent.com/d/${fileMatch[1]}`;
+  return url;
+};
+
 const conditionTypes = [
   { value: "first_exam_completed", label: "Primeiro simulado concluído" },
   { value: "first_login", label: "Primeiro login" },
@@ -94,6 +104,7 @@ export const InsigniasManager = () => {
     condition_value: 1,
     rarity: "bronze" as BadgeRarity,
     display_order: 0,
+    model_url: "",
   });
 
   const { data: insignias, isLoading } = useQuery({
@@ -165,6 +176,7 @@ export const InsigniasManager = () => {
       condition_value: 1,
       rarity: "bronze",
       display_order: 0,
+      model_url: "",
     });
     setEditingInsignia(null);
     setIsDialogOpen(false);
@@ -179,7 +191,8 @@ export const InsigniasManager = () => {
       condition_type: insignia.condition_type,
       condition_value: insignia.condition_value,
       rarity: insignia.rarity,
-      display_order: insignia.display_order,
+      display_order: insignia.display_order || 0,
+      model_url: insignia.model_url || "",
     });
     setIsDialogOpen(true);
   };
@@ -338,6 +351,18 @@ export const InsigniasManager = () => {
                 />
               </div>
 
+              <div className="space-y-2">
+                <Label>URL da Imagem/Modelo (Opcional)</Label>
+                <Input
+                  value={formData.model_url}
+                  onChange={(e) => setFormData({ ...formData, model_url: e.target.value })}
+                  placeholder="Ex: Link do Google Drive ou URL direta"
+                />
+                <p className="text-[10px] text-muted-foreground">
+                  Suporta links diretos ou links de compartilhamento do Google Drive.
+                </p>
+              </div>
+
               <div className="flex justify-end gap-2 pt-4">
                 <Button type="button" variant="outline" onClick={resetForm}>
                   Cancelar
@@ -379,8 +404,16 @@ export const InsigniasManager = () => {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                          <DynamicIcon name={insignia.icon} size={20} className="text-primary" />
+                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center overflow-hidden border border-border/50">
+                          {insignia.model_url ? (
+                            <img 
+                              src={getDriveImageUrl(insignia.model_url) || ''} 
+                              alt="" 
+                              className="w-full h-full object-contain p-1"
+                            />
+                          ) : (
+                            <DynamicIcon name={insignia.icon} size={20} className="text-primary" />
+                          )}
                         </div>
                         <div>
                           <p className="font-medium">{insignia.name}</p>

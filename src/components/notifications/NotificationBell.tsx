@@ -15,6 +15,17 @@ import { ptBR } from 'date-fns/locale';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
+import { DynamicIcon } from '@/components/ui/dynamic-icon';
+
+const getDriveImageUrl = (url: string | null): string | null => {
+  if (!url) return null;
+  if (url.includes('lh3.googleusercontent.com')) return url;
+  const ucMatch = url.match(/drive\.google\.com\/uc\?export=view&id=([^&]+)/);
+  if (ucMatch) return `https://lh3.googleusercontent.com/d/${ucMatch[1]}`;
+  const fileMatch = url.match(/drive\.google\.com\/file\/d\/([^/]+)/);
+  if (fileMatch) return `https://lh3.googleusercontent.com/d/${fileMatch[1]}`;
+  return url;
+};
 
 interface NotificationBellProps {
   className?: string;
@@ -109,10 +120,22 @@ export function NotificationBell({ className }: NotificationBellProps) {
                         {isNew && (
                            <div className="absolute -left-1 top-0 bottom-0 w-1 bg-red-500 rounded-full" />
                         )}
-                        <div className={`w-12 h-12 rounded-[5px] flex items-center justify-center shrink-0 border transition-colors ${
+                        <div className={`w-12 h-12 rounded-[5px] flex items-center justify-center shrink-0 border transition-colors overflow-hidden ${
                           isNew ? 'bg-accent/10 border-accent/20' : 'bg-muted/30 border-transparent'
                         }`}>
-                          <Trophy className={`w-6 h-6 ${isNew ? 'text-accent' : 'text-muted-foreground/60'}`} />
+                          {ui.insignia?.model_url ? (
+                            <img 
+                              src={getDriveImageUrl(ui.insignia.model_url) || ''} 
+                              alt={ui.insignia.name} 
+                              className="w-full h-full object-contain p-2"
+                            />
+                          ) : (
+                            ui.insignia?.icon ? (
+                              <DynamicIcon name={ui.insignia.icon} size={24} className={isNew ? 'text-accent' : 'text-muted-foreground/60'} />
+                            ) : (
+                              <Trophy className={`w-6 h-6 ${isNew ? 'text-accent' : 'text-muted-foreground/60'}`} />
+                            )
+                          )}
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className={`text-sm leading-tight mb-1 ${isNew ? 'font-bold text-foreground' : 'font-medium text-muted-foreground'}`}>
