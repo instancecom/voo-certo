@@ -163,7 +163,7 @@ export const VerificationsManager = () => {
             Gerencie solicitações de verificação de aprovação ANAC
           </p>
         </div>
-        <Badge variant="secondary" className="text-lg px-3 py-1">
+        <Badge variant="secondary" className="text-[10px] md:text-sm px-2 md:px-3 py-0.5 md:py-1 rounded-[5px] h-fit">
           {pendingVerifications?.length || 0} pendentes
         </Badge>
       </div>
@@ -187,7 +187,7 @@ export const VerificationsManager = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-center py-12 bg-muted/30 rounded-lg"
+          className="text-center py-12 bg-muted/30 rounded-[5px]"
         >
           <CheckCircle className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
           <p className="text-muted-foreground">
@@ -197,7 +197,7 @@ export const VerificationsManager = () => {
           </p>
         </motion.div>
       ) : (
-        <div className="border rounded-lg overflow-hidden">
+        <div className="border rounded-[5px] overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow>
