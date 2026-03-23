@@ -199,47 +199,37 @@ export default function MicrocoursePlayerPage() {
                   {isExpanded ? <ChevronDown className="w-3.5 h-3.5 text-muted-foreground shrink-0" /> : <ChevronRight className="w-3.5 h-3.5 text-muted-foreground shrink-0" />}
                 </button>
 
-                <AnimatePresence>
-                  {isExpanded && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="pl-4 pr-1 pb-1 space-y-0.5">
-                        {lessons.map((lesson, lIdx) => {
-                          const isActive = selectedLesson?.id === lesson.id;
-                          const hasVideo = !!getVideoId(lesson);
+                {isExpanded && (
+                  <div className="pl-4 pr-1 pb-1 space-y-0.5">
+                    {lessons.map((lesson, lIdx) => {
+                      const isActive = selectedLesson?.id === lesson.id;
+                      const hasVideo = !!getVideoId(lesson);
 
-                          return (
-                            <button
-                              key={lesson.id}
-                              onClick={() => handleSelectLesson(lesson)}
-                              className={cn(
-                                "w-full flex items-center gap-2 p-2 rounded-[5px] text-left transition-all text-sm",
-                                isActive
-                                  ? "bg-primary/10 text-primary font-medium"
-                                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
-                              )}
-                            >
-                              <div className={cn(
-                                "w-5 h-5 rounded-[5px] flex items-center justify-center shrink-0 text-[10px] font-medium border",
-                                isActive ? "border-primary bg-primary text-primary-foreground" : "border-border"
-                              )}>
-                                {hasVideo ? <Play className="w-2.5 h-2.5" /> : <span>{lIdx + 1}</span>}
-                              </div>
-                              <span className="flex-1 line-clamp-2 text-xs">{lesson.title}</span>
-                              {!canAccessMicrocursos && <Lock className="w-3 h-3 text-accent shrink-0" />}
-                              {canAccessMicrocursos && lesson.material_url && <FileText className="w-3 h-3 text-success shrink-0" />}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                      return (
+                        <button
+                          key={lesson.id}
+                          onClick={() => handleSelectLesson(lesson)}
+                          className={cn(
+                            "w-full flex items-center gap-2 p-2 rounded-[5px] text-left transition-all text-sm",
+                            isActive
+                              ? "bg-primary/10 text-primary font-medium"
+                              : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                          )}
+                        >
+                          <div className={cn(
+                            "w-5 h-5 rounded-[5px] flex items-center justify-center shrink-0 text-[10px] font-medium border",
+                            isActive ? "border-primary bg-primary text-primary-foreground" : "border-border"
+                          )}>
+                            {hasVideo ? <Play className="w-2.5 h-2.5" /> : <span>{lIdx + 1}</span>}
+                          </div>
+                          <span className="flex-1 line-clamp-2 text-xs">{lesson.title}</span>
+                          {!canAccessMicrocursos && <Lock className="w-3 h-3 text-accent shrink-0" />}
+                          {canAccessMicrocursos && lesson.material_url && <FileText className="w-3 h-3 text-success shrink-0" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             );
           })}

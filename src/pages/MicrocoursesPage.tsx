@@ -211,20 +211,6 @@ export default function MicrocoursesPage() {
             </DropdownMenu>
           </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
           {/* Course Grid - Netflix Style */}
           {isLoading ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
@@ -266,7 +252,7 @@ export default function MicrocoursesPage() {
                     className="group relative"
                   >
                     <div
-                      className="relative aspect-[2/3] rounded-[5px] overflow-hidden cursor-pointer transition-all duration-300 group-hover:scale-[1.03] group-hover:shadow-xl group-hover:shadow-primary/10 border border-transparent hover:border-accent/40"
+                      className="relative aspect-[2/3] rounded-[5px] overflow-hidden cursor-pointer transition-all duration-300 group-hover:scale-[1.03] shadow-lg group-hover:shadow-[#F9A91F]/30 border border-transparent hover:border-[#F9A91F]/40"
                       onClick={() => navigate(`/microcursos/${course.id}`)}
                     >
                       {/* Background */}
@@ -295,8 +281,8 @@ export default function MicrocoursesPage() {
 
                       {/* Play icon on hover */}
                       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div className="w-12 h-12 rounded-[5px] bg-primary/90 backdrop-blur-sm flex items-center justify-center shadow-lg">
-                          <Play className="w-5 h-5 text-primary-foreground ml-0.5" />
+                        <div className="w-12 h-12 rounded-[5px] bg-[#F9A91F] backdrop-blur-sm flex items-center justify-center shadow-[0_0_20px_rgba(249,169,31,0.4)]">
+                          <Play className="w-5 h-5 text-white fill-current" />
                         </div>
                       </div>
 

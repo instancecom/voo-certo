@@ -172,7 +172,7 @@ export default function SimuladosPage() {
                       <div className="space-y-2">
                         {profession.active_modes?.includes('banca_anac') && (
                           <Button variant="outline" size="sm" className="w-full h-11 justify-start rounded-[5px] hover-yellow border-border/50" onClick={() => handleStartSimulado(profession.id, 'banca_anac')}>
-                            <Timer className="w-4 h-4 mr-3 text-primary" />Modo Banca<ArrowRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <Timer className="w-4 h-4 mr-3 text-[#F9A91F]" />Modo Banca<ArrowRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
                           </Button>
                         )}
                         {profession.active_modes?.includes('livre') && (
