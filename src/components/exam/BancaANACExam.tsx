@@ -9,6 +9,7 @@ import { DbQuestion } from '@/hooks/useExams';
 import { BLOCKS } from './ExamModeSelector';
 import { ExamLoadingScreen } from './ExamLoadingScreen';
 import { ShuffledQuestion, prepareBancaQuestions } from '@/lib/examShuffle';
+import { toast } from 'sonner';
 
 interface BlockResult {
   blockNumber: number;
@@ -32,7 +33,7 @@ interface BancaANACExamProps {
   onExit: () => void;
 }
 
-const BLOCK_TIME = 30 * 60;
+const EXAM_TIME = 120 * 60; // 120 minutes total for Banca ANAC
 const QUESTIONS_PER_BLOCK = 20;
 const PASS_THRESHOLD = 0.7;
 
@@ -41,12 +42,10 @@ export function BancaANACExam({ questions, onFinish, onExit }: BancaANACExamProp
   const [currentBlock, setCurrentBlock] = useState(1);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
-  const [timeRemaining, setTimeRemaining] = useState(BLOCK_TIME);
+  const [timeRemaining, setTimeRemaining] = useState(EXAM_TIME);
   const [blockResults, setBlockResults] = useState<BlockResult[]>([]);
-  const [showBlockEndDialog, setShowBlockEndDialog] = useState(false);
   const [showTimeWarning, setShowTimeWarning] = useState(false);
   const [showExitDialog, setShowExitDialog] = useState(false);
-  const [lastBlockResult, setLastBlockResult] = useState<BlockResult | null>(null);
   const [totalTimeSpent, setTotalTimeSpent] = useState(0);
 
   // Shuffle questions on mount
@@ -83,14 +82,10 @@ export function BancaANACExam({ questions, onFinish, onExit }: BancaANACExamProp
       setTimeRemaining={setTimeRemaining}
       blockResults={blockResults}
       setBlockResults={setBlockResults}
-      showBlockEndDialog={showBlockEndDialog}
-      setShowBlockEndDialog={setShowBlockEndDialog}
       showTimeWarning={showTimeWarning}
       setShowTimeWarning={setShowTimeWarning}
       showExitDialog={showExitDialog}
       setShowExitDialog={setShowExitDialog}
-      lastBlockResult={lastBlockResult}
-      setLastBlockResult={setLastBlockResult}
       totalTimeSpent={totalTimeSpent}
       setTotalTimeSpent={setTotalTimeSpent}
       onFinish={onFinish}
@@ -107,10 +102,8 @@ function BancaExamInner({
   answers, setAnswers,
   timeRemaining, setTimeRemaining,
   blockResults, setBlockResults,
-  showBlockEndDialog, setShowBlockEndDialog,
   showTimeWarning, setShowTimeWarning,
   showExitDialog, setShowExitDialog,
-  lastBlockResult, setLastBlockResult,
   totalTimeSpent, setTotalTimeSpent,
   onFinish, onExit,
 }: any) {
@@ -142,8 +135,12 @@ function BancaExamInner({
   }, [currentBlock, showTimeWarning]);
 
   const finishCurrentBlock = useCallback(() => {
-    const timeSpent = BLOCK_TIME - timeRemaining;
-    setTotalTimeSpent((prev: number) => prev + timeSpent);
+    // Current total elapsed time since the beginning of the exam
+    const currentTotalSpent = EXAM_TIME - timeRemaining;
+    // Time spent on THIS block = current total - what was already spent on previous blocks
+    const timeSpentOnThisBlock = currentTotalSpent - totalTimeSpent;
+    
+    setTotalTimeSpent(currentTotalSpent);
 
     let correctCount = 0;
     blockQuestions.forEach((q: ShuffledQuestion) => {
@@ -162,20 +159,13 @@ function BancaExamInner({
       correctAnswers: correctCount,
       percentage,
       passed,
-      timeSpent,
+      timeSpent: timeSpentOnThisBlock,
     };
 
-    setLastBlockResult(result);
-    setBlockResults((prev: BlockResult[]) => [...prev, result]);
-    setShowBlockEndDialog(true);
-  }, [currentBlock, blockQuestions, answers, timeRemaining]);
-
-  const proceedToNextBlock = () => {
-    setShowBlockEndDialog(false);
-    setShowTimeWarning(false);
-
+    
+    // Auto-advance or finish
     if (currentBlock >= 4) {
-      const allResults = [...blockResults, lastBlockResult!];
+      const allResults = [...blockResults, result];
       const totalCorrect = allResults.reduce((acc: number, r: BlockResult) => acc + r.correctAnswers, 0);
       const overallPassed = allResults.every((r: BlockResult) => r.passed);
 
@@ -194,14 +184,17 @@ function BancaExamInner({
         totalQuestions: 80,
         overallPassed,
         answers: originalAnswers,
-        totalTimeSpent: totalTimeSpent + (BLOCK_TIME - timeRemaining),
+        totalTimeSpent: currentTotalSpent,
       });
     } else {
+      setBlockResults((prev: BlockResult[]) => [...prev, result]);
       setCurrentBlock((prev: number) => prev + 1);
       setCurrentQuestionIndex(0);
-      setTimeRemaining(BLOCK_TIME);
+      // No pause, no dialog
+      toast.info(`Bloco ${currentBlock} finalizado. Iniciando Bloco ${currentBlock + 1}...`);
     }
-  };
+  }, [currentBlock, blockQuestions, answers, timeRemaining, blockResults, totalTimeSpent, shuffledQuestions, onFinish]);
+
 
   const submitAnswer = (questionId: string, answer: number) => {
     setAnswers((prev: Record<string, number>) => ({ ...prev, [questionId]: answer }));
@@ -430,64 +423,6 @@ function BancaExamInner({
         </div>
       </footer>
 
-      {/* Block End Dialog */}
-      <Dialog open={showBlockEndDialog} onOpenChange={() => {}}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              {lastBlockResult?.passed ? (
-                <CheckCircle2 className="w-6 h-6 text-success" />
-              ) : (
-                <XCircle className="w-6 h-6 text-destructive" />
-              )}
-              Bloco {currentBlock} Finalizado
-            </DialogTitle>
-            <DialogDescription>
-              Veja seu desempenho neste bloco
-            </DialogDescription>
-          </DialogHeader>
-          
-          {lastBlockResult && (
-            <div className="space-y-4 py-4">
-              <Card className={lastBlockResult.passed ? 'border-success' : 'border-destructive'}>
-                <CardContent className="pt-6">
-                  <div className="text-center">
-                    <div className={`text-4xl font-bold ${lastBlockResult.passed ? 'text-success' : 'text-destructive'}`}>
-                      {lastBlockResult.percentage.toFixed(0)}%
-                    </div>
-                    <p className="text-muted-foreground mt-1">
-                      {lastBlockResult.correctAnswers} de {lastBlockResult.totalQuestions} acertos
-                    </p>
-                    <p className={`font-semibold mt-2 ${lastBlockResult.passed ? 'text-success' : 'text-destructive'}`}>
-                      {lastBlockResult.passed ? '✓ APROVADO neste bloco' : '✗ REPROVADO neste bloco'}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {!lastBlockResult.passed && (
-                <div className="flex items-center gap-2 p-3 rounded-[5px] bg-destructive/10 text-destructive text-sm">
-                  <AlertTriangle className="w-4 h-4" />
-                  <span>Para ser aprovado no simulado, é necessário 70% em todos os blocos.</span>
-                </div>
-              )}
-
-              {currentBlock < 4 && (
-                <p className="text-center text-muted-foreground text-sm">
-                  Próximo: <strong>Bloco {currentBlock + 1}</strong> - {BLOCKS[currentBlock]?.name}
-                </p>
-              )}
-            </div>
-          )}
-
-          <DialogFooter>
-            <Button onClick={proceedToNextBlock} className="w-full">
-              {currentBlock === 4 ? 'Ver Resultado Final' : `Iniciar Bloco ${currentBlock + 1}`}
-              <ChevronRight className="w-4 h-4 ml-2" />
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* Exit Confirmation Dialog */}
       <Dialog open={showExitDialog} onOpenChange={setShowExitDialog}>
