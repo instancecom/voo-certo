@@ -212,7 +212,7 @@ export function Header() {
                   <Button variant="ghost" size="sm" asChild className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''}>
                     <Link to="/auth">Entrar</Link>
                   </Button>
-                  <Button size="sm" asChild className="rounded-[5px] shadow-sm font-semibold hover-yellow hover:text-foreground">
+                  <Button size="sm" asChild className="rounded-[5px] shadow-sm font-semibold hover-yellow">
                     <Link to="/auth">Começar Agora</Link>
                   </Button>
                 </>

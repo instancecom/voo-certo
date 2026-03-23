@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Plane, Mail, Lock, User, Eye, EyeOff, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { Plane, Mail, Lock, User, Eye, EyeOff, ArrowLeft, ShieldCheck, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -181,7 +181,7 @@ export default function AuthPage() {
               type="submit"
               variant="hero"
               size="lg"
-              className="w-full h-12 rounded-[5px] font-bold text-sm hover-yellow hover:text-foreground"
+              className="w-full h-12 rounded-[5px] font-bold text-sm hover-yellow"
               disabled={isLoading}
             >
               {isLoading ? (

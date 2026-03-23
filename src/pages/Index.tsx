@@ -181,7 +181,7 @@ export default function Index() {
                       Começar Grátis por 7 Dias <ArrowRight className="w-5 h-5 ml-2" />
                     </Link>
                   </Button>
-                  <Button variant="outline" size="xl" asChild className="bg-white/5 text-white border-white/20 hover-yellow hover:text-foreground rounded-[5px]">
+                  <Button variant="outline" size="xl" asChild className="bg-white/5 text-white border-white/20 hover-yellow rounded-[5px]">
                     <Link to="/premium" className="flex items-center gap-2">
                       <Crown className="w-5 h-5" /> Ver Planos
                     </Link>
@@ -402,7 +402,7 @@ export default function Index() {
                             </li>
                           ))}
                         </ul>
-                        <Button variant={plan.highlight ? 'hero' : 'outline'} className="w-full h-11 rounded-[5px] font-bold hover-yellow hover:text-foreground" asChild>
+                        <Button variant={plan.highlight ? 'hero' : 'outline'} className="w-full h-11 rounded-[5px] font-bold hover-yellow" asChild>
                           <Link to="/premium">
                             Experimentar Trial
                           </Link>

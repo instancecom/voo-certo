@@ -330,7 +330,7 @@ export default function PremiumPage() {
                       ) : (
                         <Button
                           variant={plan.buttonVariant as any}
-                          className="w-full h-12 rounded-[5px] font-bold text-sm hover-yellow hover:text-foreground transition-all"
+                          className="w-full h-12 rounded-[5px] font-bold text-sm hover-yellow transition-all"
                           onClick={() => handleCheckout(plan.priceId, plan.id)}
                           disabled={!!loading}
                         >
