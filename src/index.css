@@ -153,7 +153,7 @@
   }
 
   .hover-yellow {
-    @apply hover:bg-[#FFFBCC] transition-colors;
+    @apply hover:bg-[#F9A91F] transition-colors;
   }
 }
 
