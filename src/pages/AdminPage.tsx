@@ -38,14 +38,16 @@ import { AdminStatsManager } from '@/components/admin/AdminStatsManager';
 import { PlansAndCouponsManager } from '@/components/admin/PlansAndCouponsManager';
 import { ConnectionsManager } from '@/components/admin/ConnectionsManager';
 import { BrandingManager } from '@/components/admin/BrandingManager';
-import { Palette } from 'lucide-react';
+import { FeaturesManager } from '@/components/admin/FeaturesManager';
+import { Palette, Activity } from 'lucide-react';
 
 type AdminView = 'professions' | 'blocks' | 'questions';
+type AdminTab = 'content' | 'microcourses' | 'guia' | 'insignias-models' | 'verifications' | 'stats' | 'plans' | 'connections' | 'branding' | 'recursos';
 
 export default function AdminPage() {
   const { user, isAdmin, isLoading: authLoading } = useAuth();
   const [view, setView] = useState<AdminView>('professions');
-  const [activeTab, setActiveTab] = useState('content');
+  const [activeTab, setActiveTab] = useState<AdminTab>('content');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isMobile = useIsMobile();
   const [selectedProfessionId, setSelectedProfessionId] = useState<string>('');
@@ -199,6 +201,7 @@ export default function AdminPage() {
                 { value: 'plans', label: 'Planos & Cupons', icon: Tag },
                 { value: 'connections', label: 'Conexões', icon: Plug },
                 { value: 'branding', label: 'Branding', icon: Palette },
+                { value: 'recursos', label: 'Recursos', icon: Activity },
               ];
 
               const currentTab = tabs.find(t => t.value === activeTab);
@@ -261,6 +264,7 @@ export default function AdminPage() {
                   case 'plans': return <PlansAndCouponsManager />;
                   case 'connections': return <ConnectionsManager />;
                   case 'branding': return <BrandingManager />;
+                  case 'recursos': return <FeaturesManager />;
                   default: return null;
                 }
               };

@@ -4,11 +4,20 @@ import { supabase } from '@/integrations/supabase/client';
 interface BrandingSettings {
   logo_url: string | null;
   site_name: string;
+  // Feature Flags
+  features: {
+    microcourses: boolean;
+    career_guide: boolean;
+    achievements: boolean;
+    progress: boolean;
+    curriculum: boolean;
+  };
 }
 
 interface BrandingContextType {
   settings: BrandingSettings;
-  updateSettings: (newSettings: Partial<BrandingSettings>) => Promise<void>;
+  updateSettings: (newSettings: Partial<Omit<BrandingSettings, 'features'>>) => Promise<void>;
+  updateFeatureFlag: (feature: keyof BrandingSettings['features'], active: boolean) => Promise<void>;
   isLoading: boolean;
 }
 
@@ -17,6 +26,13 @@ const BrandingContext = createContext<BrandingContextType | undefined>(undefined
 const DEFAULT_SETTINGS: BrandingSettings = {
   logo_url: null,
   site_name: 'Voo Certo',
+  features: {
+    microcourses: true,
+    career_guide: true,
+    achievements: true,
+    progress: true,
+    curriculum: true,
+  }
 };
 
 export function BrandingProvider({ children }: { children: ReactNode }) {
@@ -32,10 +48,22 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
         .select('key, value');
 
       if (!error && data) {
-        const newSettings = { ...DEFAULT_SETTINGS };
+        const newSettings = { 
+          ...DEFAULT_SETTINGS,
+          features: { ...DEFAULT_SETTINGS.features }
+        };
+        
         data.forEach((item: any) => {
           if (item.key === 'logo_url') newSettings.logo_url = item.value;
           if (item.key === 'site_name') newSettings.site_name = item.value;
+          
+          // Handle feature flags
+          if (item.key.startsWith('feature_')) {
+            const featureName = item.key.replace('feature_', '') as keyof BrandingSettings['features'];
+            if (featureName in newSettings.features) {
+              newSettings.features[featureName] = item.value === 'true';
+            }
+          }
         });
         setSettings(newSettings);
       }
@@ -46,7 +74,7 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const updateSettings = async (newSettings: Partial<BrandingSettings>) => {
+  const updateSettings = async (newSettings: Partial<Omit<BrandingSettings, 'features'>>) => {
     try {
       const updates = Object.entries(newSettings).map(([key, value]) => ({
         key,
@@ -68,12 +96,44 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const updateFeatureFlag = async (feature: keyof BrandingSettings['features'], active: boolean) => {
+    try {
+      const key = `feature_${feature}`;
+      const { error } = await supabase
+        .from('site_settings' as any)
+        .upsert({
+          key,
+          value: active ? 'true' : 'false',
+          updated_at: new Date().toISOString(),
+        }, { onConflict: 'key' });
+
+      if (error) throw error;
+      setSettings(prev => ({
+        ...prev,
+        features: {
+          ...prev.features,
+          [feature]: active
+        }
+      }));
+    } catch (err) {
+      console.error('Failed to update feature flag:', err);
+      // Update locally anyway
+      setSettings(prev => ({
+        ...prev,
+        features: {
+          ...prev.features,
+          [feature]: active
+        }
+      }));
+    }
+  };
+
   useEffect(() => {
     fetchBranding();
   }, []);
 
   return (
-    <BrandingContext.Provider value={{ settings, updateSettings, isLoading }}>
+    <BrandingContext.Provider value={{ settings, updateSettings, updateFeatureFlag, isLoading }}>
       {children}
     </BrandingContext.Provider>
   );

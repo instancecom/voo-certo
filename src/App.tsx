@@ -24,6 +24,7 @@ import ProfessionExamPage from "./pages/ProfessionExamPage";
 import ImportQuestoesPage from "./pages/ImportQuestoesPage";
 import NotFound from "./pages/NotFound";
 import { AdminGuard } from "./components/AdminGuard";
+import { FeatureGuard } from "./components/FeatureGuard";
 
 const queryClient = new QueryClient();
 
@@ -49,13 +50,13 @@ const App = () => (
                 <Route path="/admin/importar-questoes" element={<ImportQuestoesPage />} />
               </Route>
   
-              <Route path="/meu-progresso" element={<ProgressPage />} />
-              <Route path="/conquistas" element={<ConquistasPage />} />
-              <Route path="/guia-carreira" element={<GuiaCarreiraPage />} />
-              <Route path="/guia-carreira/:guideId" element={<GuiaCarreiraDetailPage />} />
-              <Route path="/microcursos" element={<MicrocoursesPage />} />
-              <Route path="/microcursos/:courseId" element={<MicrocoursePlayerPage />} />
-              <Route path="/curriculo" element={<CurriculumPage />} />
+              <Route path="/meu-progresso" element={<FeatureGuard feature="progress"><ProgressPage /></FeatureGuard>} />
+              <Route path="/conquistas" element={<FeatureGuard feature="achievements"><ConquistasPage /></FeatureGuard>} />
+              <Route path="/guia-carreira" element={<FeatureGuard feature="career_guide"><GuiaCarreiraPage /></FeatureGuard>} />
+              <Route path="/guia-carreira/:guideId" element={<FeatureGuard feature="career_guide"><GuiaCarreiraDetailPage /></FeatureGuard>} />
+              <Route path="/microcursos" element={<FeatureGuard feature="microcourses"><MicrocoursesPage /></FeatureGuard>} />
+              <Route path="/microcursos/:courseId" element={<FeatureGuard feature="microcourses"><MicrocoursePlayerPage /></FeatureGuard>} />
+              <Route path="/curriculo" element={<FeatureGuard feature="curriculum"><CurriculumPage /></FeatureGuard>} />
               <Route path="/premium" element={<PremiumPage />} />
               <Route path="/simulado-profissao/:professionId" element={<ProfessionExamPage />} />
               <Route path="*" element={<NotFound />} />

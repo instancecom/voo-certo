@@ -90,12 +90,24 @@ export function Header() {
 
   const menuItems = [
     { to: '/simulados', label: 'Simulados', icon: BookOpen, prefetch: prefetchCategories },
-    { to: '/guia-carreira', label: 'Guia de Carreira', icon: GraduationCap, prefetch: prefetchCareerGuides },
-    { to: '/microcursos', label: 'Microcursos', icon: Sparkles, prefetch: prefetchMicrocourses },
-    { to: '/conquistas', label: 'Conquistas', icon: Award, authOnly: true },
-    { to: '/meu-progresso', label: 'Progresso', icon: TrendingUp, authOnly: true },
-    { to: '/curriculo', label: 'Currículo', icon: FileText, authOnly: true },
+    { to: '/guia-carreira', label: 'Guia de Carreira', icon: GraduationCap, prefetch: prefetchCareerGuides, feature: 'career_guide' as const },
+    { to: '/microcursos', label: 'Microcursos', icon: Sparkles, prefetch: prefetchMicrocourses, feature: 'microcourses' as const },
+    { to: '/conquistas', label: 'Conquistas', icon: Award, authOnly: true, feature: 'achievements' as const },
+    { to: '/meu-progresso', label: 'Progresso', icon: TrendingUp, authOnly: true, feature: 'progress' as const },
+    { to: '/curriculo', label: 'Currículo', icon: FileText, authOnly: true, feature: 'curriculum' as const },
   ];
+
+  const filteredMenuItems = menuItems.filter(item => {
+    // Check if user is authenticated if authOnly is true
+    if (item.authOnly && !user) return false;
+    
+    // Check if feature is enabled in branding settings
+    if (item.feature && branding.features && branding.features[item.feature] === false) {
+      return false;
+    }
+    
+    return true;
+  });
 
   return (
     <header
@@ -126,10 +138,10 @@ export function Header() {
               </>
             )}
           </Link>
-
+ 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
-            {menuItems.filter(item => !item.authOnly || user).map(item => (
+            {filteredMenuItems.map(item => (
               <Link
                 key={item.to}
                 to={item.to}
@@ -259,8 +271,7 @@ export function Header() {
             className="md:hidden bg-white border-b border-border overflow-hidden"
           >
             <div className="container mx-auto px-4 py-4 space-y-1">
-              {menuItems.map((item) => {
-                if (item.authOnly && !user) return null;
+              {filteredMenuItems.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
