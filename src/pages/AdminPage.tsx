@@ -193,6 +193,7 @@ export default function AdminPage() {
             {(() => {
               const tabs = [
                 { value: 'content', label: 'Profissões & Blocos', icon: Briefcase },
+                { value: 'recursos', label: 'Recursos', icon: Activity },
                 { value: 'microcourses', label: 'Microcursos', icon: BookOpen },
                 { value: 'guia', label: 'Guia de Carreira', icon: Map },
                 { value: 'insignias-models', label: 'Modelos PNG', icon: ImageIcon },
@@ -201,7 +202,6 @@ export default function AdminPage() {
                 { value: 'plans', label: 'Planos & Cupons', icon: Tag },
                 { value: 'connections', label: 'Conexões', icon: Plug },
                 { value: 'branding', label: 'Branding', icon: Palette },
-                { value: 'recursos', label: 'Recursos', icon: Activity },
               ];
 
               const currentTab = tabs.find(t => t.value === activeTab);
@@ -294,8 +294,8 @@ export default function AdminPage() {
                   ) : (
                     /* Desktop: side nav */
                     <div className="flex gap-6">
-                      <aside className="w-56 shrink-0">
-                        <div className="sticky top-24 bg-card border border-border rounded-xl p-3">
+                      <aside className="w-56 shrink-0 h-fit sticky top-24">
+                        <div className="bg-card border border-border rounded-xl p-3 max-h-[calc(100vh-120px)] overflow-y-auto scrollbar-none">
                           <TabButtons />
                         </div>
                       </aside>
