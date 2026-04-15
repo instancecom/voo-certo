@@ -220,8 +220,69 @@ Deno.serve(async (req) => {
         }, { onConflict: "user_id" });
 
       return new Response(
-        `<html><body><h2>✅ Google Drive conectado!</h2><p>Pasta pronta.</p><script>if(window.opener){window.opener.postMessage({type:'drive_connected'},'*');}setTimeout(()=>window.close(),2000);</script></body></html>`,
-        { headers: { "Content-Type": "text/html" } }
+        `<!DOCTYPE html>
+        <html>
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Conexão bem sucedida</title>
+            <style>
+              body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                margin: 0;
+                background-color: #0f172a;
+                color: #f8fafc;
+              }
+              .container {
+                text-align: center;
+                padding: 2rem;
+                background: rgba(30, 41, 59, 0.5);
+                border-radius: 1rem;
+                border: 1px solid rgba(16, 185, 129, 0.2);
+                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+                backdrop-filter: blur(8px);
+                max-width: 400px;
+                width: 90%;
+              }
+              h2 { color: #10b981; margin-bottom: 0.5rem; }
+              p { color: #94a3b8; font-size: 0.9375rem; }
+              .status { color: #4ade80; font-weight: 500; margin: 1rem 0; }
+              .loader {
+                border: 2px solid rgba(255, 255, 255, 0.1);
+                border-top: 2px solid #10b981;
+                border-radius: 50%;
+                width: 20px;
+                height: 20px;
+                animation: spin 1s linear infinite;
+                display: inline-block;
+                margin-top: 1rem;
+              }
+              @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <h2>✅ Google Drive Conectado!</h2>
+              <p>Sua conta foi vinculada com sucesso ao Voo Certo.</p>
+              <div class="status">Pasta configurada e pronta.</div>
+              <p>Esta janela fechará automaticamente...</p>
+              <div class="loader"></div>
+            </div>
+            <script>
+              if (window.opener) {
+                window.opener.postMessage({ type: 'drive_connected' }, '*');
+              }
+              setTimeout(() => {
+                window.close();
+              }, 2500);
+            </script>
+          </body>
+        </html>`,
+        { headers: { "Content-Type": "text/html; charset=utf-8" } }
       );
     }
 

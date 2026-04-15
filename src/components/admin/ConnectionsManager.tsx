@@ -132,7 +132,7 @@ export function ConnectionsManager() {
       if (error) throw error;
       if (data?.url) {
         window.open(data.url, '_blank', 'width=600,height=700');
-        toast.info('Complete a autorização na janela aberta. Após concluir, atualize esta página.');
+        // We'll listen for the message from the popup instead of asking for manual refresh
       } else {
         throw new Error('URL de autorização não recebida');
       }
@@ -143,6 +143,21 @@ export function ConnectionsManager() {
       setActingProvider(null);
     }
   };
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === 'youtube_connected') {
+        queryClient.invalidateQueries({ queryKey: ['admin-youtube-token'] });
+        toast.success('YouTube conectado com sucesso!');
+      }
+      if (event.data?.type === 'drive_connected') {
+        queryClient.invalidateQueries({ queryKey: ['admin-drive-token'] });
+        toast.success('Google Drive conectado com sucesso!');
+      }
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [queryClient]);
 
   const handleDisconnect = async (provider: 'youtube' | 'drive') => {
     setActingProvider(provider);
