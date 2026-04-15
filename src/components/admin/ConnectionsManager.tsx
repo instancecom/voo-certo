@@ -95,11 +95,8 @@ export function ConnectionsManager() {
   const { data: youtubeToken, isLoading: ytLoading } = useQuery({
     queryKey: ['admin-youtube-token', user?.id],
     queryFn: async () => {
-      const { data } = await supabase
-        .from('admin_youtube_tokens')
-        .select('*')
-        .eq('user_id', user!.id)
-        .maybeSingle();
+      const { data, error } = await supabase.functions.invoke('youtube-upload?action=status');
+      if (error) throw error;
       return data;
     },
     enabled: !!user,
@@ -108,11 +105,8 @@ export function ConnectionsManager() {
   const { data: driveToken, isLoading: driveLoading } = useQuery({
     queryKey: ['admin-drive-token', user?.id],
     queryFn: async () => {
-      const { data } = await supabase
-        .from('admin_drive_tokens')
-        .select('*')
-        .eq('user_id', user!.id)
-        .maybeSingle();
+      const { data, error } = await supabase.functions.invoke('google-drive?action=status');
+      if (error) throw error;
       return data;
     },
     enabled: !!user,
@@ -189,8 +183,8 @@ export function ConnectionsManager() {
           title="YouTube"
           description="Permite upload privado de vídeos para microcursos."
           icon={<Youtube className="w-6 h-6 text-destructive" />}
-          isConnected={!!youtubeToken}
-          connectedInfo={youtubeToken?.channel_title || undefined}
+          isConnected={!!youtubeToken?.connected}
+          connectedInfo={youtubeToken?.email || youtubeToken?.channel_title || undefined}
           isLoading={ytLoading}
           onConnect={() => handleConnect('youtube')}
           onDisconnect={() => handleDisconnect('youtube')}
@@ -202,8 +196,8 @@ export function ConnectionsManager() {
           title="Google Drive"
           description="Permite upload de imagens e PDFs para pastas escolhidas."
           icon={<HardDrive className="w-6 h-6 text-accent" />}
-          isConnected={!!driveToken}
-          connectedInfo={driveToken?.folder_id ? `Pasta: ${driveToken.folder_id.slice(0, 12)}...` : undefined}
+          isConnected={!!driveToken?.connected}
+          connectedInfo={driveToken?.email || (driveToken?.folderId ? `Pasta: ${driveToken.folderId.slice(0, 12)}...` : undefined)}
           isLoading={driveLoading}
           onConnect={() => handleConnect('drive')}
           onDisconnect={() => handleDisconnect('drive')}

@@ -279,17 +279,39 @@ Deno.serve(async (req) => {
       }
 
       const supabase = getSupabaseAdmin();
-      const { data } = await supabase
+      const { data: tokenData } = await supabase
         .from("admin_youtube_tokens")
         .select("channel_id, channel_title, updated_at")
         .eq("user_id", user.id)
         .maybeSingle();
 
+      if (!tokenData) {
+        return new Response(JSON.stringify({ connected: false }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Buscar e-mail do usuário no Google
+      let email = null;
+      try {
+        const accessToken = await getValidAccessToken(user.id);
+        const userRes = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        if (userRes.ok) {
+          const userData = await userRes.json();
+          email = userData.email;
+        }
+      } catch (err) {
+        console.error("Erro ao buscar email do YouTube:", err);
+      }
+
       return new Response(
         JSON.stringify({
-          connected: !!data,
-          channel_id: data?.channel_id,
-          channel_title: data?.channel_title,
+          connected: true,
+          channel_id: tokenData.channel_id,
+          channel_title: tokenData.channel_title,
+          email: email,
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );

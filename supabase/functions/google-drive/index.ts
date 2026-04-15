@@ -295,13 +295,38 @@ Deno.serve(async (req) => {
         });
       }
       const supabase = getSupabaseAdmin();
-      const { data } = await supabase
+      const { data: tokenData } = await supabase
         .from("admin_drive_tokens")
-        .select("folder_id")
+        .select("folder_id, access_token")
         .eq("user_id", user.id)
         .maybeSingle();
 
-      return new Response(JSON.stringify({ connected: !!data, folderId: data?.folder_id }), {
+      if (!tokenData) {
+        return new Response(JSON.stringify({ connected: false }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Buscar info do usuário no Google
+      let email = null;
+      try {
+        const { accessToken } = await getValidAccessToken(user.id);
+        const userRes = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        if (userRes.ok) {
+          const userData = await userRes.json();
+          email = userData.email;
+        }
+      } catch (err) {
+        console.error("Erro ao buscar email do Drive:", err);
+      }
+
+      return new Response(JSON.stringify({ 
+        connected: true, 
+        folderId: tokenData.folder_id,
+        email: email 
+      }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
