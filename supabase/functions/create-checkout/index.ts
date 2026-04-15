@@ -25,7 +25,12 @@ serve(async (req) => {
     const { priceId, promotionCodeId } = await req.json();
     if (!priceId) throw new Error("priceId is required");
 
-    const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", { apiVersion: "2025-08-27.basil" });
+    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY") || "";
+    if (!stripeKey) {
+      console.error("STRIPE_SECRET_KEY is not set");
+      throw new Error("Configuração do servidor incompleta (STRIPE_SECRET_KEY)");
+    }
+    const stripe = new Stripe(stripeKey, { apiVersion: "2024-06-20" });
     
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     let customerId;
@@ -57,10 +62,13 @@ serve(async (req) => {
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Checkout error:", error);
-    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }), {
-      status: 500,
+    return new Response(JSON.stringify({ 
+      error: error?.message || "Erro desconhecido",
+      details: error?.raw?.message || error?.type || null
+    }), {
+      status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }

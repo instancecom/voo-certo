@@ -32,7 +32,7 @@ serve(async (req) => {
     const { data: isAdminData } = await supabaseClient.rpc("is_admin", { _user_id: user.id });
     if (!isAdminData) throw new Error("Admin access required");
 
-    const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
+    const stripe = new Stripe(stripeKey, { apiVersion: "2024-06-20" });
     const body = await req.json();
     const { action } = body;
 
