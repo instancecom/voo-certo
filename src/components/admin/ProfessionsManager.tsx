@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import { DriveImageUpload } from './DriveImageUpload';
 
 interface Profession {
   id: string;
@@ -23,6 +24,7 @@ interface Profession {
   active_modes: string[] | null;
   total_time: number | null;
   display_order: number | null;
+  image_url: string | null;
   created_at: string;
   block_count?: number;
   question_count?: number;
@@ -43,6 +45,7 @@ export function ProfessionsManager({ onSelectProfession }: ProfessionsManagerPro
     icon: '✈️',
     total_time: 120,
     display_order: 0,
+    image_url: '',
     active_modes: ['livre'] as string[],
   });
 
@@ -96,6 +99,7 @@ export function ProfessionsManager({ onSelectProfession }: ProfessionsManagerPro
             active_modes: data.active_modes,
             total_time: data.total_time,
             display_order: data.display_order,
+            image_url: data.image_url || null,
           })
           .eq('id', data.id);
         if (error) throw error;
@@ -110,6 +114,7 @@ export function ProfessionsManager({ onSelectProfession }: ProfessionsManagerPro
             active_modes: data.active_modes,
             total_time: data.total_time,
             display_order: data.display_order,
+            image_url: data.image_url || null,
             is_active: true,
           });
         if (error) throw error;
@@ -160,6 +165,7 @@ export function ProfessionsManager({ onSelectProfession }: ProfessionsManagerPro
       icon: profession.icon || '✈️',
       total_time: profession.total_time || 120,
       display_order: profession.display_order || 0,
+      image_url: profession.image_url || '',
       active_modes: profession.active_modes || ['livre'],
     });
     setShowDialog(true);
@@ -300,6 +306,12 @@ export function ProfessionsManager({ onSelectProfession }: ProfessionsManagerPro
           </DialogHeader>
 
           <div className="space-y-4 py-4">
+            <DriveImageUpload 
+              label="Capa da Profissão (Google Drive)"
+              value={formData.image_url}
+              onChange={(url) => setFormData(prev => ({ ...prev, image_url: url }))}
+            />
+
             <div className="space-y-2">
               <Label htmlFor="name">Nome da Profissão *</Label>
               <Input

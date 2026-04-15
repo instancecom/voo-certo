@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import { DriveImageUpload } from './DriveImageUpload';
 
 interface Block {
   id: string;
@@ -22,6 +23,7 @@ interface Block {
   display_order: number | null;
   time_limit: number | null;
   num_questions_expected: number | null;
+  image_url: string | null;
   created_at: string;
   question_count?: number;
 }
@@ -45,6 +47,7 @@ export function BlocksManager({ professionId, professionName, onBack, onSelectBl
     display_order: 0,
     time_limit: 30,
     num_questions_expected: 20,
+    image_url: '',
   });
 
   // Fetch blocks for this profession
@@ -80,7 +83,6 @@ export function BlocksManager({ professionId, professionName, onBack, onSelectBl
     },
   });
 
-  // Create/Update block
   const saveMutation = useMutation({
     mutationFn: async (data: typeof formData & { id?: string }) => {
       const slug = data.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
@@ -96,6 +98,7 @@ export function BlocksManager({ professionId, professionName, onBack, onSelectBl
             display_order: data.display_order,
             time_limit: data.time_limit,
             num_questions_expected: data.num_questions_expected,
+            image_url: data.image_url || null,
           })
           .eq('id', data.id);
         if (error) throw error;
@@ -111,6 +114,7 @@ export function BlocksManager({ professionId, professionName, onBack, onSelectBl
             display_order: data.display_order,
             time_limit: data.time_limit,
             num_questions_expected: data.num_questions_expected,
+            image_url: data.image_url || null,
           });
         if (error) throw error;
       }
@@ -169,6 +173,7 @@ export function BlocksManager({ professionId, professionName, onBack, onSelectBl
       display_order: block.display_order || 0,
       time_limit: block.time_limit || 30,
       num_questions_expected: block.num_questions_expected || 20,
+      image_url: block.image_url || '',
     });
     setShowDialog(true);
   };
@@ -305,7 +310,13 @@ export function BlocksManager({ professionId, professionName, onBack, onSelectBl
             </DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-4 py-4">
+           <div className="space-y-4 py-4">
+            <DriveImageUpload 
+              label="Capa do Bloco (Google Drive)"
+              value={formData.image_url}
+              onChange={(url) => setFormData(prev => ({ ...prev, image_url: url }))}
+            />
+
             <div className="space-y-2">
               <Label htmlFor="name">Nome do Bloco *</Label>
               <Input
