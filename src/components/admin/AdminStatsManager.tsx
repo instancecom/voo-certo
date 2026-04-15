@@ -114,7 +114,7 @@ export function AdminStatsManager() {
         />
         <StatsCard 
           title="Alunos Filtradros" 
-          value={userStatsList.length} 
+          value={userStatsList?.length || 0} 
           icon={Users} 
           description={`De ${totalUsers} cadastrados`} 
         />
