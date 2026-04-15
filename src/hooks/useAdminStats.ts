@@ -200,20 +200,22 @@ export function useAdminStats(
         };
       });
 
-    const totalUsers = userStatsList.length;
-    const activeUsers = userStatsList.filter(u => u.exam_count > 0).length;
+    const totalUsers = userStatsList.filter(u => u.email !== 'instance.com@gmail.com').length;
+    const activeUsers = userStatsList.filter(u => u.exam_count > 0 && u.email !== 'instance.com@gmail.com').length;
     const totalExams = (examResults || []).filter(r => isWithinRange(r.completed_at)).length;
     
+    const nonAdminProfiles = profiles.filter(p => p.email !== 'instance.com@gmail.com');
+    
     const plansDistribution = [
-      { name: 'Gratuito', value: profiles.filter(p => !p.plan_type || p.plan_type === 'free').length, color: PLAN_COLORS['Gratuito'] },
-      { name: 'Solo', value: profiles.filter(p => p.plan_type === 'solo').length, color: PLAN_COLORS['Solo'] },
-      { name: 'Tripulante', value: profiles.filter(p => p.plan_type === 'tripulante').length, color: PLAN_COLORS['Tripulante'] },
-      { name: 'Comandante', value: profiles.filter(p => p.plan_type === 'comandante').length, color: PLAN_COLORS['Comandante'] },
+      { name: 'Gratuito', value: nonAdminProfiles.filter(p => !p.plan_type || p.plan_type === 'free').length, color: PLAN_COLORS['Gratuito'] },
+      { name: 'Solo', value: nonAdminProfiles.filter(p => p.plan_type === 'solo').length, color: PLAN_COLORS['Solo'] },
+      { name: 'Tripulante', value: nonAdminProfiles.filter(p => p.plan_type === 'tripulante').length, color: PLAN_COLORS['Tripulante'] },
+      { name: 'Comandante', value: nonAdminProfiles.filter(p => p.plan_type === 'comandante').length, color: PLAN_COLORS['Comandante'] },
     ];
 
-    const totalRevenue = profiles.reduce((acc, p) => acc + (PLAN_PRICE[p.plan_type || 'free'] || 0), 0);
+    const totalRevenue = nonAdminProfiles.reduce((acc, p) => acc + (PLAN_PRICE[p.plan_type || 'free'] || 0), 0);
     const avgScoreTotal = totalExams ? Math.round((examResults || []).filter(r => isWithinRange(r.completed_at)).reduce((a, r) => a + r.score, 0) / totalExams) : 0;
-    const aiQuestionsTotal = profiles.reduce((acc, p) => acc + (p.ai_questions_count || 0), 0);
+    const aiQuestionsTotal = nonAdminProfiles.reduce((acc, p) => acc + (p.ai_questions_count || 0), 0);
 
     // Chart data for exams over time
     const examsTimeline = (examResults || [])

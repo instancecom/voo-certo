@@ -41,11 +41,20 @@ export function UserStatsTable({ userStats }: UserStatsTableProps) {
             </thead>
             <tbody className="divide-y">
               {userStats.length > 0 ? (
-                userStats.map((u) => (
-                  <tr key={u.user_id} className="hover:bg-muted/10 transition-colors group">
-                    <td className="px-6 py-4">
+                  <tr 
+                    key={u.user_id} 
+                    className={`hover:bg-muted/10 transition-colors group ${u.email === 'instance.com@gmail.com' ? 'bg-accent/5' : ''}`}
+                  >
+                    <td className={`px-6 py-4 ${u.email === 'instance.com@gmail.com' ? 'border-l-4 border-l-accent' : ''}`}>
                       <div className="flex flex-col">
-                        <span className="font-bold text-foreground group-hover:text-primary transition-colors">{u.full_name || 'Aluno Sem Nome'}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-foreground group-hover:text-primary transition-colors">{u.full_name || 'Aluno Sem Nome'}</span>
+                          {u.email === 'instance.com@gmail.com' && (
+                            <Badge className="bg-accent/20 text-accent border-accent/30 text-[9px] font-black h-4 px-1 rounded-sm uppercase tracking-tighter">
+                              Admin
+                            </Badge>
+                          )}
+                        </div>
                         <span className="text-[10px] text-muted-foreground font-medium">{u.email}</span>
                       </div>
                     </td>
