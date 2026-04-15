@@ -125,8 +125,7 @@ export function ConnectionsManager() {
       if (!session) { toast.error('Sessão expirada. Faça login novamente.'); return; }
 
       const funcName = provider === 'youtube' ? 'youtube-upload' : 'google-drive';
-      const { data, error } = await supabase.functions.invoke(funcName, {
-        body: { action: 'auth-url' },
+      const { data, error } = await supabase.functions.invoke(`${funcName}?action=auth_url`, {
         headers: { Authorization: `Bearer ${session.access_token}` },
       });
 
