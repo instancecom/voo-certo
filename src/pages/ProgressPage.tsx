@@ -64,43 +64,48 @@ export default function ProgressPage() {
       .map(d => new Date(d))
       .sort((a, b) => b.getTime() - a.getTime());
 
-    if (sortedDates.length > 0) {
-      let checkDate = new Date();
-      // If no exam today, check yesterday
-      if (differenceInDays(checkDate, sortedDates[0]) > 1) {
-        currentStreak = 0;
-      } else {
-        for (let i = 0; i < sortedDates.length; i++) {
-          if (i === 0) {
-            currentStreak = 1;
-            continue;
-          }
-          if (differenceInDays(sortedDates[i-1], sortedDates[i]) === 1) {
-            currentStreak++;
-          } else {
-            break;
+      if (sortedDates.length > 0) {
+        let checkDate = new Date();
+        const lastExamDate = sortedDates[0];
+        
+        // Safety check for valid dates
+        if (!isNaN(lastExamDate.getTime()) && differenceInDays(checkDate, lastExamDate) > 1) {
+          currentStreak = 0;
+        } else {
+          for (let i = 0; i < sortedDates.length; i++) {
+            if (isNaN(sortedDates[i].getTime())) continue;
+            if (i === 0) {
+              currentStreak = 1;
+              continue;
+            }
+            if (isNaN(sortedDates[i-1].getTime())) break;
+            if (differenceInDays(sortedDates[i-1], sortedDates[i]) === 1) {
+              currentStreak++;
+            } else {
+              break;
+            }
           }
         }
       }
-    }
 
-    // Subcategory stats
-    const subStats = subcategories.map((sub, index) => {
+    // Subcategory stats - With safety checks
+    const subStats = (subcategories || []).map((sub, index) => {
       const relevantScores: number[] = [];
       userResults.forEach(result => {
-        const exam = exams.find(e => e.id === result.exam_id);
+        if (!result) return;
+        const exam = exams?.find(e => e.id === result.exam_id);
         if (exam?.subcategory_id === sub.id) {
-          relevantScores.push(result.score);
+          relevantScores.push(result.score || 0);
         } else if (result.block_results && Array.isArray(result.block_results)) {
           const block = result.block_results.find((b: any) => 
-            b.blockNumber === index + 1 || b.blockName?.toLowerCase().includes(sub.name.toLowerCase())
+            b && (b.blockNumber === index + 1 || b.blockName?.toLowerCase().includes(sub.name?.toLowerCase() || ''))
           );
-          if (block) relevantScores.push(block.percentage);
+          if (block) relevantScores.push(block.percentage || 0);
         }
       });
 
       const count = relevantScores.length;
-      const avg = count ? Math.round(relevantScores.reduce((a, b) => a + b, 0) / count) : null;
+      const avg = count ? Math.round(relevantScores.reduce((a, b) => a + b, 0) / count) : 0;
       return { ...sub, avg, count, best: count ? Math.max(...relevantScores) : 0 };
     }).filter(s => s.count > 0);
 
