@@ -86,18 +86,15 @@ export function InsigniasModelManager() {
   // Delete state
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  // Check Drive connection
+  // Check Drive connection using the central function logic
   useEffect(() => {
     const checkDrive = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) return;
-        const res = await fetch(`${SUPABASE_URL}/functions/v1/google-drive?action=status`, {
-          headers: { Authorization: `Bearer ${session.access_token}` },
-        });
-        const data = await res.json();
-        setDriveConnected(data.connected);
-      } catch {
+        const { data, error } = await supabase.functions.invoke('google-drive?action=status');
+        if (error) throw error;
+        setDriveConnected(!!data.connected);
+      } catch (err) {
+        console.error('Erro ao validar conexão do Drive:', err);
         setDriveConnected(false);
       }
     };
@@ -147,22 +144,21 @@ export function InsigniasModelManager() {
   const handleConnectDrive = async () => {
     setConnectingDrive(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error('Não autenticado');
-      const res = await fetch(`${SUPABASE_URL}/functions/v1/google-drive?action=auth_url`, {
-        headers: { Authorization: `Bearer ${session.access_token}` },
-      });
-      const data = await res.json();
-      if (data.error) throw new Error(data.error);
+      const { data, error } = await supabase.functions.invoke('google-drive?action=auth_url');
+      if (error) throw error;
+      
       const popup = window.open(data.url, 'google-drive-auth', 'width=600,height=700');
-      const interval = setInterval(() => {
-        if (popup?.closed) {
-          clearInterval(interval);
+      
+      const handleMessage = (event: MessageEvent) => {
+        if (event.data?.type === 'drive_connected') {
           setDriveConnected(true);
           setConnectingDrive(false);
           toast.success('Google Drive conectado!');
+          window.removeEventListener('message', handleMessage);
         }
-      }, 1000);
+      };
+      window.addEventListener('message', handleMessage);
+
     } catch (err: any) {
       toast.error(`Erro: ${err.message}`);
       setConnectingDrive(false);
@@ -174,10 +170,8 @@ export function InsigniasModelManager() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
-      const res = await fetch(`${SUPABASE_URL}/functions/v1/google-drive?action=list_folders`, {
-        headers: { Authorization: `Bearer ${session.access_token}` },
-      });
-      const data = await res.json();
+      const { data, error } = await supabase.functions.invoke('google-drive?action=list_folders');
+      if (error) throw error;
       setDriveFolders(data.folders || []);
     } catch {
       toast.error('Erro ao listar pastas do Drive');
@@ -192,15 +186,10 @@ export function InsigniasModelManager() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
-      const res = await fetch(`${SUPABASE_URL}/functions/v1/google-drive?action=create_folder`, {
+      const { data, error } = await supabase.functions.invoke('google-drive?action=create_folder', {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name: newFolderName.trim() }),
+        body: { name: newFolderName.trim() },
       });
-      const data = await res.json();
       if (data.error) throw new Error(data.error);
       setDriveFolders(prev => [...prev, { id: data.folderId, name: newFolderName.trim() }]);
       setSelectedFolderId(data.folderId);
@@ -295,7 +284,8 @@ export function InsigniasModelManager() {
         formData.append('fileName', fileName);
         formData.append('folderId', selectedFolderId);
 
-        const res = await fetch(`${SUPABASE_URL}/functions/v1/google-drive?action=upload`, {
+        const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+        const res = await fetch(`https://${projectId}.supabase.co/functions/v1/google-drive?action=upload`, {
           method: 'POST',
           headers: { Authorization: `Bearer ${session.access_token}` },
           body: formData,
