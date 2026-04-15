@@ -32,6 +32,7 @@ import {
 import { Plus, Edit, Trash2, Award, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { DynamicIcon } from "@/components/ui/dynamic-icon";
+import { DriveImageUpload } from "./DriveImageUpload";
 import type { BadgeRarity, Insignia } from "@/hooks/useInsignias";
 
 const rarityColors: Record<BadgeRarity, string> = {
@@ -352,14 +353,13 @@ export const InsigniasManager = () => {
               </div>
 
               <div className="space-y-2">
-                <Label>URL da Imagem/Modelo (Opcional)</Label>
-                <Input
+                <DriveImageUpload 
+                  label="URL da Imagem/Modelo (Google Drive)"
                   value={formData.model_url}
-                  onChange={(e) => setFormData({ ...formData, model_url: e.target.value })}
-                  placeholder="Ex: Link do Google Drive ou URL direta"
+                  onChange={(url) => setFormData({ ...formData, model_url: url })}
                 />
                 <p className="text-[10px] text-muted-foreground">
-                  Suporta links diretos ou links de compartilhamento do Google Drive.
+                  O arquivo será salvo na sua pasta do Google Drive e ficará público automaticamente.
                 </p>
               </div>
 
