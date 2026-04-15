@@ -151,15 +151,31 @@ export default function PremiumPage() {
       if (appliedCoupon?.stripe_promotion_code_id) {
         body.promotionCodeId = appliedCoupon.stripe_promotion_code_id;
       }
+      
+      console.log('Iniciando checkout para:', priceId);
       const { data, error } = await supabase.functions.invoke('create-checkout', { body });
-      if (error) throw error;
+      
+      if (error) {
+        console.error('Erro na Edge Function:', error);
+        // Tenta extrair mensagem detalhada se disponível no erro
+        let detailedMessage = error.message;
+        
+        // Em algumas versões do SDK, o corpo do erro 400 pode estar acessível
+        // Se não, ao menos mostramos que foi um erro de função
+        toast.error(`Erro ao iniciar checkout: ${detailedMessage}`);
+        setLoading(null);
+        return;
+      }
       
       if (data?.url) {
         window.location.href = data.url;
         return;
       }
+      
+      throw new Error('URL de checkout não recebida');
     } catch (err: any) {
-      toast.error(`Erro ao iniciar checkout: ${err.message}`);
+      console.error('Erro catch checkout:', err);
+      toast.error(`Erro ao iniciar checkout: ${err.message || 'Erro inesperado'}`);
       setLoading(null);
     }
   };
