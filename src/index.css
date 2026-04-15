@@ -153,7 +153,12 @@
   }
 
   .hover-yellow {
-    @apply !hover:bg-[#F5F2EE] !hover:border-[#F7CE87] !hover:text-foreground transition-all;
+    @apply transition-all;
+  }
+  .hover-yellow:hover {
+    background-color: #F5F2EE !important;
+    border-color: #F7CE87 !important;
+    color: hsl(var(--foreground)) !important;
   }
 }
 
