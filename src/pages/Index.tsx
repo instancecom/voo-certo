@@ -170,7 +170,7 @@ export default function Index() {
                   Simulados realistas baseados em provas reais, IA explicativa e um roadmap completo para sua carreira na aviação.
                 </p>
 
-                <p className="text-sm text-accent/80 mb-8 flex items-center gap-2">
+                <p className="text-sm text-success/90 mb-8 flex items-center gap-2">
                   <BadgeCheck className="w-4 h-4" />
                   Conteúdo desenvolvido por especialistas com base em exames reais.
                 </p>
