@@ -210,7 +210,7 @@ export default function ImportQuestoesPage() {
                   >
                     {selectedBlockId === 'none' 
                       ? "Usar Bloco do CSV (Requer coluna bloco_id)"
-                      : blocks?.find((b) => b.id === selectedBlockId)?.name + " (ID: " + selectedBlockId + ")" || "Selecione um bloco..."}
+                      : blocks?.find((b) => b.id === selectedBlockId)?.name || "Selecione um bloco..."}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
@@ -250,7 +250,7 @@ export default function ImportQuestoesPage() {
                                 selectedBlockId === block.id ? "opacity-100" : "opacity-0"
                               )}
                             />
-                            {block.name} (ID: {block.id})
+                            {block.name}
                           </CommandItem>
                         ))}
                       </CommandGroup>
