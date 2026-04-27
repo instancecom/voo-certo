@@ -96,6 +96,11 @@ export default function PremiumPage() {
   }, [searchParams]);
 
   useEffect(() => {
+    // Garante que o loading seja resetado se o usuário voltar do checkout
+    setLoading(null);
+  }, []);
+
+  useEffect(() => {
     if (!user) return;
     const checkSub = async () => {
       try {
