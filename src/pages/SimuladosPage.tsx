@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Plane, BookOpen, Crown, ArrowRight, Timer, Zap, Layers, ShieldCheck, Lock } from 'lucide-react';
+import { Plane, BookOpen, Crown, ArrowRight, Timer, Zap, Layers, ShieldCheck, Lock, BadgeCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { usePlan } from '@/hooks/usePlan';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { PageTransition } from '@/components/PageTransition';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -286,5 +287,3 @@ export default function SimuladosPage() {
     </PageTransition>
   );
 }
-
-import { BadgeCheck } from 'lucide-react';
