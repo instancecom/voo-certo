@@ -41,44 +41,45 @@ export default function ProgressPage() {
   const [historyFilter, setHistoryFilter] = useState<'all' | 'bloco' | 'livre' | 'banca'>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Process data
+  // Process data with enhanced safety
   const stats = useMemo(() => {
-    if (!examResults || !exams || !subcategories) return null;
+    try {
+      if (!examResults || !exams || !subcategories) return null;
 
-    const userResults = [...examResults].sort((a, b) => 
-      new Date(b.completed_at).getTime() - new Date(a.completed_at).getTime()
-    );
-    
-    const totalExams = userResults.length;
-    if (totalExams === 0) return { totalExams: 0 };
+      const userResults = [...examResults]
+        .filter(r => r && r.completed_at) // Filter out malformed results
+        .sort((a, b) => {
+          const dateA = new Date(a.completed_at).getTime();
+          const dateB = new Date(b.completed_at).getTime();
+          return (isNaN(dateB) ? 0 : dateB) - (isNaN(dateA) ? 0 : dateA);
+        });
+      
+      const totalExams = userResults.length;
+      if (totalExams === 0) return { totalExams: 0 };
 
-    const averageScore = Math.round(userResults.reduce((acc, r) => acc + r.score, 0) / totalExams);
-    const totalQuestions = userResults.reduce((acc, r) => acc + r.total_questions, 0);
-    const totalCorrect = userResults.reduce((acc, r) => acc + r.correct_answers, 0);
-    const totalTime = userResults.reduce((acc, r) => acc + r.time_spent, 0);
-    const accuracy = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
-    
-    // Streak calculation
-    let currentStreak = 0;
-    const sortedDates = [...new Set(userResults.map(r => new Date(r.completed_at).toDateString()))]
-      .map(d => new Date(d))
-      .sort((a, b) => b.getTime() - a.getTime());
+      const averageScore = Math.round(userResults.reduce((acc, r) => acc + (Number(r.score) || 0), 0) / totalExams);
+      const totalQuestions = userResults.reduce((acc, r) => acc + (Number(r.total_questions) || 0), 0);
+      const totalCorrect = userResults.reduce((acc, r) => acc + (Number(r.correct_answers) || 0), 0);
+      const totalTime = userResults.reduce((acc, r) => acc + (Number(r.time_spent) || 0), 0);
+      const accuracy = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+      
+      // Streak calculation with safety
+      let currentStreak = 0;
+      const sortedDates = [...new Set(userResults.map(r => {
+        const d = new Date(r.completed_at);
+        return isNaN(d.getTime()) ? null : d.toDateString();
+      }))]
+        .filter((d): d is string => d !== null)
+        .map(d => new Date(d))
+        .sort((a, b) => b.getTime() - a.getTime());
 
       if (sortedDates.length > 0) {
         let checkDate = new Date();
         const lastExamDate = sortedDates[0];
         
-        // Safety check for valid dates
-        if (!isNaN(lastExamDate.getTime()) && differenceInDays(checkDate, lastExamDate) > 1) {
-          currentStreak = 0;
-        } else {
-          for (let i = 0; i < sortedDates.length; i++) {
-            if (isNaN(sortedDates[i].getTime())) continue;
-            if (i === 0) {
-              currentStreak = 1;
-              continue;
-            }
-            if (isNaN(sortedDates[i-1].getTime())) break;
+        if (lastExamDate && !isNaN(lastExamDate.getTime()) && differenceInDays(checkDate, lastExamDate) <= 1) {
+          currentStreak = 1;
+          for (let i = 1; i < sortedDates.length; i++) {
             if (differenceInDays(sortedDates[i-1], sortedDates[i]) === 1) {
               currentStreak++;
             } else {
@@ -88,55 +89,63 @@ export default function ProgressPage() {
         }
       }
 
-    // Subcategory stats - With safety checks
-    const subStats = (subcategories || []).map((sub, index) => {
-      const relevantScores: number[] = [];
-      userResults.forEach(result => {
-        if (!result) return;
-        const exam = exams?.find(e => e.id === result.exam_id);
-        if (exam?.subcategory_id === sub.id) {
-          relevantScores.push(result.score || 0);
-        } else if (result.block_results && Array.isArray(result.block_results)) {
-          const block = result.block_results.find((b: any) => 
-            b && (b.blockNumber === index + 1 || b.blockName?.toLowerCase().includes(sub.name?.toLowerCase() || ''))
-          );
-          if (block) relevantScores.push(block.percentage || 0);
-        }
+      // Subcategory stats - With high safety
+      const subStats = (subcategories || []).map((sub, index) => {
+        if (!sub) return null;
+        const relevantScores: number[] = [];
+        userResults.forEach(result => {
+          if (!result) return;
+          const exam = exams?.find(e => e.id === result.exam_id);
+          if (exam?.subcategory_id === sub.id) {
+            relevantScores.push(Number(result.score) || 0);
+          } else if (result.block_results && Array.isArray(result.block_results)) {
+            const block = result.block_results.find((b: any) => 
+              b && (b.blockNumber === index + 1 || b.blockName?.toLowerCase().includes(sub.name?.toLowerCase() || ''))
+            );
+            if (block) relevantScores.push(Number(block.percentage) || 0);
+          }
+        });
+
+        const count = relevantScores.length;
+        const avg = count ? Math.round(relevantScores.reduce((a, b) => a + b, 0) / count) : 0;
+        return { ...sub, avg, count, best: count ? Math.max(...relevantScores) : 0 };
+      }).filter((s): s is any => s !== null && s.count > 0);
+
+      const weakPoints = subStats.filter(s => (s.avg || 0) < 70).sort((a, b) => (a.avg || 0) - (b.avg || 0)).slice(0, 3);
+      const strengths = subStats.filter(s => (s.avg || 0) >= 70).sort((a, b) => (b.avg || 0) - (a.avg || 0)).slice(0, 3);
+
+      const evolutionData = [...userResults].reverse().slice(-15).map((r) => {
+        const d = new Date(r.completed_at);
+        return {
+          date: isNaN(d.getTime()) ? '--' : format(d, 'dd/MM'),
+          score: Number(r.score) || 0
+        };
       });
 
-      const count = relevantScores.length;
-      const avg = count ? Math.round(relevantScores.reduce((a, b) => a + b, 0) / count) : 0;
-      return { ...sub, avg, count, best: count ? Math.max(...relevantScores) : 0 };
-    }).filter(s => s.count > 0);
+      const pieData = [
+        { name: 'Corretas', value: totalCorrect, color: 'hsl(var(--success))' },
+        { name: 'Incorretas', value: Math.max(0, totalQuestions - totalCorrect), color: 'hsl(var(--destructive))' }
+      ];
 
-    const weakPoints = subStats.filter(s => s.avg! < 70).sort((a, b) => (a.avg || 0) - (b.avg || 0)).slice(0, 3);
-    const strengths = subStats.filter(s => s.avg! >= 70).sort((a, b) => (b.avg || 0) - (a.avg || 0)).slice(0, 3);
-
-    const evolutionData = [...userResults].reverse().slice(-15).map((r) => ({
-      date: format(new Date(r.completed_at), 'dd/MM'),
-      score: r.score
-    }));
-
-    const pieData = [
-      { name: 'Corretas', value: totalCorrect, color: 'hsl(var(--success))' },
-      { name: 'Incorretas', value: totalQuestions - totalCorrect, color: 'hsl(var(--destructive))' }
-    ];
-
-    return {
-      userResults,
-      totalExams,
-      averageScore,
-      totalTime,
-      totalQuestions,
-      totalCorrect,
-      accuracy,
-      currentStreak,
-      weakPoints,
-      strengths,
-      subStats,
-      evolutionData,
-      pieData
-    };
+      return {
+        userResults,
+        totalExams,
+        averageScore,
+        totalTime,
+        totalQuestions,
+        totalCorrect,
+        accuracy,
+        currentStreak,
+        weakPoints,
+        strengths,
+        subStats,
+        evolutionData,
+        pieData
+      };
+    } catch (error) {
+      console.error("Error processing progress stats:", error);
+      return { totalExams: 0, error: true };
+    }
   }, [examResults, exams, subcategories]);
 
   const filteredHistory = useMemo(() => {
