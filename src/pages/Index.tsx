@@ -261,19 +261,23 @@ export default function Index() {
         </section>
 
         {/* ═══════ TRUST BAR ═══════ */}
-        <section className="py-6 bg-card border-b border-border">
+        <section className="py-12 bg-card/50 backdrop-blur-sm border-b border-border/50 overflow-hidden">
           <div className="container mx-auto px-4">
-            <div className="flex flex-wrap justify-center items-center gap-8 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+            <div className="flex flex-wrap justify-center items-center gap-12 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">
               {[
                 { icon: Shield, text: 'Privacidade de Dados' },
                 { icon: BadgeCheck, text: 'Simulados Atualizados' },
                 { icon: Heart, text: 'Desenvolvimento Constante' },
                 { icon: Globe, text: 'Acesso Multiplataforma' },
               ].map((item, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <item.icon className="w-4 h-4 text-accent" />
+                <motion.div key={i} 
+                  initial={{ opacity: 0, y: 10 }} 
+                  whileInView={{ opacity: 1, y: 0 }} 
+                  transition={{ delay: i * 0.1 }}
+                  className="flex items-center gap-3 grayscale hover:grayscale-0 transition-all duration-500">
+                  <item.icon className="w-5 h-5 text-accent" />
                   <span>{item.text}</span>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -315,7 +319,7 @@ export default function Index() {
                   benefit: 'Foco Dirigido'
                 }
               ].map((mode, i) => (
-                <Card key={i} className="bg-background border-border hover:border-accent/50 transition-all group rounded-[5px]">
+                <Card key={i} className="bg-background border-border hover:border-accent/50 transition-all group rounded-[5px] hover:-translate-y-2 duration-300">
                   <CardHeader>
                     <div className="w-12 h-12 rounded-[5px] bg-accent/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                       <mode.icon className="w-6 h-6 text-accent" />
@@ -333,6 +337,74 @@ export default function Index() {
                 </Card>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* ═══════ PLATFORM SHOWCASE ═══════ */}
+        <section className="py-24 bg-background overflow-hidden">
+          <div className="container mx-auto px-4">
+             <div className="max-w-5xl mx-auto">
+                <div className="relative group">
+                   {/* Decorative elements */}
+                   <div className="absolute -top-12 -left-12 w-48 h-48 bg-accent/10 rounded-full blur-3xl opacity-50" />
+                   <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-primary/10 rounded-full blur-3xl opacity-50" />
+                   
+                   <motion.div 
+                     initial={{ opacity: 0, y: 40 }}
+                     whileInView={{ opacity: 1, y: 0 }}
+                     viewport={{ once: true }}
+                     className="relative bg-card border border-border rounded-[10px] shadow-[0_0_50px_rgba(0,0,0,0.1)] overflow-hidden">
+                      {/* Browser Header */}
+                      <div className="h-10 bg-muted/50 border-b border-border flex items-center px-4 gap-2">
+                         <div className="flex gap-1.5">
+                            <div className="w-2.5 h-2.5 rounded-full bg-destructive/30" />
+                            <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/30" />
+                            <div className="w-2.5 h-2.5 rounded-full bg-success/30" />
+                         </div>
+                         <div className="mx-auto bg-background/50 rounded-md px-4 py-1 text-[10px] text-muted-foreground/60 font-mono">
+                            app.voocerto.com.br/simulados
+                         </div>
+                      </div>
+                      
+                      {/* Dashboard Content Mockup */}
+                      <div className="p-8 grid md:grid-cols-[200px_1fr] gap-8 opacity-40 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-1000">
+                         <aside className="space-y-4 border-r border-border pr-8 hidden md:block">
+                            <div className="w-full h-8 bg-muted rounded-md" />
+                            <div className="space-y-2">
+                               {[...Array(5)].map((_, i) => (
+                                 <div key={i} className="w-full h-4 bg-muted/50 rounded-md" />
+                               ))}
+                            </div>
+                         </aside>
+                         <main className="space-y-8">
+                            <div className="grid grid-cols-3 gap-4">
+                               {[...Array(3)].map((_, i) => (
+                                 <div key={i} className="h-24 bg-accent/5 border border-accent/10 rounded-md" />
+                               ))}
+                            </div>
+                            <div className="h-64 bg-muted/20 rounded-md relative flex items-center justify-center">
+                               <Rocket className="w-12 h-12 text-accent/20 animate-pulse" />
+                            </div>
+                         </main>
+                      </div>
+
+                      {/* Floating CTAs over the blur */}
+                      <div className="absolute inset-0 flex items-center justify-center bg-background/20 backdrop-blur-[2px] group-hover:backdrop-blur-0 transition-all duration-700">
+                         <motion.div 
+                           whileHover={{ scale: 1.05 }}
+                           whileTap={{ scale: 0.95 }}
+                           className="bg-card/90 backdrop-blur-md border border-accent/20 p-8 rounded-[10px] shadow-2xl text-center max-w-sm">
+                            <Rocket className="w-12 h-12 text-accent mx-auto mb-4" />
+                            <h3 className="text-xl font-bold mb-2">Interface Intuitiva</h3>
+                            <p className="text-sm text-muted-foreground mb-6">Foque apenas no que importa: seu conhecimento.</p>
+                            <Button variant="hero" className="rounded-[5px] w-full" asChild>
+                               <Link to="/simulados">Ver Demonstração</Link>
+                            </Button>
+                         </motion.div>
+                      </div>
+                   </motion.div>
+                </div>
+             </div>
           </div>
         </section>
 
@@ -372,24 +444,48 @@ export default function Index() {
                 </Button>
               </motion.div>
               <div className="relative">
-                 <div className="bg-card border border-border p-6 rounded-[5px] shadow-2xl relative z-10">
+                 <div className="bg-card border border-border p-6 rounded-[5px] shadow-2xl relative z-10 hover:shadow-accent/5 transition-all duration-500 group/chat">
                     <div className="flex items-center gap-3 mb-6 pb-4 border-b border-border">
-                       <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center">
+                       <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center group-hover/chat:rotate-12 transition-transform">
                           <Brain className="w-6 h-6 text-accent-foreground" />
                        </div>
                        <div>
                           <p className="text-sm font-bold">Assistente de Voo IA</p>
-                          <p className="text-[10px] text-success font-bold uppercase">Online e pronto para ajudar</p>
+                          <div className="flex items-center gap-1.5">
+                             <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
+                             <p className="text-[10px] text-success font-bold uppercase tracking-tighter">Pronto para ajudar</p>
+                          </div>
                        </div>
                     </div>
                     <div className="space-y-4">
-                       <div className="bg-muted p-3 rounded-[5px] text-xs max-w-[80%]">
+                       <motion.div 
+                         initial={{ opacity: 0, x: -10 }}
+                         whileInView={{ opacity: 1, x: 0 }}
+                         className="bg-muted p-3 rounded-[10px] rounded-tl-none text-xs max-w-[85%] shadow-sm">
                           "Por que a resposta 'A' está errada nesta questão de RPA?"
-                       </div>
-                       <div className="bg-accent/10 border border-accent/20 p-3 rounded-[5px] text-xs ml-auto max-w-[90%]">
-                          <p className="font-bold text-accent mb-1">Explicação da IA:</p>
-                          A alternativa 'A' refere-se à jornada de trabalho de voo em regime de reserva, enquanto a questão pede especificamente sobre o limite de pousos permitidos para tripulação simples...
-                       </div>
+                       </motion.div>
+                       <motion.div 
+                         initial={{ opacity: 0, x: 10 }}
+                         whileInView={{ opacity: 1, x: 0 }}
+                         transition={{ delay: 0.5 }}
+                         className="bg-accent/10 border border-accent/20 p-4 rounded-[10px] rounded-tr-none text-[11px] ml-auto max-w-[90%] shadow-sm">
+                          <p className="font-bold text-accent mb-1.5 flex items-center gap-1">
+                             <Sparkles className="w-3 h-3" /> Explicação da IA
+                          </p>
+                          <p className="leading-relaxed text-foreground/80">
+                             A alternativa 'A' refere-se ao regime de reserva, mas o enunciado foca no limite de pousos para tripulação simples em voos domésticos...
+                          </p>
+                       </motion.div>
+                       <motion.div 
+                         initial={{ opacity: 0 }}
+                         whileInView={{ opacity: 1 }}
+                         transition={{ delay: 1 }}
+                         className="flex gap-1 items-center pt-2">
+                          <div className="w-1 h-1 bg-accent rounded-full animate-bounce" />
+                          <div className="w-1 h-1 bg-accent rounded-full animate-bounce [animation-delay:0.2s]" />
+                          <div className="w-1 h-1 bg-accent rounded-full animate-bounce [animation-delay:0.4s]" />
+                          <span className="text-[9px] text-muted-foreground ml-1 font-bold italic">IA analisando próxima dúvida...</span>
+                       </motion.div>
                     </div>
                  </div>
                  <div className="absolute -top-10 -right-10 w-40 h-40 bg-accent/20 rounded-full blur-3xl" />
@@ -440,6 +536,52 @@ export default function Index() {
                    </div>
                 </div>
               </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* ═══════ TESTIMONIALS ═══════ */}
+        <section className="py-24 bg-background">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-16">
+              <Badge variant="outline" className="mb-4 text-accent border-accent/20 rounded-[5px] bg-accent/5 font-bold uppercase h-6 px-3">
+                <Users className="w-3 h-3 mr-2" /> Comunidade
+              </Badge>
+              <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
+                Quem decolou, recomenda.
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Centenas de alunos já conquistaram a aprovação utilizando nossa metodologia.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              {TESTIMONIALS.map((t, i) => (
+                <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
+                  <Card className="bg-card border-border h-full flex flex-col rounded-[5px] hover:shadow-lg transition-all">
+                    <CardContent className="pt-8 flex-1">
+                      <div className="flex gap-1 mb-4 text-accent">
+                        {[...Array(t.stars)].map((_, i) => (
+                          <Star key={i} className="w-4 h-4 fill-current" />
+                        ))}
+                      </div>
+                      <p className="text-sm text-foreground italic mb-6 leading-relaxed">
+                        "{t.text}"
+                      </p>
+                    </CardContent>
+                    <div className="px-6 pb-8 flex items-center gap-4">
+                       <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-2xl border border-accent/20">
+                          {t.avatar}
+                       </div>
+                       <div>
+                          <p className="text-sm font-bold text-foreground">{t.name}</p>
+                          <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-tight">{t.role}</p>
+                       </div>
+                    </div>
+                  </Card>
+                </motion.div>
+              ))}
             </div>
           </div>
         </section>
