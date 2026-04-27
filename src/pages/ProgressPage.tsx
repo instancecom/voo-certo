@@ -144,15 +144,32 @@ export default function ProgressPage() {
       };
     } catch (error) {
       console.error("Error processing progress stats:", error);
-      return { totalExams: 0, error: true };
+      // Return a safe empty state to prevent page crash
+      return { 
+        totalExams: 0, 
+        error: true,
+        userResults: [],
+        evolutionData: [],
+        pieData: [],
+        weakPoints: [],
+        strengths: [],
+        subStats: [],
+        averageScore: 0,
+        accuracy: 0,
+        currentStreak: 0,
+        totalQuestions: 0,
+        totalCorrect: 0,
+        totalTime: 0
+      };
     }
   }, [examResults, exams, subcategories]);
 
   const filteredHistory = useMemo(() => {
-    if (!stats) return [];
+    if (!stats || !stats.userResults) return [];
     return stats.userResults.filter(r => {
+      if (!r) return false;
       const exam = exams?.find(e => e.id === r.exam_id);
-      const matchesSearch = !searchQuery || exam?.title?.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = !searchQuery || (exam?.title?.toLowerCase()?.includes(searchQuery.toLowerCase()) ?? false);
       const matchesFilter = historyFilter === 'all' || r.exam_mode === historyFilter;
       return matchesSearch && matchesFilter;
     });
