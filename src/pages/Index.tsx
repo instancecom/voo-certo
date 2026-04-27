@@ -172,30 +172,30 @@ export default function Index() {
             <Plane className="w-16 h-16 md:w-24 md:h-24 text-accent/30" />
           </motion.div>
 
-          <div className="container mx-auto px-4 py-32 relative z-10">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="container mx-auto px-4 py-20 md:py-32 relative z-10">
+            <div className="grid lg:grid-cols-2 gap-12 items-center text-center lg:text-left">
               <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: 'spring' }}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-accent/20 rounded-[5px] text-accent mb-6">
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-accent/20 rounded-[5px] text-accent mb-6 mx-auto lg:mx-0">
                   <Sparkles className="w-4 h-4" />
                   <span className="text-sm font-bold uppercase tracking-wider">Metodologia Padrão ANAC</span>
                 </motion.div>
 
                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground mb-6 leading-tight">
-                  Simulados ANAC para <br/>
+                  Simulados ANAC para <br className="hidden md:block" />
                   <span className="text-accent">Comissário de Bordo.</span>
                 </h1>
 
-                <p className="text-lg md:text-xl text-primary-foreground/80 mb-4 max-w-xl font-medium">
+                <p className="text-lg md:text-xl text-primary-foreground/80 mb-4 max-w-xl mx-auto lg:mx-0 font-medium">
                   A plataforma mais completa de preparação para a ANAC. Simulados realistas, Chat IA por questão, Guia de Carreira e Construtor de Currículo.
                 </p>
 
-                <p className="text-sm text-success/90 mb-8 flex items-center gap-2">
+                <p className="text-sm text-success/90 mb-8 flex items-center justify-center lg:justify-start gap-2">
                   <BadgeCheck className="w-4 h-4" />
                   Passe de primeira na prova da ANAC com treinamento inteligente.
                 </p>
 
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-wrap justify-center lg:justify-start gap-4">
                   <Button variant="hero" size="xl" asChild className="rounded-[5px] w-full sm:w-fit whitespace-normal h-auto py-4 sm:h-14 sm:py-0">
                     <Link to={user ? '/simulados' : '/auth?mode=signup'} className="flex items-center justify-center gap-2">
                       Começar Minha Preparação Agora <ArrowRight className="w-5 h-5" />
@@ -209,7 +209,7 @@ export default function Index() {
                 </div>
 
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
-                  className="flex flex-wrap gap-8 mt-12">
+                  className="grid grid-cols-2 sm:flex sm:flex-wrap justify-center lg:justify-start gap-6 md:gap-8 mt-12">
                   {[
                     { value: '500+', label: 'Questões' },
                     { value: '10+', label: 'Simulados' },
@@ -263,7 +263,7 @@ export default function Index() {
         {/* ═══════ TRUST BAR ═══════ */}
         <section className="py-12 bg-card/50 backdrop-blur-sm border-b border-border/50 overflow-hidden">
           <div className="container mx-auto px-4">
-            <div className="flex flex-wrap justify-center items-center gap-12 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">
+            <div className="grid grid-cols-2 md:flex md:flex-wrap justify-center items-center gap-6 md:gap-12 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">
               {[
                 { icon: Shield, text: 'Privacidade de Dados' },
                 { icon: BadgeCheck, text: 'Simulados Atualizados' },
@@ -284,7 +284,7 @@ export default function Index() {
         </section>
 
         {/* ═══════ STUDY MODES ═══════ */}
-        <section className="py-24 bg-card border-y border-border">
+        <section className="py-16 md:py-24 bg-card border-y border-border">
           <div className="container mx-auto px-4">
             <div className="text-center mb-16">
               <Badge variant="outline" className="mb-4 text-accent border-accent/20 rounded-[5px] bg-accent/5 font-bold uppercase h-6 px-3">
@@ -341,7 +341,7 @@ export default function Index() {
         </section>
 
         {/* ═══════ PLATFORM SHOWCASE ═══════ */}
-        <section className="py-24 bg-background overflow-hidden">
+        <section className="py-16 md:py-24 bg-background overflow-hidden">
           <div className="container mx-auto px-4">
              <div className="max-w-5xl mx-auto">
                 <div className="relative group">
@@ -398,7 +398,7 @@ export default function Index() {
                             <h3 className="text-xl font-bold mb-2">Interface Intuitiva</h3>
                             <p className="text-sm text-muted-foreground mb-6">Foque apenas no que importa: seu conhecimento.</p>
                             <Button variant="hero" className="rounded-[5px] w-full" asChild>
-                               <Link to="/simulados">Ver Demonstração</Link>
+                               <Link to="/simulados">Ver Agora</Link>
                             </Button>
                          </motion.div>
                       </div>
@@ -409,12 +409,12 @@ export default function Index() {
         </section>
 
         {/* ═══════ AI ASSISTANT ═══════ */}
-        <section className="py-24 bg-background relative overflow-hidden">
+        <section className="py-16 md:py-24 bg-background relative overflow-hidden">
           <div className="absolute top-0 right-0 w-1/2 h-full bg-accent/5 skew-x-12 translate-x-20" />
           <div className="container mx-auto px-4 relative z-10">
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
-              <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-                <Badge className="mb-4 bg-success text-success-foreground border-0 rounded-[5px] font-bold uppercase text-[10px] tracking-widest px-4 py-1.5 h-auto">
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+              <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="text-center lg:text-left">
+                <Badge className="mb-4 bg-success text-success-foreground border-0 rounded-[5px] font-bold uppercase text-[10px] tracking-widest px-4 py-1.5 h-auto mx-auto lg:mx-0">
                   Exclusivo Voo Certo
                 </Badge>
                 <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
@@ -424,7 +424,7 @@ export default function Index() {
                 <p className="text-lg text-muted-foreground mb-8">
                   Errou uma questão técnica? Nossa IA analisa a pergunta e as alternativas para explicar exatamente onde você errou e qual a base normativa da resposta correta.
                 </p>
-                <ul className="space-y-4 mb-10">
+                <ul className="space-y-4 mb-10 text-left inline-block lg:block">
                   {[
                     'Explicações detalhadas por questão',
                     'Dicas para memorizar matérias complexas',
@@ -496,14 +496,14 @@ export default function Index() {
         </section>
 
         {/* ═══════ CAREER & CV ═══════ */}
-        <section className="py-24 bg-muted/30">
+        <section className="py-16 md:py-24 bg-muted/30">
           <div className="container mx-auto px-4">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <div className="order-2 lg:order-1">
                 <img src={airplaneSunset} alt="Carreira na Aviação" className="rounded-[5px] shadow-xl border border-border" />
               </div>
-              <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="order-1 lg:order-2">
-                <Badge variant="outline" className="mb-4 text-accent border-accent/20 rounded-[5px] bg-accent/5 font-bold uppercase h-6 px-3">
+              <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="order-1 lg:order-2 text-center lg:text-left">
+                <Badge variant="outline" className="mb-4 text-accent border-accent/20 rounded-[5px] bg-accent/5 font-bold uppercase h-6 px-3 mx-auto lg:mx-0">
                   Apoio Profissional
                 </Badge>
                 <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
@@ -541,7 +541,7 @@ export default function Index() {
         </section>
 
         {/* ═══════ TESTIMONIALS ═══════ */}
-        <section className="py-24 bg-background">
+        <section className="py-16 md:py-24 bg-background">
           <div className="container mx-auto px-4">
             <div className="text-center mb-16">
               <Badge variant="outline" className="mb-4 text-accent border-accent/20 rounded-[5px] bg-accent/5 font-bold uppercase h-6 px-3">
@@ -587,7 +587,7 @@ export default function Index() {
         </section>
 
         {/* ═══════ PROBLEM / SOLUTION ═══════ */}
-        <section className="py-24 bg-background">
+        <section className="py-16 md:py-24 bg-background">
           <div className="container mx-auto px-4">
             <div className="grid lg:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
               <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
@@ -648,7 +648,7 @@ export default function Index() {
         </section>
 
         {/* ═══════ HOW IT WORKS ═══════ */}
-        <section className="py-24 bg-muted/30">
+        <section className="py-16 md:py-24 bg-muted/30">
           <div className="container mx-auto px-4">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
               <Badge variant="outline" className="mb-4 text-accent border-accent/20 rounded-[5px] bg-accent/5 font-bold uppercase h-6 px-3">
@@ -679,7 +679,7 @@ export default function Index() {
         </section>
 
         {/* ═══════ PRICING ═══════ */}
-        <section className="py-24" style={{ background: 'var(--gradient-hero)' }}>
+        <section className="py-16 md:py-24" style={{ background: 'var(--gradient-hero)' }}>
           <div className="container mx-auto px-4">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
               <Badge className="mb-4 bg-accent text-accent-foreground border-0 rounded-[5px] font-bold uppercase text-[10px] tracking-widest px-4 py-1.5 h-auto">
@@ -759,7 +759,7 @@ export default function Index() {
         </section>
 
         {/* ═══════ FAQ ═══════ */}
-        <section className="py-24 bg-muted/20">
+        <section className="py-16 md:py-24 bg-muted/20">
           <div className="container mx-auto px-4">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
               <h2 className="text-3xl md:text-5xl font-bold text-foreground">Dúvidas Frequentes</h2>
@@ -783,7 +783,7 @@ export default function Index() {
           </div>
         </section>
         {/* ═══════ FINAL CTA ═══════ */}
-        <section className="py-24 relative overflow-hidden" style={{ background: 'var(--gradient-hero)' }}>
+        <section className="py-16 md:py-24 relative overflow-hidden" style={{ background: 'var(--gradient-hero)' }}>
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-0 left-0 w-full h-full" style={{ backgroundImage: `url(${airplaneSunset})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
           </div>

@@ -8,9 +8,9 @@ export function Footer() {
   return (
     <footer className="bg-primary text-primary-foreground">
       <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 text-center md:text-left">
           {/* Brand */}
-          <div className="md:col-span-1">
+          <div className="md:col-span-1 flex flex-col items-center md:items-start">
             <Link to="/" className="flex items-center gap-2 mb-6 group">
               {branding.logo_url ? (
                 <img src={branding.logo_url} alt={branding.site_name} className="h-10 w-auto object-contain brightness-0 invert" />
@@ -49,7 +49,7 @@ export function Footer() {
           {/* Contact */}
           <div>
             <h4 className="font-bold text-sm uppercase tracking-wider mb-6">Conecte-se</h4>
-            <div className="flex gap-2 mb-6">
+            <div className="flex justify-center md:justify-start gap-2 mb-6">
               <a href="#" className="p-2.5 bg-primary-foreground/10 rounded-[5px] hover:bg-accent hover:text-accent-foreground transition-all">
                 <Instagram className="w-5 h-5" />
               </a>
@@ -63,7 +63,7 @@ export function Footer() {
                 <Mail className="w-5 h-5" />
               </a>
             </div>
-            <div className="flex items-center gap-2 text-xs text-primary-foreground/50">
+            <div className="flex items-center justify-center md:justify-start gap-2 text-xs text-primary-foreground/50">
                <ShieldCheck className="w-4 h-4" />
                <span>Pagamento 100% Seguro</span>
             </div>
