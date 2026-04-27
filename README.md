@@ -1,4 +1,4 @@
-# ✈️ Voo Certo
+# ✈️ Voo Certo .
 
 **Voo Certo** é uma plataforma digital focada na **preparação de candidatos para o concurso de Comissário de Bordo (ANAC)**, oferecendo simulados realistas, cronometrados e alinhados ao formato oficial das provas.
 
