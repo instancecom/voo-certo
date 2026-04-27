@@ -389,22 +389,32 @@ export default function PremiumPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[9999] bg-background/98 flex flex-col items-center justify-center p-6 text-center"
+            className="fixed inset-0 z-[9999] bg-background/70 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center"
           >
-            <div className="relative mb-12">
-              <div className="w-24 h-24 rounded-[5px] bg-card border-2 border-primary/20 flex items-center justify-center shadow-2xl">
-                <Loader2 className="w-10 h-10 text-primary animate-spin" />
+            <motion.div 
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="relative mb-12"
+            >
+              <div className="w-24 h-24 rounded-2xl bg-card border border-primary/20 flex items-center justify-center shadow-[0_0_50px_-12px_rgba(var(--primary),0.3)] relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent" />
+                <Loader2 className="w-10 h-10 text-primary animate-spin relative z-10" />
               </div>
-            </div>
+            </motion.div>
             
-            <div className="space-y-4 max-w-sm">
+            <motion.div 
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.1 }}
+              className="space-y-4 max-w-sm"
+            >
               <h3 className="text-3xl font-black text-foreground tracking-tight">
                 {loading === 'manage' ? 'Acessando Portal Seguro' : 'Processando sua Escolha'}
               </h3>
-              <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest px-8">
+              <p className="text-muted-foreground font-bold text-[10px] uppercase tracking-[0.2em] px-8 leading-loose opacity-80">
                 Transferindo você para o ambiente de faturamento seguro da Stripe.
               </p>
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
