@@ -287,6 +287,7 @@ export type Database = {
           display_order: number | null
           icon: string | null
           id: string
+          image_url: string | null
           is_active: boolean | null
           name: string
           slug: string
@@ -299,6 +300,7 @@ export type Database = {
           display_order?: number | null
           icon?: string | null
           id?: string
+          image_url?: string | null
           is_active?: boolean | null
           name: string
           slug: string
@@ -311,6 +313,7 @@ export type Database = {
           display_order?: number | null
           icon?: string | null
           id?: string
+          image_url?: string | null
           is_active?: boolean | null
           name?: string
           slug?: string
@@ -1070,6 +1073,7 @@ export type Database = {
           display_order: number | null
           icon: string | null
           id: string
+          image_url: string | null
           name: string
           num_questions_expected: number | null
           slug: string
@@ -1082,6 +1086,7 @@ export type Database = {
           display_order?: number | null
           icon?: string | null
           id?: string
+          image_url?: string | null
           name: string
           num_questions_expected?: number | null
           slug: string
@@ -1094,6 +1099,7 @@ export type Database = {
           display_order?: number | null
           icon?: string | null
           id?: string
+          image_url?: string | null
           name?: string
           num_questions_expected?: number | null
           slug?: string

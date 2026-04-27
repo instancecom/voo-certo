@@ -125,9 +125,9 @@ export function BlocksManager({ professionId, professionName, onBack, onSelectBl
       toast.success(selectedBlock ? 'Bloco atualizado!' : 'Bloco criado!');
       closeDialog();
     },
-    onError: (error) => {
-      console.error(error);
-      toast.error('Erro ao salvar bloco');
+    onError: (error: any) => {
+      console.error('Error saving block:', error);
+      toast.error(`Erro ao salvar bloco: ${error.message || 'Erro desconhecido'}`);
     },
   });
 

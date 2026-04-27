@@ -126,9 +126,9 @@ export function ProfessionsManager({ onSelectProfession }: ProfessionsManagerPro
       toast.success(selectedProfession ? 'Profissão atualizada!' : 'Profissão criada!');
       closeDialog();
     },
-    onError: (error) => {
-      console.error(error);
-      toast.error('Erro ao salvar profissão');
+    onError: (error: any) => {
+      console.error('Error saving profession:', error);
+      toast.error(`Erro ao salvar profissão: ${error.message || 'Erro desconhecido'}`);
     },
   });
 
