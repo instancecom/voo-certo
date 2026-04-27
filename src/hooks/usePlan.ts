@@ -35,19 +35,25 @@ export function usePlan() {
     return planLevel >= PLAN_HIERARCHY[requiredPlan];
   };
 
-  const canAccessSimulados = hasAccess('solo');
+  const canAccessSimulados = true; // Everyone sees the list
+  const canAccessModoLivre = true; // Basic access for all
+  const canAccessModoBloco = hasAccess('solo');
+  const canAccessModoBanca = hasAccess('solo');
+  const isBancaLimited = currentPlan === 'solo'; // Solo has limitations in Banca mode
+  
   const canAccessMicrocursos = hasAccess('tripulante');
-  const canAccessAIChat = hasAccess('tripulante');
+  const canAccessAIChat = hasAccess('solo');
   const canAccessProgress = hasAccess('tripulante');
-  const canSaveCurriculum = hasAccess('tripulante');
-  const canAccessGuideContent = hasAccess('tripulante');
-  const canAccessConquistas = hasAccess('solo');
+  const canSaveCurriculum = true; // Now free for all
+  const canAccessGuideContent = true; // Now free for all
+  const canAccessConquistas = true; // Now free for all
   const canAccessUnlimitedAI = hasAccess('comandante');
 
   // AI chat limit PER QUESTION
   const aiChatLimitPerQuestion = (() => {
     if (currentPlan === 'comandante') return 15;
     if (currentPlan === 'tripulante') return 5;
+    if (currentPlan === 'solo') return 2;
     return 0;
   })();
 
@@ -55,6 +61,7 @@ export function usePlan() {
   const aiChatDailySafetyLimit = (() => {
     if (currentPlan === 'comandante') return 100;
     if (currentPlan === 'tripulante') return 30;
+    if (currentPlan === 'solo') return 8;
     return 0;
   })();
 
@@ -66,6 +73,10 @@ export function usePlan() {
     isLoading,
     hasAccess,
     canAccessSimulados,
+    canAccessModoLivre,
+    canAccessModoBloco,
+    canAccessModoBanca,
+    isBancaLimited,
     canAccessMicrocursos,
     canAccessAIChat,
     canAccessProgress,
