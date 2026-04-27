@@ -198,12 +198,12 @@ export default function Index() {
                 <div className="flex flex-wrap justify-center lg:justify-start gap-4">
                   <Button variant="hero" size="xl" asChild className="rounded-[5px] w-full sm:w-fit whitespace-normal h-auto py-4 sm:h-14 sm:py-0">
                     <Link to={user ? '/simulados' : '/auth?mode=signup'} className="flex items-center justify-center gap-2">
-                      Começar Minha Preparação Agora <ArrowRight className="w-5 h-5" />
+                      Começar Agora <ArrowRight className="w-5 h-5" />
                     </Link>
                   </Button>
                   <Button variant="outline" size="xl" asChild className="bg-white/5 text-white border-white/20 hover-yellow rounded-[5px] w-full sm:w-fit">
                     <Link to="/premium" className="flex items-center justify-center gap-2">
-                      Explorar Funcionalidades
+                      Ver Recursos
                     </Link>
                   </Button>
                 </div>
@@ -440,7 +440,7 @@ export default function Index() {
                   ))}
                 </ul>
                 <Button variant="hero" size="lg" className="rounded-[5px]" asChild>
-                  <Link to="/auth?mode=signup">Experimentar IA Grátis</Link>
+                  <Link to="/auth?mode=signup">Testar IA Grátis</Link>
                 </Button>
               </motion.div>
               <div className="relative">
@@ -731,7 +731,7 @@ export default function Index() {
                         </ul>
                         <Button variant={plan.highlight ? 'hero' : 'outline'} className="w-full h-11 rounded-[5px] font-bold hover-yellow" asChild>
                           <Link to="/premium">
-                            Experimentar Trial
+                            Iniciar Grátis
                           </Link>
                         </Button>
                       </CardContent>
