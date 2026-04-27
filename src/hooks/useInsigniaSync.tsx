@@ -12,15 +12,17 @@ export function useInsigniaSync() {
   const { checkBadges, isGranting } = useCheckAndGrantBadges();
 
   const syncBadges = async () => {
-    if (!user || !results || results.length === 0) return [];
-
+    if (!user) return [];
+    
+    const safeResults = results || [];
+    
     // 1. Basic Stats
-    const totalExams = results.length;
-    const totalCorrect = results.reduce((acc, r) => acc + r.correct_answers, 0);
-    const totalQuestions = results.reduce((acc, r) => acc + r.total_questions, 0);
+    const totalExams = safeResults.length;
+    const totalCorrect = safeResults.reduce((acc, r) => acc + (r.correct_answers || 0), 0);
+    const totalQuestions = safeResults.reduce((acc, r) => acc + (r.total_questions || 0), 0);
     
     // 2. Training Days & Streak
-    const uniqueDays = Array.from(new Set(results.map(r => new Date(r.completed_at).toISOString().split('T')[0]))).sort();
+    const uniqueDays = Array.from(new Set(safeResults.map(r => new Date(r.completed_at).toISOString().split('T')[0]))).sort();
     const trainingDays = uniqueDays.length;
     
     let currentStreak = 0;
@@ -28,7 +30,6 @@ export function useInsigniaSync() {
       const today = new Date().toISOString().split('T')[0];
       const lastDay = uniqueDays[uniqueDays.length - 1];
       
-      // Only count streak if they practiced today or yesterday
       const dayDiff = Math.floor((new Date(today).getTime() - new Date(lastDay).getTime()) / (1000 * 60 * 60 * 24));
       
       if (dayDiff <= 1) {
@@ -58,36 +59,31 @@ export function useInsigniaSync() {
     let stressMaxScore = 0;
     let emergencyPerfectBlocks = 0;
     
-    results.forEach(r => {
+    safeResults.forEach(r => {
       const exam = examMap.get(r.exam_id);
       const title = exam?.title?.toLowerCase() || '';
       
-      // English
       if (title.includes('inglês')) {
-        englishCorrect += r.correct_answers;
-        englishMaxScore = Math.max(englishMaxScore, r.score);
+        englishCorrect += r.correct_answers || 0;
+        englishMaxScore = Math.max(englishMaxScore, r.score || 0);
       }
       
-      // Spanish
       if (title.includes('espanhol')) {
-        spanishMaxScore = Math.max(spanishMaxScore, r.score);
+        spanishMaxScore = Math.max(spanishMaxScore, r.score || 0);
       }
       
-      // Security / Technical
       if (title.includes('segurança') || title.includes('técnico')) {
-        securityCorrect += r.correct_answers;
-        securityMaxScore = Math.max(securityMaxScore, r.score);
+        securityCorrect += r.correct_answers || 0;
+        securityMaxScore = Math.max(securityMaxScore, r.score || 0);
       }
 
-      // Behavioral / Stress
       if (title.includes('comportamental') || title.includes('psicotécnico')) {
-        behavioralMaxScore = Math.max(behavioralMaxScore, r.score);
+        behavioralMaxScore = Math.max(behavioralMaxScore, r.score || 0);
       }
       if (title.includes('estresse') || title.includes('pressão')) {
-        stressMaxScore = Math.max(stressMaxScore, r.score);
+        stressMaxScore = Math.max(stressMaxScore, r.score || 0);
       }
 
-      // Emergency Blocks
       if (r.block_results) {
         const blocks = r.block_results as any[];
         blocks.forEach(b => {
@@ -99,14 +95,14 @@ export function useInsigniaSync() {
     });
 
     // 4. Consecutive Performance
-    const sortedResults = [...results].sort((a, b) => new Date(b.completed_at).getTime() - new Date(a.completed_at).getTime());
+    const sortedResults = [...safeResults].sort((a, b) => new Date(b.completed_at).getTime() - new Date(a.completed_at).getTime());
     let consecutiveScore70 = 0;
     for (const r of sortedResults) {
-      if (r.score >= 70) consecutiveScore70++;
+      if ((r.score || 0) >= 70) consecutiveScore70++;
       else break;
     }
 
-    const avgScore = totalExams ? Math.round(results.reduce((acc, r) => acc + r.score, 0) / totalExams) : 0;
+    const avgScore = totalExams ? Math.round(safeResults.reduce((acc, r) => acc + (r.score || 0), 0) / totalExams) : 0;
 
     const stats = {
       examsCompleted: totalExams,
@@ -114,8 +110,8 @@ export function useInsigniaSync() {
       questionsAnswered: totalQuestions,
       trainingStreak: currentStreak,
       trainingDays: trainingDays,
-      blocksCompleted: results.reduce((acc, r) => acc + (r.block_results?.length || 0), 0),
-      anacApprovals: results.filter(r => r.score >= 70 && r.exam_mode === 'banca_anac').length,
+      blocksCompleted: safeResults.reduce((acc, r) => acc + (r.block_results?.length || 0), 0),
+      anacApprovals: safeResults.filter(r => (r.score || 0) >= 70 && r.exam_mode === 'banca_anac').length,
       avgScore: avgScore,
       firstLogin: true,
       firstExam: totalExams >= 1,
@@ -124,7 +120,7 @@ export function useInsigniaSync() {
       spanish_score: spanishMaxScore,
       security_correct: securityCorrect,
       security_score: securityMaxScore,
-      security_streak: securityMaxScore >= 90 ? 1 : 0, // Simplified
+      security_streak: securityMaxScore >= 90 ? 1 : 0,
       security_perfect: securityMaxScore === 100 ? 100 : 0,
       behavioral_score: behavioralMaxScore,
       stress_score: stressMaxScore,
