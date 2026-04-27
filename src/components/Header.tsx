@@ -222,10 +222,10 @@ export function Header() {
                 /* Confirmed guest - show login/register */
                 <>
                   <Button variant="ghost" size="sm" asChild className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''}>
-                    <Link to="/auth">Entrar</Link>
+                    <Link to="/auth?mode=login">Entrar</Link>
                   </Button>
                   <Button size="sm" asChild className="rounded-[5px] shadow-sm font-semibold hover-yellow">
-                    <Link to="/auth">Começar Agora</Link>
+                    <Link to="/auth?mode=signup">Começar Agora</Link>
                   </Button>
                 </>
               )}
@@ -315,10 +315,10 @@ export function Header() {
               ) : (
                 <div className="grid grid-cols-2 gap-2 pt-2">
                   <Button variant="outline" size="sm" asChild onClick={() => setIsMenuOpen(false)}>
-                    <Link to="/auth">Entrar</Link>
+                    <Link to="/auth?mode=login">Entrar</Link>
                   </Button>
                   <Button size="sm" asChild onClick={() => setIsMenuOpen(false)}>
-                    <Link to="/auth">Cadastrar</Link>
+                    <Link to="/auth?mode=signup">Cadastrar</Link>
                   </Button>
                 </div>
               )}

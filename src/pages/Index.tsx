@@ -176,7 +176,7 @@ export default function Index() {
 
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button variant="hero" size="xl" asChild className="rounded-[5px]">
-                    <Link to={user ? '/simulados' : '/auth'}>
+                    <Link to={user ? '/simulados' : '/auth?mode=signup'}>
                       Começar Grátis por 7 Dias <ArrowRight className="w-5 h-5 ml-2" />
                     </Link>
                   </Button>
