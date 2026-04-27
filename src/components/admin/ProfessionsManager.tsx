@@ -128,7 +128,8 @@ export function ProfessionsManager({ onSelectProfession }: ProfessionsManagerPro
     },
     onError: (error: any) => {
       console.error('Error saving profession:', error);
-      toast.error(`Erro ao salvar profissão: ${error.message || 'Erro desconhecido'}`);
+      const detailedError = error.message || error.details || 'Erro desconhecido';
+      toast.error(`Erro ao salvar profissão: ${detailedError}`);
     },
   });
 
