@@ -96,8 +96,12 @@ export default function PremiumPage() {
   }, [searchParams]);
 
   useEffect(() => {
-    // Garante que o loading seja resetado se o usuário voltar do checkout
-    setLoading(null);
+    const handlePageShow = () => {
+      setLoading(null);
+    };
+
+    window.addEventListener('pageshow', handlePageShow);
+    return () => window.removeEventListener('pageshow', handlePageShow);
   }, []);
 
   useEffect(() => {
