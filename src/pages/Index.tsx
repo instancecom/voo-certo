@@ -32,7 +32,7 @@ const PLANS = [
     price: 'R$ 19,90',
     period: '/mês',
     icon: Plane,
-    description: 'Foco nos simulados básicos',
+    description: 'Seu ponto de partida nos estudos',
     features: [
       'Modo Livre e Bloco ilimitados',
       'Modo Banca limitado',
@@ -49,10 +49,10 @@ const PLANS = [
     price: 'R$ 39,90',
     period: '/mês',
     icon: Zap,
-    description: 'A experiência completa de estudo',
+    description: 'A escolha ideal para sua aprovação',
     features: [
       'Tudo do plano Solo',
-      'Modo Banca ilimitado (ANAC)',
+      'Modo Banca ilimitado (Estilo ANAC)',
       'Chat IA (5 msgs por questão)',
       'Histórico de Desempenho Avançado',
       'Relatórios por matéria',
@@ -66,7 +66,7 @@ const PLANS = [
     price: 'R$ 79,90',
     period: '/mês',
     icon: Crown,
-    description: 'Máxima performance e IA premium',
+    description: 'Experiência premium e IA avançada',
     features: [
       'Tudo do plano Tripulante',
       'Chat IA Turbo (15 msgs por questão)',
@@ -80,10 +80,10 @@ const PLANS = [
 ];
 
 const STEPS = [
-  { icon: GraduationCap, title: 'Estude com simulados', desc: 'Questões baseadas em padrões reais da ANAC, organizadas por matéria.' },
-  { icon: BarChart3, title: 'Acompanhe seu progresso', desc: 'Relatórios detalhados mostram onde você precisa melhorar.' },
-  { icon: Trophy, title: 'Conquiste insígnias', desc: 'Ganhe medalhas conforme avança e prove que está pronto.' },
-  { icon: Award, title: 'Passe na prova', desc: 'Chegue preparado e conquiste sua aprovação na ANAC.' },
+  { icon: GraduationCap, title: 'Treine com simulados realistas', desc: 'Pratique com questões inspiradas no formato dos exames oficiais, organizadas por matéria.' },
+  { icon: BarChart3, title: 'Descubra seus pontos fracos', desc: 'Relatórios detalhados identificam exatamente onde você precisa focar sua energia.' },
+  { icon: Brain, title: 'Evolua com IA especializada', desc: 'Entenda o porquê de cada resposta com explicações contextuais inteligentes.' },
+  { icon: Award, title: 'Avance rumo à sua aprovação', desc: 'Ganhe confiança e chegue preparado para conquistar seu lugar no mercado.' },
 ];
 
 const TESTIMONIALS = [
@@ -96,23 +96,23 @@ const TESTIMONIALS = [
 ];
 
 const FAQ = [
-  { q: 'O Voo Certo substitui o curso de comissário?', a: 'Não. O Voo Certo é uma plataforma de preparação complementar focada nos simulados e no guia de carreira. Você ainda precisa fazer o curso em uma escola homologada.' },
-  { q: 'Posso cancelar a qualquer momento?', a: 'Sim! Todos os planos podem ser cancelados quando quiser, sem multa ou burocracia. Você mantém o acesso até o fim do período pago.' },
-  { q: 'As questões são iguais às da prova da ANAC?', a: 'Nossas questões são baseadas em provas anteriores e seguem os padrões de avaliação da ANAC. Cobrimos todas as matérias exigidas com o mesmo nível de dificuldade.' },
-  { q: 'Funciona no celular?', a: 'Sim! A plataforma é 100% responsiva e otimizada para celular. Estude de qualquer lugar, a qualquer hora.' },
-  { q: 'O que é o Chat IA?', a: 'É um assistente inteligente que explica cada questão em detalhe. Quando você erra ou tem dúvida, a IA analisa a questão e dá uma explicação personalizada.' },
-  { q: 'Como funciona o período de teste grátis?', a: 'Você tem 7 dias gratuitos em qualquer plano pago. Se não gostar, cancele antes do fim do trial e não será cobrado.' },
+  { q: 'O Voo Certo substitui o curso de comissário obrigatório?', a: 'Não. O Voo Certo é uma ferramenta de apoio e preparação complementar. Você ainda deve realizar o curso teórico e prático em uma escola homologada pela ANAC conforme as exigências legais.' },
+  { q: 'Funciona para quem está começando do zero?', a: 'Com certeza! A plataforma foi desenhada para guiar você desde os primeiros passos, com explicações didáticas via IA e um roadmap completo de carreira.' },
+  { q: 'A IA realmente responde dúvidas reais?', a: 'Sim. Nossa IA foi treinada especificamente no contexto aeronáutico para explicar a lógica por trás de cada questão, ajudando você a aprender com o erro em vez de apenas decorar.' },
+  { q: 'Os simulados seguem os temas cobrados nos exames do setor?', a: 'Sim, nossos simulados são inspirados no formato e nos temas recorrentes das provas de certificação, garantindo um treino altamente realista e focado no que importa.' },
+  { q: 'Posso estudar pelo celular?', a: 'Perfeitamente. A plataforma é 100% otimizada para dispositivos móveis, permitindo que você estude em qualquer lugar, aproveitando cada minuto do seu dia.' },
+  { q: 'Posso cancelar minha assinatura?', a: 'Sim, o cancelamento é simples e pode ser feito a qualquer momento diretamente no seu painel, sem taxas escondidas ou fidelidade.' },
 ];
 
 const DIFFERENTIALS = [
-  { icon: Brain, title: 'IA Contextual', desc: 'Cada questão tem um chat com IA que explica a resposta, mostra a lógica e tira suas dúvidas em tempo real.' },
-  { icon: Headphones, title: 'Simulados Especializados', desc: 'Questões de proficiência linguística com áudio, simulando o que você vai encontrar na prova.' },
-  { icon: Timer, title: 'Cronômetro Real', desc: 'Simule as condições reais da prova com temporizador por bloco e por prova completa.' },
-  { icon: BarChart3, title: 'Relatórios Inteligentes', desc: 'Veja seu desempenho por matéria, identifique pontos fracos e acompanhe sua evolução.' },
-  { icon: Trophy, title: 'Gamificação', desc: 'Insígnias, conquistas e certificados que motivam e comprovam seu progresso.' },
-  { icon: FileText, title: 'Currículo Aviação', desc: 'Gerador de CV específico para companhias aéreas, com template profissional.' },
-  { icon: Map, title: 'Guia de Carreira', desc: 'Roadmap completo: do curso à contratação, passo a passo com dicas práticas.' },
-  { icon: Monitor, title: '100% Online', desc: 'Estude do celular, tablet ou computador. Acesso 24/7 de qualquer lugar.' },
+  { icon: Brain, title: 'IA Explicativa 24/7', desc: 'Nunca mais fique com dúvida. Nossa IA explica a lógica de cada alternativa, transformando erros em aprendizado imediato.' },
+  { icon: Target, title: 'Treino Estilo Prova Real', desc: 'Simulados com o mesmo tempo, estrutura e pressão dos exames oficiais para você ganhar confiança.' },
+  { icon: BarChart3, title: 'Evolução Mensurável', desc: 'Visualize seu progresso por matéria através de gráficos detalhados e saiba exatamente quando estiver pronto.' },
+  { icon: Map, title: 'Roadmap de Carreira', desc: 'Um guia completo que mostra o passo a passo: do início dos estudos até o dia da sua contratação.' },
+  { icon: FileText, title: 'Currículo Aeronáutico', desc: 'Construtor de currículos otimizado para os padrões exigidos pelas grandes companhias aéreas.' },
+  { icon: Trophy, title: 'Gamificação e Conquistas', desc: 'Mantenha-se motivado com um sistema de insígnias que premia seu esforço e evolução constante.' },
+  { icon: Headphones, title: 'Simulados Especializados', desc: 'Questões técnicas com suporte a áudio para preparação completa em todas as frentes.' },
+  { icon: Monitor, title: 'Plataforma Premium', desc: 'Interface moderna, rápida e intuitiva, desenhada para focar no que importa: seu estudo.' },
 ];
 
 export default function Index() {
@@ -161,28 +161,28 @@ export default function Index() {
                 </motion.div>
 
                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground mb-6 leading-tight">
-                  Sua decolagem profissional
-                  <span className="block text-accent">começa aqui.</span>
+                  Conquiste sua aprovação
+                  <span className="block text-accent">na prova da ANAC.</span>
                 </h1>
 
                 <p className="text-lg md:text-xl text-primary-foreground/80 mb-4 max-w-xl font-medium">
-                  Simulados realistas baseados em provas reais, IA explicativa e um roadmap completo para sua carreira na aviação.
+                  Simulados realistas, IA que explica cada questão e roadmap profissional completo. Tudo o que você precisa para decolar sua carreira na aviação.
                 </p>
 
                 <p className="text-sm text-success/90 mb-8 flex items-center gap-2">
                   <BadgeCheck className="w-4 h-4" />
-                  Conteúdo desenvolvido por especialistas com base em exames reais.
+                  Treinamento inteligente focado em resultados reais e suporte de carreira.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button variant="hero" size="xl" asChild className="rounded-[5px]">
                     <Link to={user ? '/simulados' : '/auth?mode=signup'}>
-                      Começar Grátis por 7 Dias <ArrowRight className="w-5 h-5 ml-2" />
+                      Começar Minha Preparação Agora <ArrowRight className="w-5 h-5 ml-2" />
                     </Link>
                   </Button>
                   <Button variant="outline" size="xl" asChild className="bg-white/5 text-white border-white/20 hover-yellow rounded-[5px]">
                     <Link to="/premium" className="flex items-center gap-2">
-                      <Crown className="w-5 h-5" /> Ver Planos
+                      Explorar Funcionalidades
                     </Link>
                   </Button>
                 </div>
@@ -271,11 +271,11 @@ export default function Index() {
                 </h2>
                 <div className="space-y-3">
                   {[
-                    'Informação fragmentada e desatualizada',
-                    'Dificuldade em mensurar a evolução real',
-                    'Falta de suporte especializado imediato',
-                    'Ausência de um método de estudo estruturado',
-                    'Insegurança sobre o ambiente real de prova',
+                    'Estudar sem saber se realmente está progredindo',
+                    'Errar questões e não entender o motivo técnico',
+                    'Insegurança e ansiedade para o dia da prova',
+                    'Falta de direção sobre os próximos passos da carreira',
+                    'Materiais de estudo desatualizados ou incompletos',
                   ].map((problem, i) => (
                     <motion.div key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }} transition={{ delay: i * 0.1 }}
@@ -298,11 +298,11 @@ export default function Index() {
                 </h2>
                 <div className="space-y-3">
                   {[
-                    'Simulados focados nos padrões exigidos pelo mercado',
-                    'Estatísticas precisas por matéria e subcategoria',
-                    'IA treinada para explicar cada alternativa da questão',
-                    'Roadmap profissional do curso à contratação',
-                    'Ambiente de prova que simula as restrições reais',
+                    'Simulados inteligentes inspirados no formato oficial',
+                    'IA explicativa 24h para tirar todas as suas dúvidas',
+                    'Relatórios de desempenho e prontidão para a prova',
+                    'Roadmap completo: do curso à contratação',
+                    'Ambiente de treino que reduz a ansiedade real',
                   ].map((solution, i) => (
                     <motion.div key={i} initial={{ opacity: 0, x: 10 }} whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }} transition={{ delay: i * 0.1 }}
@@ -437,6 +437,36 @@ export default function Index() {
                 </motion.details>
               ))}
             </div>
+          </div>
+        </section>
+        {/* ═══════ FINAL CTA ═══════ */}
+        <section className="py-24 relative overflow-hidden" style={{ background: 'var(--gradient-hero)' }}>
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 left-0 w-full h-full" style={{ backgroundImage: `url(${airplaneSunset})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+          </div>
+          
+          <div className="container mx-auto px-4 relative z-10 text-center">
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="max-w-3xl mx-auto">
+              <Badge className="mb-6 bg-accent text-accent-foreground border-0 rounded-[5px] font-bold uppercase text-[10px] tracking-widest px-4 py-1.5 h-auto">
+                Sua Jornada Começa Aqui
+              </Badge>
+              <h2 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-6 leading-tight">
+                Pronto para conquistar sua <span className="text-accent">aprovação na ANAC?</span>
+              </h2>
+              <p className="text-xl text-primary-foreground/70 mb-10 font-medium">
+                Tenha acesso aos simulados mais realistas do mercado, suporte de IA em tempo real e um guia completo de carreira.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button variant="hero" size="xl" asChild className="rounded-[5px]">
+                  <Link to={user ? '/simulados' : '/auth?mode=signup'}>
+                    Começar Minha Preparação Agora <ArrowRight className="w-5 h-5 ml-2" />
+                  </Link>
+                </Button>
+              </div>
+              <p className="mt-8 text-sm text-primary-foreground/40 font-medium flex items-center justify-center gap-2">
+                <Shield className="w-4 h-4" /> Cancelamento simples e sem burocracia.
+              </p>
+            </motion.div>
           </div>
         </section>
 
