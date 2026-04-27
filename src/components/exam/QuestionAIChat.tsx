@@ -158,7 +158,7 @@ export function QuestionAIChat({
     return (
       <div className="flex items-center gap-2 p-3 rounded-[5px] bg-muted/50 border border-border text-sm">
         <Lock className="w-4 h-4 text-muted-foreground shrink-0" />
-        <span className="text-muted-foreground flex-1">Chat IA disponível no plano Tripulante+</span>
+        <span className="text-muted-foreground flex-1">Chat IA disponível no plano Solo+</span>
         <Button variant="outline" size="sm" asChild>
           <Link to="/premium">Upgrade</Link>
         </Button>

@@ -76,18 +76,23 @@ export default function SimuladosPage() {
   });
 
   const handleStartSimulado = (professionId: string, mode: string) => {
-    if (!canAccessSimulados) {
-      toast.error('Assine o plano Solo ou superior para acessar simulados', {
+    if (mode === 'banca_anac' && !canAccessModoBanca) {
+      toast.error('Assine o plano Solo para acessar o Modo Banca', {
         action: { label: 'Ver Planos', onClick: () => navigate('/premium') },
       });
+      return;
+    }
+    if (mode === 'livre' && !canAccessModoLivre) {
+      // In theory everyone has access, but we check anyway
+      toast.error('Acesse sua conta para fazer simulados');
       return;
     }
     navigate(`/simulado-profissao/${professionId}?modo=${mode}`);
   };
 
   const handleOpenBlockSelection = (profession: ProfessionWithBlocks) => {
-    if (!canAccessSimulados) {
-      toast.error('Assine o plano para acessar simulados', {
+    if (!canAccessModoBloco) {
+      toast.error('Assine o plano Solo para acessar o Modo Bloco', {
         action: { label: 'Ver Planos', onClick: () => navigate('/premium') },
       });
       return;
