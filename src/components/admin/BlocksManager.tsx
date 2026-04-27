@@ -160,6 +160,7 @@ export function BlocksManager({ professionId, professionName, onBack, onSelectBl
       display_order: nextOrder,
       time_limit: 30,
       num_questions_expected: 20,
+      image_url: '',
     });
     setShowDialog(true);
   };
@@ -181,7 +182,7 @@ export function BlocksManager({ professionId, professionName, onBack, onSelectBl
   const closeDialog = () => {
     setShowDialog(false);
     setSelectedBlock(null);
-    setFormData({ name: '', description: '', icon: '📋', display_order: 0, time_limit: 30, num_questions_expected: 20 });
+    setFormData({ name: '', description: '', icon: '📋', display_order: 0, time_limit: 30, num_questions_expected: 20, image_url: '' });
   };
 
   const handleSubmit = () => {

@@ -15,6 +15,7 @@ import { useAdminStats, TimeRange, PLAN_COLORS, PLAN_BADGE, PLAN_LABEL } from '@
 import { StatsCard } from './stats/StatsCard';
 import { FilterControls } from './stats/FilterControls';
 import { UserStatsTable } from './stats/UserStatsTable';
+import { Button } from '@/components/ui/button';
 
 export function AdminStatsManager() {
   const [timeRange, setTimeRange] = useState<TimeRange>('total');

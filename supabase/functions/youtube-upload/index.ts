@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -93,7 +94,7 @@ async function getValidAccessToken(userId: string) {
   return refreshed.access_token;
 }
 
-Deno.serve(async (req) => {
+Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -459,11 +460,10 @@ Deno.serve(async (req) => {
       status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
-  } catch (err) {
+  } catch (err: any) {
     console.error("YouTube upload error:", err);
     return new Response(
-      JSON.stringify({ error: err.message || "Erro interno" }),
-      {
+      JSON.stringify({ error: err.message || "Erro interno" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       },

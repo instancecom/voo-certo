@@ -41,6 +41,7 @@ export function UserStatsTable({ userStats }: UserStatsTableProps) {
             </thead>
             <tbody className="divide-y">
               {userStats.length > 0 ? (
+                userStats.map((u) => (
                   <tr 
                     key={u.user_id} 
                     className={`hover:bg-muted/10 transition-colors group ${u.email === 'instance.com@gmail.com' ? 'bg-accent/5' : ''}`}

@@ -153,7 +153,7 @@ export function ProfessionsManager({ onSelectProfession }: ProfessionsManagerPro
 
   const openNewDialog = () => {
     setSelectedProfession(null);
-    setFormData({ name: '', description: '', icon: '✈️', total_time: 120, display_order: 0, active_modes: ['livre'] });
+    setFormData({ name: '', description: '', icon: '✈️', total_time: 120, display_order: 0, image_url: '', active_modes: ['livre'] });
     setShowDialog(true);
   };
 
@@ -174,7 +174,7 @@ export function ProfessionsManager({ onSelectProfession }: ProfessionsManagerPro
   const closeDialog = () => {
     setShowDialog(false);
     setSelectedProfession(null);
-    setFormData({ name: '', description: '', icon: '✈️', total_time: 120, display_order: 0, active_modes: ['livre'] });
+    setFormData({ name: '', description: '', icon: '✈️', total_time: 120, display_order: 0, image_url: '', active_modes: ['livre'] });
   };
 
   const handleModeToggle = (mode: string) => {
