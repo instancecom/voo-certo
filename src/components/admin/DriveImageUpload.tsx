@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Loader2, Upload, Image as ImageIcon, X, FolderOpen } from 'lucide-react';
 import { toast } from 'sonner';
@@ -10,11 +9,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-interface DriveFolder {
-  id: string;
-  name: string;
-}
+import { googleDriveService } from '@/services/googleDrive';
+import { getDrivePreviewUrl } from '@/lib/media-utils';
+import { DriveFolder } from '@/types/admin';
 
 interface DriveImageUploadProps {
   value: string;
@@ -36,26 +33,12 @@ export function DriveImageUpload({ value, onChange, label }: DriveImageUploadPro
   const fetchFolders = async () => {
     setIsLoadingFolders(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-
-      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-      const resp = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/google-drive?action=list_folders`,
-        {
-          headers: {
-            Authorization: `Bearer ${session.access_token}`,
-            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-          },
-        }
-      );
-      const data = await resp.json();
-      if (data.folders) {
-        setFolders(data.folders);
-        // Tenta encontrar a pasta "Capas" ou seleciona a primeira
-        const capasFolder = data.folders.find((f: any) => f.name.toLowerCase().includes('capa'));
-        setSelectedFolderId(capasFolder?.id || data.folders[0]?.id || '');
-      }
+      const folderList = await googleDriveService.listFolders();
+      setFolders(folderList);
+      
+      // Tenta encontrar a pasta "Capas" ou seleciona a primeira
+      const capasFolder = folderList.find((f: any) => f.name.toLowerCase().includes('capa'));
+      setSelectedFolderId(capasFolder?.id || folderList[0]?.id || '');
     } catch (error) {
       console.error('Error fetching folders:', error);
     } finally {
@@ -74,32 +57,9 @@ export function DriveImageUpload({ value, onChange, label }: DriveImageUploadPro
 
     setIsUploading(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error('Não autenticado');
-
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('fileName', `capa_${Date.now()}_${file.name}`);
-      if (selectedFolderId) {
-        formData.append('folderId', selectedFolderId);
-      }
-
-      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-      const resp = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/google-drive?action=upload`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${session.access_token}`,
-            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-          },
-          body: formData,
-        }
-      );
-
-      const result = await resp.json();
-      if (result.error) throw new Error(result.error);
-
+      const fileName = `capa_${Date.now()}_${file.name}`;
+      const result = await googleDriveService.uploadFile(file, fileName, selectedFolderId);
+      
       onChange(result.directUrl);
       toast.success('Imagem enviada para o Google Drive!');
     } catch (error: any) {
@@ -111,15 +71,6 @@ export function DriveImageUpload({ value, onChange, label }: DriveImageUploadPro
     }
   };
 
-  const getPreviewUrl = (url: string) => {
-    if (!url) return '';
-    if (url.includes('drive.google.com/file/d/')) {
-      const id = url.match(/\/d\/([^/]+)/)?.[1];
-      return `https://lh3.googleusercontent.com/d/${id}`;
-    }
-    return url;
-  };
-
   return (
     <div className="space-y-3">
       {label && <label className="text-xs font-bold text-muted-foreground uppercase opacity-70">{label}</label>}
@@ -128,7 +79,7 @@ export function DriveImageUpload({ value, onChange, label }: DriveImageUploadPro
         {value ? (
           <div className="relative group shrink-0">
             <img 
-              src={getPreviewUrl(value)} 
+              src={getDrivePreviewUrl(value)} 
               alt="Preview" 
               className="w-24 h-16 object-cover rounded-md border border-border bg-muted shadow-sm"
               onError={(e) => {

@@ -1,6 +1,3 @@
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import { motion } from 'framer-motion';
 import { Plus, Edit2, Trash2, ChevronRight, Loader2, Briefcase, Clock, Blocks } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -11,193 +8,32 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { toast } from 'sonner';
 import { DriveImageUpload } from './DriveImageUpload';
-
-interface Profession {
-  id: string;
-  name: string;
-  slug: string;
-  description: string | null;
-  icon: string | null;
-  is_active: boolean | null;
-  active_modes: string[] | null;
-  total_time: number | null;
-  display_order: number | null;
-  image_url: string | null;
-  created_at: string;
-  block_count?: number;
-  question_count?: number;
-}
+import { useProfessionsManager } from '@/hooks/useProfessionsManager';
 
 interface ProfessionsManagerProps {
   onSelectProfession: (professionId: string, professionName: string) => void;
 }
 
 export function ProfessionsManager({ onSelectProfession }: ProfessionsManagerProps) {
-  const queryClient = useQueryClient();
-  const [showDialog, setShowDialog] = useState(false);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [selectedProfession, setSelectedProfession] = useState<Profession | null>(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    icon: '✈️',
-    total_time: 120,
-    display_order: 0,
-    image_url: '',
-    active_modes: ['livre'] as string[],
-  });
-
-  // Fetch professions with block and question counts
-  const { data: professions, isLoading } = useQuery({
-    queryKey: ['admin-professions'],
-    queryFn: async () => {
-      const { data: cats, error } = await supabase
-        .from('categories')
-        .select('*')
-        .order('display_order', { ascending: true });
-
-      if (error) throw error;
-
-      // Get counts per profession using direct count queries to avoid row limits
-      const countsMap: Record<string, { blocks: number, questions: number }> = {};
-      
-      await Promise.all((cats || []).map(async (cat) => {
-        const [blocksRes, questionsRes] = await Promise.all([
-          supabase.from('subcategories').select('*', { count: 'exact', head: true }).eq('category_id', cat.id),
-          supabase.from('questions').select('*', { count: 'exact', head: true }).eq('category_id', cat.id)
-        ]);
-        
-        countsMap[cat.id] = {
-          blocks: blocksRes.count || 0,
-          questions: questionsRes.count || 0
-        };
-      }));
-
-      return (cats || []).map(cat => ({
-        ...cat,
-        block_count: countsMap[cat.id]?.blocks || 0,
-        question_count: countsMap[cat.id]?.questions || 0,
-      })) as Profession[];
-    },
-  });
-
-  // Create/Update profession
-  const saveMutation = useMutation({
-    mutationFn: async (data: typeof formData & { id?: string }) => {
-      const slug = data.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-      
-      if (data.id) {
-        const { error } = await supabase
-          .from('categories')
-          .update({
-            name: data.name,
-            slug,
-            description: data.description || null,
-            icon: data.icon || '✈️',
-            active_modes: data.active_modes,
-            total_time: data.total_time,
-            display_order: data.display_order,
-            image_url: data.image_url || null,
-          })
-          .eq('id', data.id);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase
-          .from('categories')
-          .insert({
-            name: data.name,
-            slug,
-            description: data.description || null,
-            icon: data.icon || '✈️',
-            active_modes: data.active_modes,
-            total_time: data.total_time,
-            display_order: data.display_order,
-            image_url: data.image_url || null,
-            is_active: true,
-          });
-        if (error) throw error;
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-professions'] });
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
-      toast.success(selectedProfession ? 'Profissão atualizada!' : 'Profissão criada!');
-      closeDialog();
-    },
-    onError: (error: any) => {
-      console.error('Error saving profession:', error);
-      const detailedError = error.message || error.details || 'Erro desconhecido';
-      toast.error(`Erro ao salvar profissão: ${detailedError}`);
-    },
-  });
-
-  // Delete profession
-  const deleteMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from('categories').delete().eq('id', id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-professions'] });
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
-      toast.success('Profissão excluída!');
-      setShowDeleteDialog(false);
-      setSelectedProfession(null);
-    },
-    onError: (error) => {
-      console.error(error);
-      toast.error('Erro ao excluir profissão. Verifique se não há blocos/questões vinculados.');
-    },
-  });
-
-  const openNewDialog = () => {
-    setSelectedProfession(null);
-    setFormData({ name: '', description: '', icon: '✈️', total_time: 120, display_order: 0, image_url: '', active_modes: ['livre'] });
-    setShowDialog(true);
-  };
-
-  const openEditDialog = (profession: Profession) => {
-    setSelectedProfession(profession);
-    setFormData({
-      name: profession.name,
-      description: profession.description || '',
-      icon: profession.icon || '✈️',
-      total_time: profession.total_time || 120,
-      display_order: profession.display_order || 0,
-      image_url: profession.image_url || '',
-      active_modes: profession.active_modes || ['livre'],
-    });
-    setShowDialog(true);
-  };
-
-  const closeDialog = () => {
-    setShowDialog(false);
-    setSelectedProfession(null);
-    setFormData({ name: '', description: '', icon: '✈️', total_time: 120, display_order: 0, image_url: '', active_modes: ['livre'] });
-  };
-
-  const handleModeToggle = (mode: string) => {
-    setFormData(prev => ({
-      ...prev,
-      active_modes: prev.active_modes.includes(mode)
-        ? prev.active_modes.filter(m => m !== mode)
-        : [...prev.active_modes, mode],
-    }));
-  };
-
-  const handleSubmit = () => {
-    if (!formData.name.trim()) {
-      toast.error('O nome da profissão é obrigatório');
-      return;
-    }
-    if (formData.active_modes.length === 0) {
-      toast.error('Selecione pelo menos um modo');
-      return;
-    }
-    saveMutation.mutate({ ...formData, id: selectedProfession?.id });
-  };
+  const {
+    professions,
+    isLoading,
+    showDialog,
+    setShowDialog,
+    showDeleteDialog,
+    setShowDeleteDialog,
+    selectedProfession,
+    formData,
+    setFormData,
+    openNewDialog,
+    openEditDialog,
+    closeDialog,
+    handleModeToggle,
+    handleSubmit,
+    saveMutation,
+    deleteMutation,
+  } = useProfessionsManager();
 
   if (isLoading) {
     return (

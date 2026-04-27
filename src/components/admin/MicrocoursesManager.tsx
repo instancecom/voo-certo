@@ -1,76 +1,23 @@
 import { useState, useEffect, useRef } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { useMicrocoursesManager } from '@/hooks/useMicrocoursesManager';
+import { googleDriveService } from '@/services/googleDrive';
+import { youtubeService } from '@/services/youtube';
+import { extractYouTubeId, getYouTubeEmbedUrl, getYouTubeThumbnail } from '@/lib/media-utils';
+import { Microcourse, Module, Lesson, DriveFolder } from '@/types/admin';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { DriveImageUpload } from './DriveImageUpload';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogDescription,
-} from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { DriveImageUpload } from './DriveImageUpload';
 import { toast } from 'sonner';
 import {
   Loader2, Plus, Pencil, Trash2, Save, X, Play, BookOpen,
-  Clock, Youtube, Upload, Link2, Unplug, CheckCircle2, AlertCircle,
-  ChevronRight, ChevronDown, FolderPlus, FileText, Layers, GraduationCap,
-  FileUp, FolderOpen,
+  Youtube, Upload, CheckCircle2, ChevronRight, ChevronDown, 
+  FolderPlus, FileText, Layers, GraduationCap, FileUp
 } from 'lucide-react';
-
-// ── Types ──
-interface Microcourse {
-  id: string;
-  title: string;
-  description: string | null;
-  content: string | null;
-  video_url: string | null;
-  thumbnail_url: string | null;
-  youtube_video_id: string | null;
-  category: string;
-  tags: string[];
-  duration_minutes: number;
-  display_order: number;
-  is_active: boolean;
-}
-
-interface Module {
-  id: string;
-  microcourse_id: string;
-  title: string;
-  description: string | null;
-  display_order: number;
-  is_active: boolean;
-}
-
-interface Lesson {
-  id: string;
-  module_id: string;
-  title: string;
-  description: string | null;
-  display_order: number;
-  video_url: string | null;
-  youtube_video_id: string | null;
-  thumbnail_url: string | null;
-  material_url: string | null;
-  material_name: string | null;
-  material_drive_folder: string | null;
-  is_active: boolean;
-  is_premium: boolean;
-}
-
-interface DriveFolder {
-  id: string;
-  name: string;
-}
 
 const CATEGORIES = [
   { value: 'seguranca', label: 'Segurança' },
@@ -80,45 +27,6 @@ const CATEGORIES = [
   { value: 'ingles', label: 'Inglês' },
   { value: 'geral', label: 'Geral' },
 ];
-
-const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/quicktime', 'video/webm', 'video/x-msvideo'];
-const MAX_FILE_SIZE = 500 * 1024 * 1024;
-
-function extractYouTubeId(url: string): string | null {
-  if (!url) return null;
-  const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-  return match ? match[1] : null;
-}
-
-function getYouTubeEmbedUrl(videoId: string): string {
-  return `https://www.youtube.com/embed/${videoId}`;
-}
-
-function getYouTubeThumbnail(videoId: string): string {
-  return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-}
-
-// ── Drive helpers ──
-async function driveRequest(action: string, options?: { method?: string; body?: any; isFormData?: boolean }) {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) throw new Error('Não autenticado');
-  const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-  const headers: Record<string, string> = {
-    Authorization: `Bearer ${session.access_token}`,
-    apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-  };
-  if (!options?.isFormData) headers['Content-Type'] = 'application/json';
-
-  const resp = await fetch(
-    `https://${projectId}.supabase.co/functions/v1/google-drive?action=${action}`,
-    {
-      method: options?.method || 'GET',
-      headers,
-      body: options?.body ? (options.isFormData ? options.body : JSON.stringify(options.body)) : undefined,
-    }
-  );
-  return await resp.json();
-}
 
 // ── Microcourse Form ──
 function MicrocourseForm({ course, onSave, onCancel }: {
@@ -150,7 +58,6 @@ function MicrocourseForm({ course, onSave, onCancel }: {
           <Input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Nome do microcurso" />
         </div>
 
-        {/* Thumbnail / Capa */}
            <div className="space-y-2">
             <DriveImageUpload
               label="Imagem de Capa (Google Drive)"
@@ -260,11 +167,9 @@ function LessonForm({ lesson, onSave, onCancel, youtubeConnected }: {
   const loadFolders = async () => {
     setLoadingFolders(true);
     try {
-      const data = await driveRequest('list_folders');
-      setFolders(data.folders || []);
-    } catch {
-      // ignore
-    } finally {
+      const folderList = await googleDriveService.listFolders();
+      setFolders(folderList);
+    } catch { /* ignore */ } finally {
       setLoadingFolders(false);
     }
   };
@@ -273,15 +178,13 @@ function LessonForm({ lesson, onSave, onCancel, youtubeConnected }: {
     if (!newFolderName.trim()) return;
     setCreatingFolder(true);
     try {
-      const data = await driveRequest('create_folder', { method: 'POST', body: { name: newFolderName.trim() } });
+      const data = await googleDriveService.createFolder(newFolderName);
       if (data.folderId) {
         setFolders(prev => [...prev, { id: data.folderId, name: newFolderName.trim() }]);
         setSelectedFolder(data.folderId);
         setShowNewFolder(false);
         setNewFolderName('');
-        toast.success(`Pasta "${newFolderName.trim()}" criada!`);
-      } else {
-        toast.error(data.error || 'Erro ao criar pasta');
+        toast.success(`Pasta criada!`);
       }
     } catch (e: any) {
       toast.error(e.message);
@@ -292,55 +195,22 @@ function LessonForm({ lesson, onSave, onCancel, youtubeConnected }: {
 
   const handleVideoUpload = async () => {
     if (!videoFile) return;
-    if (!ALLOWED_VIDEO_TYPES.includes(videoFile.type)) {
-      toast.error('Formato não suportado. Use MP4, MOV, WebM ou AVI.');
-      return;
-    }
-    if (videoFile.size > MAX_FILE_SIZE) {
-      toast.error('Arquivo excede 500MB.');
-      return;
-    }
     setUploadingVideo(true);
     setUploadProgress(10);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error('Não autenticado');
-      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-
-      const formData = new FormData();
-      formData.append('video', videoFile);
-      formData.append('title', title || videoFile.name);
-      formData.append('description', description || '');
-      formData.append('privacy', 'unlisted');
-
       setUploadProgress(30);
-
-      const resp = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/youtube-upload?action=upload`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${session.access_token}`,
-            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-          },
-          body: formData,
-        }
-      );
-
+      const data = await youtubeService.uploadVideo(videoFile, title || videoFile.name, description);
       setUploadProgress(80);
-      const data = await resp.json();
 
-      if (!resp.ok || !data.success) {
-        throw new Error(data.error || 'Falha no upload');
+      if (data.success) {
+        setUploadProgress(100);
+        setVideoUrl(`https://www.youtube.com/watch?v=${data.video_id}`);
+        setVideoFile(null);
+        toast.success(`Vídeo enviado ao YouTube!`);
+      } else {
+        throw new Error(data.error);
       }
-
-      setUploadProgress(100);
-      const newUrl = `https://www.youtube.com/watch?v=${data.video_id}`;
-      setVideoUrl(newUrl);
-      setVideoFile(null);
-      toast.success(`Vídeo enviado ao YouTube! ID: ${data.video_id}`);
     } catch (e: any) {
-      console.error('Upload error:', e);
       toast.error(e.message || 'Erro ao enviar vídeo');
     } finally {
       setUploadingVideo(false);
@@ -397,17 +267,7 @@ function LessonForm({ lesson, onSave, onCancel, youtubeConnected }: {
                   <Youtube className="w-3 h-3" /> Enviar ao YouTube
                 </Button>
               )}
-              {videoFile && (
-                <span className="text-xs text-muted-foreground">
-                  {(videoFile.size / (1024 * 1024)).toFixed(1)} MB
-                </span>
-              )}
             </div>
-          )}
-          {!youtubeConnected && (
-            <p className="text-xs text-muted-foreground flex items-center gap-1">
-              <AlertCircle className="w-3 h-3" /> Conecte o YouTube na aba "Conexões" para habilitar o upload.
-            </p>
           )}
         </div>
       )}
@@ -481,234 +341,38 @@ function LessonForm({ lesson, onSave, onCancel, youtubeConnected }: {
 
 // ── Main Component ──
 export function MicrocoursesManager() {
-  const queryClient = useQueryClient();
-  const [showMicrocourseForm, setShowMicrocourseForm] = useState(false);
-  const [editingMicrocourse, setEditingMicrocourse] = useState<Microcourse | null>(null);
-  const [expandedMicrocourses, setExpandedMicrocourses] = useState<Set<string>>(new Set());
-  const [expandedModules, setExpandedModules] = useState<Set<string>>(new Set());
-  const [addingModuleTo, setAddingModuleTo] = useState<string | null>(null);
-  const [editingModule, setEditingModule] = useState<Module | null>(null);
-  const [addingLessonTo, setAddingLessonTo] = useState<string | null>(null);
-  const [editingLesson, setEditingLesson] = useState<Lesson | null>(null);
-  const [youtubeConnected, setYoutubeConnected] = useState(false);
-  const [driveConnected, setDriveConnected] = useState(false);
-  const [checkingConnections, setCheckingConnections] = useState(true);
-  const [uploadingMaterial, setUploadingMaterial] = useState(false);
-
-  useEffect(() => {
-    checkConnections();
-    const handleMessage = (e: MessageEvent) => {
-      if (e.data?.type === 'youtube_connected') {
-        setYoutubeConnected(true);
-        toast.success('YouTube conectado!');
-      }
-      if (e.data?.type === 'drive_connected') {
-        setDriveConnected(true);
-        toast.success('Google Drive conectado!');
-      }
-    };
-    window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
-  }, []);
-
-  const checkConnections = async () => {
-    setCheckingConnections(true);
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-      const headers = {
-        Authorization: `Bearer ${session.access_token}`,
-        apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-      };
-      const [ytResp, driveResp] = await Promise.all([
-        fetch(`https://${projectId}.supabase.co/functions/v1/youtube-upload?action=status`, { headers }),
-        fetch(`https://${projectId}.supabase.co/functions/v1/google-drive?action=status`, { headers }),
-      ]);
-      const ytData = await ytResp.json();
-      const driveData = await driveResp.json();
-      setYoutubeConnected(ytData.connected);
-      setDriveConnected(driveData.connected);
-    } catch { /* ignore */ } finally {
-      setCheckingConnections(false);
-    }
-  };
-
-  const handleConnectDrive = async () => {
-    try {
-      const data = await driveRequest('auth_url');
-      if (data.url) window.open(data.url, 'drive_oauth', 'width=600,height=700');
-      else toast.error(data.error || 'Erro ao gerar URL OAuth');
-    } catch (e: any) { toast.error(e.message); }
-  };
-
-  // ── Queries ──
-  const { data: courses, isLoading } = useQuery({
-    queryKey: ['admin-microcourses'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('microcourses').select('*').order('display_order');
-      if (error) throw error;
-      return data as unknown as Microcourse[];
-    },
-  });
-
-  const { data: allModules } = useQuery({
-    queryKey: ['admin-modules'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('modules').select('*').order('display_order');
-      if (error) throw error;
-      return data as Module[];
-    },
-  });
-
-  const { data: allLessons } = useQuery({
-    queryKey: ['admin-lessons'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('lessons').select('*').order('display_order');
-      if (error) throw error;
-      return data as Lesson[];
-    },
-  });
-
-  // ── Mutations ──
-  const saveMicrocourseMutation = useMutation({
-    mutationFn: async (data: any) => {
-      const payload: any = {
-        title: data.title,
-        description: data.description || null,
-        content: data.content || null,
-        thumbnail_url: data.thumbnail_url || null,
-        category: data.category,
-        tags: data.tags ? data.tags.split(',').map((t: string) => t.trim()).filter(Boolean) : [],
-        duration_minutes: data.duration_minutes,
-        display_order: data.display_order,
-        is_active: data.is_active,
-      };
-      if (editingMicrocourse) {
-        const { error } = await supabase.from('microcourses').update(payload).eq('id', editingMicrocourse.id);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.from('microcourses').insert(payload);
-        if (error) throw error;
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-microcourses'] });
-      toast.success(editingMicrocourse ? 'Microcurso atualizado!' : 'Microcurso criado!');
-      setShowMicrocourseForm(false);
-      setEditingMicrocourse(null);
-    },
-    onError: (e: any) => toast.error(e.message),
-  });
-
-  const deleteMicrocourseMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from('microcourses').delete().eq('id', id);
-      if (error) throw error;
-    },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['admin-microcourses'] }); toast.success('Microcurso removido!'); },
-    onError: (e: any) => toast.error(e.message),
-  });
-
-  const saveModuleMutation = useMutation({
-    mutationFn: async ({ data, microcourseId, moduleId }: { data: any; microcourseId: string; moduleId?: string }) => {
-      if (moduleId) {
-        const { error } = await supabase.from('modules').update(data).eq('id', moduleId);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.from('modules').insert({ ...data, microcourse_id: microcourseId });
-        if (error) throw error;
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-modules'] });
-      toast.success('Módulo salvo!');
-      setAddingModuleTo(null);
-      setEditingModule(null);
-    },
-    onError: (e: any) => toast.error(e.message),
-  });
-
-  const deleteModuleMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from('modules').delete().eq('id', id);
-      if (error) throw error;
-    },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['admin-modules'] }); queryClient.invalidateQueries({ queryKey: ['admin-lessons'] }); toast.success('Módulo removido!'); },
-    onError: (e: any) => toast.error(e.message),
-  });
-
-  const saveLessonMutation = useMutation({
-    mutationFn: async ({ data, moduleId, lessonId, materialFile }: { data: any; moduleId: string; lessonId?: string; materialFile?: File }) => {
-      let materialUrl = data.material_url || null;
-      let materialName = data.material_name || null;
-
-      // Upload material to Drive if file provided
-      if (materialFile) {
-        setUploadingMaterial(true);
-        try {
-          const formData = new FormData();
-          formData.append('file', materialFile);
-          formData.append('fileName', materialFile.name);
-          if (data.material_drive_folder) {
-            formData.append('folderId', data.material_drive_folder);
-          }
-          const result = await driveRequest('upload', { method: 'POST', body: formData, isFormData: true });
-          if (result.error) throw new Error(result.error);
-          materialUrl = result.directUrl;
-          materialName = materialFile.name;
-        } finally {
-          setUploadingMaterial(false);
-        }
-      }
-
-      const payload = {
-        title: data.title,
-        description: data.description || null,
-        display_order: data.display_order,
-        video_url: data.video_url || null,
-        youtube_video_id: data.youtube_video_id || null,
-        thumbnail_url: data.thumbnail_url || null,
-        material_url: materialUrl,
-        material_name: materialName,
-        material_drive_folder: data.material_drive_folder || null,
-        is_premium: data.is_premium,
-      };
-
-      if (lessonId) {
-        const { error } = await supabase.from('lessons').update(payload).eq('id', lessonId);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.from('lessons').insert({ ...payload, module_id: moduleId });
-        if (error) throw error;
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-lessons'] });
-      toast.success('Aula salva!');
-      setAddingLessonTo(null);
-      setEditingLesson(null);
-    },
-    onError: (e: any) => toast.error(e.message),
-  });
-
-  const deleteLessonMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from('lessons').delete().eq('id', id);
-      if (error) throw error;
-    },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['admin-lessons'] }); toast.success('Aula removida!'); },
-    onError: (e: any) => toast.error(e.message),
-  });
-
-  const toggleExpand = (set: Set<string>, id: string, setter: (s: Set<string>) => void) => {
-    const next = new Set(set);
-    next.has(id) ? next.delete(id) : next.add(id);
-    setter(next);
-  };
-
-  const getModules = (mcId: string) => (allModules || []).filter(m => m.microcourse_id === mcId);
-  const getLessons = (modId: string) => (allLessons || []).filter(l => l.module_id === modId);
+  const {
+    courses,
+    isLoadingCourses,
+    showMicrocourseForm,
+    setShowMicrocourseForm,
+    editingMicrocourse,
+    setEditingMicrocourse,
+    expandedMicrocourses,
+    setExpandedMicrocourses,
+    expandedModules,
+    setExpandedModules,
+    addingModuleTo,
+    setAddingModuleTo,
+    editingModule,
+    setEditingModule,
+    addingLessonTo,
+    setAddingLessonTo,
+    editingLesson,
+    setEditingLesson,
+    youtubeConnected,
+    driveConnected,
+    uploadingMaterial,
+    saveMicrocourseMutation,
+    deleteMicrocourseMutation,
+    saveModuleMutation,
+    deleteModuleMutation,
+    saveLessonMutation,
+    deleteLessonMutation,
+    toggleExpand,
+    getModules,
+    getLessons,
+  } = useMicrocoursesManager();
 
   return (
     <div className="space-y-6">
@@ -749,7 +413,7 @@ export function MicrocoursesManager() {
       )}
 
       {/* Loading */}
-      {isLoading ? (
+      {isLoadingCourses ? (
         <div className="flex items-center justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
       ) : courses?.length === 0 ? (
         <div className="text-center py-12 bg-muted/50 rounded-xl">
