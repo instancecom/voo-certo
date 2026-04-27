@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Plane, BookOpen, Crown, ArrowRight, Timer, Zap, Layers, ShieldCheck, Lock, BadgeCheck } from 'lucide-react';
+import { Plane, BookOpen, Crown, ArrowRight, Timer, Zap, Layers, ShieldCheck, Lock, BadgeCheck, Users, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
@@ -40,55 +40,62 @@ export default function SimuladosPage() {
   const { canAccessModoLivre, canAccessModoBloco, canAccessModoBanca } = usePlan();
   const [blockDialogOpen, setBlockDialogOpen] = useState(false);
   const [selectedProfession, setSelectedProfession] = useState<ProfessionWithBlocks | null>(null);
+  
+  // Modais de conversão
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [upgradeReason, setUpgradeReason] = useState<'banca' | 'bloco'>('banca');
 
   const { data: professions, isLoading } = useQuery({
     queryKey: ['professions-with-blocks'],
     queryFn: async () => {
-      const { data: cats, error } = await supabase
-        .from('categories')
-        .select('*')
-        .eq('is_active', true)
-        .order('display_order', { ascending: true });
+      try {
+        const { data: cats, error } = await supabase
+          .from('categories')
+          .select('*')
+          .eq('is_active', true)
+          .order('display_order', { ascending: true });
 
-      if (error) throw error;
+        if (error) throw error;
 
-      const resultsMap: Record<string, { blocks: BlockInfo[], questionCount: number }> = {};
-      
-      await Promise.all((cats || []).map(async (cat) => {
-        const [blocksRes, questionsRes] = await Promise.all([
-          supabase.from('subcategories').select('id, name').eq('category_id', cat.id).order('name').limit(100),
-          supabase.from('questions').select('*', { count: 'exact', head: true }).eq('category_id', cat.id)
-        ]);
+        const resultsMap: Record<string, { blocks: BlockInfo[], questionCount: number }> = {};
         
-        resultsMap[cat.id] = {
-          blocks: (blocksRes.data || []).map(b => ({ id: b.id, name: b.name })),
-          questionCount: questionsRes.count || 0
-        };
-      }));
+        await Promise.all((cats || []).map(async (cat) => {
+          const [blocksRes, questionsRes] = await Promise.all([
+            supabase.from('subcategories').select('id, name').eq('category_id', cat.id).order('name').limit(100),
+            supabase.from('questions').select('*', { count: 'exact', head: true }).eq('category_id', cat.id)
+          ]);
+          
+          resultsMap[cat.id] = {
+            blocks: (blocksRes.data || []).map(b => ({ id: b.id, name: b.name })),
+            questionCount: questionsRes.count || 0
+          };
+        }));
 
-      return (cats || [])
-        .map(cat => ({
-          ...cat,
-          block_count: resultsMap[cat.id]?.blocks.length || 0,
-          question_count: resultsMap[cat.id]?.questionCount || 0,
-          blocks: resultsMap[cat.id]?.blocks || [],
-        }))
-        .filter(cat => cat.question_count > 0) as ProfessionWithBlocks[];
+        return (cats || [])
+          .map(cat => ({
+            ...cat,
+            block_count: resultsMap[cat.id]?.blocks.length || 0,
+            question_count: resultsMap[cat.id]?.questionCount || 0,
+            blocks: resultsMap[cat.id]?.blocks || [],
+          }))
+          .filter(cat => cat.question_count > 0) as ProfessionWithBlocks[];
+      } catch (err) {
+        console.error('Error in queryFn:', err);
+        return [];
+      }
     },
   });
 
   const handleStartSimulado = (professionId: string, mode: string) => {
     if (!user) {
-      toast.error('Faça login ou crie sua conta para começar este simulado', {
-        action: { label: 'Entrar', onClick: () => navigate('/auth') },
-      });
+      setShowAuthModal(true);
       return;
     }
 
     if (mode === 'banca_anac' && !canAccessModoBanca) {
-      toast.error('O Modo Banca é exclusivo para assinantes Solo ou superior.', {
-        action: { label: 'Ver Planos', onClick: () => navigate('/premium') },
-      });
+      setUpgradeReason('banca');
+      setShowUpgradeModal(true);
       return;
     }
     
@@ -97,16 +104,13 @@ export default function SimuladosPage() {
 
   const handleOpenBlockSelection = (profession: ProfessionWithBlocks) => {
     if (!user) {
-      toast.error('Faça login para selecionar os blocos de estudo', {
-        action: { label: 'Entrar', onClick: () => navigate('/auth') },
-      });
+      setShowAuthModal(true);
       return;
     }
 
     if (!canAccessModoBloco) {
-      toast.error('O Modo Bloco é exclusivo para assinantes Solo ou superior.', {
-        action: { label: 'Ver Planos', onClick: () => navigate('/premium') },
-      });
+      setUpgradeReason('bloco');
+      setShowUpgradeModal(true);
       return;
     }
     setSelectedProfession(profession);
@@ -248,6 +252,78 @@ export default function SimuladosPage() {
              </div>
           </div>
         </section>
+
+        {/* Modal de Autenticação */}
+        <Dialog open={showAuthModal} onOpenChange={setShowAuthModal}>
+          <DialogContent className="max-w-md rounded-[5px] p-0 overflow-hidden border-none shadow-2xl">
+            <div className="bg-gradient-to-br from-primary via-primary to-primary/90 p-8 text-white relative">
+              <div className="absolute top-0 right-0 p-4 opacity-10">
+                <Plane className="w-24 h-24 rotate-12" />
+              </div>
+              <div className="w-16 h-16 rounded-[5px] bg-white/10 backdrop-blur-sm flex items-center justify-center mb-6 border border-white/20">
+                <Users className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-2xl font-black mb-2 tracking-tight uppercase">Sua jornada começa aqui</h3>
+              <p className="text-white/70 text-sm font-medium leading-relaxed">Crie sua conta gratuita em segundos para salvar seu progresso e acessar o Modo Livre.</p>
+            </div>
+            <div className="p-8 space-y-4 bg-white">
+              <div className="space-y-3">
+                <Button variant="hero" className="w-full h-12 rounded-[5px] font-bold text-base shadow-lg shadow-primary/20" onClick={() => navigate('/auth')}>
+                  Criar minha conta agora <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+                <Button variant="outline" className="w-full h-12 rounded-[5px] font-bold border-border/60 hover:bg-muted" onClick={() => setShowAuthModal(false)}>
+                  Talvez mais tarde
+                </Button>
+              </div>
+              <p className="text-[10px] text-center text-muted-foreground uppercase font-bold tracking-widest pt-2">Já tem conta? <span className="text-primary cursor-pointer hover:underline" onClick={() => navigate('/auth')}>Entrar</span></p>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Modal de Upgrade */}
+        <Dialog open={showUpgradeModal} onOpenChange={setShowUpgradeModal}>
+          <DialogContent className="max-w-md rounded-[5px] p-0 overflow-hidden border-none shadow-2xl">
+            <div className="bg-gradient-to-br from-accent via-accent to-accent/90 p-8 text-accent-foreground relative">
+              <div className="absolute top-0 right-0 p-4 opacity-10">
+                <Crown className="w-24 h-24 rotate-12" />
+              </div>
+              <div className="w-16 h-16 rounded-[5px] bg-black/5 backdrop-blur-sm flex items-center justify-center mb-6 border border-black/10">
+                <Sparkles className="w-8 h-8 text-accent-foreground" />
+              </div>
+              <h3 className="text-2xl font-black mb-2 tracking-tight uppercase">
+                {upgradeReason === 'banca' ? 'Desbloqueie o Modo Banca' : 'Desbloqueie o Modo Bloco'}
+              </h3>
+              <p className="text-accent-foreground/70 text-sm font-bold leading-relaxed">
+                Este recurso é exclusivo para assinantes. Estude com questões oficiais e tenha acesso à IA explicativa.
+              </p>
+            </div>
+            <div className="p-8 bg-white">
+              <div className="space-y-4 mb-6">
+                {[
+                  'Simulados padrão ANAC Ilimitados',
+                  'Chat de IA para tirar todas as suas dúvidas',
+                  'Relatórios de desempenho por matéria',
+                  'Insígnias e medalhas exclusivas'
+                ].map((feature, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="w-5 h-5 rounded-full bg-success/10 flex items-center justify-center shrink-0">
+                      <ShieldCheck className="w-3 h-3 text-success" />
+                    </div>
+                    <span className="text-sm font-bold text-foreground/80">{feature}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="space-y-3">
+                <Button variant="hero" className="w-full h-12 rounded-[5px] font-bold text-base bg-accent text-accent-foreground hover:bg-accent/90 shadow-lg shadow-accent/20 border-none" onClick={() => navigate('/premium')}>
+                   Ver Planos e Assinar <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+                <Button variant="ghost" className="w-full h-12 rounded-[5px] font-bold text-muted-foreground" onClick={() => setShowUpgradeModal(false)}>
+                  Agora não, quero continuar grátis
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         <Dialog open={blockDialogOpen} onOpenChange={setBlockDialogOpen}>
           <DialogContent className="rounded-[5px]">
