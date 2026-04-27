@@ -165,12 +165,43 @@ export const useCheckAndGrantBadges = () => {
         case "english_correct":
           shouldGrant = (stats.english_correct || 0) >= insignia.condition_value;
           break;
+        case "english_score":
+          shouldGrant = (stats.english_score || 0) >= insignia.condition_value;
+          break;
         case "security_score":
+          shouldGrant = (stats.security_score || 0) >= insignia.condition_value;
+          break;
         case "security_correct":
           shouldGrant = (stats.security_correct || 0) >= insignia.condition_value;
           break;
+        case "security_streak":
+          shouldGrant = (stats.security_streak || 0) >= insignia.condition_value;
+          break;
+        case "security_perfect":
+          shouldGrant = (stats.security_perfect || 0) >= insignia.condition_value;
+          break;
+        case "security_block_score":
+          shouldGrant = (stats.security_score || 0) >= insignia.condition_value;
+          break;
+        case "emergency_block_perfect":
+          shouldGrant = (stats.emergency_block_perfect || 0) >= insignia.condition_value;
+          break;
+        case "behavioral_score":
+        case "behavioral_exams":
+          shouldGrant = (stats.behavioral_score || 0) >= insignia.condition_value;
+          break;
+        case "stress_score":
+          shouldGrant = (stats.stress_score || 0) >= insignia.condition_value;
+          break;
+        case "multilingual_score":
+        case "multilingual_perfect":
+          shouldGrant = (stats.multilingual_score || 0) >= insignia.condition_value;
+          break;
         case "consecutive_score":
           shouldGrant = (stats.consecutive_score || 0) >= insignia.condition_value;
+          break;
+        case "all_modes_score":
+          shouldGrant = (stats.avgScore || 0) >= insignia.condition_value;
           break;
         case "avg_score_exams":
         case "avg_score_exams_10":
@@ -179,7 +210,12 @@ export const useCheckAndGrantBadges = () => {
           shouldGrant = (stats.avgScore || 0) >= insignia.condition_value;
           break;
         case "free_exam_score":
-          shouldGrant = (stats.avgScore || 0) >= insignia.condition_value; // Simplification
+          shouldGrant = (stats.avgScore || 0) >= insignia.condition_value;
+          break;
+        case "profession_complete":
+        case "profession_mastery":
+        case "profession_perfect":
+          shouldGrant = (stats.blocksCompleted || 0) >= 4; // Assuming 4 blocks per profession
           break;
         // Add more condition types as needed
       }

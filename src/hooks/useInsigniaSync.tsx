@@ -47,26 +47,56 @@ export function useInsigniaSync() {
     }
 
     // 3. Category Specific Stats
-    // Map of exam_id to its subcategory (to filter results)
     const examMap = new Map(allExams?.map(e => [e.id, e]) || []);
     
-    const englishCorrect = results.reduce((acc, r) => {
+    let englishCorrect = 0;
+    let englishMaxScore = 0;
+    let spanishMaxScore = 0;
+    let securityCorrect = 0;
+    let securityMaxScore = 0;
+    let behavioralMaxScore = 0;
+    let stressMaxScore = 0;
+    let emergencyPerfectBlocks = 0;
+    
+    results.forEach(r => {
       const exam = examMap.get(r.exam_id);
-      // We assume subcategory slugs for English
-      if (exam?.title?.toLowerCase().includes('inglês') || exam?.description?.toLowerCase().includes('inglês')) {
-        return acc + r.correct_answers;
+      const title = exam?.title?.toLowerCase() || '';
+      
+      // English
+      if (title.includes('inglês')) {
+        englishCorrect += r.correct_answers;
+        englishMaxScore = Math.max(englishMaxScore, r.score);
       }
-      return acc;
-    }, 0);
+      
+      // Spanish
+      if (title.includes('espanhol')) {
+        spanishMaxScore = Math.max(spanishMaxScore, r.score);
+      }
+      
+      // Security / Technical
+      if (title.includes('segurança') || title.includes('técnico')) {
+        securityCorrect += r.correct_answers;
+        securityMaxScore = Math.max(securityMaxScore, r.score);
+      }
 
-    const securityCorrect = results.reduce((acc, r) => {
-      const exam = examMap.get(r.exam_id);
-      // We assume "Segurança" or "Conhecimentos Técnicos"
-      if (exam?.title?.toLowerCase().includes('segurança') || exam?.title?.toLowerCase().includes('técnico')) {
-        return acc + r.correct_answers;
+      // Behavioral / Stress
+      if (title.includes('comportamental') || title.includes('psicotécnico')) {
+        behavioralMaxScore = Math.max(behavioralMaxScore, r.score);
       }
-      return acc;
-    }, 0);
+      if (title.includes('estresse') || title.includes('pressão')) {
+        stressMaxScore = Math.max(stressMaxScore, r.score);
+      }
+
+      // Emergency Blocks
+      if (r.block_results) {
+        const blocks = r.block_results as any[];
+        blocks.forEach(b => {
+          if ((b.blockName?.toLowerCase().includes('emergência') || b.blockName?.toLowerCase().includes('segurança')) && b.percentage === 100) {
+            emergencyPerfectBlocks++;
+          }
+        });
+      }
+    });
 
     // 4. Consecutive Performance
     const sortedResults = [...results].sort((a, b) => new Date(b.completed_at).getTime() - new Date(a.completed_at).getTime());
@@ -90,7 +120,16 @@ export function useInsigniaSync() {
       firstLogin: true,
       firstExam: totalExams >= 1,
       english_correct: englishCorrect,
+      english_score: englishMaxScore,
+      spanish_score: spanishMaxScore,
       security_correct: securityCorrect,
+      security_score: securityMaxScore,
+      security_streak: securityMaxScore >= 90 ? 1 : 0, // Simplified
+      security_perfect: securityMaxScore === 100 ? 100 : 0,
+      behavioral_score: behavioralMaxScore,
+      stress_score: stressMaxScore,
+      emergency_block_perfect: emergencyPerfectBlocks,
+      multilingual_score: (englishMaxScore + spanishMaxScore) / (englishMaxScore > 0 && spanishMaxScore > 0 ? 2 : 1),
       consecutive_score: consecutiveScore70,
     };
 
