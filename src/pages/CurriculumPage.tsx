@@ -434,13 +434,25 @@ export default function CurriculumPage() {
             <div className={`lg:col-span-5 space-y-6 ${mode === 'preview' ? 'hidden lg:block' : ''}`}>
                <Card className="rounded-[5px] border-2 shadow-sm overflow-hidden bg-white/80 backdrop-blur-xl border-slate-200">
                   <Tabs value={activeTab} onValueChange={setActiveTab}>
-                    <TabsList className="grid grid-cols-5 bg-muted/30 p-1 h-14 rounded-none border-b">
-                      <TabsTrigger value="modelo" title="Modelo" className="rounded-[5px] data-[state=active]:bg-white data-[state=active]:shadow-md transition-all"><Layout className="w-4 h-4" /></TabsTrigger>
-                      <TabsTrigger value="dados" title="Dados" className="rounded-[5px] data-[state=active]:bg-white data-[state=active]:shadow-md transition-all"><User className="w-4 h-4" /></TabsTrigger>
-                      <TabsTrigger value="experiencia" title="Experiências" className="rounded-[5px] data-[state=active]:bg-white data-[state=active]:shadow-md transition-all"><Briefcase className="w-4 h-4" /></TabsTrigger>
-                      <TabsTrigger value="formacao" title="Formação" className="rounded-[5px] data-[state=active]:bg-white data-[state=active]:shadow-md transition-all"><GraduationCap className="w-4 h-4" /></TabsTrigger>
-                      <TabsTrigger value="extras" title="Extras" className="rounded-[5px] data-[state=active]:bg-white data-[state=active]:shadow-md transition-all"><Award className="w-4 h-4" /></TabsTrigger>
-                    </TabsList>
+                    <div className="px-6 pt-6">
+                      <TabsList className="grid grid-cols-5 bg-slate-100/50 p-1.5 h-12 rounded-xl border border-slate-200/50 backdrop-blur-sm">
+                        <TabsTrigger value="modelo" title="Modelo" className="rounded-lg data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all duration-300">
+                          <Layout className="w-4 h-4" />
+                        </TabsTrigger>
+                        <TabsTrigger value="dados" title="Dados" className="rounded-lg data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all duration-300">
+                          <User className="w-4 h-4" />
+                        </TabsTrigger>
+                        <TabsTrigger value="experiencia" title="Experiências" className="rounded-lg data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all duration-300">
+                          <Briefcase className="w-4 h-4" />
+                        </TabsTrigger>
+                        <TabsTrigger value="formacao" title="Formação" className="rounded-lg data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all duration-300">
+                          <GraduationCap className="w-4 h-4" />
+                        </TabsTrigger>
+                        <TabsTrigger value="extras" title="Extras" className="rounded-lg data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all duration-300">
+                          <Award className="w-4 h-4" />
+                        </TabsTrigger>
+                      </TabsList>
+                    </div>
 
                     <div className="p-6">
                       <TabsContent value="modelo" className="mt-0 space-y-4">
