@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Plane, BookOpen, Crown, ArrowRight, Timer, Zap, Layers, ShieldCheck } from 'lucide-react';
+import { Plane, BookOpen, Crown, ArrowRight, Timer, Zap, Layers, ShieldCheck, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
@@ -35,7 +35,8 @@ interface ProfessionWithBlocks {
 
 export default function SimuladosPage() {
   const navigate = useNavigate();
-  const { canAccessSimulados } = usePlan();
+  const { user } = useAuth();
+  const { canAccessModoLivre, canAccessModoBloco, canAccessModoBanca } = usePlan();
   const [blockDialogOpen, setBlockDialogOpen] = useState(false);
   const [selectedProfession, setSelectedProfession] = useState<ProfessionWithBlocks | null>(null);
 
@@ -76,23 +77,33 @@ export default function SimuladosPage() {
   });
 
   const handleStartSimulado = (professionId: string, mode: string) => {
+    if (!user) {
+      toast.error('Faça login ou crie sua conta para começar este simulado', {
+        action: { label: 'Entrar', onClick: () => navigate('/auth') },
+      });
+      return;
+    }
+
     if (mode === 'banca_anac' && !canAccessModoBanca) {
-      toast.error('Assine o plano Solo para acessar o Modo Banca', {
+      toast.error('O Modo Banca é exclusivo para assinantes Solo ou superior.', {
         action: { label: 'Ver Planos', onClick: () => navigate('/premium') },
       });
       return;
     }
-    if (mode === 'livre' && !canAccessModoLivre) {
-      // In theory everyone has access, but we check anyway
-      toast.error('Acesse sua conta para fazer simulados');
-      return;
-    }
+    
     navigate(`/simulado-profissao/${professionId}?modo=${mode}`);
   };
 
   const handleOpenBlockSelection = (profession: ProfessionWithBlocks) => {
+    if (!user) {
+      toast.error('Faça login para selecionar os blocos de estudo', {
+        action: { label: 'Entrar', onClick: () => navigate('/auth') },
+      });
+      return;
+    }
+
     if (!canAccessModoBloco) {
-      toast.error('Assine o plano Solo para acessar o Modo Bloco', {
+      toast.error('O Modo Bloco é exclusivo para assinantes Solo ou superior.', {
         action: { label: 'Ver Planos', onClick: () => navigate('/premium') },
       });
       return;
@@ -176,18 +187,37 @@ export default function SimuladosPage() {
 
                       <div className="space-y-2">
                         {profession.active_modes?.includes('banca_anac') && (
-                          <Button variant="outline" size="sm" className="w-full h-11 justify-start rounded-[5px] hover-yellow border-border/50" onClick={() => handleStartSimulado(profession.id, 'banca_anac')}>
-                            <Timer className="w-4 h-4 mr-3 text-[#F7CE87]" />Modo Banca<ArrowRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className={`w-full h-11 justify-start rounded-[5px] border-border/50 transition-all ${!canAccessModoBanca ? 'bg-muted/30 opacity-80' : 'hover-yellow'}`} 
+                            onClick={() => handleStartSimulado(profession.id, 'banca_anac')}
+                          >
+                            <Timer className={`w-4 h-4 mr-3 ${!canAccessModoBanca ? 'text-muted-foreground' : 'text-[#F7CE87]'}`} />
+                            <span className={!canAccessModoBanca ? 'text-muted-foreground' : ''}>Modo Banca</span>
+                            {!canAccessModoBanca ? <Lock className="w-3 h-3 ml-auto text-muted-foreground/50" /> : <ArrowRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />}
                           </Button>
                         )}
                         {profession.active_modes?.includes('livre') && (
-                          <Button variant="outline" size="sm" className="w-full h-11 justify-start rounded-[5px] hover-yellow border-border/50" onClick={() => handleStartSimulado(profession.id, 'livre')}>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="w-full h-11 justify-start rounded-[5px] hover-yellow border-border/50" 
+                            onClick={() => handleStartSimulado(profession.id, 'livre')}
+                          >
                             <Zap className="w-4 h-4 mr-3 text-accent" />Modo Livre<ArrowRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
                           </Button>
                         )}
                         {profession.block_count > 0 && (
-                          <Button variant="outline" size="sm" className="w-full h-11 justify-start rounded-[5px] hover-yellow border-border/50" onClick={() => handleOpenBlockSelection(profession)}>
-                            <Layers className="w-4 h-4 mr-3 text-warning" />Modo Bloco<ArrowRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className={`w-full h-11 justify-start rounded-[5px] border-border/50 transition-all ${!canAccessModoBloco ? 'bg-muted/30 opacity-80' : 'hover-yellow'}`} 
+                            onClick={() => handleOpenBlockSelection(profession)}
+                          >
+                            <Layers className={`w-4 h-4 mr-3 ${!canAccessModoBloco ? 'text-muted-foreground' : 'text-warning'}`} />
+                            <span className={!canAccessModoBloco ? 'text-muted-foreground' : ''}>Modo Bloco</span>
+                            {!canAccessModoBloco ? <Lock className="w-3 h-3 ml-auto text-muted-foreground/50" /> : <ArrowRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />}
                           </Button>
                         )}
                       </div>
