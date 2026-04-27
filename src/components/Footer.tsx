@@ -7,7 +7,7 @@ export function Footer() {
 
   return (
     <footer className="bg-primary text-primary-foreground">
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 text-center md:text-left">
           {/* Brand */}
           <div className="md:col-span-1 flex flex-col items-center md:items-start">

@@ -166,13 +166,13 @@ export default function Index() {
              <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary-foreground/5 rounded-[5px] blur-3xl" />
           </div>
 
-          <motion.div className="absolute top-20 right-10 md:right-20"
+          <motion.div className="absolute top-10 md:top-20 right-4 md:right-20 opacity-20 md:opacity-100"
             animate={{ y: [-10, 10, -10], rotate: [0, 2, 0] }}
             transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}>
-            <Plane className="w-16 h-16 md:w-24 md:h-24 text-accent/30" />
+            <Plane className="w-12 h-12 md:w-24 md:h-24 text-accent/30" />
           </motion.div>
 
-          <div className="container mx-auto px-4 py-20 md:py-32 relative z-10">
+          <div className="container mx-auto py-20 md:py-32 relative z-10">
             <div className="grid lg:grid-cols-2 gap-12 items-center text-center lg:text-left">
               <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: 'spring' }}
@@ -181,7 +181,7 @@ export default function Index() {
                   <span className="text-sm font-bold uppercase tracking-wider">Metodologia Padrão ANAC</span>
                 </motion.div>
 
-                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground mb-6 leading-tight">
+                <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground mb-6 leading-tight">
                   Simulados ANAC para <br className="hidden md:block" />
                   <span className="text-accent">Comissário de Bordo.</span>
                 </h1>
@@ -217,8 +217,8 @@ export default function Index() {
                     { value: '24/7', label: 'Acesso' },
                   ].map((stat, i) => (
                     <div key={i} className="text-center">
-                      <div className="text-3xl md:text-4xl font-bold text-accent">{stat.value}</div>
-                      <div className="text-sm text-primary-foreground/60 font-bold uppercase tracking-tighter">{stat.label}</div>
+                      <div className="text-2xl md:text-4xl font-bold text-accent">{stat.value}</div>
+                      <div className="text-[10px] md:text-sm text-primary-foreground/60 font-bold uppercase tracking-tighter">{stat.label}</div>
                     </div>
                   ))}
                 </motion.div>
@@ -262,13 +262,13 @@ export default function Index() {
 
         {/* ═══════ TRUST BAR ═══════ */}
         <section className="py-12 bg-card/50 backdrop-blur-sm border-b border-border/50 overflow-hidden">
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto">
             <div className="grid grid-cols-2 md:flex md:flex-wrap justify-center items-center gap-6 md:gap-12 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">
               {[
-                { icon: Shield, text: 'Privacidade de Dados' },
-                { icon: BadgeCheck, text: 'Simulados Atualizados' },
-                { icon: Heart, text: 'Desenvolvimento Constante' },
-                { icon: Globe, text: 'Acesso Multiplataforma' },
+                { icon: Shield, text: 'Privacidade' },
+                { icon: BadgeCheck, text: 'Atualizados' },
+                { icon: Heart, text: 'Qualidade' },
+                { icon: Globe, text: 'Acesso' },
               ].map((item, i) => (
                 <motion.div key={i} 
                   initial={{ opacity: 0, y: 10 }} 
@@ -285,12 +285,12 @@ export default function Index() {
 
         {/* ═══════ STUDY MODES ═══════ */}
         <section className="py-16 md:py-24 bg-card border-y border-border">
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto">
             <div className="text-center mb-16">
               <Badge variant="outline" className="mb-4 text-accent border-accent/20 rounded-[5px] bg-accent/5 font-bold uppercase h-6 px-3">
                 <Play className="w-3 h-3 mr-2" /> Tecnologia de Estudo
               </Badge>
-              <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
+              <h2 className="text-2xl md:text-5xl font-bold text-foreground mb-4">
                 3 Modos de Estudo Inteligentes
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -342,7 +342,7 @@ export default function Index() {
 
         {/* ═══════ PLATFORM SHOWCASE ═══════ */}
         <section className="py-16 md:py-24 bg-background overflow-hidden">
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto">
              <div className="max-w-5xl mx-auto">
                 <div className="relative group">
                    {/* Decorative elements */}
@@ -367,7 +367,7 @@ export default function Index() {
                       </div>
                       
                       {/* Dashboard Content Mockup */}
-                      <div className="p-8 grid md:grid-cols-[200px_1fr] gap-8 opacity-40 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-1000">
+                      <div className="p-4 md:p-8 grid md:grid-cols-[200px_1fr] gap-8 opacity-40 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-1000">
                          <aside className="space-y-4 border-r border-border pr-8 hidden md:block">
                             <div className="w-full h-8 bg-muted rounded-md" />
                             <div className="space-y-2">
@@ -411,14 +411,14 @@ export default function Index() {
         {/* ═══════ AI ASSISTANT ═══════ */}
         <section className="py-16 md:py-24 bg-background relative overflow-hidden">
           <div className="absolute top-0 right-0 w-1/2 h-full bg-accent/5 skew-x-12 translate-x-20" />
-          <div className="container mx-auto px-4 relative z-10">
+          <div className="container mx-auto relative z-10">
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
               <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="text-center lg:text-left">
                 <Badge className="mb-4 bg-success text-success-foreground border-0 rounded-[5px] font-bold uppercase text-[10px] tracking-widest px-4 py-1.5 h-auto mx-auto lg:mx-0">
                   Exclusivo Voo Certo
                 </Badge>
-                <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
-                  Chat IA Contextual: <br/>
+                <h2 className="text-2xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
+                  Chat IA Contextual: <br className="hidden md:block" />
                   Sua dúvida respondida <span className="text-accent">na hora.</span>
                 </h2>
                 <p className="text-lg text-muted-foreground mb-8">
@@ -497,7 +497,7 @@ export default function Index() {
 
         {/* ═══════ CAREER & CV ═══════ */}
         <section className="py-16 md:py-24 bg-muted/30">
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <div className="order-2 lg:order-1">
                 <img src={airplaneSunset} alt="Carreira na Aviação" className="rounded-[5px] shadow-xl border border-border" />
@@ -506,8 +506,8 @@ export default function Index() {
                 <Badge variant="outline" className="mb-4 text-accent border-accent/20 rounded-[5px] bg-accent/5 font-bold uppercase h-6 px-3 mx-auto lg:mx-0">
                   Apoio Profissional
                 </Badge>
-                <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
-                  Do simulado à sua <br/>
+                <h2 className="text-2xl md:text-5xl font-bold text-foreground mb-6">
+                  Do simulado à sua <br className="hidden md:block" />
                   <span className="text-accent underline decoration-accent/20">primeira contratação.</span>
                 </h2>
                 <p className="text-lg text-muted-foreground mb-8">
@@ -542,12 +542,12 @@ export default function Index() {
 
         {/* ═══════ TESTIMONIALS ═══════ */}
         <section className="py-16 md:py-24 bg-background">
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto">
             <div className="text-center mb-16">
               <Badge variant="outline" className="mb-4 text-accent border-accent/20 rounded-[5px] bg-accent/5 font-bold uppercase h-6 px-3">
                 <Users className="w-3 h-3 mr-2" /> Comunidade
               </Badge>
-              <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
+              <h2 className="text-2xl md:text-5xl font-bold text-foreground mb-4">
                 Quem decolou, recomenda.
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -588,13 +588,13 @@ export default function Index() {
 
         {/* ═══════ PROBLEM / SOLUTION ═══════ */}
         <section className="py-16 md:py-24 bg-background">
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto">
             <div className="grid lg:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
               <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
                 <Badge variant="outline" className="mb-4 text-destructive border-destructive/20 rounded-[5px] bg-destructive/5 font-bold uppercase h-6 px-3">
                   <Target className="w-3 h-3 mr-2" /> O Desafio do Aluno
                 </Badge>
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
+                <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-6">
                   Estudar para simulados técnicos não deve ser confuso.
                 </h2>
                 <div className="space-y-3">
@@ -621,7 +621,7 @@ export default function Index() {
                 <Badge variant="outline" className="mb-4 text-success border-success/20 rounded-[5px] bg-success/5 font-bold uppercase h-6 px-3">
                   <Lightbulb className="w-3 h-3 mr-2" /> A Solução Inteligente
                 </Badge>
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
+                <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-6">
                   O Voo Certo centraliza sua <span className="text-accent underline decoration-accent/20">preparação completa.</span>
                 </h2>
                 <div className="space-y-3">
@@ -649,12 +649,12 @@ export default function Index() {
 
         {/* ═══════ HOW IT WORKS ═══════ */}
         <section className="py-16 md:py-24 bg-muted/30">
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
               <Badge variant="outline" className="mb-4 text-accent border-accent/20 rounded-[5px] bg-accent/5 font-bold uppercase h-6 px-3">
                 <Map className="w-3 h-3 mr-2" /> Metodologia
               </Badge>
-              <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
+              <h2 className="text-2xl md:text-5xl font-bold text-foreground mb-4">
                 Seu plano de voo em 4 passos
               </h2>
             </motion.div>
@@ -680,12 +680,12 @@ export default function Index() {
 
         {/* ═══════ PRICING ═══════ */}
         <section className="py-16 md:py-24" style={{ background: 'var(--gradient-hero)' }}>
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
               <Badge className="mb-4 bg-accent text-accent-foreground border-0 rounded-[5px] font-bold uppercase text-[10px] tracking-widest px-4 py-1.5 h-auto">
                  Período de Experiência Grátis por 7 Dias
               </Badge>
-              <h2 className="text-3xl md:text-5xl font-bold text-primary-foreground mb-4">Planos de Preparação</h2>
+              <h2 className="text-2xl md:text-5xl font-bold text-primary-foreground mb-4">Planos de Preparação</h2>
               <p className="text-primary-foreground/60 max-w-xl mx-auto font-medium">
                 Escolha o nível de suporte que sua carreira exige.
               </p>
@@ -760,9 +760,9 @@ export default function Index() {
 
         {/* ═══════ FAQ ═══════ */}
         <section className="py-16 md:py-24 bg-muted/20">
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
-              <h2 className="text-3xl md:text-5xl font-bold text-foreground">Dúvidas Frequentes</h2>
+              <h2 className="text-2xl md:text-5xl font-bold text-foreground">Dúvidas Frequentes</h2>
             </motion.div>
 
             <div className="max-w-3xl mx-auto space-y-3">
@@ -788,12 +788,12 @@ export default function Index() {
             <div className="absolute top-0 left-0 w-full h-full" style={{ backgroundImage: `url(${airplaneSunset})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
           </div>
           
-          <div className="container mx-auto px-4 relative z-10 text-center">
+          <div className="container mx-auto relative z-10 text-center">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="max-w-3xl mx-auto">
               <Badge className="mb-6 bg-accent text-accent-foreground border-0 rounded-[5px] font-bold uppercase text-[10px] tracking-widest px-4 py-1.5 h-auto">
                 Sua Jornada Começa Aqui
               </Badge>
-              <h2 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-6 leading-tight">
+              <h2 className="text-3xl md:text-5xl font-bold text-primary-foreground mb-6 leading-tight">
                 Pronto para conquistar sua <span className="text-accent">aprovação na ANAC?</span>
               </h2>
               <p className="text-xl text-primary-foreground/70 mb-10 font-medium">

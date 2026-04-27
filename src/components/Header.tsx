@@ -117,7 +117,7 @@ export function Header() {
           : 'bg-white border-b border-border py-4 shadow-sm'
       }`}
     >
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto">
         <div className="flex items-center justify-between h-14">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
