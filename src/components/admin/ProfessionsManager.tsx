@@ -302,7 +302,7 @@ export function ProfessionsManager({ onSelectProfession }: ProfessionsManagerPro
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
-              {selectedProfession ? 'Editar Profissão' : 'Nova Profissão'}
+              {selectedProfession ? 'Editar Profissão' : 'Nova Profissão (Versão Atualizada)'}
             </DialogTitle>
           </DialogHeader>
 
