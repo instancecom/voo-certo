@@ -233,12 +233,12 @@ export default function Index() {
                   <motion.div className="absolute -bottom-6 -left-6 bg-card rounded-[5px] p-4 shadow-xl border border-border"
                     animate={{ y: [-5, 5, -5] }} transition={{ duration: 4, repeat: Infinity }}>
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-[5px] bg-success/10 flex items-center justify-center">
-                        <CheckCircle2 className="w-5 h-5 text-success" />
+                      <div className="w-10 h-10 rounded-[5px] bg-accent/10 flex items-center justify-center">
+                        <BadgeCheck className="w-5 h-5 text-accent" />
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-foreground">Aprovada!</p>
-                        <p className="text-[10px] text-muted-foreground uppercase font-bold">Nota: 94% no simulado</p>
+                        <p className="text-sm font-bold text-foreground">Padrão ANAC</p>
+                        <p className="text-[10px] text-muted-foreground uppercase font-bold">Questões 100% atualizadas</p>
                       </div>
                     </div>
                   </motion.div>
