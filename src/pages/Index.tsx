@@ -32,7 +32,7 @@ const PLANS = [
     price: 'R$ 19,90',
     period: '/mês',
     icon: Plane,
-    description: 'Seu ponto de partida nos estudos',
+    description: 'Ideal para quem está iniciando os estudos',
     features: [
       'Modo Livre e Bloco ilimitados',
       'Modo Banca limitado',
@@ -45,11 +45,11 @@ const PLANS = [
   },
   {
     id: 'tripulante',
-    name: 'Tripulante ⭐',
+    name: 'Tripulante',
     price: 'R$ 39,90',
     period: '/mês',
     icon: Zap,
-    description: 'A escolha ideal para sua aprovação',
+    description: 'O melhor custo-benefício para sua aprovação',
     features: [
       'Tudo do plano Solo',
       'Modo Banca ilimitado (Estilo ANAC)',
@@ -62,11 +62,11 @@ const PLANS = [
   },
   {
     id: 'comandante',
-    name: 'Comandante 👑',
+    name: 'Comandante',
     price: 'R$ 79,90',
     period: '/mês',
     icon: Crown,
-    description: 'Experiência premium e IA avançada',
+    description: 'A preparação definitiva para garantir sua vaga',
     features: [
       'Tudo do plano Tripulante',
       'Chat IA Turbo (15 msgs por questão)',

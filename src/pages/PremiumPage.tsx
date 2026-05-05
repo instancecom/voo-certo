@@ -21,7 +21,7 @@ const PLANS = [
     priceLabel: 'R$ 19,90',
     priceId: 'price_1T2s0K5IdjxdYZGcfJIVoMGL',
     icon: Plane,
-    description: 'Foco nos simulados básicos',
+    description: 'Ideal para quem está iniciando os estudos',
     features: [
       'Modo Livre e Bloco ilimitados',
       'Modo Banca limitado',
@@ -39,7 +39,7 @@ const PLANS = [
     priceLabel: 'R$ 39,90',
     priceId: 'price_1T2s125IdjxdYZGcbdnPSAWj',
     icon: Zap,
-    description: 'A experiência completa de estudo',
+    description: 'O melhor custo-benefício para sua aprovação',
     popular: true,
     features: [
       'Tudo do plano Solo',
@@ -58,7 +58,7 @@ const PLANS = [
     priceLabel: 'R$ 79,90',
     priceId: 'price_1T2s1m5IdjxdYZGcxahBdOM0',
     icon: Crown,
-    description: 'Máxima performance e IA premium',
+    description: 'A preparação definitiva para garantir sua vaga',
     features: [
       'Tudo do plano Tripulante',
       'Chat IA Turbo (15 msgs por questão)',
