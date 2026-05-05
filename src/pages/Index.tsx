@@ -86,14 +86,6 @@ const STEPS = [
   { icon: Award, title: 'Avance rumo à sua aprovação', desc: 'Ganhe confiança e chegue preparado para conquistar seu lugar no mercado.' },
 ];
 
-const TESTIMONIALS = [
-  { name: 'Carla M.', role: 'Comissária aprovada – GOL', text: 'Os simulados do Voo Certo foram essenciais para minha aprovação. A IA me ajudou a entender cada erro!', stars: 5, avatar: '👩🏻‍✈️' },
-  { name: 'Lucas R.', role: 'Estudante de aviação', text: 'Melhor plataforma de simulados. O cronômetro e os relatórios fazem toda a diferença.', stars: 5, avatar: '👨🏽‍✈️' },
-  { name: 'Ana P.', role: 'Comissária aprovada – LATAM', text: 'Passei de primeira graças ao Voo Certo. O guia de carreira me deu o caminho completo.', stars: 5, avatar: '👩🏾‍✈️' },
-  { name: 'Pedro S.', role: 'Comissário aprovado – Azul', text: 'A plataforma é incrível! Estudei pelo celular e passei com nota acima de 90%.', stars: 5, avatar: '👨🏻‍✈️' },
-  { name: 'Juliana F.', role: 'Aprovada na ANAC', text: 'Os microcursos são excelentes, aprendi meteorologia de um jeito muito mais fácil.', stars: 5, avatar: '👩🏼‍✈️' },
-  { name: 'Rafael T.', role: 'Comissário em treinamento', text: 'O chat com IA é genial. Cada dúvida era respondida na hora com explicação detalhada.', stars: 5, avatar: '👨🏾‍✈️' },
-];
 
 const FAQ = [
   { q: 'O Voo Certo substitui o curso de comissário obrigatório?', a: 'Não. O Voo Certo é uma ferramenta de apoio e preparação complementar. Você ainda deve realizar o curso teórico e prático em uma escola homologada pela ANAC conforme as exigências legais.' },
@@ -540,48 +532,41 @@ export default function Index() {
           </div>
         </section>
 
-        {/* ═══════ TESTIMONIALS ═══════ */}
+        {/* ═══════ DIFFERENTIALS (EX-TESTIMONIALS) ═══════ */}
         <section className="py-16 md:py-24 bg-background">
           <div className="container mx-auto">
             <div className="text-center mb-16">
               <Badge variant="outline" className="mb-4 text-accent border-accent/20 rounded-[5px] bg-accent/5 font-bold uppercase h-6 px-3">
-                <Users className="w-3 h-3 mr-2" /> Comunidade
+                <Sparkles className="w-3 h-3 mr-2" /> Excelência Técnica
               </Badge>
               <h2 className="text-2xl md:text-5xl font-bold text-foreground mb-4">
-                Quem decolou, recomenda.
+                Por que estudar com o Voo Certo?
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Centenas de alunos já conquistaram a aprovação utilizando nossa metodologia.
+                Unimos tecnologia de ponta e metodologia focada para garantir que você chegue na prova com total confiança.
               </p>
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              {TESTIMONIALS.map((t, i) => (
-                <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
-                  <Card className="bg-card border-border h-full flex flex-col rounded-[5px] hover:shadow-lg transition-all">
-                    <CardContent className="pt-8 flex-1">
-                      <div className="flex gap-1 mb-4 text-accent">
-                        {[...Array(t.stars)].map((_, i) => (
-                          <Star key={i} className="w-4 h-4 fill-current" />
-                        ))}
-                      </div>
-                      <p className="text-sm text-foreground italic mb-6 leading-relaxed">
-                        "{t.text}"
-                      </p>
-                    </CardContent>
-                    <div className="px-6 pb-8 flex items-center gap-4">
-                       <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-2xl border border-accent/20">
-                          {t.avatar}
-                       </div>
-                       <div>
-                          <p className="text-sm font-bold text-foreground">{t.name}</p>
-                          <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-tight">{t.role}</p>
-                       </div>
-                    </div>
-                  </Card>
-                </motion.div>
-              ))}
+              {DIFFERENTIALS.slice(0, 6).map((d, i) => {
+                const Icon = d.icon;
+                return (
+                  <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
+                    <Card className="bg-card border-border h-full flex flex-col rounded-[5px] hover:shadow-xl transition-all group border-transparent hover:border-accent/20">
+                      <CardContent className="pt-8 flex-1">
+                        <div className="w-12 h-12 rounded-[5px] bg-accent/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                           <Icon className="w-6 h-6 text-accent" />
+                        </div>
+                        <h3 className="text-lg font-bold mb-3 group-hover:text-accent transition-colors">{d.title}</h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          {d.desc}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
         </section>
