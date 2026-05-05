@@ -746,7 +746,7 @@ export default function Index() {
                   { icon: Shield, text: 'Cancelamento sem burocracia' },
                   { icon: Sparkles, text: '7 dias grátis em todos os planos' },
                   { icon: Globe, text: 'Acesso pelo PC, Tablet e Celular' },
-                  { icon: Headphones, text: 'Suporte técnico especializado' }
+                  { icon: Zap, text: 'Dúvidas resolvidas na hora por IA' }
                 ].map((item, i) => (
                   <div key={i} className="flex flex-col items-center gap-3">
                     <item.icon className="w-6 h-6 text-accent" />

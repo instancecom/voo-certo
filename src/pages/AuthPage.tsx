@@ -265,11 +265,11 @@ export default function AuthPage() {
             </div>
             <div className="p-6 rounded-[5px] bg-white/5 border border-white/10 backdrop-blur-sm">
               <div className="text-3xl font-black text-accent mb-1">95%</div>
-              <div className="text-[10px] font-bold uppercase tracking-wider text-primary-foreground/40">Acessos</div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-primary-foreground/40">Aprovação</div>
             </div>
             <div className="p-6 rounded-[5px] bg-white/5 border border-white/10 backdrop-blur-sm">
               <div className="text-3xl font-black text-accent mb-1">24/7</div>
-              <div className="text-[10px] font-bold uppercase tracking-wider text-primary-foreground/40">Suporte</div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-primary-foreground/40">Acesso</div>
             </div>
           </div>
         </motion.div>

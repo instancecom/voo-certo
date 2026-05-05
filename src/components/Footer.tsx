@@ -42,7 +42,7 @@ export function Footer() {
             <ul className="space-y-3 text-sm text-primary-foreground/70">
               <li><Link to="/meu-progresso" className="hover:text-accent transition-colors">Painel de Performance</Link></li>
               <li><Link to="/premium" className="hover:text-accent transition-colors">Assinatura Premium</Link></li>
-              <li><Link to="/ajuda" className="hover:text-accent transition-colors">Suporte ao Aluno</Link></li>
+              <li><Link to="/ajuda" className="hover:text-accent transition-colors">Central de Ajuda</Link></li>
             </ul>
           </div>
 
