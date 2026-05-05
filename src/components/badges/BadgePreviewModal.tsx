@@ -55,159 +55,177 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt }: Ba
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4"
           onClick={() => onOpenChange(false)}
-          onKeyDown={(e) => e.key === 'Escape' && onOpenChange(false)}
         >
-          {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+          {/* Backdrop with strong blur */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 bg-black/85 backdrop-blur-[20px]" 
+          />
 
-          {/* Modal */}
+          {/* Floating Content */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-md bg-[#F5F7F9] border border-yellow-500/20 rounded-[5px] shadow-2xl overflow-hidden"
+            className="relative z-10 flex flex-col items-center gap-12 max-w-lg w-full"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header */}
-            <div className="bg-white border-b border-border/40 p-5 flex items-center justify-between">
-              <div>
-                <div className={`inline-block px-2 py-0.5 rounded-[5px] text-[10px] font-bold uppercase tracking-wider mb-1 bg-gradient-to-r ${colors.bg} text-white shadow-sm`}>
-                  {rarityLabels[insignia.rarity]}
-                </div>
-                <h2 className="text-xl font-extrabold text-[#1A233A] leading-tight">{insignia.name}</h2>
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => {
-                  onOpenChange(false);
-                  setIsFlipped(false);
+            {/* The Insignia Image/Icon */}
+            <div 
+              className="relative w-64 h-64 sm:w-80 sm:h-80 cursor-pointer perspective-1000 group"
+              onClick={() => !isLocked && setIsFlipped(!isFlipped)}
+            >
+              <motion.div
+                className="w-full h-full preserve-3d"
+                animate={{ 
+                  rotateY: isFlipped ? 180 : 0,
+                  y: [0, -15, 0]
                 }}
-                className="text-muted-foreground hover:text-[#1A233A] hover:bg-muted/50 -mr-2"
+                transition={{ 
+                  rotateY: { duration: 0.8, type: 'spring', stiffness: 200, damping: 20 },
+                  y: { repeat: Infinity, duration: 5, ease: "easeInOut" }
+                }}
               >
-                <X className="w-5 h-5" />
-              </Button>
+                {/* Front Side: Just the PNG/Icon */}
+                <div className="absolute inset-0 backface-hidden flex items-center justify-center">
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    {/* Glow Effect behind the insignia */}
+                    <div className={cn(
+                      "absolute inset-0 rounded-full blur-[60px] opacity-20 scale-75",
+                      insignia.rarity === 'gold' ? 'bg-yellow-500' : 
+                      insignia.rarity === 'platinum' ? 'bg-purple-500' : 
+                      insignia.rarity === 'silver' ? 'bg-slate-300' : 'bg-amber-700'
+                    )} />
+                    
+                    {imageUrl ? (
+                      <img 
+                        src={imageUrl} 
+                        alt={insignia.name} 
+                        className={cn(
+                          "w-full h-full object-contain filter drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)] transition-all duration-500",
+                          isLocked && "grayscale brightness-50 opacity-40 blur-[2px]"
+                        )}
+                        crossOrigin="anonymous"
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <DynamicIcon 
+                        name={insignia.icon} 
+                        size={160} 
+                        className={cn(
+                          "filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]",
+                          colors.text, 
+                          isLocked && "grayscale opacity-30 blur-[2px]"
+                        )}
+                      />
+                    )}
+                  </div>
+                </div>
+
+                {/* Back Side: Verso */}
+                <div 
+                  className="absolute inset-0 backface-hidden flex flex-col items-center justify-center"
+                  style={{ transform: 'rotateY(180deg)' }}
+                >
+                  <div className="bg-white/10 backdrop-blur-md rounded-[5px] p-8 border border-white/20 shadow-2xl max-w-xs">
+                    <h4 className="text-yellow-500 text-[10px] font-black uppercase tracking-[0.3em] mb-4">Significado</h4>
+                    <p className="text-white text-lg font-bold italic leading-relaxed">
+                      {versoTexto ? `"${versoTexto}"` : "Esta insígnia representa sua dedicação e excelência na sua jornada como aviador."}
+                    </p>
+                    <div className="mt-6 flex justify-center">
+                      <div className="w-1 h-1 rounded-full bg-white/20 mx-1" />
+                      <div className="w-1 h-1 rounded-full bg-white/40 mx-1" />
+                      <div className="w-1 h-1 rounded-full bg-white/20 mx-1" />
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+              
+              {/* Interaction Hint */}
+              {!isLocked && (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: [0.4, 0.8, 0.4] }}
+                  transition={{ repeat: Infinity, duration: 2.5 }}
+                  className="absolute -bottom-8 left-0 right-0 text-center"
+                >
+                  <span className="text-[10px] text-white/40 font-black uppercase tracking-[0.2em]">Clique para virar</span>
+                </motion.div>
+              )}
             </div>
 
-            {/* Content */}
-            <div className="p-6 space-y-6">
-              {/* Image / Icon - Flip Card */}
-              <div 
-                className="flex flex-col items-center gap-4 perspective-1000"
-                onClick={() => !isLocked && setIsFlipped(!isFlipped)}
+            {/* Info Section */}
+            <div className="text-center space-y-4">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
               >
-                <div className="relative w-48 h-48 sm:w-56 sm:h-56">
-                  {isLocked && <div className="absolute inset-0 bg-white/40 z-20 rounded-[5px]" />}
-                  
-                  <motion.div
-                    className="w-full h-full preserve-3d cursor-pointer"
-                    initial={false}
-                    animate={{ rotateY: isFlipped ? 180 : 0 }}
-                    transition={{ duration: 0.6, type: 'spring', stiffness: 260, damping: 20 }}
-                  >
-                    {/* Front Side */}
-                    <div 
-                      className={cn(
-                        "absolute inset-0 backface-hidden rounded-[5px] bg-white border flex items-center justify-center overflow-hidden shadow-[0_0_30px_rgba(212,175,55,0.15)]",
-                        colors.border
-                      )}
-                    >
-                      {imageUrl ? (
-                        <img
-                          src={imageUrl}
-                          alt={insignia.name}
-                          className={`w-full h-full object-contain p-3 ${isLocked ? 'grayscale opacity-60' : ''}`}
-                          crossOrigin="anonymous"
-                          referrerPolicy="no-referrer"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display = 'none';
-                            (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
-                          }}
-                        />
-                      ) : null}
-                      <DynamicIcon
-                        name={insignia.icon}
-                        size={80}
-                        className={`${imageUrl ? 'hidden' : colors.text} ${isLocked ? 'grayscale opacity-60' : ''}`}
-                      />
-                    </div>
-
-                    {/* Back Side */}
-                    <div 
-                      className={cn(
-                        "absolute inset-0 backface-hidden rounded-[5px] bg-white border flex flex-col items-center justify-center p-6 text-center shadow-[0_0_30px_rgba(212,175,55,0.15)]",
-                        colors.border
-                      )}
-                      style={{ transform: 'rotateY(180deg)' }}
-                    >
-                      <div className="absolute top-3 left-3 opacity-20">
-                        <DynamicIcon name={insignia.icon} size={24} className={colors.text} />
-                      </div>
-                      <h4 className="text-xs font-bold text-yellow-600 uppercase tracking-widest mb-3">Significado</h4>
-                      <p className="text-sm text-[#1A233A] leading-relaxed italic font-medium">
-                        {versoTexto ? `"${versoTexto}"` : "Esta insígnia representa sua dedicação e excelência na sua jornada como aviador."}
-                      </p>
-                      <div className="absolute bottom-3 right-3 opacity-20 rotate-180">
-                        <DynamicIcon name={insignia.icon} size={24} className={colors.text} />
-                      </div>
-                    </div>
-                  </motion.div>
+                <div className={cn(
+                  "inline-block px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] text-white shadow-xl mb-4 bg-gradient-to-r",
+                  colors.bg
+                )}>
+                  {rarityLabels[insignia.rarity]}
                 </div>
-                
-                {!isLocked && (
-                  <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-tighter animate-pulse">
-                    Clique na insígnia para virar
-                  </p>
-                )}
-              </div>
-
-              {/* Detailed Description */}
-              {!isLocked ? (
-                <>
-                  <p className="text-sm text-center text-muted-foreground font-medium px-4">{insignia.description}</p>
-                  <p className="text-xs text-muted-foreground/70 text-center font-semibold">
-                    Conquistada em {new Date(earnedAt!).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
-                  </p>
-                </>
-              ) : (
-                <div className="rounded-[5px] border border-yellow-500/30 bg-yellow-500/5 p-5 text-center shadow-[inset_0_1px_10px_rgba(212,175,55,0.05)] mt-4">
-                  <Lock className="w-6 h-6 mx-auto text-yellow-600 mb-2" />
-                  <h3 className="text-base font-bold text-[#1A233A] mb-1">
-                    Conquiste esta insígnia
-                  </h3>
-                  <p className="text-xs text-muted-foreground font-medium px-2 mb-4">
-                    Este selo é exclusivo para planos {insignia.plano_minimo === 'comandante' ? 'Comandante' : 'Tripulante ou superior'}. 
-                    Faça upgrade para ter a chance de desbloqueá-lo no seu perfil e currículo.
-                  </p>
+                <h2 className="text-4xl sm:text-5xl font-black text-white mb-2 tracking-tight drop-shadow-2xl px-4">
+                  {insignia.name}
+                </h2>
+                <p className="text-white/60 text-sm font-medium max-w-sm mx-auto leading-relaxed px-6">
+                  {insignia.description}
+                </p>
+              </motion.div>
+              
+              {isLocked ? (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                  className="pt-6 flex flex-col items-center gap-4"
+                >
+                  <div className="flex items-center gap-2 text-yellow-500/80 bg-yellow-500/10 px-4 py-2 rounded-[5px] border border-yellow-500/20">
+                    <Lock size={14} />
+                    <span className="text-xs font-bold uppercase tracking-widest">Requisito: Plano {insignia.plano_minimo || 'Tripulante'}</span>
+                  </div>
                   <Button 
-                    className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-bold shadow-md shadow-yellow-500/20"
+                    className="bg-white text-black hover:bg-[#F5F7F9] font-black uppercase text-xs tracking-widest px-8 h-12 rounded-[5px] shadow-2xl"
                     onClick={() => {
                       onOpenChange(false);
                       navigate('/premium');
                     }}
                   >
-                    Fazer Upgrade Agora
+                    Fazer Upgrade
                   </Button>
-                </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                  className="pt-4"
+                >
+                  <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest">
+                    Conquistada em {new Date(earnedAt!).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
+                  </p>
+                </motion.div>
               )}
             </div>
 
-            {/* Footer */}
-            <div className="px-6 pb-5">
-              <Button 
-                variant="outline" 
-                className="w-full" 
-                onClick={() => {
-                  onOpenChange(false);
-                  setIsFlipped(false);
-                }}
-              >
-                Fechar
-              </Button>
-            </div>
+            {/* Close hint */}
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1 }}
+              onClick={() => onOpenChange(false)}
+              className="mt-8 text-white/30 hover:text-white/60 transition-colors flex items-center gap-2 group"
+            >
+              <X size={16} className="group-hover:rotate-90 transition-transform duration-300" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em]">Fechar</span>
+            </motion.button>
           </motion.div>
         </motion.div>
       )}
