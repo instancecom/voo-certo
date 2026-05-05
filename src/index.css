@@ -156,9 +156,10 @@
     @apply transition-all;
   }
   .hover-yellow:hover {
-    background-color: #F5F2EE !important;
-    border-color: #F7CE87 !important;
-    color: hsl(var(--foreground)) !important;
+    background-color: hsl(var(--accent)) !important;
+    border-color: hsl(var(--accent)) !important;
+    color: hsl(var(--accent-foreground)) !important;
+    box-shadow: var(--shadow-glow) !important;
   }
 }
 

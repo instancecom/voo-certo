@@ -196,7 +196,7 @@ export default function Index() {
                 </p>
 
                 <div className="flex flex-wrap justify-center lg:justify-start gap-4">
-                  <Button variant="hero" size="xl" asChild className="rounded-[5px] w-full sm:w-fit whitespace-normal h-auto py-4 sm:h-14 sm:py-0">
+                  <Button variant="hero" size="xl" asChild className="rounded-[5px] w-full sm:w-fit whitespace-normal h-auto py-4 sm:h-14 sm:py-0 hover-yellow">
                     <Link to={user ? '/simulados' : '/auth?mode=signup'} className="flex items-center justify-center gap-2">
                       Começar Agora <ArrowRight className="w-5 h-5" />
                     </Link>
@@ -800,7 +800,7 @@ export default function Index() {
                 Tenha acesso aos simulados mais realistas do mercado, suporte de IA em tempo real e um guia completo de carreira.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button variant="hero" size="xl" asChild className="rounded-[5px] w-full sm:w-fit whitespace-normal h-auto py-4 sm:h-14 sm:py-0">
+                <Button variant="hero" size="xl" asChild className="rounded-[5px] w-full sm:w-fit whitespace-normal h-auto py-4 sm:h-14 sm:py-0 hover-yellow">
                   <Link to={user ? '/simulados' : '/auth?mode=signup'} className="flex items-center justify-center gap-2">
                     Começar Minha Preparação Agora <ArrowRight className="w-5 h-5" />
                   </Link>
