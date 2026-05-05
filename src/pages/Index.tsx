@@ -358,26 +358,24 @@ export default function Index() {
                          </div>
                       </div>
                       
-                      {/* Dashboard Content Mockup */}
-                      <div className="p-4 md:p-8 grid md:grid-cols-[200px_1fr] gap-8 opacity-40 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-1000">
-                         <aside className="space-y-4 border-r border-border pr-8 hidden md:block">
-                            <div className="w-full h-8 bg-muted rounded-md" />
-                            <div className="space-y-2">
-                               {[...Array(5)].map((_, i) => (
-                                 <div key={i} className="w-full h-4 bg-muted/50 rounded-md" />
-                               ))}
-                            </div>
-                         </aside>
-                         <main className="space-y-8">
-                            <div className="grid grid-cols-3 gap-4">
-                               {[...Array(3)].map((_, i) => (
-                                 <div key={i} className="h-24 bg-accent/5 border border-accent/10 rounded-md" />
-                               ))}
-                            </div>
-                            <div className="h-64 bg-muted/20 rounded-md relative flex items-center justify-center">
-                               <Rocket className="w-12 h-12 text-accent/20 animate-pulse" />
-                            </div>
-                         </main>
+                      {/* Dashboard Content Mockup - Can be replaced by an Image, GIF or Video */}
+                      <div className="relative aspect-video w-full overflow-hidden opacity-40 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-1000">
+                         <img 
+                           src="/platform_showcase_mockup_1777986775787.png" 
+                           alt="Preview da Plataforma" 
+                           className="w-full h-full object-cover"
+                         />
+                         {/* To use a video instead, uncomment below and comment the img tag above: */}
+                         {/* 
+                         <video 
+                           src="/seu-video.mp4" 
+                           autoPlay 
+                           loop 
+                           muted 
+                           playsInline 
+                           className="w-full h-full object-cover"
+                         /> 
+                         */}
                       </div>
 
                       {/* Floating CTAs over the blur */}
