@@ -115,7 +115,7 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
       blockResults,
       totalCorrect: correctCount,
       totalQuestions: shuffledQuestions.length,
-      overallPassed: percentage >= 70,
+      overallPassed: shuffledQuestions.length > 0 && percentage >= 70,
       answers: originalAnswers,
       totalTimeSpent,
     });

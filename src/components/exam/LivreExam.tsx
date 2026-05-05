@@ -81,10 +81,12 @@ export function LivreExam({ questions, selectedBlock, questionLimit, onFinish, o
 
   const handleFinish = () => {
     const blockResults: BlockResult[] = [];
-    const blocksToCalculate = selectedBlock ? [selectedBlock] : [1, 2, 3, 4];
+    
+    // Get unique blocks present in shuffledQuestions
+    const presentBlocks = Array.from(new Set(shuffledQuestions.map(q => q.block_number || 0))).sort((a, b) => (a || 0) - (b || 0));
 
-    blocksToCalculate.forEach(blockNum => {
-      const blockQs = shuffledQuestions.filter(q => q.block_number === blockNum);
+    presentBlocks.forEach(blockNum => {
+      const blockQs = shuffledQuestions.filter(q => (q.block_number || 0) === blockNum);
       if (blockQs.length === 0) return;
 
       let correctCount = 0;
@@ -96,7 +98,7 @@ export function LivreExam({ questions, selectedBlock, questionLimit, onFinish, o
 
       const percentage = (correctCount / blockQs.length) * 100;
       blockResults.push({
-        blockNumber: blockNum,
+        blockNumber: blockNum || 1, // Fallback to 1 for UI if it was 0
         totalQuestions: blockQs.length,
         correctAnswers: correctCount,
         percentage,
@@ -106,7 +108,7 @@ export function LivreExam({ questions, selectedBlock, questionLimit, onFinish, o
 
     const totalCorrect = blockResults.reduce((acc, r) => acc + r.correctAnswers, 0);
     const totalQuestions = blockResults.reduce((acc, r) => acc + r.totalQuestions, 0);
-    const overallPassed = blockResults.every(r => r.passed);
+    const overallPassed = blockResults.length > 0 && blockResults.every(r => r.passed);
 
     // Convert answers back to original indices for storage
     const originalAnswers: Record<string, number> = {};

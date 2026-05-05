@@ -167,7 +167,7 @@ function BancaExamInner({
     if (currentBlock >= 4) {
       const allResults = [...blockResults, result];
       const totalCorrect = allResults.reduce((acc: number, r: BlockResult) => acc + r.correctAnswers, 0);
-      const overallPassed = allResults.every((r: BlockResult) => r.passed);
+      const overallPassed = allResults.length > 0 && allResults.every((r: BlockResult) => r.passed);
 
       // Convert answers back to original indices for storage
       const originalAnswers: Record<string, number> = {};

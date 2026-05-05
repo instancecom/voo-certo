@@ -40,12 +40,15 @@ export function ExamResults({
   onHome,
 }: ExamResultsProps) {
   const { syncBadges } = useInsigniaSync();
-  const overallPercentage = (totalCorrect / totalQuestions) * 100;
+  const overallPercentage = totalQuestions > 0 ? (totalCorrect / totalQuestions) * 100 : 0;
+  const isApproved = overallPassed && totalQuestions > 0;
 
   // Sync badges on result show
   useEffect(() => {
-    syncBadges();
-  }, []);
+    if (isApproved) {
+      syncBadges();
+    }
+  }, [isApproved]);
 
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
@@ -67,18 +70,18 @@ export function ExamResults({
           className="text-center mb-8"
         >
           <div className={`inline-flex items-center justify-center w-20 h-20 rounded-full mb-4 ${
-            overallPassed ? 'bg-success/20' : 'bg-destructive/20'
+            isApproved ? 'bg-success/20' : 'bg-destructive/20'
           }`}>
-            {overallPassed ? (
+            {isApproved ? (
               <Trophy className="w-10 h-10 text-success" />
             ) : (
               <AlertTriangle className="w-10 h-10 text-destructive" />
             )}
           </div>
           <h1 className={`text-3xl md:text-4xl font-bold mb-2 ${
-            overallPassed ? 'text-success' : 'text-destructive'
+            isApproved ? 'text-success' : 'text-destructive'
           }`}>
-            {overallPassed ? 'Parabéns! Você foi Aprovado!' : 'Não foi dessa vez...'}
+            {isApproved ? 'Parabéns! Você foi Aprovado!' : 'Não foi dessa vez...'}
           </h1>
           <p className="text-muted-foreground text-lg">
             {mode === 'banca_anac' ? 'Simulado Modo Banca ANAC' : mode === 'bloco' ? `Simulado Modo Bloco - ${blockName || ''}` : 'Simulado Modo Livre'}
@@ -91,13 +94,13 @@ export function ExamResults({
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.1 }}
         >
-          <Card className={`mb-6 border-2 ${overallPassed ? 'border-success' : 'border-destructive'}`}>
+          <Card className={`mb-6 border-2 ${isApproved ? 'border-success' : 'border-destructive'}`}>
             <CardContent className="pt-6">
               <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                 <div className="text-center md:text-left">
                   <p className="text-muted-foreground mb-1">Resultado Geral</p>
                   <div className={`text-5xl md:text-6xl font-bold ${
-                    overallPassed ? 'text-success' : 'text-destructive'
+                    isApproved ? 'text-success' : 'text-destructive'
                   }`}>
                     {overallPercentage.toFixed(0)}%
                   </div>
@@ -109,7 +112,7 @@ export function ExamResults({
                 <div className="flex-1 w-full max-w-xs space-y-2">
                   <Progress 
                     value={overallPercentage} 
-                    className={`h-4 ${overallPassed ? '[&>div]:bg-success' : '[&>div]:bg-destructive'}`}
+                    className={`h-4 ${isApproved ? '[&>div]:bg-success' : '[&>div]:bg-destructive'}`}
                   />
                   <div className="flex justify-between text-sm text-muted-foreground">
                     <span>0%</span>
@@ -203,10 +206,10 @@ export function ExamResults({
           transition={{ delay: 0.5 }}
           className="mt-6"
         >
-          <Card className={`${overallPassed ? 'bg-success/5 border-success' : 'bg-destructive/5 border-destructive'}`}>
+          <Card className={`${isApproved ? 'bg-success/5 border-success' : 'bg-destructive/5 border-destructive'}`}>
             <CardContent className="py-4">
               <div className="flex items-center gap-3">
-                {overallPassed ? (
+                {isApproved ? (
                   <>
                     <CheckCircle2 className="w-6 h-6 text-success" />
                     <div>
@@ -221,10 +224,12 @@ export function ExamResults({
                     <XCircle className="w-6 h-6 text-destructive" />
                     <div>
                       <p className="font-semibold text-destructive">
-                        Reprovado{mode === 'bloco' ? '' : ` em ${blockResults.filter(r => !r.passed).length} bloco(s)`}
+                        Reprovado{mode === 'bloco' ? '' : ` em ${blockResults.filter(r => !r.passed).length || (totalQuestions > 0 ? blockResults.length : 1)} bloco(s)`}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        É necessário atingir 70%{mode === 'bloco' ? '' : ' em todos os blocos'} para aprovação. Continue estudando!
+                        {totalQuestions > 0 
+                          ? `É necessário atingir 70%${mode === 'bloco' ? '' : ' em todos os blocos'} para aprovação. Continue estudando!`
+                          : 'O simulado foi finalizado sem questões válidas. Tente outro modo ou profissão.'}
                       </p>
                     </div>
                   </>
