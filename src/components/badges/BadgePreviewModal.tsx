@@ -114,7 +114,9 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt, appr
           const tagX = (tag.x / 100) * resolution;
           const tagY = (tag.y / 100) * resolution;
           
+          // Style tags
           ctx.fillStyle = tag.color || '#FFFFFF';
+          // Scale font size proportional to resolution (using 400 as base width)
           const fontSize = (tag.fontSize || 16) * (resolution / 400); 
           ctx.font = `900 ${fontSize}px Arial, sans-serif`;
           ctx.textAlign = 'center';
@@ -231,15 +233,15 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt, appr
                               return (
                                 <div
                                   key={key}
-                                  className="absolute whitespace-nowrap font-black uppercase text-center drop-shadow-md"
+                                  className="absolute whitespace-nowrap font-black uppercase text-center"
                                   style={{
                                     left: `${tag.x}%`,
                                     top: `${tag.y}%`,
                                     transform: 'translate(-50%, -50%)',
-                                    fontSize: `${(tag.fontSize || 10) * 0.8}px`,
+                                    // Proportional font size: (base / 400) * 100% of container width
+                                    fontSize: `calc((${tag.fontSize || 12} / 400) * 100%)`,
                                     color: tag.color || '#FFFFFF',
-                                    opacity: 0.9,
-                                    textShadow: '0 1px 2px rgba(0,0,0,0.8)'
+                                    textShadow: '0 1px 3px rgba(0,0,0,0.9), 0 2px 6px rgba(0,0,0,0.5)'
                                   }}
                                 >
                                   {content}

@@ -592,29 +592,33 @@ export function InsigniasModelManager() {
                           drag
                           dragMomentum={false}
                           dragElastic={0}
-                          onDragEnd={(_, info) => {
-                            if (tagContainerRef.current) {
-                              const rect = tagContainerRef.current.getBoundingClientRect();
-                              const x = Math.min(100, Math.max(0, ((info.point.x - rect.left) / rect.width) * 100));
-                              const y = Math.min(100, Math.max(0, ((info.point.y - rect.top) / rect.height) * 100));
+                          onDragEnd={(e) => {
+                            const container = tagContainerRef.current;
+                            const target = (e.target as HTMLElement).closest('.cursor-move') as HTMLElement;
+                            if (container && target) {
+                              const cRect = container.getBoundingClientRect();
+                              const tRect = target.getBoundingClientRect();
+                              const x = ((tRect.left + tRect.width / 2 - cRect.left) / cRect.width) * 100;
+                              const y = ((tRect.top + tRect.height / 2 - cRect.top) / cRect.height) * 100;
                               setTagPositions(prev => ({
                                 ...prev,
                                 [key]: { ...prev[key], x, y }
                               }));
                             }
                           }}
-                          whileHover={{ scale: 1.05, backgroundColor: 'rgba(var(--primary), 0.9)' }}
-                          whileTap={{ scale: 0.95 }}
-                          className="absolute z-20 cursor-move bg-primary text-white text-[10px] px-2 py-0.5 rounded-full shadow-xl whitespace-nowrap flex items-center gap-1.5 border border-white/20 select-none"
+                          className="absolute z-20 cursor-move bg-primary text-white font-black uppercase whitespace-nowrap flex items-center justify-center select-none shadow-lg px-2 py-0.5 rounded-full border border-white/20"
                           style={{ 
                             left: `${tag.x}%`, 
                             top: `${tag.y}%`,
                             x: "-50%",
-                            y: "-50%"
+                            y: "-50%",
+                            // Proportional font size: (base / 400) * 100% of container width
+                            fontSize: `calc((${tag.fontSize || 12} / 400) * 100%)`, 
+                            transform: 'translate(-50%, -50%)',
+                            textShadow: '0 1px 2px rgba(0,0,0,0.8)'
                           }}
                           initial={false}
                         >
-                          {getTagIcon(key)}
                           {getTagLabel(key)}
                         </motion.div>
                       ))}
@@ -839,29 +843,38 @@ export function InsigniasModelManager() {
                           drag
                           dragMomentum={false}
                           dragElastic={0}
-                          onDragEnd={(_, info) => {
-                            if (tagContainerRef.current) {
-                              const rect = tagContainerRef.current.getBoundingClientRect();
-                              const x = Math.min(100, Math.max(0, ((info.point.x - rect.left) / rect.width) * 100));
-                              const y = Math.min(100, Math.max(0, ((info.point.y - rect.top) / rect.height) * 100));
+                          onDragEnd={(e) => {
+                            const container = tagContainerRef.current;
+                            const target = (e.target as HTMLElement).closest('.cursor-move') as HTMLElement;
+                            if (container && target) {
+                              const cRect = container.getBoundingClientRect();
+                              const tRect = target.getBoundingClientRect();
+                              const x = ((tRect.left + tRect.width / 2 - cRect.left) / cRect.width) * 100;
+                              const y = ((tRect.top + tRect.height / 2 - cRect.top) / cRect.height) * 100;
                               setTagPositions(prev => ({
                                 ...prev,
                                 [key]: { ...prev[key], x, y }
                               }));
                             }
                           }}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          className="absolute z-20 cursor-move bg-primary text-white font-black uppercase text-[11px] px-3 py-1.5 rounded-full shadow-2xl whitespace-nowrap flex items-center gap-2 border border-white/30"
+                          whileHover={{ scale: 1.01 }}
+                          whileTap={{ scale: 0.99 }}
+                          className="absolute z-20 cursor-move text-white font-black uppercase whitespace-nowrap select-none flex items-center justify-center text-center"
                           style={{ 
                             left: `${tag.x}%`, 
                             top: `${tag.y}%`,
                             x: "-50%",
                             y: "-50%",
-                            textShadow: '0 2px 4px rgba(0,0,0,0.5)'
+                            // Proportional font size: (base font / 400) * containerWidth
+                            // Here container is 650px max, but we want it to look like it will on the 1000px download
+                            fontSize: `calc((${tag.fontSize || 12} / 400) * 100%)`, 
+                            textShadow: '0 2px 4px rgba(0,0,0,0.9), 0 4px 8px rgba(0,0,0,0.5)',
+                            color: tag.color || '#FFFFFF',
+                            width: 'auto',
+                            height: 'auto',
+                            pointerEvents: 'auto'
                           }}
                         >
-                          {getTagIcon(key)}
                           {getTagLabel(key)}
                         </motion.div>
                       ))}
