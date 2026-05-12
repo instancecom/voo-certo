@@ -7,10 +7,18 @@ import { DynamicIcon } from '@/components/ui/dynamic-icon';
 import { cn } from '@/lib/utils';
 import type { Insignia, BadgeRarity } from '@/hooks/useInsignias';
 
+interface InsigniaTag {
+  x: number;
+  y: number;
+  enabled: boolean;
+  fontSize?: number;
+  color?: string;
+}
+
 interface BadgePreviewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  insignia: Insignia;
+  insignia: Insignia & { tag_positions?: Record<string, InsigniaTag> | null };
   earnedAt?: string;
 }
 
@@ -38,7 +46,10 @@ const getDriveImageUrl = (url: string | null): string | null => {
   return url;
 };
 
+import { useAuth } from '@/contexts/AuthContext';
+
 export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt }: BadgePreviewModalProps) {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [isFlipped, setIsFlipped] = useState(false);
   const colors = rarityColors[insignia.rarity];
@@ -103,16 +114,55 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt }: Ba
                     )} />
                     
                     {imageUrl ? (
-                      <img 
-                        src={imageUrl} 
-                        alt={insignia.name} 
-                        className={cn(
-                          "w-full h-full object-contain filter drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)] transition-all duration-500",
-                          isLocked && "grayscale brightness-50 opacity-40 blur-[2px]"
+                      <div className="relative w-full h-full">
+                        <img 
+                          src={imageUrl} 
+                          alt={insignia.name} 
+                          className={cn(
+                            "w-full h-full object-contain filter drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)] transition-all duration-500",
+                            isLocked && "grayscale brightness-50 opacity-40 blur-[2px]"
+                          )}
+                          crossOrigin="anonymous"
+                          referrerPolicy="no-referrer"
+                        />
+                        
+                        {/* Dynamic Tags Overlay */}
+                        {!isLocked && insignia.tag_positions && (
+                          <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full">
+                            {Object.entries(insignia.tag_positions).map(([key, tag]) => {
+                              if (!tag.enabled) return null;
+                              
+                              let content = '';
+                              switch (key) {
+                                case 'userName': content = user?.full_name || user?.email?.split('@')[0] || 'Usuário'; break;
+                                case 'approvalText': content = 'APROVADO ANAC'; break;
+                                case 'verificationDate': content = earnedAt ? new Date(earnedAt).toLocaleDateString('pt-BR') : ''; break;
+                                case 'insigniaId': content = `ID: ${insignia.id.slice(0, 8).toUpperCase()}`; break;
+                              }
+
+                              if (!content) return null;
+
+                              return (
+                                <div
+                                  key={key}
+                                  className="absolute whitespace-nowrap font-black uppercase text-center drop-shadow-md"
+                                  style={{
+                                    left: `${tag.x}%`,
+                                    top: `${tag.y}%`,
+                                    transform: 'translate(-50%, -50%)',
+                                    fontSize: `${(tag.fontSize || 10) * 0.8}px`,
+                                    color: tag.color || '#FFFFFF',
+                                    opacity: 0.9,
+                                    textShadow: '0 1px 2px rgba(0,0,0,0.8)'
+                                  }}
+                                >
+                                  {content}
+                                </div>
+                              );
+                            })}
+                          </div>
                         )}
-                        crossOrigin="anonymous"
-                        referrerPolicy="no-referrer"
-                      />
+                      </div>
                     ) : (
                       <DynamicIcon 
                         name={insignia.icon} 

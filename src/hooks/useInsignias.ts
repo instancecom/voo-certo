@@ -17,6 +17,13 @@ export interface Insignia {
   model_url: string | null;
   verso_texto: string | null;
   plano_minimo?: string;
+  tag_positions?: Record<string, {
+    x: number;
+    y: number;
+    enabled: boolean;
+    fontSize?: number;
+    color?: string;
+  }> | null;
   created_at: string;
   updated_at: string;
 }

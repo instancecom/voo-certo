@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -15,7 +16,16 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import {
   Loader2, Upload, ImageIcon, CheckCircle2, CloudIcon, Plus, Pencil, Trash2, Search, Award, FolderPlus,
+  Type, Calendar, Hash, User,
 } from 'lucide-react';
+
+interface InsigniaTag {
+  x: number;
+  y: number;
+  enabled: boolean;
+  fontSize?: number;
+  color?: string;
+}
 
 interface Insignia {
   id: string;
@@ -29,6 +39,7 @@ interface Insignia {
   is_active: boolean | null;
   display_order: number | null;
   verso_texto: string | null;
+  tag_positions?: Record<string, InsigniaTag> | null;
 }
 
 interface DriveFolder {
@@ -74,6 +85,14 @@ export function InsigniasModelManager() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  
+  // Tag positioning state
+  const [tagPositions, setTagPositions] = useState<Record<string, InsigniaTag>>({
+    userName: { x: 50, y: 30, enabled: false, fontSize: 14, color: '#FFFFFF' },
+    approvalText: { x: 50, y: 50, enabled: false, fontSize: 12, color: '#FFFFFF' },
+    verificationDate: { x: 50, y: 70, enabled: false, fontSize: 10, color: '#FFFFFF' },
+    insigniaId: { x: 50, y: 90, enabled: false, fontSize: 10, color: '#FFFFFF' },
+  });
 
   // Drive folder state
   const [driveFolders, setDriveFolders] = useState<DriveFolder[]>([]);
@@ -215,6 +234,16 @@ export function InsigniasModelManager() {
     setShowNewFolder(false);
     setNewFolderName('');
     setModalOpen(true);
+    if (insignia.tag_positions) {
+      setTagPositions(insignia.tag_positions as Record<string, InsigniaTag>);
+    } else {
+      setTagPositions({
+        userName: { x: 50, y: 30, enabled: false, fontSize: 14, color: '#FFFFFF' },
+        approvalText: { x: 50, y: 50, enabled: false, fontSize: 12, color: '#FFFFFF' },
+        verificationDate: { x: 50, y: 70, enabled: false, fontSize: 10, color: '#FFFFFF' },
+        insigniaId: { x: 50, y: 90, enabled: false, fontSize: 10, color: '#FFFFFF' },
+      });
+    }
     if (driveConnected) loadDriveFolders();
   };
 
@@ -229,6 +258,12 @@ export function InsigniasModelManager() {
     setSelectedFolderId('');
     setShowNewFolder(false);
     setNewFolderName('');
+    setTagPositions({
+      userName: { x: 50, y: 30, enabled: false, fontSize: 14, color: '#FFFFFF' },
+      approvalText: { x: 50, y: 50, enabled: false, fontSize: 12, color: '#FFFFFF' },
+      verificationDate: { x: 50, y: 70, enabled: false, fontSize: 10, color: '#FFFFFF' },
+      insigniaId: { x: 50, y: 90, enabled: false, fontSize: 10, color: '#FFFFFF' },
+    });
     setModalOpen(true);
     if (driveConnected) loadDriveFolders();
   };
@@ -304,6 +339,7 @@ export function InsigniasModelManager() {
             description: editDescription.trim(),
             verso_texto: editVerso.trim(),
             is_active: editActive,
+            tag_positions: tagPositions,
             ...(modelUrl !== editingInsignia.model_url ? { model_url: modelUrl } : {}),
           },
         });
@@ -315,6 +351,7 @@ export function InsigniasModelManager() {
           verso_texto: editVerso.trim(),
           is_active: editActive,
           model_url: modelUrl,
+          tag_positions: tagPositions,
           icon: 'Award',
           condition_type: 'manual',
           condition_value: 1,
@@ -337,6 +374,36 @@ export function InsigniasModelManager() {
   const filteredInsignias = insignias?.filter(i =>
     i.name.toLowerCase().includes(searchQuery.toLowerCase())
   ) || [];
+
+  const getTagLabel = (key: string) => {
+    switch (key) {
+      case 'userName': return 'Nome do Usuário';
+      case 'approvalText': return 'Texto: Aprovado ANAC';
+      case 'verificationDate': return 'Dia da Verificação';
+      case 'insigniaId': return 'ID da Insígnia';
+      default: return key;
+    }
+  };
+
+  const getTagIcon = (key: string) => {
+    switch (key) {
+      case 'userName': return <User className="w-3 h-3" />;
+      case 'approvalText': return <Type className="w-3 h-3" />;
+      case 'verificationDate': return <Calendar className="w-3 h-3" />;
+      case 'insigniaId': return <Hash className="w-3 h-3" />;
+      default: return null;
+    }
+  };
+
+  const handleDrag = (key: string, e: any, data: any, containerRect: DOMRect) => {
+    const x = Math.min(Math.max(0, ((data.x + 10) / containerRect.width) * 100), 100);
+    const y = Math.min(Math.max(0, ((data.y + 10) / containerRect.height) * 100), 100);
+    
+    setTagPositions(prev => ({
+      ...prev,
+      [key]: { ...prev[key], x, y }
+    }));
+  };
 
   if (isLoading) {
     return (
@@ -494,21 +561,87 @@ export function InsigniasModelManager() {
           </DialogHeader>
 
           <div className="grid grid-cols-1 sm:grid-cols-[200px_1fr] gap-4 p-4">
-            {/* Left: preview */}
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-full aspect-square max-w-[200px] rounded-lg border-2 border-dashed border-border bg-muted/20 flex items-center justify-center overflow-hidden">
-                {filePreview ? (
-                  <img src={filePreview} alt="Preview" className="w-full h-full object-contain" />
-                ) : editingInsignia?.model_url ? (
-                  <img src={getDriveImageUrl(editingInsignia.model_url) || ''} alt={editingInsignia.name} className="w-full h-full object-contain" />
+            {/* Left: preview and positioning */}
+            <div className="flex flex-col gap-4">
+              <div 
+                className="relative w-full aspect-square max-w-[280px] mx-auto rounded-lg border-2 border-dashed border-border bg-muted/20 overflow-hidden select-none"
+                onDragOver={e => { e.preventDefault(); e.stopPropagation(); }}
+                onDrop={handleDrop}
+              >
+                {filePreview || editingInsignia?.model_url ? (
+                  <div className="relative w-full h-full">
+                    <img 
+                      src={filePreview || getDriveImageUrl(editingInsignia!.model_url) || ''} 
+                      alt="Preview" 
+                      className="w-full h-full object-contain pointer-events-none" 
+                    />
+                    
+                    {/* Interactive Tags Layer */}
+                    <div className="absolute inset-0 overflow-hidden">
+                      {Object.entries(tagPositions).map(([key, tag]) => tag.enabled && (
+                        <motion.div
+                          key={key}
+                          drag
+                          dragMomentum={false}
+                          dragElastic={0}
+                          onDragEnd={(e, info) => {
+                            const rect = (e.target as HTMLElement).parentElement?.getBoundingClientRect();
+                            if (rect) {
+                              const x = ((info.point.x - rect.left) / rect.width) * 100;
+                              const y = ((info.point.y - rect.top) / rect.height) * 100;
+                              setTagPositions(prev => ({
+                                ...prev,
+                                [key]: { ...prev[key], x, y }
+                              }));
+                            }
+                          }}
+                          className="absolute z-20 cursor-move bg-primary/80 text-white text-[10px] px-1.5 py-0.5 rounded shadow-lg whitespace-nowrap flex items-center gap-1 border border-white/20"
+                          style={{ 
+                            left: `${tag.x}%`, 
+                            top: `${tag.y}%`,
+                            x: "-50%",
+                            y: "-50%"
+                          }}
+                          initial={false}
+                        >
+                          {getTagIcon(key)}
+                          {getTagLabel(key)}
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
                 ) : (
-                  <div className="flex flex-col items-center gap-1 text-muted-foreground">
-                    <ImageIcon className="w-8 h-8" />
-                    <span className="text-[10px]">Sem imagem</span>
+                  <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-muted-foreground" onClick={() => fileInputRef.current?.click()}>
+                    <ImageIcon className="w-10 h-10 opacity-20" />
+                    <span className="text-xs font-medium">Sem imagem de modelo</span>
+                    <Button variant="outline" size="sm" className="h-7 text-[10px]">Importar PNG</Button>
                   </div>
                 )}
               </div>
-              <p className="text-[10px] text-muted-foreground text-center">PNG/JPG até 5MB · 800×800px</p>
+              <p className="text-[10px] text-muted-foreground text-center">Arraste as tags acima para posicionar no modelo.</p>
+              
+              {/* Tag Toggles */}
+              <div className="space-y-2 p-3 rounded-lg bg-muted/30 border border-border">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Habilitar Tags Dinâmicas</p>
+                {Object.entries(tagPositions).map(([key, tag]) => (
+                  <div key={key} className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <div className={cn("p-1 rounded bg-background border border-border", tag.enabled ? "text-primary" : "text-muted-foreground opacity-50")}>
+                        {getTagIcon(key)}
+                      </div>
+                      <span className={cn("text-xs", !tag.enabled && "text-muted-foreground")}>{getTagLabel(key)}</span>
+                    </div>
+                    <Switch 
+                      checked={tag.enabled} 
+                      onCheckedChange={(enabled) => setTagPositions(prev => ({
+                        ...prev,
+                        [key]: { ...prev[key], enabled }
+                      }))}
+                      className="scale-75 origin-right"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Right: fields */}
