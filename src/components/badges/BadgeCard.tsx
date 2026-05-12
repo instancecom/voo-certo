@@ -203,6 +203,7 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
           onOpenChange={setCertificateModalOpen}
           approvalId={verification?.approval_id || ''}
           approvedAt={verification?.reviewed_at || new Date().toISOString()}
+          insignia={insignia}
         />
       )}
     </>
