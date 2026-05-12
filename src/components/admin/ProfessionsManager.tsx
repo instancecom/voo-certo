@@ -10,6 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { DriveImageUpload } from './DriveImageUpload';
 import { useProfessionsManager } from '@/hooks/useProfessionsManager';
+import { getDrivePreviewUrl } from '@/lib/media-utils';
 
 interface ProfessionsManagerProps {
   onSelectProfession: (professionId: string, professionName: string) => void;
@@ -79,7 +80,20 @@ export function ProfessionsManager({ onSelectProfession }: ProfessionsManagerPro
                 <CardContent className="py-4 px-3 sm:px-6">
                   <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="text-2xl sm:text-3xl shrink-0">{profession.icon || '✈️'}</div>
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-[5px] bg-muted flex items-center justify-center shrink-0 overflow-hidden border border-border/50">
+                        {profession.image_url ? (
+                          <img 
+                            src={getDrivePreviewUrl(profession.image_url)} 
+                            alt={profession.name} 
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = 'https://placehold.co/80x80?text=Erro';
+                            }}
+                          />
+                        ) : (
+                          <span className="text-2xl sm:text-3xl">{profession.icon || '✈️'}</span>
+                        )}
+                      </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 mb-0.5">
                           <h3 className="font-semibold text-foreground text-sm sm:text-base truncate">{profession.name}</h3>

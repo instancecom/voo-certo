@@ -14,6 +14,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { PageTransition } from '@/components/PageTransition';
 import { Skeleton } from '@/components/ui/skeleton';
+import { getDrivePreviewUrl } from '@/lib/media-utils';
 
 interface BlockInfo {
   id: string;
@@ -29,6 +30,7 @@ interface ProfessionWithBlocks {
   is_active: boolean | null;
   active_modes: string[] | null;
   total_time: number | null;
+  image_url: string | null;
   block_count: number;
   question_count: number;
   blocks: BlockInfo[];
@@ -175,8 +177,19 @@ export default function SimuladosPage() {
                       </div>
 
                       <div className="flex items-start justify-between mb-6">
-                        <div className="w-14 h-14 rounded-[5px] bg-primary/5 flex items-center justify-center text-3xl">
-                          {profession.icon || '✈️'}
+                        <div className="w-14 h-14 rounded-[5px] bg-primary/5 flex items-center justify-center text-3xl overflow-hidden border border-border/50">
+                          {profession.image_url ? (
+                            <img 
+                              src={getDrivePreviewUrl(profession.image_url)} 
+                              alt={profession.name} 
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = 'https://placehold.co/100x100?text=Erro';
+                              }}
+                            />
+                          ) : (
+                            profession.icon || '✈️'
+                          )}
                         </div>
                         <Badge variant="outline" className="rounded-[5px] border-primary/20 bg-primary/5 font-bold uppercase text-[9px] tracking-widest">{profession.block_count} blocos</Badge>
                       </div>
