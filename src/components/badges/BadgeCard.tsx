@@ -57,11 +57,6 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
   const handleClick = () => {
     if (onClick) { onClick(); return; }
 
-    if (earned && isAnacBadge && hasApprovedVerification) {
-      setCertificateModalOpen(true);
-      return;
-    }
-
     if (isAnacBadge && !earned && user && !hasPendingVerification && !insignia.plano_minimo) {
       setVerificationModalOpen(true);
       return;
@@ -188,6 +183,7 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
         onOpenChange={setPreviewModalOpen}
         insignia={insignia}
         earnedAt={earnedAt}
+        approvalId={verification?.approval_id}
       />
 
       <VerificationSubmitModal
@@ -197,15 +193,7 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
         insigniaName={insignia.name}
       />
 
-      {hasApprovedVerification && (
-        <CertificateGeneratorModal
-          open={certificateModalOpen}
-          onOpenChange={setCertificateModalOpen}
-          approvalId={verification?.approval_id || ''}
-          approvedAt={verification?.reviewed_at || new Date().toISOString()}
-          insignia={insignia}
-        />
-      )}
+      {/* Removed separate CertificateGeneratorModal as it's now integrated into BadgePreviewModal */}
     </>
   );
 };

@@ -18,8 +18,11 @@ interface InsigniaTag {
 interface BadgePreviewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  insignia: Insignia & { tag_positions?: Record<string, InsigniaTag> | null };
+  insignia: Insignia & {
+    tag_positions?: Record<string, InsigniaTag> | null;
+  };
   earnedAt?: string;
+  approvalId?: string;
 }
 
 const rarityColors: Record<BadgeRarity, { bg: string; border: string; text: string }> = {
@@ -48,14 +51,97 @@ const getDriveImageUrl = (url: string | null): string | null => {
 
 import { useAuth } from '@/contexts/AuthContext';
 
-export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt }: BadgePreviewModalProps) {
+import { useRef } from 'react';
+import { Download, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
+
+export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt, approvalId }: BadgePreviewModalProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [isFlipped, setIsFlipped] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const displayName = user?.full_name || user?.email?.split('@')[0] || 'Piloto';
+  const formattedDate = earnedAt ? new Date(earnedAt).toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  }) : '';
   const colors = rarityColors[insignia.rarity];
   const imageUrl = getDriveImageUrl(insignia.model_url);
   const versoTexto = insignia.verso_texto;
   const isLocked = !earnedAt;
+
+  const generateInsignia = async () => {
+    const canvas = canvasRef.current;
+    if (!canvas || !imageUrl) return;
+
+    setIsGenerating(true);
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const resolution = 1000;
+    canvas.width = resolution;
+    canvas.height = resolution;
+    ctx.clearRect(0, 0, resolution, resolution);
+
+    try {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = imageUrl;
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+
+      ctx.drawImage(img, 0, 0, resolution, resolution);
+
+      if (insignia.tag_positions) {
+        Object.entries(insignia.tag_positions).forEach(([key, tag]) => {
+          if (!tag.enabled) return;
+          
+          let content = '';
+          switch (key) {
+            case 'userName': content = displayName; break;
+            case 'approvalText': content = 'APROVADO ANAC'; break;
+            case 'verificationDate': content = formattedDate; break;
+            case 'insigniaId': content = `ID: ${approvalId || 'VOO-CERT-000'}`; break;
+          }
+
+          if (!content) return;
+
+          const tagX = (tag.x / 100) * resolution;
+          const tagY = (tag.y / 100) * resolution;
+          
+          ctx.fillStyle = tag.color || '#FFFFFF';
+          const fontSize = (tag.fontSize || 16) * (resolution / 400); 
+          ctx.font = `900 ${fontSize}px Arial, sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          
+          ctx.shadowBlur = 8;
+          ctx.shadowColor = 'rgba(0,0,0,0.9)';
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 2;
+          ctx.fillText(content.toUpperCase(), tagX, tagY);
+          ctx.shadowBlur = 0;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
+        });
+      }
+
+      const link = document.createElement('a');
+      link.download = `insignia-voocerto-${approvalId || 'export'}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (err) {
+      console.error(err);
+      toast.error("Erro ao gerar imagem.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   if (!open) return null;
 
@@ -261,6 +347,31 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt }: Ba
                   <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest">
                     Conquistada em {new Date(earnedAt!).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
                   </p>
+
+                  {approvalId && (
+                    <p className="text-primary/60 font-mono text-[10px] mt-1 uppercase">
+                      ID: {approvalId}
+                    </p>
+                  )}
+                  
+                  {/* Generate Button for ANAC badges */}
+                  {insignia.condition_type === 'anac_approval' && imageUrl && (
+                    <div className="mt-6">
+                      <Button
+                        onClick={generateInsignia}
+                        disabled={isGenerating}
+                        className="bg-green-600 hover:bg-green-700 text-white font-black uppercase text-xs tracking-widest px-8 h-12 rounded-[5px] shadow-2xl"
+                      >
+                        {isGenerating ? (
+                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                        ) : (
+                          <Download className="w-4 h-4 mr-2" />
+                        )}
+                        Gerar Insígnia PNG
+                      </Button>
+                      <canvas ref={canvasRef} className="hidden" />
+                    </div>
+                  )}
                 </motion.div>
               )}
             </div>
