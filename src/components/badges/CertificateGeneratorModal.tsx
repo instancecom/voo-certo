@@ -94,8 +94,16 @@ export const CertificateGeneratorModal = ({
         img.onerror = reject;
       });
 
-      // Draw insignia to fill canvas
-      ctx.drawImage(img, 0, 0, resolution, resolution);
+      // Draw insignia centered and proportional to avoid stretching
+      const imgWidth = img.width;
+      const imgHeight = img.height;
+      const ratio = Math.min(resolution / imgWidth, resolution / imgHeight);
+      const newWidth = imgWidth * ratio;
+      const newHeight = imgHeight * ratio;
+      const x = (resolution - newWidth) / 2;
+      const y = (resolution - newHeight) / 2;
+      
+      ctx.drawImage(img, x, y, newWidth, newHeight);
 
       // Draw tags over the image
       if (insignia.tag_positions) {

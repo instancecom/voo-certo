@@ -95,7 +95,16 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt, appr
         img.onerror = reject;
       });
 
-      ctx.drawImage(img, 0, 0, resolution, resolution);
+      // Draw image with contain logic to avoid stretching
+      const imgWidth = img.width;
+      const imgHeight = img.height;
+      const ratio = Math.min(resolution / imgWidth, resolution / imgHeight);
+      const newWidth = imgWidth * ratio;
+      const newHeight = imgHeight * ratio;
+      const x = (resolution - newWidth) / 2;
+      const y = (resolution - newHeight) / 2;
+      
+      ctx.drawImage(img, x, y, newWidth, newHeight);
 
       if (insignia.tag_positions) {
         Object.entries(insignia.tag_positions).forEach(([key, tag]) => {
@@ -106,7 +115,7 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt, appr
             case 'userName': content = displayName; break;
             case 'approvalText': content = 'APROVADO ANAC'; break;
             case 'verificationDate': content = formattedDate; break;
-            case 'insigniaId': content = `ID: ${approvalId || 'VOO-CERT-000'}`; break;
+            case 'insigniaId': content = `ID: ${approvalId || insignia.id.slice(0, 8).toUpperCase()}`; break;
           }
 
           if (!content) return;
@@ -117,8 +126,8 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt, appr
           // Style tags
           ctx.fillStyle = tag.color || '#FFFFFF';
           // Scale font size proportional to resolution (using 400 as base width)
-          const fontSize = (tag.fontSize || 16) * (resolution / 400); 
-          ctx.font = `900 ${fontSize}px Arial, sans-serif`;
+          const fontSize = (tag.fontSize || 12) * (resolution / 400); 
+          ctx.font = `900 ${fontSize}px "Plus Jakarta Sans", Arial, sans-serif`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           
@@ -222,10 +231,10 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt, appr
                               
                               let content = '';
                               switch (key) {
-                                case 'userName': content = user?.full_name || user?.email?.split('@')[0] || 'Usuário'; break;
+                                case 'userName': content = displayName; break;
                                 case 'approvalText': content = 'APROVADO ANAC'; break;
-                                case 'verificationDate': content = earnedAt ? new Date(earnedAt).toLocaleDateString('pt-BR') : ''; break;
-                                case 'insigniaId': content = `ID: ${insignia.id.slice(0, 8).toUpperCase()}`; break;
+                                case 'verificationDate': content = formattedDate; break;
+                                case 'insigniaId': content = `ID: ${approvalId || insignia.id.slice(0, 8).toUpperCase()}`; break;
                               }
 
                               if (!content) return null;
