@@ -86,6 +86,7 @@ export function InsigniasModelManager() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [tagEditorOpen, setTagEditorOpen] = useState(false);
   
   // Tag positioning state
   const [tagPositions, setTagPositions] = useState<Record<string, InsigniaTag>>({
@@ -627,7 +628,21 @@ export function InsigniasModelManager() {
                   </div>
                 )}
               </div>
-              <p className="text-[10px] text-muted-foreground text-center">Arraste as tags acima para posicionar no modelo.</p>
+              <div className="flex flex-col gap-3">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  className="w-full h-12 border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary flex items-center justify-center gap-2"
+                  onClick={() => setTagEditorOpen(true)}
+                  disabled={!filePreview && !editingInsignia?.model_url}
+                >
+                  <Type className="w-4 h-4" />
+                  Abrir Editor de Tags (Grande)
+                </Button>
+                <p className="text-[10px] text-muted-foreground text-center italic">
+                  Habilite as tags e clique no botão acima para posicionar com precisão.
+                </p>
+              </div>
               
               {/* Tag Toggles */}
               <div className="space-y-2 p-3 rounded-lg bg-muted/30 border border-border">
@@ -778,6 +793,178 @@ export function InsigniasModelManager() {
               Salvar
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Large Tag Editor Modal */}
+      <Dialog open={tagEditorOpen} onOpenChange={setTagEditorOpen}>
+        <DialogContent className="max-w-5xl w-[95vw] h-[90vh] p-0 overflow-hidden flex flex-col bg-slate-950 border-white/10">
+          <DialogHeader className="p-6 border-b border-white/10 bg-slate-900/50">
+            <div className="flex items-center justify-between">
+              <div>
+                <DialogTitle className="text-white flex items-center gap-2">
+                  <Type className="w-5 h-5 text-primary" />
+                  Editor Visual de Tags
+                </DialogTitle>
+                <DialogDescription className="text-slate-400">
+                  Arraste as tags ou use os controles laterais para um ajuste fino.
+                </DialogDescription>
+              </div>
+              <Button onClick={() => setTagEditorOpen(false)} className="bg-primary hover:bg-primary/90">
+                Concluir Ajuste
+              </Button>
+            </div>
+          </DialogHeader>
+
+          <div className="flex-1 overflow-hidden grid grid-cols-1 lg:grid-cols-[1fr_300px]">
+            {/* Canvas Area */}
+            <div className="relative bg-[#050505] flex items-center justify-center p-8 overflow-auto border-r border-white/10 custom-scrollbar">
+              <div 
+                ref={tagContainerRef}
+                className="relative aspect-square w-full max-w-[650px] shadow-[0_0_100px_rgba(59,130,246,0.1)] rounded-xl border border-white/5 bg-slate-900/20 overflow-hidden select-none"
+              >
+                {(filePreview || editingInsignia?.model_url) && (
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    <img 
+                      src={filePreview || getDriveImageUrl(editingInsignia!.model_url) || ''} 
+                      alt="Large Preview" 
+                      className="w-full h-full object-contain pointer-events-none opacity-90" 
+                    />
+                    
+                    {/* Interactive Tags Layer */}
+                    <div className="absolute inset-0">
+                      {Object.entries(tagPositions).map(([key, tag]) => tag.enabled && (
+                        <motion.div
+                          key={key}
+                          drag
+                          dragMomentum={false}
+                          dragElastic={0}
+                          onDragEnd={(_, info) => {
+                            if (tagContainerRef.current) {
+                              const rect = tagContainerRef.current.getBoundingClientRect();
+                              const x = Math.min(100, Math.max(0, ((info.point.x - rect.left) / rect.width) * 100));
+                              const y = Math.min(100, Math.max(0, ((info.point.y - rect.top) / rect.height) * 100));
+                              setTagPositions(prev => ({
+                                ...prev,
+                                [key]: { ...prev[key], x, y }
+                              }));
+                            }
+                          }}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          className="absolute z-20 cursor-move bg-primary text-white font-black uppercase text-[11px] px-3 py-1.5 rounded-full shadow-2xl whitespace-nowrap flex items-center gap-2 border border-white/30"
+                          style={{ 
+                            left: `${tag.x}%`, 
+                            top: `${tag.y}%`,
+                            x: "-50%",
+                            y: "-50%",
+                            textShadow: '0 2px 4px rgba(0,0,0,0.5)'
+                          }}
+                        >
+                          {getTagIcon(key)}
+                          {getTagLabel(key)}
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Controls Side Panel */}
+            <div className="bg-slate-900/50 p-6 overflow-y-auto custom-scrollbar space-y-8">
+              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em]">Ajuste Fino</h3>
+              
+              <div className="space-y-6">
+                {Object.entries(tagPositions).map(([key, tag]) => (
+                  <div key={key} className={cn(
+                    "p-4 rounded-xl border transition-all duration-300",
+                    tag.enabled ? "bg-slate-800/40 border-primary/30" : "bg-slate-900/20 border-white/5 opacity-50"
+                  )}>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <div className={cn("p-1.5 rounded-lg", tag.enabled ? "bg-primary/20 text-primary" : "bg-slate-800 text-slate-600")}>
+                          {getTagIcon(key)}
+                        </div>
+                        <span className="text-sm font-bold text-white uppercase tracking-wider">{getTagLabel(key)}</span>
+                      </div>
+                      <Switch 
+                        checked={tag.enabled} 
+                        onCheckedChange={(enabled) => setTagPositions(prev => ({
+                          ...prev,
+                          [key]: { ...prev[key], enabled }
+                        }))}
+                        className="scale-90"
+                      />
+                    </div>
+
+                    {tag.enabled && (
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-1.5">
+                          <Label className="text-[10px] text-slate-400 uppercase font-bold">Eixo X (%)</Label>
+                          <div className="flex items-center gap-2">
+                            <Input 
+                              type="number"
+                              step="0.1"
+                              value={tag.x.toFixed(1)}
+                              onChange={(e) => {
+                                const val = parseFloat(e.target.value);
+                                if (!isNaN(val)) {
+                                  setTagPositions(prev => ({
+                                    ...prev,
+                                    [key]: { ...prev[key], x: Math.min(100, Math.max(0, val)) }
+                                  }));
+                                }
+                              }}
+                              className="h-8 bg-slate-950 border-white/10 text-xs text-center"
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label className="text-[10px] text-slate-400 uppercase font-bold">Eixo Y (%)</Label>
+                          <div className="flex items-center gap-2">
+                            <Input 
+                              type="number"
+                              step="0.1"
+                              value={tag.y.toFixed(1)}
+                              onChange={(e) => {
+                                const val = parseFloat(e.target.value);
+                                if (!isNaN(val)) {
+                                  setTagPositions(prev => ({
+                                    ...prev,
+                                    [key]: { ...prev[key], y: Math.min(100, Math.max(0, val)) }
+                                  }));
+                                }
+                              }}
+                              className="h-8 bg-slate-950 border-white/10 text-xs text-center"
+                            />
+                          </div>
+                        </div>
+                        
+                        <div className="col-span-2 space-y-1.5 mt-2">
+                          <Label className="text-[10px] text-slate-400 uppercase font-bold">Tamanho da Fonte</Label>
+                          <div className="flex items-center gap-4">
+                            <input 
+                              type="range"
+                              min="8"
+                              max="32"
+                              value={tag.fontSize || 12}
+                              onChange={(e) => setTagPositions(prev => ({
+                                ...prev,
+                                [key]: { ...prev[key], fontSize: parseInt(e.target.value) }
+                              }))}
+                              className="flex-1 accent-primary"
+                            />
+                            <span className="text-xs text-white font-mono w-6">{tag.fontSize || 12}</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
