@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 
+import { toast } from "sonner";
 import { Insignia } from "@/hooks/useInsignias";
 
 interface CertificateGeneratorModalProps {
@@ -68,123 +69,89 @@ export const CertificateGeneratorModal = ({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Canvas dimensions (1200x600 for LinkedIn)
-    canvas.width = 1200;
-    canvas.height = 600;
+    // Use a high resolution square for the insignia
+    const resolution = 1000;
+    canvas.width = resolution;
+    canvas.height = resolution;
 
-    // Background gradient
-    const gradient = ctx.createLinearGradient(0, 0, 1200, 600);
-    gradient.addColorStop(0, '#0f172a');
-    gradient.addColorStop(0.5, '#1e293b');
-    gradient.addColorStop(1, '#0f172a');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 1200, 600);
+    // Clear canvas (transparent background)
+    ctx.clearRect(0, 0, resolution, resolution);
 
-    // Border
-    ctx.strokeStyle = '#3b82f6';
-    ctx.lineWidth = 4;
-    ctx.strokeRect(20, 20, 1160, 560);
-
-    // Inner border
-    ctx.strokeStyle = '#60a5fa';
-    ctx.lineWidth = 1;
-    ctx.strokeRect(30, 30, 1140, 540);
-
-    // Load insignia image if exists
+    // Load insignia image
     const imageUrl = getDriveImageUrl(insignia.model_url);
-    if (imageUrl) {
-      try {
-        const img = new Image();
-        img.crossOrigin = "anonymous";
-        img.src = imageUrl;
-        await new Promise((resolve, reject) => {
-          img.onload = resolve;
-          img.onerror = reject;
-        });
-
-        // Draw image on the left (square)
-        const size = 400;
-        const x = 100;
-        const y = 100;
-        ctx.drawImage(img, x, y, size, size);
-
-        // Draw tags over the image
-        if (insignia.tag_positions) {
-          Object.entries(insignia.tag_positions).forEach(([key, tag]) => {
-            if (!tag.enabled) return;
-            
-            let content = '';
-            switch (key) {
-              case 'userName': content = displayName; break;
-              case 'approvalText': content = 'APROVADO ANAC'; break;
-              case 'verificationDate': content = formattedDate; break;
-              case 'insigniaId': content = `ID: ${approvalId}`; break;
-            }
-
-            if (!content) return;
-
-            const tagX = x + (tag.x / 100) * size;
-            const tagY = y + (tag.y / 100) * size;
-            
-            ctx.fillStyle = tag.color || '#FFFFFF';
-            ctx.font = `black ${tag.fontSize || 12}px Arial, sans-serif`;
-            ctx.textAlign = 'center';
-            ctx.shadowBlur = 4;
-            ctx.shadowColor = 'rgba(0,0,0,0.8)';
-            ctx.fillText(content.toUpperCase(), tagX, tagY);
-            ctx.shadowBlur = 0;
-          });
-        }
-      } catch (err) {
-        console.error("Erro ao carregar imagem para o canvas:", err);
-        // Fallback to old icon if image fails
-        drawFallbackIcon(ctx);
-      }
-    } else {
-      drawFallbackIcon(ctx);
+    if (!imageUrl) {
+      toast.error("Modelo de insígnia não encontrado.");
+      setIsGenerating(false);
+      return;
     }
 
-    // Title & Content (Right side)
-    const textX = imageUrl ? 850 : 600;
-    
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 36px Arial, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('CERTIFICADO DE APROVAÇÃO', textX, 180);
+    try {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = imageUrl;
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
 
-    ctx.fillStyle = '#3b82f6';
-    ctx.font = 'bold 24px Arial, sans-serif';
-    ctx.fillText('BANCA ANAC - VOO CERTO', textX, 220);
+      // Draw insignia to fill canvas
+      ctx.drawImage(img, 0, 0, resolution, resolution);
 
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 42px Arial, sans-serif';
-    ctx.fillText(displayName.toUpperCase(), textX, 300);
+      // Draw tags over the image
+      if (insignia.tag_positions) {
+        Object.entries(insignia.tag_positions).forEach(([key, tag]) => {
+          if (!tag.enabled) return;
+          
+          let content = '';
+          switch (key) {
+            case 'userName': content = displayName; break;
+            case 'approvalText': content = 'APROVADO ANAC'; break;
+            case 'verificationDate': content = formattedDate; break;
+            case 'insigniaId': content = `ID: ${approvalId}`; break;
+          }
 
-    ctx.fillStyle = '#94a3b8';
-    ctx.font = '20px Arial, sans-serif';
-    ctx.fillText('Concluiu com êxito a preparação e foi aprovado(a)', textX, 360);
-    ctx.fillText('na Banca Oficial da ANAC para Comissário de Bordo', textX, 390);
+          if (!content) return;
 
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '18px Arial, sans-serif';
-    ctx.fillText(`Aprovado em ${formattedDate}`, textX, 450);
+          const tagX = (tag.x / 100) * resolution;
+          const tagY = (tag.y / 100) * resolution;
+          
+          // Style tags
+          ctx.fillStyle = tag.color || '#FFFFFF';
+          // Scale font size relative to resolution
+          const fontSize = (tag.fontSize || 16) * (resolution / 400); 
+          ctx.font = `900 ${fontSize}px Arial, sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          
+          // Stronger drop shadow for visibility
+          ctx.shadowBlur = 8;
+          ctx.shadowColor = 'rgba(0,0,0,0.9)';
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 2;
+          
+          ctx.fillText(content.toUpperCase(), tagX, tagY);
+          
+          // Reset shadow
+          ctx.shadowBlur = 0;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
+        });
+      }
 
-    ctx.fillStyle = '#60a5fa';
-    ctx.font = 'bold 16px monospace';
-    ctx.fillText(`ID: ${approvalId}`, textX, 490);
+      // Download
+      setTimeout(() => {
+        const link = document.createElement('a');
+        link.download = `insignia-voocerto-${approvalId}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        setIsGenerating(false);
+      }, 300);
 
-    ctx.fillStyle = '#64748b';
-    ctx.font = '14px Arial, sans-serif';
-    ctx.fillText('Verificado pela equipe Voo Certo • voocerto.com.br', textX, 550);
-
-    // Download
-    setTimeout(() => {
-      const link = document.createElement('a');
-      link.download = `certificado-anac-${approvalId}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
+    } catch (err) {
+      console.error("Erro ao gerar insígnia:", err);
+      toast.error("Erro ao processar imagem.");
       setIsGenerating(false);
-    }, 500);
+    }
   };
 
   const drawFallbackIcon = (ctx: CanvasRenderingContext2D) => {
@@ -207,10 +174,10 @@ export const CertificateGeneratorModal = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Award className="w-5 h-5 text-yellow-500" />
-            Gerar Certificado
+            Compartilhar Insígnia
           </DialogTitle>
           <DialogDescription>
-            Gere sua insígnia em formato PNG para compartilhar no LinkedIn
+            Gere sua insígnia personalizada para compartilhar suas conquistas
           </DialogDescription>
         </DialogHeader>
 
@@ -219,15 +186,18 @@ export const CertificateGeneratorModal = ({
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-[5px] p-6 border border-primary/30 text-center overflow-hidden"
+            className="relative bg-slate-950 rounded-[5px] p-8 border border-white/10 text-center overflow-hidden flex items-center justify-center min-h-[300px]"
           >
-            <div className="relative w-48 h-48 mx-auto mb-4 rounded-[5px] flex items-center justify-center group">
+            {/* Soft glow background */}
+            <div className="absolute inset-0 bg-gradient-to-t from-primary/10 to-transparent pointer-events-none" />
+            
+            <div className="relative w-64 h-64 mx-auto flex items-center justify-center z-10">
               {insignia.model_url ? (
-                <div className="relative w-full h-full">
+                <div className="relative w-full h-full drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
                   <img 
                     src={getDriveImageUrl(insignia.model_url) || ''} 
                     alt={insignia.name} 
-                    className="w-full h-full object-contain filter drop-shadow-2xl" 
+                    className="w-full h-full object-contain" 
                   />
                   
                   {/* Tags Preview */}
@@ -249,14 +219,14 @@ export const CertificateGeneratorModal = ({
                         return (
                           <div
                             key={key}
-                            className="absolute whitespace-nowrap font-black uppercase text-center drop-shadow-md"
+                            className="absolute whitespace-nowrap font-black uppercase text-center"
                             style={{
                               left: `${tag.x}%`,
                               top: `${tag.y}%`,
                               transform: 'translate(-50%, -50%)',
-                              fontSize: `${(tag.fontSize || 10) * 0.6}px`,
+                              fontSize: `${(tag.fontSize || 10) * 0.65}px`,
                               color: tag.color || '#FFFFFF',
-                              textShadow: '0 1px 2px rgba(0,0,0,0.8)'
+                              textShadow: '0 1px 3px rgba(0,0,0,0.9), 0 2px 6px rgba(0,0,0,0.5)'
                             }}
                           >
                             {content}
@@ -267,34 +237,20 @@ export const CertificateGeneratorModal = ({
                   )}
                 </div>
               ) : (
-                <div className="w-16 h-16 rounded-[5px] bg-yellow-500/20 flex items-center justify-center">
-                  <Award className="w-8 h-8 text-yellow-500" />
+                <div className="w-24 h-24 rounded-full bg-yellow-500/20 flex items-center justify-center border border-yellow-500/30">
+                  <Award className="w-12 h-12 text-yellow-500" />
                 </div>
               )}
-            </div>
-            
-            <h3 className="text-xl font-bold text-white mb-1">
-              {displayName}
-            </h3>
-            <p className="text-primary text-sm font-medium mb-4">
-              Aprovado(a) na Banca ANAC
-            </p>
-            
-            <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground mb-2">
-              <CheckCircle className="w-4 h-4 text-green-500" />
-              Verificado em {formattedDate}
-            </div>
-            
-            <div className="bg-slate-900/50 rounded-[5px] py-2 px-4 inline-block">
-              <span className="text-xs text-muted-foreground">ID: </span>
-              <span className="font-mono text-primary text-sm">{approvalId}</span>
             </div>
           </motion.div>
 
           {/* Info text */}
-          <p className="text-sm text-muted-foreground text-center">
-            Use essa insígnia no seu LinkedIn como comprovação de aprovação na banca ANAC
-          </p>
+          <div className="text-center space-y-1">
+            <h4 className="font-bold text-white uppercase tracking-wider text-sm">{insignia.name}</h4>
+            <p className="text-xs text-muted-foreground">
+              Aprovado em {formattedDate} • ID: {approvalId}
+            </p>
+          </div>
 
           {/* Hidden canvas for generation */}
           <canvas ref={canvasRef} className="hidden" />
@@ -328,7 +284,7 @@ export const CertificateGeneratorModal = ({
           </div>
 
           <p className="text-xs text-center text-muted-foreground">
-            Imagem PNG 1200x600px • Ideal para LinkedIn
+            Imagem PNG de alta resolução • Fundo transparente
           </p>
         </div>
       </DialogContent>
