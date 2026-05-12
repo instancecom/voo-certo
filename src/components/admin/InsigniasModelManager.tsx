@@ -70,6 +70,7 @@ export function InsigniasModelManager() {
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const dropRef = useRef<HTMLDivElement | null>(null);
+  const tagContainerRef = useRef<HTMLDivElement | null>(null);
 
   const [driveConnected, setDriveConnected] = useState<boolean | null>(null);
   const [connectingDrive, setConnectingDrive] = useState(false);
@@ -234,15 +235,21 @@ export function InsigniasModelManager() {
     setShowNewFolder(false);
     setNewFolderName('');
     setModalOpen(true);
-    if (insignia.tag_positions) {
-      setTagPositions(insignia.tag_positions as Record<string, InsigniaTag>);
-    } else {
+    const defaultPositions = {
+      userName: { x: 50, y: 30, enabled: false, fontSize: 14, color: '#FFFFFF' },
+      approvalText: { x: 50, y: 50, enabled: false, fontSize: 12, color: '#FFFFFF' },
+      verificationDate: { x: 50, y: 70, enabled: false, fontSize: 10, color: '#FFFFFF' },
+      insigniaId: { x: 50, y: 90, enabled: false, fontSize: 10, color: '#FFFFFF' },
+    };
+
+    if (insignia.tag_positions && Object.keys(insignia.tag_positions).length > 0) {
+      // Merge with defaults to ensure all keys exist
       setTagPositions({
-        userName: { x: 50, y: 30, enabled: false, fontSize: 14, color: '#FFFFFF' },
-        approvalText: { x: 50, y: 50, enabled: false, fontSize: 12, color: '#FFFFFF' },
-        verificationDate: { x: 50, y: 70, enabled: false, fontSize: 10, color: '#FFFFFF' },
-        insigniaId: { x: 50, y: 90, enabled: false, fontSize: 10, color: '#FFFFFF' },
+        ...defaultPositions,
+        ...(insignia.tag_positions as Record<string, InsigniaTag>)
       });
+    } else {
+      setTagPositions(defaultPositions);
     }
     if (driveConnected) loadDriveFolders();
   };
@@ -577,25 +584,27 @@ export function InsigniasModelManager() {
                     />
                     
                     {/* Interactive Tags Layer */}
-                    <div className="absolute inset-0 overflow-hidden">
+                    <div ref={tagContainerRef} className="absolute inset-0 overflow-hidden">
                       {Object.entries(tagPositions).map(([key, tag]) => tag.enabled && (
                         <motion.div
                           key={key}
                           drag
                           dragMomentum={false}
                           dragElastic={0}
-                          onDragEnd={(e, info) => {
-                            const rect = (e.target as HTMLElement).parentElement?.getBoundingClientRect();
-                            if (rect) {
-                              const x = ((info.point.x - rect.left) / rect.width) * 100;
-                              const y = ((info.point.y - rect.top) / rect.height) * 100;
+                          onDragEnd={(_, info) => {
+                            if (tagContainerRef.current) {
+                              const rect = tagContainerRef.current.getBoundingClientRect();
+                              const x = Math.min(100, Math.max(0, ((info.point.x - rect.left) / rect.width) * 100));
+                              const y = Math.min(100, Math.max(0, ((info.point.y - rect.top) / rect.height) * 100));
                               setTagPositions(prev => ({
                                 ...prev,
                                 [key]: { ...prev[key], x, y }
                               }));
                             }
                           }}
-                          className="absolute z-20 cursor-move bg-primary/80 text-white text-[10px] px-1.5 py-0.5 rounded shadow-lg whitespace-nowrap flex items-center gap-1 border border-white/20"
+                          whileHover={{ scale: 1.05, backgroundColor: 'rgba(var(--primary), 0.9)' }}
+                          whileTap={{ scale: 0.95 }}
+                          className="absolute z-20 cursor-move bg-primary text-white text-[10px] px-2 py-0.5 rounded-full shadow-xl whitespace-nowrap flex items-center gap-1.5 border border-white/20 select-none"
                           style={{ 
                             left: `${tag.x}%`, 
                             top: `${tag.y}%`,
