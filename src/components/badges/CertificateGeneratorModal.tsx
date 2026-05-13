@@ -13,6 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 import { toast } from "sonner";
 import { Insignia } from "@/hooks/useInsignias";
+import { bakeBadgeMetadata } from "@/lib/badge-baker";
 
 interface CertificateGeneratorModalProps {
   open: boolean;
@@ -74,7 +75,7 @@ export const CertificateGeneratorModal = ({
     canvas.width = resolution;
     canvas.height = resolution;
 
-    // Clear canvas (transparent background)
+    // Explicitly clear canvas for transparency
     ctx.clearRect(0, 0, resolution, resolution);
 
     // Load insignia image
@@ -146,12 +147,29 @@ export const CertificateGeneratorModal = ({
         });
       }
 
-      // Download
-      setTimeout(() => {
+      // Download with Metadata (Cisco/Open Badges style)
+      setTimeout(async () => {
+        const canvasBlob = await new Promise<Blob>((resolve) => {
+          canvas.toBlob((blob) => resolve(blob!), 'image/png');
+        });
+
+        const bakedBlob = await bakeBadgeMetadata(canvasBlob, {
+          recipient: user?.email || 'piloto@voocerto.com.br',
+          issuedOn: new Date().toISOString(),
+          badgeId: insignia.id,
+          approvalId: approvalId,
+          verifyUrl: `${window.location.origin}/verificar/${approvalId}`,
+          issuerName: "Voo Certo",
+          origin: window.location.origin
+        });
+
+        const url = URL.createObjectURL(bakedBlob);
         const link = document.createElement('a');
         link.download = `insignia-voocerto-${approvalId}.png`;
-        link.href = canvas.toDataURL('image/png');
+        link.href = url;
         link.click();
+        
+        URL.revokeObjectURL(url);
         setIsGenerating(false);
       }, 300);
 
@@ -194,7 +212,7 @@ export const CertificateGeneratorModal = ({
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="relative bg-slate-950 rounded-[5px] p-8 border border-white/10 text-center overflow-hidden flex items-center justify-center min-h-[300px]"
+            className="relative bg-checkerboard/5 rounded-[5px] p-8 border border-white/10 text-center overflow-hidden flex items-center justify-center min-h-[300px]"
           >
             {/* Soft glow background */}
             <div className="absolute inset-0 bg-gradient-to-t from-primary/10 to-transparent pointer-events-none" />

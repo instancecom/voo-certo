@@ -572,7 +572,7 @@ export function InsigniasModelManager() {
             {/* Left: preview and positioning */}
             <div className="flex flex-col gap-4">
               <div 
-                className="relative w-full aspect-square max-w-[280px] mx-auto rounded-lg border-2 border-dashed border-border bg-muted/20 overflow-hidden select-none"
+                className="relative w-full aspect-square max-w-[280px] mx-auto rounded-lg border-2 border-dashed border-border bg-checkerboard/10 overflow-hidden select-none"
                 onDragOver={e => { e.preventDefault(); e.stopPropagation(); }}
                 onDrop={handleDrop}
               >

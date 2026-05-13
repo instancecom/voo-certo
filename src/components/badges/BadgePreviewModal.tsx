@@ -54,6 +54,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRef } from 'react';
 import { Download, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { bakeBadgeMetadata } from '@/lib/badge-baker';
 
 export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt, approvalId }: BadgePreviewModalProps) {
   const { user } = useAuth();
@@ -84,6 +85,8 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt, appr
     const resolution = 1000;
     canvas.width = resolution;
     canvas.height = resolution;
+    
+    // Explicitly clear canvas for transparency
     ctx.clearRect(0, 0, resolution, resolution);
 
     try {
@@ -142,10 +145,29 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt, appr
         });
       }
 
+      const finalApprovalId = approvalId || insignia.id.slice(0, 8).toUpperCase();
+      
+      const canvasBlob = await new Promise<Blob>((resolve) => {
+        canvas.toBlob((blob) => resolve(blob!), 'image/png');
+      });
+
+      // Bake Metadata (Cisco/Open Badges style)
+      const bakedBlob = await bakeBadgeMetadata(canvasBlob, {
+        recipient: user?.email || 'piloto@voocerto.com.br',
+        issuedOn: new Date().toISOString(),
+        badgeId: insignia.id,
+        approvalId: finalApprovalId,
+        verifyUrl: `${window.location.origin}/verificar/${finalApprovalId}`,
+        issuerName: "Voo Certo",
+        origin: window.location.origin
+      });
+
+      const url = URL.createObjectURL(bakedBlob);
       const link = document.createElement('a');
-      link.download = `insignia-voocerto-${approvalId || 'export'}.png`;
-      link.href = canvas.toDataURL('image/png');
+      link.download = `insignia-voocerto-${finalApprovalId}.png`;
+      link.href = url;
       link.click();
+      URL.revokeObjectURL(url);
     } catch (err) {
       console.error(err);
       toast.error("Erro ao gerar imagem.");
@@ -211,7 +233,7 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt, appr
                     )} />
                     
                     {imageUrl ? (
-                      <div className="relative w-full h-full">
+                      <div className="relative w-full h-full rounded-full overflow-hidden bg-checkerboard/10 group-hover:bg-checkerboard/20 transition-colors">
                         <img 
                           src={imageUrl} 
                           alt={insignia.name} 
