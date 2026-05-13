@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Lock } from 'lucide-react';
+import { X, Lock, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { DynamicIcon } from '@/components/ui/dynamic-icon';
@@ -61,6 +61,7 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt, appr
   const navigate = useNavigate();
   const [isFlipped, setIsFlipped] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showAuthenticity, setShowAuthenticity] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const displayName = user?.full_name || user?.email?.split('@')[0] || 'Piloto';
@@ -389,19 +390,63 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt, appr
                   
                   {/* Generate Button for ANAC badges */}
                   {insignia.condition_type === 'anac_approval' && imageUrl && (
-                    <div className="mt-6">
-                      <Button
-                        onClick={generateInsignia}
-                        disabled={isGenerating}
-                        className="bg-green-600 hover:bg-green-700 text-white font-black uppercase text-xs tracking-widest px-8 h-12 rounded-[5px] shadow-2xl"
-                      >
-                        {isGenerating ? (
-                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                        ) : (
-                          <Download className="w-4 h-4 mr-2" />
-                        )}
-                        Gerar Insígnia PNG
-                      </Button>
+                    <div className="mt-6 flex flex-col items-center gap-3">
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={generateInsignia}
+                          disabled={isGenerating}
+                          className="bg-green-600 hover:bg-green-700 text-white font-black uppercase text-[10px] tracking-widest px-6 h-10 rounded-[5px] shadow-2xl"
+                        >
+                          {isGenerating ? (
+                            <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                          ) : (
+                            <Download className="w-4 h-4 mr-2" />
+                          )}
+                          Download PNG
+                        </Button>
+                        
+                        <Button
+                          variant="outline"
+                          onClick={() => setShowAuthenticity(!showAuthenticity)}
+                          className="border-white/20 bg-white/5 hover:bg-white/10 text-white font-black uppercase text-[10px] tracking-widest px-6 h-10 rounded-[5px]"
+                        >
+                          <ShieldCheck className="w-4 h-4 mr-2 text-success" />
+                          {showAuthenticity ? 'Ocultar Detalhes' : 'Verificar'}
+                        </Button>
+                      </div>
+
+                      {showAuthenticity && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="w-full mt-4 p-4 rounded-[5px] bg-white/5 border border-white/10 text-left space-y-3"
+                        >
+                          <div className="flex items-center gap-2 text-success mb-1">
+                            <CheckCircle2 size={14} />
+                            <span className="text-[10px] font-black uppercase tracking-wider">Credencial Autêntica</span>
+                          </div>
+                          
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <p className="text-[9px] text-white/40 uppercase font-bold tracking-tight">Emitido para</p>
+                              <p className="text-[11px] text-white font-medium truncate">{user?.email}</p>
+                            </div>
+                            <div>
+                              <p className="text-[9px] text-white/40 uppercase font-bold tracking-tight">ID Verificação</p>
+                              <p className="text-[11px] text-primary font-mono font-bold uppercase">{approvalId || 'PENDENTE'}</p>
+                            </div>
+                            <div>
+                              <p className="text-[9px] text-white/40 uppercase font-bold tracking-tight">Data Conquista</p>
+                              <p className="text-[11px] text-white font-medium">{formattedDate}</p>
+                            </div>
+                            <div>
+                              <p className="text-[9px] text-white/40 uppercase font-bold tracking-tight">Status</p>
+                              <p className="text-[11px] text-green-400 font-bold uppercase">Ativo</p>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                      
                       <canvas ref={canvasRef} className="hidden" />
                     </div>
                   )}
