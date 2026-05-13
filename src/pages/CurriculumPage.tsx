@@ -80,9 +80,9 @@ const EMPTY_DATA: CurriculumData = {
 };
 
 const TEMPLATES = [
-  { id: 'classico', name: 'Clássico', icon: FileText, desc: 'Organizado e direto' },
-  { id: 'moderno', name: 'Moderno', icon: Sparkles, desc: 'Destaque visual' },
-  { id: 'criativo', name: 'Criativo', icon: Layout, desc: 'Layout inovador' },
+  { id: 'elite', name: 'Elite', icon: Shield, desc: 'Alta performance (Navy)' },
+  { id: 'executivo', name: 'Executivo', icon: Briefcase, desc: 'Minimalista e sério' },
+  { id: 'moderno', name: 'Skyline', icon: Sparkles, desc: 'Moderno e dinâmico' },
 ];
 
 export default function CurriculumPage() {
@@ -118,7 +118,7 @@ export default function CurriculumPage() {
           languages: (saved.languages as unknown as Language[]) || [],
           skills: saved.skills || [],
           photo_url: saved.photo_url || '',
-          template: saved.template || 'classico',
+          template: saved.template || 'elite',
         });
       }
       return saved;
@@ -182,193 +182,227 @@ export default function CurriculumPage() {
       const h = pdf.internal.pageSize.getHeight();
       let y = 0;
 
-      const template = data.template || 'classico';
-      const isModern = template === 'moderno';
-      const isCreative = template === 'criativo';
-      const isClassic = template === 'classico';
+      const template = data.template || 'elite';
+      const isElite = template === 'elite';
+      const isExecutivo = template === 'executivo';
+      const isModerno = template === 'moderno';
 
       const colors = {
-        classico: { p: [30, 41, 59] as [number, number, number], light: [248, 250, 252] as [number, number, number] },
-        moderno: { p: [37, 99, 235] as [number, number, number], light: [239, 246, 255] as [number, number, number] },
-        criativo: { p: [124, 58, 237] as [number, number, number], light: [245, 243, 255] as [number, number, number] },
+        elite: { p: [26, 35, 58] as [number, number, number], light: [248, 250, 252] as [number, number, number] },
+        executivo: { p: [15, 23, 42] as [number, number, number], light: [255, 255, 255] as [number, number, number] },
+        moderno: { p: [37, 99, 235] as [number, number, number], light: [248, 250, 252] as [number, number, number] },
       };
-      const c = colors[template as keyof typeof colors] || colors.classico;
+      const c = colors[template as keyof typeof colors] || colors.elite;
 
-      // Header background
-      if (isCreative) {
+      // Header
+      if (isElite) {
         pdf.setFillColor(...c.p);
-        pdf.rect(0, 0, w, 40, 'F');
+        pdf.rect(0, 0, w, 50, 'F');
         pdf.setTextColor(255, 255, 255);
-      } else if (isModern) {
-        pdf.setFillColor(...c.light);
-        pdf.rect(0, 0, w, 40, 'F');
-        pdf.setFillColor(...c.p);
-        pdf.rect(0, 0, 5, 40, 'F');
-        pdf.setTextColor(30, 41, 59);
+      } else if (isExecutivo) {
+        pdf.setTextColor(...c.p);
       } else {
-        pdf.setFillColor(30, 41, 59);
-        pdf.rect(15, 38, w - 30, 1.5, 'F');
-        pdf.setTextColor(30, 41, 59);
-      }
-
-      // Sidebar background for Modern
-      if (isModern) {
-        pdf.setFillColor(...c.light);
-        pdf.rect(w * 0.65, 40, w * 0.35, h - 40, 'F');
+        pdf.setFillColor(248, 250, 252);
+        pdf.rect(0, 0, w, 50, 'F');
+        pdf.setDrawColor(226, 232, 240);
+        pdf.line(0, 50, w, 50);
+        pdf.setTextColor(...c.p);
       }
 
       // Name & Profession
+      pdf.setFontSize(24);
       pdf.setFont('helvetica', 'bold');
-      pdf.setFontSize(22);
-      if (isClassic) {
-        pdf.text(data.full_name.toUpperCase(), w / 2, 20, { align: 'center' });
+      if (isExecutivo) {
+        pdf.text(data.full_name.toUpperCase(), w / 2, 25, { align: 'center' });
         pdf.setFontSize(10);
-        pdf.setTextColor(...c.p);
-        pdf.text(data.profession.toUpperCase(), w / 2, 28, { align: 'center' });
+        pdf.setTextColor(100);
+        pdf.text(data.profession.toUpperCase(), w / 2, 33, { align: 'center' });
       } else {
-        pdf.text(data.full_name.toUpperCase(), 15, 20);
+        pdf.text(data.full_name.toUpperCase(), 15, 25);
         pdf.setFontSize(10);
-        pdf.setTextColor(isCreative ? 220 : c.p[0], isCreative ? 220 : c.p[1], isCreative ? 220 : c.p[2]);
-        pdf.text(data.profession.toUpperCase(), 15, 28);
+        pdf.setTextColor(isElite ? 150 : c.p[0], isElite ? 150 : c.p[1], isElite ? 150 : c.p[2]);
+        pdf.text(data.profession.toUpperCase(), 15, 33);
       }
 
       // Contact Info
       pdf.setFontSize(8);
-      pdf.setTextColor(isCreative ? 230 : 100);
-      const contactStr = [data.email, data.phone, data.city].filter(Boolean).join('  •  ');
-      if (isClassic) pdf.text(contactStr, w / 2, 34, { align: 'center' });
-      else pdf.text(contactStr, 15, 34);
+      pdf.setTextColor(isElite ? 200 : 120);
+      const contactStr = [data.email, data.phone, data.city].filter(Boolean).join('  |  ');
+      if (isExecutivo) pdf.text(contactStr, w / 2, 42, { align: 'center' });
+      else pdf.text(contactStr, 15, 42);
 
-      pdf.setTextColor(50, 50, 50);
-      y = 50;
+      // Reset text color for body
+      pdf.setTextColor(30, 41, 59);
+      y = 65;
 
-      // Main content width
-      const contentW = (isModern) ? w * 0.6 : w - 30;
-      const sidebarX = w * 0.68;
+      // Layout structure
+      const hasSidebar = isElite || isModerno;
+      const contentW = hasSidebar ? w * 0.58 : w - 30;
+      const sidebarX = isElite ? 15 : w * 0.65;
+      const mainX = isElite ? w * 0.38 : 15;
       const sidebarW = w * 0.28;
 
-      const section = (title: string, xPos = 15, width = contentW) => {
-        pdf.setFontSize(11);
+      if (isElite) {
+         pdf.setFillColor(248, 250, 252);
+         pdf.rect(0, 50, w * 0.35, h - 50, 'F');
+         pdf.setDrawColor(241, 245, 249);
+         pdf.line(w * 0.35, 50, w * 0.35, h);
+      } else if (isModerno) {
+         pdf.setDrawColor(241, 245, 249);
+         pdf.line(w * 0.62, 50, w * 0.62, h);
+      }
+
+      const sectionTitle = (title: string, xPos: number, width: number) => {
+        pdf.setFontSize(10);
         pdf.setFont('helvetica', 'bold');
         pdf.setTextColor(...c.p);
         pdf.text(title.toUpperCase(), xPos, y);
         y += 2;
-        pdf.setDrawColor(240, 240, 240);
+        pdf.setDrawColor(241, 245, 249);
         pdf.line(xPos, y, xPos + width, y);
-        y += 6;
-        pdf.setTextColor(50, 50, 50);
+        y += 8;
+        pdf.setTextColor(40, 40, 40);
       };
-
-      // Summary
-      if (data.summary) {
-        section('Perfil Profissional');
-        pdf.setFontSize(9);
-        pdf.setFont('helvetica', 'normal');
-        const lines = pdf.splitTextToSize(data.summary, contentW);
-        pdf.text(lines, 15, y);
-        y += (lines.length * 4.5) + 8;
-      }
 
       const checkPage = (added: number) => {
-        if (y + added > 280) { pdf.addPage(); y = 20; if (isModern) { pdf.setFillColor(...c.light); pdf.rect(w * 0.65, 0, w * 0.35, h, 'F'); } }
+        if (y + added > 280) { 
+           pdf.addPage(); 
+           y = 20; 
+           if (isElite) {
+             pdf.setFillColor(248, 250, 252);
+             pdf.rect(0, 0, w * 0.35, h, 'F');
+             pdf.setDrawColor(241, 245, 249);
+             pdf.line(w * 0.35, 0, w * 0.35, h);
+           }
+        }
       };
 
-      // Experience
-      if (data.experience.length > 0) {
-        checkPage(20);
-        section('Trajetória Profissional');
-        data.experience.forEach(exp => {
-          checkPage(25);
-          pdf.setFont('helvetica', 'bold');
-          pdf.setFontSize(10);
-          pdf.text(exp.role.toUpperCase(), 15, y);
+      // Helper for Sidebar content
+      const drawSidebar = () => {
+        const savedY = y;
+        y = 65;
+        const x = sidebarX;
+        const width = sidebarW;
+
+        if (data.skills.length > 0) {
+          sectionTitle('Competências', x, width);
+          pdf.setFont('helvetica', 'normal');
           pdf.setFontSize(8);
-          pdf.setTextColor(...c.p);
-          pdf.text(`${exp.company.toUpperCase()} | ${exp.start} - ${exp.end || 'Atual'}`, 15, y + 4);
-          y += 9;
-          if (exp.description) {
-            pdf.setTextColor(70);
+          data.skills.forEach(s => {
+            pdf.text(`• ${s}`, x, y);
+            y += 5;
+          });
+          y += 10;
+        }
+
+        if (data.languages.length > 0) {
+          sectionTitle('Idiomas', x, width);
+          data.languages.forEach(l => {
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(8);
+            pdf.text(l.name.toUpperCase(), x, y);
             pdf.setFont('helvetica', 'normal');
-            const descLines = pdf.splitTextToSize(exp.description, contentW - 5);
-            pdf.text(descLines, 15, y);
-            y += (descLines.length * 4) + 4;
-          }
-          y += 2;
-        });
-        y += 6;
+            pdf.text(l.level, x + width, y, { align: 'right' });
+            y += 6;
+          });
+          y += 10;
+        }
+
+        if (data.certificates.length > 0) {
+          sectionTitle('Certificações', x, width);
+          data.certificates.forEach(cert => {
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(8);
+            pdf.text(cert.name, x, y);
+            y += 4;
+            pdf.setFont('helvetica', 'normal');
+            pdf.setFontSize(7);
+            pdf.setTextColor(120);
+            pdf.text(`${cert.issuer} (${cert.year})`, x, y);
+            y += 8;
+            pdf.setTextColor(40, 40, 40);
+          });
+        }
+        
+        return y;
+      };
+
+      // Draw Sidebar if needed
+      let sidebarEndY = 0;
+      if (hasSidebar) sidebarEndY = drawSidebar();
+
+      // Main Content
+      y = 65;
+      const mainContentX = mainX;
+      const mainContentW = contentW;
+
+      if (data.summary) {
+        sectionTitle('Perfil Profissional', mainContentX, mainContentW);
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'normal');
+        const lines = pdf.splitTextToSize(data.summary, mainContentW);
+        pdf.text(lines, mainContentX, y);
+        y += (lines.length * 4.5) + 12;
       }
 
-      // Education
+      if (data.experience.length > 0) {
+        sectionTitle('Trajetória Profissional', mainContentX, mainContentW);
+        data.experience.forEach(exp => {
+          checkPage(30);
+          pdf.setFont('helvetica', 'bold');
+          pdf.setFontSize(10);
+          pdf.text(exp.role.toUpperCase(), mainContentX, y);
+          pdf.setFontSize(8);
+          pdf.setTextColor(...c.p);
+          pdf.text(`${exp.company.toUpperCase()} | ${exp.start} - ${exp.end || 'Atual'}`, mainContentX, y + 5);
+          y += 10;
+          if (exp.description) {
+            pdf.setTextColor(80);
+            pdf.setFont('helvetica', 'normal');
+            const descLines = pdf.splitTextToSize(exp.description, mainContentW - 2);
+            pdf.text(descLines, mainContentX, y);
+            y += (descLines.length * 4.2) + 6;
+          }
+        });
+        y += 8;
+      }
+
       if (data.education.length > 0) {
-        checkPage(20);
-        section('Formação Acadêmica');
+        sectionTitle('Formação Acadêmica', mainContentX, mainContentW);
         data.education.forEach(edu => {
           checkPage(15);
           pdf.setFont('helvetica', 'bold');
           pdf.setFontSize(9);
-          pdf.text(edu.degree.toUpperCase(), 15, y);
+          pdf.text(edu.degree.toUpperCase(), mainContentX, y);
           pdf.setFont('helvetica', 'normal');
           pdf.setFontSize(8);
-          pdf.text(`${edu.institution.toUpperCase()} (${edu.year})`, 15, y + 4);
-          y += 10;
+          pdf.text(`${edu.institution.toUpperCase()} (${edu.year})`, mainContentX, y + 4);
+          y += 12;
         });
       }
 
-      // Sidebar content for Modern/Creative
-      if (isModern) {
-        const savedY = y;
-        y = 50;
-        
-        if (data.skills.length > 0) {
-          section('Competências', sidebarX, sidebarW);
-          pdf.setFontSize(8);
-          data.skills.forEach(s => {
-            pdf.text(`• ${s}`, sidebarX, y);
-            y += 4.5;
-          });
-          y += 8;
-        }
-
-        if (data.languages.length > 0) {
-          section('Idiomas', sidebarX, sidebarW);
-          pdf.setFontSize(8);
-          data.languages.forEach(l => {
-            pdf.text(`${l.name}: ${l.level}`, sidebarX, y);
-            y += 4.5;
-          });
-          y += 8;
-        }
-
-        if (data.certificates.length > 0) {
-          section('Certificações', sidebarX, sidebarW);
-          pdf.setFontSize(8);
-          data.certificates.forEach(cert => {
-            pdf.setFont('helvetica', 'bold');
-            pdf.text(cert.name, sidebarX, y);
-            pdf.setFont('helvetica', 'normal');
-            pdf.text(`${cert.issuer} (${cert.year})`, sidebarX, y + 3.5);
-            y += 8;
-          });
-        }
-        
-        y = Math.max(y, savedY);
-      } else {
-        // Simple sequential for others
-        if (data.skills.length > 0) {
-          checkPage(20);
-          section('Competências');
-          pdf.setFontSize(8);
-          pdf.text(data.skills.join('  •  '), 15, y);
-          y += 12;
-        }
-        
-        if (data.languages.length > 0) {
-          checkPage(20);
-          section('Idiomas');
-          pdf.setFontSize(8);
-          pdf.text(data.languages.map(l => `${l.name} (${l.level})`).join('  •  '), 15, y);
-          y += 12;
-        }
+      // Executivo specific skills/langs at bottom
+      if (isExecutivo) {
+         y += 10;
+         pdf.setDrawColor(241, 245, 249);
+         pdf.line(15, y, w - 15, y);
+         y += 10;
+         
+         const half = (w - 40) / 2;
+         const startY = y;
+         
+         if (data.skills.length > 0) {
+            sectionTitle('Competências', 15, half);
+            pdf.setFontSize(8);
+            pdf.text(data.skills.join('  •  '), 15, y);
+         }
+         
+         y = startY;
+         if (data.languages.length > 0) {
+            sectionTitle('Idiomas', 25 + half, half);
+            pdf.setFontSize(8);
+            pdf.text(data.languages.map(l => `${l.name} (${l.level})`).join('  •  '), 25 + half, y);
+         }
       }
 
       pdf.save(`curriculo_${data.full_name.replace(/\s+/g, '_').toLowerCase()}.pdf`);
