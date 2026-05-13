@@ -126,7 +126,7 @@ export default function VerificationPage() {
                 animate={{ x: 0, opacity: 1 }}
                 className="relative group perspective-1000"
               >
-                <div className="h-full rounded-2xl bg-gradient-to-br from-slate-950 to-slate-900 border border-white/10 p-12 flex flex-col items-center justify-center shadow-2xl overflow-hidden">
+                <div className="h-full rounded-2xl bg-gradient-to-br from-slate-950 to-slate-900 border border-white/10 p-6 md:p-10 flex flex-col items-center justify-center shadow-2xl overflow-hidden">
                   {/* Decorative backgrounds */}
                   <div className="absolute inset-0 bg-checkerboard opacity-5 pointer-events-none" />
                   <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-primary/20 to-transparent pointer-events-none" />
@@ -134,7 +134,7 @@ export default function VerificationPage() {
                   <motion.div 
                     animate={{ y: [0, -10, 0] }}
                     transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                    className="relative z-10 w-full aspect-square max-w-[280px]"
+                    className="relative z-10 w-full aspect-square max-w-[400px]"
                   >
                     {imageUrl ? (
                       <img 
