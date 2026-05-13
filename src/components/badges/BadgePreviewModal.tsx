@@ -383,7 +383,7 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt, appr
                   </p>
 
                   {approvalId && (
-                    <p className="text-primary/60 font-mono text-[10px] mt-1 uppercase">
+                    <p className="text-yellow-500/60 font-mono text-[10px] mt-1 uppercase">
                       ID: {approvalId}
                     </p>
                   )}
@@ -433,7 +433,7 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt, appr
                             </div>
                             <div>
                               <p className="text-[9px] text-white/40 uppercase font-bold tracking-tight">ID Verificação</p>
-                              <p className="text-[11px] text-primary font-mono font-bold uppercase">{approvalId || 'PENDENTE'}</p>
+                              <p className="text-[11px] text-yellow-500 font-mono font-bold uppercase">{approvalId || 'PENDENTE'}</p>
                             </div>
                             <div>
                               <p className="text-[9px] text-white/40 uppercase font-bold tracking-tight">Data Conquista</p>
@@ -445,10 +445,10 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt, appr
                             </div>
                           </div>
 
-                          <Button
+                            <Button
                             variant="ghost"
                             size="sm"
-                            className="w-full mt-2 h-8 text-[9px] font-black uppercase tracking-widest text-primary hover:bg-primary/10 border border-primary/20"
+                            className="w-full mt-2 h-8 text-[9px] font-black uppercase tracking-widest text-yellow-500 hover:bg-yellow-500/10 border border-yellow-500/20"
                             onClick={() => {
                               const verifyUrl = `${window.location.origin}/verificar/${approvalId || insignia.id.slice(0, 8).toUpperCase()}`;
                               navigator.clipboard.writeText(verifyUrl);
