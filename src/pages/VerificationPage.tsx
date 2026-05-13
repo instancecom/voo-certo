@@ -26,17 +26,22 @@ export default function VerificationPage() {
     queryFn: async () => {
       if (!approvalId) return null;
 
+      // Try to fetch the verification. If RLS blocks profiles or insignias, 
+      // we at least try to get the core data.
       const { data, error } = await supabase
         .from('badge_verifications')
         .select(`
           *,
           insignia:insignias(*),
-          profile:profiles(full_name, email)
+          profile:profiles(full_name)
         `)
         .eq('approval_id', approvalId)
-        .single();
+        .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Erro na verificação:", error);
+        throw error;
+      }
       return data;
     },
     enabled: !!approvalId,
