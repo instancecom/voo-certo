@@ -83,8 +83,9 @@ export function CurriculumPreview({ data }: CurriculumPreviewProps) {
           ${isModerno ? 'bg-slate-50 border-b border-slate-200' : ''}
         `}>
           <h1 className={`
-            text-3xl md:text-4xl font-black tracking-tight uppercase leading-none mb-3
+            font-black tracking-tight uppercase leading-tight mb-3
             ${isElite ? 'text-white' : 'text-slate-900'}
+            ${(data.full_name?.length || 0) > 35 ? 'text-xl' : (data.full_name?.length || 0) > 25 ? 'text-2xl' : 'text-3xl md:text-4xl'}
           `}>
             {data.full_name || 'Seu Nome Completo'}
           </h1>

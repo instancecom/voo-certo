@@ -210,15 +210,24 @@ export default function CurriculumPage() {
       }
 
       // Name & Profession
-      pdf.setFontSize(24);
       pdf.setFont('helvetica', 'bold');
+      
+      // Dynamic Font Size for Name
+      const name = data.full_name.toUpperCase();
+      let nameFontSize = 24;
+      if (name.length > 20) nameFontSize = 20;
+      if (name.length > 30) nameFontSize = 16;
+      if (name.length > 40) nameFontSize = 14;
+      
+      pdf.setFontSize(nameFontSize);
+      
       if (isExecutivo) {
-        pdf.text(data.full_name.toUpperCase(), w / 2, 25, { align: 'center' });
+        pdf.text(name, w / 2, 25, { align: 'center' });
         pdf.setFontSize(10);
         pdf.setTextColor(100);
         pdf.text(data.profession.toUpperCase(), w / 2, 33, { align: 'center' });
       } else {
-        pdf.text(data.full_name.toUpperCase(), 15, 25);
+        pdf.text(name, 15, 25);
         pdf.setFontSize(10);
         pdf.setTextColor(isElite ? 150 : c.p[0], isElite ? 150 : c.p[1], isElite ? 150 : c.p[2]);
         pdf.text(data.profession.toUpperCase(), 15, 33);
