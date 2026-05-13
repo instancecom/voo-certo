@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Lock, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { X, Lock, ShieldCheck, CheckCircle2, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { DynamicIcon } from '@/components/ui/dynamic-icon';
@@ -444,6 +444,20 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt, appr
                               <p className="text-[11px] text-green-400 font-bold uppercase">Ativo</p>
                             </div>
                           </div>
+
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="w-full mt-2 h-8 text-[9px] font-black uppercase tracking-widest text-primary hover:bg-primary/10 border border-primary/20"
+                            onClick={() => {
+                              const verifyUrl = `${window.location.origin}/verificar/${approvalId || insignia.id.slice(0, 8).toUpperCase()}`;
+                              navigator.clipboard.writeText(verifyUrl);
+                              toast.success("Link de verificação copiado!");
+                            }}
+                          >
+                            <ExternalLink size={12} className="mr-2" />
+                            Copiar Link para LinkedIn
+                          </Button>
                         </motion.div>
                       )}
                       
