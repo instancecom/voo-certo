@@ -111,10 +111,10 @@ export default function VerificationPage() {
               </motion.div>
               
               <h1 className="text-3xl md:text-5xl font-black tracking-tight mb-4">
-                Validação de Competência
+                Certificação de Preparação Técnica
               </h1>
               <p className="text-muted-foreground max-w-xl font-medium">
-                Esta página confirma oficialmente que a insígnia abaixo foi conquistada através de excelência técnica e aprovação em simulados padrão ANAC.
+                Esta página confirma que o profissional utilizou a plataforma Voo Certo como suporte estratégico de estudo, atingindo a proficiência necessária para aprovação nos exames oficiais da ANAC.
               </p>
             </div>
 
@@ -209,7 +209,7 @@ export default function VerificationPage() {
 
                   <div className="mt-10 pt-10 border-t border-border">
                     <p className="text-xs text-muted-foreground italic leading-relaxed">
-                      "Esta credencial certifica que o profissional demonstrou conhecimento técnico excepcional através da plataforma Voo Certo, atingindo os padrões exigidos para operações seguras e eficientes."
+                      "Esta credencial certifica que o profissional demonstrou domínio técnico através da metodologia de simulados de alta performance do Voo Certo, garantindo o preparo exigido para as bancas examinadoras da ANAC."
                     </p>
                   </div>
                 </div>
