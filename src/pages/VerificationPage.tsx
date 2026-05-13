@@ -26,25 +26,35 @@ export default function VerificationPage() {
     queryFn: async () => {
       if (!approvalId) return null;
 
-      // Try to fetch the verification. If RLS blocks profiles or insignias, 
-      // we at least try to get the core data.
-      const { data, error } = await supabase
+      const { data: verifyData, error: verifyError } = await supabase
         .from('badge_verifications')
         .select(`
           *,
-          insignia:insignias(*),
-          profile:profiles(full_name)
+          insignia:insignias(*)
         `)
         .eq('approval_id', approvalId)
         .maybeSingle();
 
-      if (error) {
-        console.error("Erro na verificação:", error);
-        throw error;
+      if (verifyError) {
+        console.error("Erro na verificação:", verifyError);
+        throw verifyError;
       }
-      return data;
+      
+      if (!verifyData) return null;
+
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', verifyData.user_id)
+        .maybeSingle();
+
+      return {
+        ...verifyData,
+        profile: profileData || { full_name: 'Piloto Voo Certo' }
+      };
     },
     enabled: !!approvalId,
+    refetchOnWindowFocus: false,
   });
 
   if (isLoading) {
