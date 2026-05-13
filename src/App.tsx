@@ -22,6 +22,7 @@ import CurriculumPage from "./pages/CurriculumPage";
 import PremiumPage from "./pages/PremiumPage";
 import ProfessionExamPage from "./pages/ProfessionExamPage";
 import ImportQuestoesPage from "./pages/ImportQuestoesPage";
+import VerificationPage from "./pages/VerificationPage";
 import NotFound from "./pages/NotFound";
 import { AdminGuard } from "./components/AdminGuard";
 import { FeatureGuard } from "./components/FeatureGuard";
@@ -61,6 +62,7 @@ const App = () => (
               <Route path="/curriculo" element={<FeatureGuard feature="curriculum"><CurriculumPage /></FeatureGuard>} />
               <Route path="/premium" element={<PremiumPage />} />
               <Route path="/simulado-profissao/:professionId" element={<ProfessionExamPage />} />
+              <Route path="/verificar/:approvalId" element={<VerificationPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
