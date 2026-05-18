@@ -44,8 +44,10 @@ serve(async (req) => {
         'Authorization': `Bearer ${RESEND_API_KEY}`
       },
       body: JSON.stringify({
-        // IMPORTANTE: Esse email deve ter um domínio verificado no Resend
-        from: 'Voo Certo <boasvindas@voocerto.com.br>', 
+        // IMPORTANTE: Esse email deve ter um domínio verificado no Resend.
+        // Se você ainda não verificou o domínio voocerto.com.br no Resend,
+        // mude o "from" temporariamente para: 'onboarding@resend.dev'
+        from: 'Voo Certo <onboarding@resend.dev>', 
         to: [userEmail],
         subject: 'Bem-vindo(a) à Voo Certo ✈️',
         html: htmlContent,
@@ -68,7 +70,7 @@ serve(async (req) => {
     )
 
   } catch (error: any) {
-    console.error("Erro ao enviar email de boas-vindas:", error)
+    console.error("Erro ao enviar email de boas-vindas:", error.message || error)
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
