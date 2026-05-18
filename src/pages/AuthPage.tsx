@@ -50,7 +50,7 @@ export default function AuthPage() {
       } else {
         const redirectUrl = `${window.location.origin}/`;
         
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -63,11 +63,19 @@ export default function AuthPage() {
 
         if (error) throw error;
 
-        toast({
-          title: 'Conta criada!',
-          description: 'Sua conta foi criada com sucesso. Você já pode começar!',
-        });
-        navigate('/');
+        if (!data.session) {
+          toast({
+            title: 'Verifique seu email',
+            description: 'Enviamos um link de confirmação para o seu email. Confirme para acessar sua conta.',
+          });
+          setIsLogin(true);
+        } else {
+          toast({
+            title: 'Conta criada!',
+            description: 'Sua conta foi criada com sucesso. Você já pode começar!',
+          });
+          navigate('/');
+        }
       }
     } catch (error: any) {
       console.error('Auth error:', error);
