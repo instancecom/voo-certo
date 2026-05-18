@@ -116,7 +116,6 @@ export default function GuiaCarreiraPage() {
                                 <CardTitle className="text-xl md:text-2xl font-bold transition-colors group-hover:text-accent">
                                   {guide.title}
                                 </CardTitle>
-                                <Badge className="mt-1 bg-primary/5 text-primary border-primary/20 hover:bg-primary/5">Guia Oficial</Badge>
                               </div>
                             </div>
                             {guide.description && (
