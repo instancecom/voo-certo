@@ -250,6 +250,33 @@ function GuideStepsEditor({ guideId, onBack }: { guideId: string; onBack: () => 
 
   const renderStepForm = () => {
     if (!editingStep) return null;
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        const textarea = e.currentTarget;
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const selectedText = editingStep.description.substring(start, end);
+        
+        const url = window.prompt('Digite a URL de destino:');
+        if (url) {
+          const textToInsert = `[${selectedText || 'clique aqui'}](${url})`;
+          const newDescription = 
+            editingStep.description.substring(0, start) + 
+            textToInsert + 
+            editingStep.description.substring(end);
+          
+          setEditingStep({ ...editingStep, description: newDescription });
+          
+          setTimeout(() => {
+            textarea.focus();
+            textarea.setSelectionRange(start + textToInsert.length, start + textToInsert.length);
+          }, 10);
+        }
+      }
+    };
+
     return (
       <Card className="bg-muted/50 border-primary">
         <CardContent className="pt-6 space-y-4">
@@ -259,8 +286,17 @@ function GuideStepsEditor({ guideId, onBack }: { guideId: string; onBack: () => 
             <Input value={editingStep.title} onChange={e => setEditingStep({ ...editingStep, title: e.target.value })} placeholder="Ex: Inscrição no processo seletivo" />
           </div>
           <div>
-            <Label>Descrição / Instruções</Label>
-            <Textarea value={editingStep.description} onChange={e => setEditingStep({ ...editingStep, description: e.target.value })} placeholder="O que o aluno deve fazer nesta etapa..." rows={4} />
+            <div className="flex justify-between items-center mb-1">
+              <Label>Descrição / Instruções</Label>
+              <span className="text-[10px] text-muted-foreground">Selecione texto e pressione <kbd className="px-1 border rounded bg-background">Ctrl</kbd> + <kbd className="px-1 border rounded bg-background">K</kbd> para link</span>
+            </div>
+            <Textarea 
+              value={editingStep.description} 
+              onChange={e => setEditingStep({ ...editingStep, description: e.target.value })} 
+              onKeyDown={handleKeyDown}
+              placeholder="O que o aluno deve fazer nesta etapa..." 
+              rows={4} 
+            />
           </div>
 
           {/* Simulados */}

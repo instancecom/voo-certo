@@ -60,6 +60,36 @@ export default function GuiaCarreiraDetailPage() {
     return opt.type === 'category' ? `/simulados?category=${id}` : `/simulados?block=${id}`;
   };
 
+  const renderDescription = (text: string) => {
+    if (!text) return null;
+    const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+    const parts = [];
+    let lastIndex = 0;
+    let match;
+    while ((match = linkRegex.exec(text)) !== null) {
+      if (match.index > lastIndex) {
+        parts.push(text.substring(lastIndex, match.index));
+      }
+      parts.push(
+        <a 
+          key={`link-${match.index}`} 
+          href={match[2]} 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="text-primary hover:underline font-medium not-italic"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {match[1]}
+        </a>
+      );
+      lastIndex = match.index + match[0].length;
+    }
+    if (lastIndex < text.length) {
+      parts.push(text.substring(lastIndex));
+    }
+    return parts.length > 0 ? parts : text;
+  };
+
   if (authLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -216,7 +246,7 @@ export default function GuiaCarreiraDetailPage() {
                                 </h3>
                                 {step.description && (
                                   <p className="mt-2 text-muted-foreground text-sm leading-relaxed whitespace-pre-wrap italic opacity-80">
-                                    {step.description}
+                                    {renderDescription(step.description)}
                                   </p>
                                 )}
                               </div>
