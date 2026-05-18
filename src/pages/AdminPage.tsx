@@ -206,7 +206,7 @@ export default function AdminPage() {
 
               const currentTab = tabs.find(t => t.value === activeTab);
 
-              const TabButtons = ({ onSelect }: { onSelect?: () => void }) => (
+              const renderTabButtons = (onSelect?: () => void) => (
                 <div className="flex flex-col gap-1">
                   {tabs.map(tab => {
                     const Icon = tab.icon;
@@ -214,7 +214,7 @@ export default function AdminPage() {
                     return (
                       <button
                         key={tab.value}
-                        onClick={() => { setActiveTab(tab.value); onSelect?.(); }}
+                        onClick={() => { setActiveTab(tab.value as AdminTab); onSelect?.(); }}
                         className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-left w-full ${
                           isActive
                             ? 'bg-primary/10 text-primary'
@@ -229,15 +229,15 @@ export default function AdminPage() {
                 </div>
               );
 
-              const Content = () => {
-                switch (activeTab) {
-                  case 'content':
-                    return (
-                      <div className="space-y-6">
-                        {view === 'professions' && (
-                          <ProfessionsManager onSelectProfession={handleSelectProfession} />
-                        )}
-                        {view === 'blocks' && (
+              const contentJsx = (
+                <div className="relative">
+                  <div className={activeTab === 'content' ? 'block' : 'hidden'}>
+                    <div className="space-y-6">
+                      <div className={view === 'professions' ? 'block' : 'hidden'}>
+                        <ProfessionsManager onSelectProfession={handleSelectProfession} />
+                      </div>
+                      <div className={view === 'blocks' ? 'block' : 'hidden'}>
+                        {selectedProfessionId && (
                           <BlocksManager
                             professionId={selectedProfessionId}
                             professionName={selectedProfessionName}
@@ -245,7 +245,9 @@ export default function AdminPage() {
                             onSelectBlock={handleSelectBlock}
                           />
                         )}
-                        {view === 'questions' && (
+                      </div>
+                      <div className={view === 'questions' ? 'block' : 'hidden'}>
+                        {selectedBlockId && (
                           <BlockQuestionsManager
                             professionId={selectedProfessionId}
                             professionName={selectedProfessionName}
@@ -255,19 +257,19 @@ export default function AdminPage() {
                           />
                         )}
                       </div>
-                    );
-                  case 'microcourses': return <MicrocoursesManager />;
-                  case 'guia': return <CareerGuidesManager />;
-                  case 'insignias-models': return <InsigniasModelManager />;
-                  case 'verifications': return <VerificationsManager />;
-                  case 'stats': return <AdminStatsManager />;
-                  case 'plans': return <PlansAndCouponsManager />;
-                  case 'connections': return <ConnectionsManager />;
-                  case 'branding': return <BrandingManager />;
-                  case 'recursos': return <FeaturesManager />;
-                  default: return null;
-                }
-              };
+                    </div>
+                  </div>
+                  <div className={activeTab === 'microcourses' ? 'block' : 'hidden'}><MicrocoursesManager /></div>
+                  <div className={activeTab === 'guia' ? 'block' : 'hidden'}><CareerGuidesManager /></div>
+                  <div className={activeTab === 'insignias-models' ? 'block' : 'hidden'}><InsigniasModelManager /></div>
+                  <div className={activeTab === 'verifications' ? 'block' : 'hidden'}><VerificationsManager /></div>
+                  <div className={activeTab === 'stats' ? 'block' : 'hidden'}><AdminStatsManager /></div>
+                  <div className={activeTab === 'plans' ? 'block' : 'hidden'}><PlansAndCouponsManager /></div>
+                  <div className={activeTab === 'connections' ? 'block' : 'hidden'}><ConnectionsManager /></div>
+                  <div className={activeTab === 'branding' ? 'block' : 'hidden'}><BrandingManager /></div>
+                  <div className={activeTab === 'recursos' ? 'block' : 'hidden'}><FeaturesManager /></div>
+                </div>
+              );
 
               return (
                 <>
@@ -286,21 +288,21 @@ export default function AdminPage() {
                         </SheetTrigger>
                         <SheetContent side="bottom" className="pb-8 max-h-[70vh]">
                           <h3 className="text-sm font-semibold text-muted-foreground mb-3 px-1">Navegação</h3>
-                          <TabButtons onSelect={() => setMobileMenuOpen(false)} />
+                          {renderTabButtons(() => setMobileMenuOpen(false))}
                         </SheetContent>
                       </Sheet>
-                      <Content />
+                      {contentJsx}
                     </div>
                   ) : (
                     /* Desktop: side nav */
                     <div className="flex gap-6">
                       <aside className="w-56 shrink-0 h-fit sticky top-24">
                         <div className="bg-card border border-border rounded-xl p-3 max-h-[calc(100vh-120px)] overflow-y-auto scrollbar-none">
-                          <TabButtons />
+                          {renderTabButtons()}
                         </div>
                       </aside>
                       <div className="flex-1 min-w-0">
-                        <Content />
+                        {contentJsx}
                       </div>
                     </div>
                   )}
