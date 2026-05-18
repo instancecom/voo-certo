@@ -48,16 +48,36 @@ export default function GuiaCarreiraDetailPage() {
   const completedCount = totalSteps > 0 ? guide!.steps!.filter(s => completedStepIds.has(s.id)).length : 0;
   const progressPercent = totalSteps > 0 ? Math.round((completedCount / totalSteps) * 100) : 0;
 
-  const getSimuladoLabel = (id: string) => {
+  const getSimuladoLabel = (item: string) => {
+    const [id, mode] = item.split(':');
     const opt = simuladoOptions?.find(o => o.id === id);
     if (!opt) return 'Simulado';
-    return opt.type === 'subcategory' && opt.parentName ? `${opt.parentName} - ${opt.name}` : opt.name;
+    const baseName = opt.type === 'subcategory' && opt.parentName ? `${opt.parentName} - ${opt.name}` : opt.name;
+    if (mode === 'banca_anac') return `${baseName} (Modo Banca)`;
+    if (mode === 'livre') return `${baseName} (Modo Livre)`;
+    if (mode === 'bloco') return `${baseName} (Modo Bloco)`;
+    return baseName;
   };
 
-  const getSimuladoLink = (id: string) => {
+  const getSimuladoLink = (item: string) => {
+    const [id, mode] = item.split(':');
     const opt = simuladoOptions?.find(o => o.id === id);
     if (!opt) return '/simulados';
-    return opt.type === 'category' ? `/simulados?category=${id}` : `/simulados?block=${id}`;
+    
+    if (mode) {
+      if (opt.type === 'category') {
+        return `/simulado-profissao/${id}?modo=${mode}`;
+      } else {
+        return `/simulado-profissao/${opt.categoryId}?modo=${mode}&bloco_id=${id}&nome_bloco=${encodeURIComponent(opt.name)}`;
+      }
+    }
+    
+    // Default fallback
+    if (opt.type === 'category') {
+      return `/simulados`;
+    } else {
+      return `/simulado-profissao/${opt.categoryId}?modo=bloco&bloco_id=${id}&nome_bloco=${encodeURIComponent(opt.name)}`;
+    }
   };
 
   const renderDescription = (text: string) => {

@@ -21,6 +21,8 @@ interface SimuladoOption {
   name: string;
   type: 'category' | 'subcategory';
   parentName?: string;
+  categoryId?: string;
+  activeModes?: string[];
 }
 
 export function useGuiaEtapas() {
@@ -49,7 +51,7 @@ export function useSimuladoOptions() {
     queryKey: ['simulado-options'],
     queryFn: async () => {
       const [categoriesRes, subcategoriesRes] = await Promise.all([
-        supabase.from('categories').select('id, name').eq('is_active', true).order('display_order'),
+        supabase.from('categories').select('id, name, active_modes').eq('is_active', true).order('display_order'),
         supabase.from('subcategories').select('id, name, category_id').order('display_order'),
       ]);
       
@@ -59,20 +61,27 @@ export function useSimuladoOptions() {
       const categories = categoriesRes.data || [];
       const subcategories = subcategoriesRes.data || [];
       
-      const categoryMap = new Map(categories.map(c => [c.id, c.name]));
+      const categoryMap = new Map(categories.map(c => [c.id, { name: c.name, active_modes: c.active_modes }]));
       
       const options: SimuladoOption[] = [
         ...categories.map(c => ({
           id: c.id,
           name: c.name,
           type: 'category' as const,
+          categoryId: c.id,
+          activeModes: c.active_modes || [],
         })),
-        ...subcategories.map(s => ({
-          id: s.id,
-          name: s.name,
-          type: 'subcategory' as const,
-          parentName: categoryMap.get(s.category_id) || '',
-        })),
+        ...subcategories.map(s => {
+          const parent = categoryMap.get(s.category_id);
+          return {
+            id: s.id,
+            name: s.name,
+            type: 'subcategory' as const,
+            parentName: parent?.name || '',
+            categoryId: s.category_id,
+            activeModes: parent?.active_modes || [],
+          };
+        }),
       ];
       
       return options;

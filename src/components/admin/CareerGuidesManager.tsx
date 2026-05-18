@@ -215,9 +215,10 @@ function GuideStepsEditor({ guideId, onBack }: { guideId: string; onBack: () => 
 
   const addSimulado = (value: string) => {
     if (!editingStep || !value || value === 'none') return;
-    const id = value.split(':')[1];
-    if (!editingStep.simulado_ids.includes(id)) {
-      setEditingStep({ ...editingStep, simulado_ids: [...editingStep.simulado_ids, id] });
+    const parts = value.split(':');
+    const idWithMode = parts.slice(1).join(':');
+    if (!editingStep.simulado_ids.includes(idWithMode)) {
+      setEditingStep({ ...editingStep, simulado_ids: [...editingStep.simulado_ids, idWithMode] });
     }
   };
 
@@ -238,10 +239,15 @@ function GuideStepsEditor({ guideId, onBack }: { guideId: string; onBack: () => 
     setEditingStep({ ...editingStep, microcourse_ids: editingStep.microcourse_ids.filter(m => m !== id) });
   };
 
-  const getSimuladoLabel = (id: string) => {
+  const getSimuladoLabel = (item: string) => {
+    const [id, mode] = item.split(':');
     const opt = simuladoOptions?.find(o => o.id === id);
     if (!opt) return id.substring(0, 8);
-    return opt.type === 'subcategory' && opt.parentName ? `${opt.parentName} - ${opt.name}` : opt.name;
+    const baseName = opt.type === 'subcategory' && opt.parentName ? `${opt.parentName} - ${opt.name}` : opt.name;
+    if (mode === 'banca_anac') return `${baseName} (Modo Banca)`;
+    if (mode === 'livre') return `${baseName} (Modo Livre)`;
+    if (mode === 'bloco') return `${baseName} (Modo Bloco)`;
+    return baseName;
   };
 
   const getMicrocourseLabel = (id: string) => {
@@ -314,16 +320,35 @@ function GuideStepsEditor({ guideId, onBack }: { guideId: string; onBack: () => 
               <SelectTrigger className="max-w-md"><SelectValue placeholder="Adicionar simulado..." /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="none">Selecione...</SelectItem>
-                {simuladoOptions?.filter(o => o.type === 'category').map(o => (
-                  <SelectItem key={o.id} value={`category:${o.id}`} disabled={editingStep.simulado_ids.includes(o.id)}>
-                    📚 {o.name}
-                  </SelectItem>
-                ))}
-                {simuladoOptions?.filter(o => o.type === 'subcategory').map(o => (
-                  <SelectItem key={o.id} value={`subcategory:${o.id}`} disabled={editingStep.simulado_ids.includes(o.id)}>
-                    📋 {o.parentName} - {o.name}
-                  </SelectItem>
-                ))}
+                {simuladoOptions?.map(o => {
+                  const isCategory = o.type === 'category';
+                  const prefix = isCategory ? 'category' : 'subcategory';
+                  const icon = isCategory ? '📚' : '📋';
+                  const name = isCategory ? o.name : `${o.parentName} - ${o.name}`;
+                  
+                  return (
+                    <React.Fragment key={o.id}>
+                      <SelectItem value={`${prefix}:${o.id}`} disabled={editingStep.simulado_ids.includes(o.id)}>
+                        {icon} {name}
+                      </SelectItem>
+                      {o.activeModes?.includes('banca_anac') && (
+                        <SelectItem value={`${prefix}:${o.id}:banca_anac`} disabled={editingStep.simulado_ids.includes(`${o.id}:banca_anac`)}>
+                          {icon} {name} (Modo Banca)
+                        </SelectItem>
+                      )}
+                      {o.activeModes?.includes('livre') && (
+                        <SelectItem value={`${prefix}:${o.id}:livre`} disabled={editingStep.simulado_ids.includes(`${o.id}:livre`)}>
+                          {icon} {name} (Modo Livre)
+                        </SelectItem>
+                      )}
+                      {isCategory && o.activeModes?.includes('bloco') && (
+                        <SelectItem value={`${prefix}:${o.id}:bloco`} disabled={editingStep.simulado_ids.includes(`${o.id}:bloco`)}>
+                          {icon} {name} (Modo Bloco)
+                        </SelectItem>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
               </SelectContent>
             </Select>
           </div>
