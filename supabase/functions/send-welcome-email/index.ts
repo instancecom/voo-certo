@@ -1,10 +1,12 @@
+// @ts-ignore
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { getWelcomeEmailHtml } from "./emailTemplates.ts"
 
 // A chave da API do Resend deve ser configurada nos secrets do Supabase
+// @ts-ignore
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
 
-serve(async (req) => {
+serve(async (req: any) => {
   try {
     // Permitir apenas requisições POST (Webhook do Supabase)
     if (req.method !== 'POST') {

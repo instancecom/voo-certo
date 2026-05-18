@@ -88,6 +88,8 @@ export default function AuthPage() {
         errorMessage = 'Este email já está cadastrado. Faça login.';
       } else if (error.message?.includes('Password should be')) {
         errorMessage = 'A senha deve ter pelo menos 6 caracteres.';
+      } else if (error.message?.includes('rate limit') || error.status === 429) {
+        errorMessage = 'Muitas tentativas de cadastro. O limite de envio de emails foi atingido, aguarde cerca de uma hora ou use outro provedor de email (SMTP) no Supabase.';
       }
       
       toast({
