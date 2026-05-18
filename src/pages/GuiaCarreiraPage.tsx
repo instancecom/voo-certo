@@ -14,6 +14,14 @@ import {
   ArrowRight, Plane, Loader2, Lock, BookOpen, Crown, ChevronLeft, ChevronRight,
 } from 'lucide-react';
 
+const GRADIENT_THEMES = [
+  'from-indigo-600 via-indigo-950 to-slate-950',
+  'from-sky-600 via-slate-900 to-indigo-950',
+  'from-amber-600 via-slate-900 to-amber-950',
+  'from-purple-600 via-slate-900 to-purple-950',
+  'from-teal-600 via-slate-900 to-teal-950',
+];
+
 export default function GuiaCarreiraPage() {
   const { data: guides, isLoading } = useCareerGuides();
   const { user, isPremium, isLoading: authLoading } = useAuth();
@@ -140,7 +148,7 @@ export default function GuiaCarreiraPage() {
               {isLoading ? (
                 <div className="flex gap-6 overflow-hidden py-4 pl-2">
                   {[1, 2, 3, 4].map(i => (
-                    <Skeleton key={i} className="h-[320px] w-[290px] sm:w-[340px] md:w-[380px] shrink-0 rounded-xl" />
+                    <Skeleton key={i} className="h-[230px] sm:h-[290px] md:h-[340px] w-[170px] sm:w-[240px] md:w-[310px] shrink-0 rounded-xl" />
                   ))}
                 </div>
               ) : guides?.length === 0 ? (
@@ -184,45 +192,65 @@ export default function GuiaCarreiraPage() {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: index * 0.05, duration: 0.5 }}
-                        className="snap-start shrink-0 w-[290px] sm:w-[340px] md:w-[380px]"
+                        className="snap-start shrink-0 w-[170px] sm:w-[240px] md:w-[310px]"
                       >
                         <Card 
-                          className="group h-[320px] flex flex-col hover:border-accent bg-card shadow-sm hover:shadow-xl hover:shadow-primary/5 hover:scale-[1.03] hover:-translate-y-1 transition-all duration-500 cursor-pointer border-2 rounded-xl overflow-hidden relative" 
+                          className="group h-[230px] sm:h-[290px] md:h-[340px] flex flex-col bg-slate-950 border border-slate-800/80 hover:border-accent/40 shadow-lg hover:shadow-accent/10 hover:scale-[1.05] transition-all duration-300 cursor-pointer rounded-xl overflow-hidden relative" 
                           onClick={() => navigate(`/guia-carreira/${guide.id}`)}
                         >
-                          <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-10 transition-opacity">
-                            <Plane className="w-24 h-24 -rotate-45" />
-                          </div>
-                          
-                          {/* Premium top gradient line */}
-                          <div className="absolute top-0 left-0 right-0 h-[4px] bg-gradient-to-r from-transparent via-accent/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                          
-                          <CardHeader className="p-6 pb-2 flex-1">
-                            <div className="flex items-start gap-4 mb-4">
-                              <div className="shrink-0 w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center group-hover:bg-accent group-hover:text-accent-foreground transition-all duration-500 transform group-hover:rotate-6">
-                                <BookOpen className="w-5 h-5 text-accent group-hover:text-current" />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <CardTitle className="text-lg md:text-xl font-bold leading-snug transition-colors group-hover:text-accent line-clamp-2">
-                                  {guide.title}
-                                </CardTitle>
-                              </div>
+                          {/* Premium Top Half visual thumbnail */}
+                          <div className={`relative h-[95px] sm:h-[125px] md:h-[150px] w-full bg-gradient-to-br ${GRADIENT_THEMES[index % GRADIENT_THEMES.length]} flex items-center justify-center overflow-hidden shrink-0`}>
+                            {/* Technical Grid Overlay */}
+                            <svg className="absolute inset-0 w-full h-full opacity-10 mix-blend-overlay" xmlns="http://www.w3.org/2000/svg">
+                              <defs>
+                                <pattern id={`grid-${index}`} width="10" height="10" patternUnits="userSpaceOnUse">
+                                  <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" strokeWidth="0.5" />
+                                </pattern>
+                              </defs>
+                              <rect width="100%" height="100%" fill={`url(#grid-${index})`} className="text-white" />
+                            </svg>
+
+                            {/* Badge */}
+                            <div className="absolute top-2 left-2 z-10 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded bg-accent/20 border border-accent/40 backdrop-blur-md text-[8px] sm:text-[10px] font-black uppercase tracking-wider text-accent">
+                              Guia
                             </div>
-                            {guide.description && (
-                              <CardDescription className="text-sm md:text-base text-muted-foreground line-clamp-3 leading-relaxed mt-2">
-                                {guide.description}
-                              </CardDescription>
-                            )}
-                          </CardHeader>
-                          
-                          <div className="p-6 pt-0 mt-auto">
-                            <div className="h-[1px] w-full bg-muted mb-4 group-hover:bg-accent/20 transition-colors" />
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm font-bold text-muted-foreground group-hover:text-primary transition-colors flex items-center gap-2">
-                                Começar jornada <ArrowRight className="w-4 h-4" />
-                              </span>
-                              <div className="w-9 h-9 rounded-lg border border-muted flex items-center justify-center group-hover:border-accent group-hover:bg-accent group-hover:text-accent-foreground transition-all duration-500">
-                                <ArrowRight className="w-4 h-4" />
+
+                            {/* Border highlight */}
+                            <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
+
+                            {/* Floating Glassmorphic Icon */}
+                            <div className="relative z-10 w-9 h-9 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/15 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 transform text-white group-hover:text-accent">
+                              {index % 2 === 0 ? (
+                                <Plane className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 -rotate-45" />
+                              ) : (
+                                <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Content Section */}
+                          <div className="p-3 sm:p-5 md:p-6 flex-1 flex flex-col justify-between">
+                            <div className="space-y-1 sm:space-y-2">
+                              <h3 className="text-xs sm:text-base md:text-lg font-extrabold tracking-tight text-white leading-snug transition-colors group-hover:text-accent line-clamp-2">
+                                {guide.title}
+                              </h3>
+                              {guide.description && (
+                                <p className="hidden sm:block text-[10px] md:text-xs text-slate-400 line-clamp-2 md:line-clamp-3 leading-relaxed">
+                                  {guide.description}
+                                </p>
+                              )}
+                            </div>
+
+                            {/* Action Footer */}
+                            <div className="pt-2 flex items-center justify-between mt-auto">
+                              <div className="flex items-center gap-1.5 text-slate-400">
+                                <BookOpen className="w-3 h-3 text-accent/80 shrink-0" />
+                                <span className="text-[9px] sm:text-[11px] font-bold tracking-wide uppercase">
+                                  Começar
+                                </span>
+                              </div>
+                              <div className="w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-white hover:bg-accent text-slate-950 hover:text-white flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-md">
+                                <ArrowRight className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5" />
                               </div>
                             </div>
                           </div>
