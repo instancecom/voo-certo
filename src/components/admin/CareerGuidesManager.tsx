@@ -248,6 +248,86 @@ function GuideStepsEditor({ guideId, onBack }: { guideId: string; onBack: () => 
     return microcourseOptions?.find(m => m.id === id)?.title || id.substring(0, 8);
   };
 
+  const renderStepForm = () => {
+    if (!editingStep) return null;
+    return (
+      <Card className="bg-muted/50 border-primary">
+        <CardContent className="pt-6 space-y-4">
+          <h3 className="font-semibold text-primary">{isNew ? 'Nova Etapa' : 'Editar Etapa'}</h3>
+          <div>
+            <Label>Título da Etapa</Label>
+            <Input value={editingStep.title} onChange={e => setEditingStep({ ...editingStep, title: e.target.value })} placeholder="Ex: Inscrição no processo seletivo" />
+          </div>
+          <div>
+            <Label>Descrição / Instruções</Label>
+            <Textarea value={editingStep.description} onChange={e => setEditingStep({ ...editingStep, description: e.target.value })} placeholder="O que o aluno deve fazer nesta etapa..." rows={4} />
+          </div>
+
+          {/* Simulados */}
+          <div>
+            <Label className="text-sm">Simulados Associados</Label>
+            <div className="flex flex-wrap gap-1 mb-2">
+              {editingStep.simulado_ids.map(id => (
+                <Badge key={id} variant="secondary" className="flex items-center gap-1">
+                  <BookOpen className="w-3 h-3" />{getSimuladoLabel(id)}
+                  <button onClick={() => removeSimulado(id)} className="ml-1 hover:text-destructive"><X className="w-3 h-3" /></button>
+                </Badge>
+              ))}
+            </div>
+            <Select onValueChange={addSimulado}>
+              <SelectTrigger className="max-w-md"><SelectValue placeholder="Adicionar simulado..." /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">Selecione...</SelectItem>
+                {simuladoOptions?.filter(o => o.type === 'category').map(o => (
+                  <SelectItem key={o.id} value={`category:${o.id}`} disabled={editingStep.simulado_ids.includes(o.id)}>
+                    📚 {o.name}
+                  </SelectItem>
+                ))}
+                {simuladoOptions?.filter(o => o.type === 'subcategory').map(o => (
+                  <SelectItem key={o.id} value={`subcategory:${o.id}`} disabled={editingStep.simulado_ids.includes(o.id)}>
+                    📋 {o.parentName} - {o.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Microcursos */}
+          <div>
+            <Label className="text-sm">Microcursos Associados</Label>
+            <div className="flex flex-wrap gap-1 mb-2">
+              {editingStep.microcourse_ids.map(id => (
+                <Badge key={id} variant="secondary" className="flex items-center gap-1">
+                  <GraduationCap className="w-3 h-3" />{getMicrocourseLabel(id)}
+                  <button onClick={() => removeMicrocourse(id)} className="ml-1 hover:text-destructive"><X className="w-3 h-3" /></button>
+                </Badge>
+              ))}
+            </div>
+            <Select onValueChange={addMicrocourse}>
+              <SelectTrigger className="max-w-md"><SelectValue placeholder="Adicionar microcurso..." /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">Selecione...</SelectItem>
+                {microcourseOptions?.map(m => (
+                  <SelectItem key={m.id} value={m.id} disabled={editingStep.microcourse_ids.includes(m.id)}>
+                    🎓 {m.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex gap-2 justify-end pt-2">
+            <Button variant="ghost" onClick={() => setEditingStep(null)}>Cancelar</Button>
+            <Button onClick={handleSaveStep} disabled={upsertStep.isPending}>
+              {upsertStep.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              <Save className="w-4 h-4 mr-2" />Salvar
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+
   if (isLoading) return <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
 
   return (
@@ -263,118 +343,53 @@ function GuideStepsEditor({ guideId, onBack }: { guideId: string; onBack: () => 
       {/* Steps list */}
       <div className="space-y-3">
         {guide?.steps?.map((step, index) => (
-          <Card key={step.id} className="border-l-4 border-l-accent">
-            <CardHeader className="pb-2">
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex items-center gap-3 flex-1">
-                  <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-sm font-bold text-accent shrink-0">
-                    {index + 1}
+          editingStep && !isNew && editingStep.id === step.id ? (
+            <div key={step.id} className="animate-in fade-in slide-in-from-top-2">
+              {renderStepForm()}
+            </div>
+          ) : (
+            <Card key={step.id} className="border-l-4 border-l-accent">
+              <CardHeader className="pb-2">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-3 flex-1">
+                    <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-sm font-bold text-accent shrink-0">
+                      {index + 1}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <CardTitle className="text-base">{step.title}</CardTitle>
+                      {step.description && <CardDescription className="mt-1 line-clamp-2">{step.description}</CardDescription>}
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <CardTitle className="text-base">{step.title}</CardTitle>
-                    {step.description && <CardDescription className="mt-1 line-clamp-2">{step.description}</CardDescription>}
+                  <div className="flex gap-1 shrink-0">
+                    <Button variant="outline" size="sm" onClick={() => handleEditStep(step)}>
+                      <Edit className="w-3 h-3" />
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => handleDeleteStep(step.id)} className="text-destructive">
+                      <Trash2 className="w-3 h-3" />
+                    </Button>
                   </div>
                 </div>
-                <div className="flex gap-1 shrink-0">
-                  <Button variant="outline" size="sm" onClick={() => handleEditStep(step)}>
-                    <Edit className="w-3 h-3" />
-                  </Button>
-                  <Button variant="ghost" size="sm" onClick={() => handleDeleteStep(step.id)} className="text-destructive">
-                    <Trash2 className="w-3 h-3" />
-                  </Button>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="flex flex-wrap gap-1">
+                  {step.simulado_ids?.map(id => (
+                    <Badge key={id} variant="outline" className="text-xs"><BookOpen className="w-3 h-3 mr-1" />{getSimuladoLabel(id)}</Badge>
+                  ))}
+                  {step.microcourse_ids?.map(id => (
+                    <Badge key={id} variant="secondary" className="text-xs"><GraduationCap className="w-3 h-3 mr-1" />{getMicrocourseLabel(id)}</Badge>
+                  ))}
                 </div>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="flex flex-wrap gap-1">
-                {step.simulado_ids?.map(id => (
-                  <Badge key={id} variant="outline" className="text-xs"><BookOpen className="w-3 h-3 mr-1" />{getSimuladoLabel(id)}</Badge>
-                ))}
-                {step.microcourse_ids?.map(id => (
-                  <Badge key={id} variant="secondary" className="text-xs"><GraduationCap className="w-3 h-3 mr-1" />{getMicrocourseLabel(id)}</Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )
         ))}
       </div>
 
-      {/* Edit/Add step form */}
-      {editingStep ? (
-        <Card className="bg-muted/50">
-          <CardContent className="pt-6 space-y-4">
-            <h3 className="font-semibold">{isNew ? 'Nova Etapa' : 'Editar Etapa'}</h3>
-            <div>
-              <Label>Título da Etapa</Label>
-              <Input value={editingStep.title} onChange={e => setEditingStep({ ...editingStep, title: e.target.value })} placeholder="Ex: Inscrição no processo seletivo" />
-            </div>
-            <div>
-              <Label>Descrição / Instruções</Label>
-              <Textarea value={editingStep.description} onChange={e => setEditingStep({ ...editingStep, description: e.target.value })} placeholder="O que o aluno deve fazer nesta etapa..." rows={4} />
-            </div>
-
-            {/* Simulados */}
-            <div>
-              <Label className="text-sm">Simulados Associados</Label>
-              <div className="flex flex-wrap gap-1 mb-2">
-                {editingStep.simulado_ids.map(id => (
-                  <Badge key={id} variant="secondary" className="flex items-center gap-1">
-                    <BookOpen className="w-3 h-3" />{getSimuladoLabel(id)}
-                    <button onClick={() => removeSimulado(id)} className="ml-1 hover:text-destructive"><X className="w-3 h-3" /></button>
-                  </Badge>
-                ))}
-              </div>
-              <Select onValueChange={addSimulado}>
-                <SelectTrigger className="max-w-md"><SelectValue placeholder="Adicionar simulado..." /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">Selecione...</SelectItem>
-                  {simuladoOptions?.filter(o => o.type === 'category').map(o => (
-                    <SelectItem key={o.id} value={`category:${o.id}`} disabled={editingStep.simulado_ids.includes(o.id)}>
-                      📚 {o.name}
-                    </SelectItem>
-                  ))}
-                  {simuladoOptions?.filter(o => o.type === 'subcategory').map(o => (
-                    <SelectItem key={o.id} value={`subcategory:${o.id}`} disabled={editingStep.simulado_ids.includes(o.id)}>
-                      📋 {o.parentName} - {o.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Microcursos */}
-            <div>
-              <Label className="text-sm">Microcursos Associados</Label>
-              <div className="flex flex-wrap gap-1 mb-2">
-                {editingStep.microcourse_ids.map(id => (
-                  <Badge key={id} variant="secondary" className="flex items-center gap-1">
-                    <GraduationCap className="w-3 h-3" />{getMicrocourseLabel(id)}
-                    <button onClick={() => removeMicrocourse(id)} className="ml-1 hover:text-destructive"><X className="w-3 h-3" /></button>
-                  </Badge>
-                ))}
-              </div>
-              <Select onValueChange={addMicrocourse}>
-                <SelectTrigger className="max-w-md"><SelectValue placeholder="Adicionar microcurso..." /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">Selecione...</SelectItem>
-                  {microcourseOptions?.map(m => (
-                    <SelectItem key={m.id} value={m.id} disabled={editingStep.microcourse_ids.includes(m.id)}>
-                      🎓 {m.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex gap-2 justify-end pt-2">
-              <Button variant="ghost" onClick={() => setEditingStep(null)}>Cancelar</Button>
-              <Button onClick={handleSaveStep} disabled={upsertStep.isPending}>
-                {upsertStep.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                <Save className="w-4 h-4 mr-2" />Salvar
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Add new step or Add button */}
+      {editingStep && isNew ? (
+        <div className="animate-in fade-in slide-in-from-top-2">
+          {renderStepForm()}
+        </div>
       ) : (
         <Button variant="outline" className="w-full border-dashed" onClick={handleAddStep}>
           <Plus className="w-4 h-4 mr-2" />Adicionar Etapa
