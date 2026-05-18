@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
-import { Loader2, Upload, Download, CheckCircle, AlertTriangle, ArrowLeft, Check, ChevronsUpDown } from 'lucide-react';
+import { Loader2, Upload, Download, CheckCircle, AlertTriangle, ArrowLeft, Check, ChevronsUpDown, Copy } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -258,6 +258,27 @@ export default function ImportQuestoesPage() {
                   </Command>
                 </PopoverContent>
               </Popover>
+
+              {selectedBlockId !== 'none' && selectedBlockId && (
+                <div className="mt-2 flex items-center justify-between p-2.5 bg-muted/50 border border-border rounded-lg text-sm">
+                  <div className="flex flex-col">
+                    <span className="text-xs text-muted-foreground font-medium mb-0.5">ID do Bloco Selecionado:</span>
+                    <span className="font-mono text-foreground font-medium">{selectedBlockId}</span>
+                  </div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-8 shrink-0" 
+                    onClick={() => {
+                      navigator.clipboard.writeText(selectedBlockId);
+                      toast.success('ID copiado com sucesso!');
+                    }}
+                  >
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copiar ID
+                  </Button>
+                </div>
+              )}
             </div>
 
             <div className="border-2 border-dashed border-border rounded-xl p-6 text-center space-y-4">
