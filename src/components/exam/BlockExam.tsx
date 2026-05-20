@@ -215,7 +215,7 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
                   const isCorrectOption = index === currentQuestion.shuffledCorrectAnswer;
                   const optionLetter = String.fromCharCode(65 + index);
 
-                  let optionStyle = 'border-slate-200 bg-white hover-yellow shadow-sm';
+                  let optionStyle = 'border-slate-200 bg-white hover:border-primary hover:bg-primary/5 transition-all duration-300 shadow-sm';
                   if (showAnswer) {
                     if (isCorrectOption) {
                       optionStyle = 'border-green-500 bg-green-50 shadow-sm';
@@ -245,7 +245,7 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
                               : 'bg-slate-100 text-slate-400'
                             : isSelected
                             ? 'bg-accent text-white'
-                            : 'bg-slate-50 text-slate-400 group-hover:bg-accent/10 group-hover:text-accent'
+                            : 'bg-slate-50 text-slate-400 group-hover:bg-primary/10 group-hover:text-primary'
                         }`}>
                           {showAnswer && isCorrectOption ? (
                             <CheckCircle2 className="w-5 h-5 md:w-6 md:h-6" />

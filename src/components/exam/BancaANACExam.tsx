@@ -321,7 +321,7 @@ function BancaExamInner({
                   const isSelected = selectedAnswer === index;
                   const optionLetter = String.fromCharCode(65 + index);
 
-                  let optionStyle = 'border-slate-200 bg-white hover-yellow shadow-sm';
+                  let optionStyle = 'border-slate-200 bg-white hover:border-primary hover:bg-primary/5 transition-all duration-300 shadow-sm';
                   if (isSelected) {
                     optionStyle = 'border-accent bg-accent/5 shadow-sm';
                   }
@@ -338,7 +338,7 @@ function BancaExamInner({
                         <span className={`flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-[5px] flex items-center justify-center font-bold text-sm md:text-lg transition-colors ${
                           isSelected
                             ? 'bg-accent text-white'
-                            : 'bg-slate-50 text-slate-400 group-hover:bg-accent/10 group-hover:text-accent'
+                            : 'bg-slate-50 text-slate-400 group-hover:bg-primary/10 group-hover:text-primary'
                         }`}>
                           {optionLetter}
                         </span>
@@ -377,18 +377,27 @@ function BancaExamInner({
               {blockQuestions.map((q: ShuffledQuestion, index: number) => {
                 const isAnswered = answers[q.id] !== undefined;
                 const isCurrent = index === currentQuestionIndex;
+                const isNavigable = 
+                  index <= currentQuestionIndex || 
+                  answers[blockQuestions[index].id] !== undefined ||
+                  (index === currentQuestionIndex + 1 && selectedAnswer !== undefined);
 
-                let btnClass = 'bg-slate-50 text-slate-400 border border-slate-200 hover:bg-slate-100 hover:text-slate-600';
+                let btnClass = '';
                 if (isCurrent) {
                   btnClass = 'bg-[#0F172A] text-white border-2 border-[#0F172A] shadow-md';
                 } else if (isAnswered) {
                   btnClass = 'bg-green-50 text-green-600 border border-green-200 hover:bg-green-100';
+                } else if (!isNavigable) {
+                  btnClass = 'bg-slate-50 text-slate-300 border border-slate-100 cursor-not-allowed opacity-40';
+                } else {
+                  btnClass = 'bg-slate-50 text-slate-400 border border-slate-200 hover:bg-slate-100 hover:text-slate-600';
                 }
 
                 return (
                   <button
                     key={q.id}
-                    onClick={() => goToQuestion(index)}
+                    onClick={() => isNavigable && goToQuestion(index)}
+                    disabled={!isNavigable}
                     className={`w-8 h-8 rounded-[5px] text-xs font-black flex items-center justify-center transition-all shrink-0 ${btnClass}`}
                   >
                     {index + 1}
@@ -408,7 +417,8 @@ function BancaExamInner({
               <Button 
                 size="lg" 
                 onClick={finishCurrentBlock}
-                className="h-10 md:h-12 px-6 md:px-10 rounded-[5px] font-bold uppercase text-[10px] md:text-xs tracking-widest transition-all shrink-0 shadow-lg bg-accent hover:bg-accent/90 text-slate-900"
+                disabled={selectedAnswer === undefined}
+                className="h-10 md:h-12 px-6 md:px-10 rounded-[5px] font-bold uppercase text-[10px] md:text-xs tracking-widest transition-all shrink-0 shadow-lg bg-accent hover:bg-accent/90 text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span>
                   {currentBlock === 4 ? 'Finalizar Simulado' : 'Finalizar Bloco'}
@@ -419,7 +429,8 @@ function BancaExamInner({
               <Button 
                 size="lg" 
                 onClick={nextQuestion}
-                className="h-10 md:h-12 px-6 md:px-10 rounded-[5px] font-bold uppercase text-[10px] md:text-xs tracking-widest transition-all shrink-0 shadow-lg bg-[#8E9AAF] hover:bg-[#7F8C9F] text-white"
+                disabled={selectedAnswer === undefined}
+                className="h-10 md:h-12 px-6 md:px-10 rounded-[5px] font-bold uppercase text-[10px] md:text-xs tracking-widest transition-all shrink-0 shadow-lg bg-[#8E9AAF] hover:bg-[#7F8C9F] text-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span>Próxima</span>
                 <ChevronRight className="w-4 h-4 ml-2" />
