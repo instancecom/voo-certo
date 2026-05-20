@@ -111,10 +111,10 @@ export function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 border-b ${
         isHome && !isScrolled 
-          ? 'bg-transparent py-4' 
-          : 'bg-white border-b border-border py-4 shadow-sm'
+          ? 'bg-transparent border-transparent py-4' 
+          : 'bg-white border-border py-4 shadow-sm'
       }`}
     >
       <div className="container mx-auto">
