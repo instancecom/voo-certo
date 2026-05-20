@@ -9,6 +9,7 @@ import { CertificateGeneratorModal } from "./CertificateGeneratorModal";
 import { BadgePreviewModal } from "./BadgePreviewModal";
 import { useUserVerifications } from "@/hooks/useBadgeVerifications";
 import { useAuth } from "@/contexts/AuthContext";
+import { getInsigniaFallback } from "@/hooks/useInsigniasFallback";
 
 interface BadgeCardProps {
   insignia: Insignia;
@@ -43,7 +44,8 @@ const getDriveImageUrl = (url: string | null): string | null => {
 export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = true, large, onClick }: BadgeCardProps) => {
   const { user } = useAuth();
   const colors = rarityColors[insignia.rarity];
-  const imageUrl = getDriveImageUrl(insignia.model_url);
+  const fallback = getInsigniaFallback(insignia.name);
+  const imageUrl = getDriveImageUrl(insignia.model_url) || fallback?.model_url || null;
   const [verificationModalOpen, setVerificationModalOpen] = useState(false);
   const [certificateModalOpen, setCertificateModalOpen] = useState(false);
   const [previewModalOpen, setPreviewModalOpen] = useState(false);

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { DynamicIcon } from '@/components/ui/dynamic-icon';
 import { cn } from '@/lib/utils';
 import type { Insignia, BadgeRarity } from '@/hooks/useInsignias';
+import { getInsigniaFallback } from '@/hooks/useInsigniasFallback';
 
 interface InsigniaTag {
   x: number;
@@ -71,8 +72,9 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt, appr
     year: 'numeric',
   }) : '';
   const colors = rarityColors[insignia.rarity];
-  const imageUrl = getDriveImageUrl(insignia.model_url);
-  const versoTexto = insignia.verso_texto;
+  const fallback = getInsigniaFallback(insignia.name);
+  const imageUrl = getDriveImageUrl(insignia.model_url) || fallback?.model_url || null;
+  const versoTexto = insignia.verso_texto || fallback?.verso_texto || null;
   const isLocked = !earnedAt;
 
   const generateInsignia = async () => {
