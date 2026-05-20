@@ -118,7 +118,7 @@ export function Header() {
       }`}
     >
       <div className="container mx-auto">
-        <div className="flex items-center justify-between h-14">
+        <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <div className="flex-1 flex items-center justify-start">
             <Link to="/" className="flex items-center gap-2 group">
@@ -126,12 +126,12 @@ export function Header() {
                 <img 
                   src={getDriveImageUrl(branding.logo_url) || ''} 
                   alt={branding.site_name} 
-                  className="h-8 md:h-10 w-auto object-contain transition-transform group-hover:scale-105" 
+                  className="h-10 md:h-16 w-auto object-contain" 
                 />
               ) : (
                 <>
-                  <Plane className="w-8 h-8 text-accent transition-transform group-hover:rotate-12" />
-                  <span className={`text-xl font-bold tracking-tight ${
+                  <Plane className="w-10 h-10 md:w-12 md:h-12 text-accent" />
+                  <span className={`text-xl md:text-2xl font-bold tracking-tight ${
                     isHome && !isScrolled ? 'text-white' : 'text-foreground'
                   }`}>
                     {branding.site_name}
