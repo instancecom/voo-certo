@@ -20,11 +20,11 @@ interface BadgeCardProps {
   onClick?: () => void;
 }
 
-const rarityColors: Record<BadgeRarity, { border: string; text: string; glow: string }> = {
-  bronze: { border: "border-amber-600", text: "text-amber-700", glow: "shadow-amber-600/20" },
-  silver: { border: "border-slate-400", text: "text-slate-600", glow: "shadow-slate-400/20" },
-  gold: { border: "border-yellow-400", text: "text-yellow-600", glow: "shadow-yellow-400/30" },
-  platinum: { border: "border-cyan-400", text: "text-cyan-600", glow: "shadow-cyan-400/30" },
+const rarityColors: Record<BadgeRarity, { text: string; bgGlow: string; badgeBg: string }> = {
+  bronze: { text: "text-amber-700", bgGlow: "bg-amber-600", badgeBg: "bg-gradient-to-br from-amber-300 to-amber-600" },
+  silver: { text: "text-slate-600", bgGlow: "bg-slate-400", badgeBg: "bg-gradient-to-br from-slate-200 to-slate-400" },
+  gold: { text: "text-yellow-600", bgGlow: "bg-yellow-400", badgeBg: "bg-gradient-to-br from-yellow-300 to-yellow-500" },
+  platinum: { text: "text-cyan-600", bgGlow: "bg-cyan-400", badgeBg: "bg-gradient-to-br from-cyan-300 to-cyan-500" },
 };
 
 const rarityLabels: Record<BadgeRarity, string> = {
@@ -47,7 +47,6 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
   const fallback = getInsigniaFallback(insignia.name);
   const imageUrl = getDriveImageUrl(insignia.model_url) || fallback?.model_url || null;
   const [verificationModalOpen, setVerificationModalOpen] = useState(false);
-  const [certificateModalOpen, setCertificateModalOpen] = useState(false);
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const { data: userVerifications } = useUserVerifications();
 
@@ -70,111 +69,87 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
   return (
     <>
       <motion.div
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.98 }}
+        whileHover={{ scale: 1.1, y: -5 }}
+        whileTap={{ scale: 0.95 }}
         className={cn(
-          "relative rounded-[5px] border-2 cursor-pointer transition-all duration-300 overflow-hidden",
-          large ? "p-6" : "p-4",
-          earned ? `bg-white ${colors.border} ${colors.glow} shadow-md` : "bg-[#EAEFF5] border-transparent opacity-80",
-          hasPendingVerification && "opacity-90 grayscale-0 border-yellow-500/50"
+          "relative cursor-pointer transition-all duration-300 flex flex-col items-center justify-start group mx-auto",
+          large ? "w-32" : "w-28",
+          hasPendingVerification && "opacity-90"
         )}
         onClick={handleClick}
       >
-        {/* Rarity badge */}
+        {/* Icon Container */}
         <div className={cn(
-          "absolute -top-1.5 -right-1.5 text-[0.65rem] font-bold px-2 py-0.5 rounded-[5px] shadow-sm z-10",
-          earned ? "bg-white" : "bg-[#F5F7F9]",
-          earned ? colors.text : "text-muted-foreground",
-          earned ? `border ${colors.border}` : "border border-border"
+          "relative flex items-center justify-center rounded-full transition-all duration-500",
+          large ? "w-24 h-24 mb-4" : "w-20 h-20 mb-3",
+          earned ? "" : "grayscale opacity-50 group-hover:opacity-80"
         )}>
-          {rarityLabels[insignia.rarity]}
-        </div>
+          {/* Animated Glow behind the image if earned */}
+          {earned && (
+            <div className={cn(
+              "absolute inset-0 rounded-full blur-xl opacity-30 transition-all duration-500 group-hover:opacity-60 group-hover:scale-125 group-hover:blur-2xl",
+              colors.bgGlow
+            )} />
+          )}
 
-        {/* Icon or Model Image */}
-        <div className={cn(
-          "mx-auto mb-3 rounded-[5px] flex items-center justify-center overflow-hidden drop-shadow-sm",
-          large ? "w-20 h-20" : "w-14 h-14",
-          earned ? "bg-[#F5F7F9]" : "bg-muted-foreground/5",
-          !earned && "grayscale opacity-70"
-        )}>
-          {imageUrl ? (
-            <img
-              src={imageUrl}
-              alt={insignia.name}
-              className="w-full h-full object-contain p-2"
-              crossOrigin="anonymous"
-              referrerPolicy="no-referrer"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
-                (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
-              }}
+          {/* Rarity small badge */}
+          {earned && (
+             <div className={cn(
+               "absolute -top-1 -right-2 text-[0.6rem] font-extrabold px-2 py-0.5 rounded-full shadow-lg z-20 text-white",
+               colors.badgeBg
+             )}>
+               {rarityLabels[insignia.rarity]}
+             </div>
+          )}
+
+          {/* Image / Icon */}
+          <div className="relative z-10 w-full h-full flex items-center justify-center drop-shadow-xl group-hover:drop-shadow-2xl transition-all duration-500">
+            {imageUrl ? (
+              <img
+                src={imageUrl}
+                alt={insignia.name}
+                className="w-full h-full object-contain transform group-hover:rotate-3 transition-transform duration-500"
+                crossOrigin="anonymous"
+                referrerPolicy="no-referrer"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                  (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
+                }}
+              />
+            ) : null}
+            <DynamicIcon
+              name={insignia.icon}
+              size={large ? 56 : 42}
+              className={cn(imageUrl ? "hidden" : "transform group-hover:rotate-3 transition-transform duration-500", earned ? colors.text : "text-muted-foreground")}
             />
-          ) : null}
-          <DynamicIcon
-            name={insignia.icon}
-            size={large ? 38 : 28}
-            className={cn(imageUrl ? "hidden" : "", earned ? colors.text : "text-muted-foreground")}
-          />
+          </div>
         </div>
 
         {/* Name */}
         <h3 className={cn(
-          "font-bold text-center mb-1 line-clamp-2",
-          large ? "text-base" : "text-sm",
-          earned ? "text-[#1A233A]" : "text-muted-foreground"
+          "font-bold text-center leading-tight line-clamp-2 transition-colors duration-300",
+          large ? "text-sm" : "text-xs",
+          earned ? "text-[#1A233A] group-hover:text-primary" : "text-muted-foreground group-hover:text-slate-600"
         )}>
           {insignia.name}
         </h3>
 
-        {/* Description */}
-        {showDetails && (
-          <p className={cn(
-            "text-center line-clamp-2",
-            large ? "text-xs mt-2" : "text-[11px]",
-            earned ? "text-muted-foreground" : "text-muted-foreground/70"
-          )}>
-            {insignia.description}
-          </p>
-        )}
-
-        {/* Earned date */}
-        {earned && earnedAt && (
-          <p className="text-[10px] text-center text-muted-foreground/80 mt-2 font-medium">
-            {new Date(earnedAt).toLocaleDateString("pt-BR")}
-          </p>
-        )}
-
-        {/* Certificate hint for ANAC */}
-        {earned && isAnacBadge && hasApprovedVerification && (
-          <div className="mt-2 text-center">
-            <span className="text-[10px] text-white/70 flex items-center justify-center gap-1">
-              <Award className="w-3 h-3" />
-              Clique para gerar certificado
+        {/* Hover info for unearned */}
+        {!earned && !hasPendingVerification && (
+          <div className="absolute inset-x-0 bottom-full mb-2 flex flex-col items-center justify-end opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-30">
+            <span className="text-[10px] text-muted-foreground font-semibold flex items-center gap-1 bg-white/90 px-2.5 py-1 rounded-full shadow-md backdrop-blur-sm border border-slate-200">
+             {isAnacBadge ? <Upload size={12} /> : <Lock size={12} />}
+             {isAnacBadge ? "Enviar Doc" : "Bloqueada"}
             </span>
           </div>
         )}
 
-        {/* Locked overlay */}
-        {!earned && !hasPendingVerification && (
-          <div className="absolute inset-x-0 bottom-0 top-1/2 flex flex-col items-center justify-end pb-3 bg-gradient-to-t from-background/90 to-transparent">
-            {isAnacBadge ? (
-               <span className="text-[10px] text-muted-foreground font-medium flex items-center gap-1 bg-[#F5F7F9] px-2 py-0.5 rounded-[5px] border border-border">
-                 <Upload size={12} />
-                 Enviar Doc
-               </span>
-            ) : (
-                <span className="text-[10px] text-muted-foreground font-medium flex items-center gap-1 bg-[#F5F7F9] px-2 py-0.5 rounded-[5px] border border-border">
-                 <Lock size={12} />
-                 Bloqueada
-               </span>
-            )}
-          </div>
-        )}
-
-        {/* Pending verification overlay */}
+        {/* Pending verification info */}
         {hasPendingVerification && !earned && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center rounded-[5px] bg-yellow-500/10">
-            <span className="text-[10px] text-yellow-600 font-medium">Aguardando aprovação</span>
+          <div className="absolute inset-x-0 bottom-full mb-2 flex flex-col items-center justify-end opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-30">
+            <span className="text-[10px] text-yellow-700 font-semibold flex items-center gap-1 bg-yellow-100/90 px-2.5 py-1 rounded-full shadow-md backdrop-blur-sm border border-yellow-300">
+             Aguardando aprovação
+            </span>
           </div>
         )}
       </motion.div>
