@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Clock, ChevronRight, ChevronLeft, Flag, AlertTriangle, Loader2, CheckCircle2, XCircle } from 'lucide-react';
+import { Clock, ChevronRight, ChevronLeft, Flag, AlertTriangle, Loader2, CheckCircle2, XCircle, Clipboard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
@@ -222,67 +222,73 @@ function BancaExamInner({
 
   if (!currentQuestion || blockQuestions.length === 0) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <AlertTriangle className="w-12 h-12 text-warning mx-auto mb-4" />
-          <p className="text-foreground mb-4">Não há questões disponíveis para o Bloco {currentBlock}.</p>
-          <Button onClick={onExit}>Voltar</Button>
+      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
+        <div className="text-center p-8 bg-white border border-slate-200 rounded-[5px] shadow-sm max-w-md mx-auto">
+          <AlertTriangle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
+          <p className="text-slate-700 font-bold mb-4">Não há questões disponíveis para o Bloco {currentBlock}.</p>
+          <Button onClick={onExit} className="rounded-[5px] h-11 px-6 font-bold uppercase text-xs tracking-wider">Voltar</Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#F8FAFC]">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-card border-b border-border shadow-sm">
-        <div className="container mx-auto px-3 sm:px-4">
-          <div className="flex items-center justify-between h-14 md:h-16">
-            <div className="flex items-center gap-2 md:gap-4 min-w-0">
-              <div className="flex items-center gap-2 min-w-0">
-                <span className="text-xl md:text-2xl shrink-0">{blockInfo?.icon}</span>
-                <div className="min-w-0">
-                  <h1 className="text-[10px] md:text-sm font-bold text-foreground leading-tight truncate">
-                    BLOCO {currentBlock}
-                  </h1>
-                  <p className="text-[11px] md:text-xs text-muted-foreground truncate max-w-[100px] md:max-w-none">
-                    {blockInfo?.name}
-                  </p>
-                </div>
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-200 shadow-sm">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="flex items-center justify-between h-16 md:h-20">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-[5px] bg-accent/10 flex items-center justify-center shadow-inner">
+                 <Clipboard className="w-5 h-5 md:w-6 md:h-6 text-accent" />
+              </div>
+              <div className="min-w-0">
+                <h1 className="text-xs md:text-sm font-black text-slate-400 uppercase tracking-widest leading-none mb-1">
+                  BANCA ANAC
+                </h1>
+                <p className="text-sm md:text-xl font-black text-slate-900 truncate max-w-[150px] md:max-w-none tracking-tight">
+                  Bloco {currentBlock} — {blockInfo?.name}
+                </p>
               </div>
             </div>
 
-            <div className={`flex items-center gap-1.5 md:gap-2 px-2.5 md:px-4 py-1.5 rounded-[5px] ${
-              isTimeWarning ? 'bg-destructive/10 text-destructive animate-pulse' : 'bg-muted border border-border/50'
+            {/* Cronômetro Centralizado Premium */}
+            <div className={`flex items-center gap-2 px-4 py-2 rounded-[5px] border transition-all ${
+              isTimeWarning 
+                ? 'bg-red-50 border-red-200 text-red-500 animate-pulse' 
+                : 'bg-slate-50 border-slate-200 text-slate-700 shadow-inner'
             }`}>
-              <Clock className="w-3.5 h-3.5 md:w-4 md:h-4" />
-              <span className="font-mono font-bold text-xs md:text-lg leading-none">
+              <Clock className={`w-4 h-4 ${isTimeWarning ? 'text-red-500' : 'text-slate-400'}`} />
+              <span className="font-mono font-black text-sm md:text-xl leading-none">
                 {formatTime(timeRemaining)}
               </span>
             </div>
 
-            <div className="flex items-center gap-1.5 md:gap-2">
+            <div className="flex items-center gap-3">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setShowExitDialog(true)}
-                className="h-8 md:h-9 px-2 md:px-4 rounded-[5px] text-[10px] md:text-sm border-border hover:bg-muted"
+                className="h-10 md:h-12 px-4 md:px-6 rounded-[5px] font-bold uppercase text-[10px] md:text-xs tracking-widest bg-white hover-red text-slate-600 border-slate-200 transition-all shadow-sm hover:border-red-200 hover:text-red-500"
               >
-                <Flag className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
-                <span className="hidden xs:inline">Sair</span>
-                <span className="xs:hidden">Sair</span>
+                <Flag className="w-4 h-4 mr-2" />
+                Sair
               </Button>
             </div>
           </div>
 
-          <div className="pb-3 px-1">
-            <Progress value={progress} className="h-1 bg-muted" />
-            <div className="flex justify-between text-[10px] md:text-xs font-medium text-muted-foreground mt-1.5">
-              <span className="flex items-center gap-1">
-                QUESTÃO <span className="text-foreground">{currentQuestionIndex + 1}</span> / {blockQuestions.length}
+          <div className="pb-4 px-1">
+            <div className="flex justify-between text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2">
+               <span>Progresso do Bloco</span>
+               <span className="text-accent">{Math.round(progress)}%</span>
+            </div>
+            <Progress value={progress} className="h-1.5 bg-slate-100" />
+            <div className="flex justify-between text-[10px] font-bold text-slate-400 mt-2">
+              <span className="flex items-center gap-1 uppercase tracking-wider">
+                QUESTÃO <span className="text-slate-900">{currentQuestionIndex + 1}</span> / {blockQuestions.length}
               </span>
-              <span className="flex items-center gap-2 uppercase tracking-tight">
-                Bloco <span className="text-foreground">{currentBlock}</span> de 4
+              <span className="flex items-center gap-2 uppercase tracking-wider text-right">
+                Bloco <span className="text-slate-900">{currentBlock}</span> de 4
               </span>
             </div>
           </div>
@@ -290,51 +296,55 @@ function BancaExamInner({
       </header>
 
       {/* Main Content */}
-      <main className="pt-28 pb-24">
+      <main className="pt-32 md:pt-44 pb-32">
         <div className="container mx-auto px-4 max-w-4xl">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentQuestion.id}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
+              className="space-y-8"
             >
-              <div className="mb-8">
-                <span className="text-sm text-accent font-medium mb-2 block">
+              <div className="space-y-4">
+                <span className="px-3 py-1 rounded-[5px] bg-accent/10 text-accent text-[10px] font-bold uppercase tracking-widest border border-accent/10">
                   Questão {currentQuestionIndex + 1}
                 </span>
-                <h2 className="text-xl md:text-2xl font-semibold text-foreground leading-relaxed">
+                <h2 className="text-[20px] font-black text-slate-900 leading-tight tracking-tight">
                   {currentQuestion.text}
                 </h2>
               </div>
 
-              <div className="space-y-3">
+              <div className="grid grid-cols-1 gap-4">
                 {currentQuestion.shuffledOptions.map((option: string, index: number) => {
                   const isSelected = selectedAnswer === index;
                   const optionLetter = String.fromCharCode(65 + index);
+
+                  let optionStyle = 'border-slate-200 bg-white hover-yellow shadow-sm';
+                  if (isSelected) {
+                    optionStyle = 'border-accent bg-accent/5 shadow-sm';
+                  }
 
                   return (
                     <motion.button
                       key={index}
                       onClick={() => submitAnswer(currentQuestion.id, index)}
-                      className={`w-full p-4 rounded-[5px] border-2 text-left transition-all duration-200 ${
-                        isSelected
-                          ? 'border-accent bg-accent/10'
-                          : 'border-border bg-card hover:border-accent/50 hover:bg-accent/5'
-                      }`}
-                      whileHover={{ scale: 1.01 }}
-                      whileTap={{ scale: 0.99 }}
+                      className={`w-full p-3 md:p-4 rounded-[5px] border-2 text-left transition-all duration-300 relative group overflow-hidden ${optionStyle}`}
+                      whileHover={{ scale: 1.005 }}
+                      whileTap={{ scale: 0.995 }}
                     >
-                      <div className="flex items-start gap-4">
-                        <span className={`flex-shrink-0 w-8 h-8 rounded-[5px] flex items-center justify-center font-semibold ${
+                      <div className="flex items-center gap-5 relative z-10">
+                        <span className={`flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-[5px] flex items-center justify-center font-bold text-sm md:text-lg transition-colors ${
                           isSelected
-                            ? 'bg-accent text-accent-foreground'
-                            : 'bg-muted text-muted-foreground'
+                            ? 'bg-accent text-white'
+                            : 'bg-slate-50 text-slate-400 group-hover:bg-accent/10 group-hover:text-accent'
                         }`}>
                           {optionLetter}
                         </span>
-                        <span className={`${isSelected ? 'text-foreground' : 'text-muted-foreground'}`}>
+                        <span className={`text-sm md:text-lg font-bold leading-snug ${
+                           isSelected ? 'text-slate-900' : 'text-slate-700'
+                        }`}>
                           {option}
                         </span>
                       </div>
@@ -348,25 +358,38 @@ function BancaExamInner({
       </main>
 
       {/* Footer Navigation */}
-      <footer className="fixed bottom-0 left-0 right-0 bg-card border-t border-border shadow-[0_-4px_10px_rgba(0,0,0,0.03)]">
-        <div className="container mx-auto px-4 py-3 md:py-4">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex-1 hidden md:flex gap-1 overflow-x-auto max-w-md">
+      <footer className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 p-4 md:p-6 shadow-[0_-10px_40px_rgba(0,0,0,0.03)] z-50">
+        <div className="container mx-auto max-w-4xl">
+          <div className="flex items-center justify-between gap-4">
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => setCurrentQuestionIndex((prev: number) => Math.max(0, prev - 1))}
+              disabled={currentQuestionIndex === 0}
+              className="h-10 md:h-12 px-6 md:px-10 rounded-[5px] border-slate-300 text-slate-400 font-bold uppercase text-[10px] md:text-xs tracking-widest hover:bg-slate-50 transition-all shrink-0 shadow-sm"
+            >
+              <ChevronLeft className="w-4 h-4 mr-2" />
+              <span>Anterior</span>
+            </Button>
+
+            {/* 1-20 Question indicator bubbles (Desktop) */}
+            <div className="hidden md:flex flex-1 justify-center gap-1.5 overflow-x-auto px-4 max-w-lg scrollbar-thin">
               {blockQuestions.map((q: ShuffledQuestion, index: number) => {
                 const isAnswered = answers[q.id] !== undefined;
                 const isCurrent = index === currentQuestionIndex;
+
+                let btnClass = 'bg-slate-50 text-slate-400 border border-slate-200 hover:bg-slate-100 hover:text-slate-600';
+                if (isCurrent) {
+                  btnClass = 'bg-[#0F172A] text-white border-2 border-[#0F172A] shadow-md';
+                } else if (isAnswered) {
+                  btnClass = 'bg-green-50 text-green-600 border border-green-200 hover:bg-green-100';
+                }
 
                 return (
                   <button
                     key={q.id}
                     onClick={() => goToQuestion(index)}
-                    className={`w-8 h-8 rounded-[5px] text-sm font-medium transition-colors ${
-                      isCurrent
-                        ? 'bg-primary text-primary-foreground'
-                        : isAnswered
-                        ? 'bg-success/20 text-success'
-                        : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                    }`}
+                    className={`w-8 h-8 rounded-[5px] text-xs font-black flex items-center justify-center transition-all shrink-0 ${btnClass}`}
                   >
                     {index + 1}
                   </button>
@@ -374,73 +397,55 @@ function BancaExamInner({
               })}
             </div>
 
-            <div className="md:hidden flex-1">
-              <div className="inline-flex items-center bg-muted/50 px-3 py-1.5 rounded-[5px] border border-border/50">
-                <span className="text-[11px] font-bold text-muted-foreground whitespace-nowrap">
-                  {currentQuestionIndex + 1} <span className="opacity-40 font-normal">/ {blockQuestions.length}</span>
-                </span>
+            {/* Mobile Question indicator */}
+            <div className="md:hidden flex-1 flex justify-center">
+              <div className="px-6 py-2.5 rounded-[5px] bg-[#0F172A] text-white font-bold text-xs md:text-sm shadow-xl shadow-slate-200 ring-4 ring-white">
+                {currentQuestionIndex + 1} <span className="opacity-40 font-normal mx-1">/</span> {blockQuestions.length}
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentQuestionIndex(prev => Math.max(0, prev - 1))}
-                disabled={currentQuestionIndex === 0}
-                className="h-9 md:h-10 px-2 md:px-4 rounded-[5px] text-xs md:text-sm"
+            {currentQuestionIndex === blockQuestions.length - 1 ? (
+              <Button 
+                size="lg" 
+                onClick={finishCurrentBlock}
+                className="h-10 md:h-12 px-6 md:px-10 rounded-[5px] font-bold uppercase text-[10px] md:text-xs tracking-widest transition-all shrink-0 shadow-lg bg-accent hover:bg-accent/90 text-slate-900"
               >
-                <ChevronLeft className="w-4 h-4 md:mr-2" />
-                <span className="hidden sm:inline">Anterior</span>
+                <span>
+                  {currentBlock === 4 ? 'Finalizar Simulado' : 'Finalizar Bloco'}
+                </span>
+                <Flag className="w-4 h-4 ml-2" />
               </Button>
-
-              {currentQuestionIndex === blockQuestions.length - 1 ? (
-                <Button 
-                  variant="hero" 
-                  size="sm" 
-                  onClick={finishCurrentBlock}
-                  className="h-9 md:h-10 px-4 md:px-6 rounded-[5px] text-xs md:text-sm shadow-md"
-                >
-                  <span className="hidden sm:inline mr-2">
-                    {currentBlock === 4 ? 'Finalizar Simulado' : 'Finalizar Bloco'}
-                  </span>
-                  <span className="sm:hidden mr-1">Finalizar</span>
-                  <Flag className="w-4 h-4" />
-                </Button>
-              ) : (
-                <Button 
-                  variant="default" 
-                  size="sm" 
-                  onClick={nextQuestion}
-                  className="h-9 md:h-10 px-4 md:px-6 rounded-[5px] text-xs md:text-sm shadow-md"
-                >
-                  <span className="hidden sm:inline mr-2">Próxima</span>
-                  <ChevronRight className="w-4 h-4" />
-                </Button>
-              )}
-            </div>
+            ) : (
+              <Button 
+                size="lg" 
+                onClick={nextQuestion}
+                className="h-10 md:h-12 px-6 md:px-10 rounded-[5px] font-bold uppercase text-[10px] md:text-xs tracking-widest transition-all shrink-0 shadow-lg bg-[#8E9AAF] hover:bg-[#7F8C9F] text-white"
+              >
+                <span>Próxima</span>
+                <ChevronRight className="w-4 h-4 ml-2" />
+              </Button>
+            )}
           </div>
         </div>
       </footer>
 
-
       {/* Exit Confirmation Dialog */}
       <Dialog open={showExitDialog} onOpenChange={setShowExitDialog}>
-        <DialogContent>
+        <DialogContent className="rounded-[5px] border-none shadow-2xl p-8">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-destructive">
-              <AlertTriangle className="w-5 h-5" />
-              Sair do Simulado?
-            </DialogTitle>
-            <DialogDescription>
+            <div className="w-16 h-16 rounded-[5px] bg-red-50 flex items-center justify-center mb-6 mx-auto">
+               <AlertTriangle className="w-8 h-8 text-red-500" />
+            </div>
+            <DialogTitle className="text-2xl font-black text-center text-red-600">Sair do Simulado?</DialogTitle>
+            <DialogDescription className="text-center pt-2">
               Se você sair agora, todo o seu progresso será perdido e você terá que começar novamente.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={() => setShowExitDialog(false)}>
+          <DialogFooter className="flex-col sm:flex-row gap-3 mt-6">
+            <Button variant="outline" onClick={() => setShowExitDialog(false)} className="rounded-[5px] h-12 flex-1 font-bold">
               Continuar Simulado
             </Button>
-            <Button variant="destructive" onClick={onExit}>
+            <Button onClick={onExit} className="rounded-[5px] h-12 flex-1 font-black bg-red-600 text-white hover:bg-red-700">
               Sair e Perder Progresso
             </Button>
           </DialogFooter>
@@ -449,18 +454,18 @@ function BancaExamInner({
 
       {/* Time Warning Dialog */}
       <Dialog open={showTimeWarning} onOpenChange={setShowTimeWarning}>
-        <DialogContent>
+        <DialogContent className="rounded-[5px] border-none shadow-2xl p-8">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-warning">
-              <Clock className="w-5 h-5" />
-              Atenção: 5 minutos restantes!
-            </DialogTitle>
-            <DialogDescription>
+            <div className="w-16 h-16 rounded-[5px] bg-amber-50 flex items-center justify-center mb-6 mx-auto">
+               <Clock className="w-8 h-8 text-amber-500 animate-pulse" />
+            </div>
+            <DialogTitle className="text-2xl font-black text-center text-amber-600">Atenção: 5 minutos restantes!</DialogTitle>
+            <DialogDescription className="text-center pt-2">
               Você tem apenas 5 minutos para finalizar este bloco. Responda as questões restantes.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
-            <Button onClick={() => setShowTimeWarning(false)}>
+          <DialogFooter className="mt-6 flex justify-center">
+            <Button onClick={() => setShowTimeWarning(false)} className="rounded-[5px] h-12 w-full font-black bg-amber-500 hover:bg-amber-600 text-slate-900">
               Entendi
             </Button>
           </DialogFooter>
