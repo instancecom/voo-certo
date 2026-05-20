@@ -120,48 +120,60 @@ export function Header() {
       <div className="container mx-auto">
         <div className="flex items-center justify-between h-14">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
-            {branding.logo_url ? (
-              <img 
-                src={getDriveImageUrl(branding.logo_url) || ''} 
-                alt={branding.site_name} 
-                className="h-8 md:h-10 w-auto object-contain transition-transform group-hover:scale-105" 
-              />
-            ) : (
-              <>
-                <Plane className="w-8 h-8 text-accent transition-transform group-hover:rotate-12" />
-                <span className={`text-xl font-bold tracking-tight ${
-                  isHome && !isScrolled ? 'text-white' : 'text-foreground'
-                }`}>
-                  {branding.site_name}
-                </span>
-              </>
-            )}
-          </Link>
+          <div className="flex-1 flex items-center justify-start">
+            <Link to="/" className="flex items-center gap-2 group">
+              {branding.logo_url ? (
+                <img 
+                  src={getDriveImageUrl(branding.logo_url) || ''} 
+                  alt={branding.site_name} 
+                  className="h-8 md:h-10 w-auto object-contain transition-transform group-hover:scale-105" 
+                />
+              ) : (
+                <>
+                  <Plane className="w-8 h-8 text-accent transition-transform group-hover:rotate-12" />
+                  <span className={`text-xl font-bold tracking-tight ${
+                    isHome && !isScrolled ? 'text-white' : 'text-foreground'
+                  }`}>
+                    {branding.site_name}
+                  </span>
+                </>
+              )}
+            </Link>
+          </div>
  
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-6">
-            {filteredMenuItems.map(item => (
-              <Link
-                key={item.to}
-                to={item.to}
-                className={`text-sm font-medium transition-colors hover:text-accent ${
-                  location.pathname === item.to 
-                    ? 'text-accent' 
-                    : isHome && !isScrolled 
-                      ? 'text-white/90' 
-                      : 'text-muted-foreground'
-                }`}
-                onMouseEnter={item.prefetch}
-              >
-                {item.label}
-              </Link>
-            ))}
+          <nav className="hidden md:flex flex-none items-center justify-center gap-6">
+            {isLoading ? (
+              <div className="flex items-center gap-6 opacity-50">
+                <div className="w-16 h-4 bg-muted/40 animate-pulse rounded" />
+                <div className="w-24 h-4 bg-muted/40 animate-pulse rounded" />
+                <div className="w-20 h-4 bg-muted/40 animate-pulse rounded" />
+                <div className="w-20 h-4 bg-muted/40 animate-pulse rounded" />
+                <div className="w-16 h-4 bg-muted/40 animate-pulse rounded" />
+              </div>
+            ) : (
+              filteredMenuItems.map(item => (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className={`text-sm font-medium transition-colors hover:text-accent ${
+                    location.pathname === item.to 
+                      ? 'text-accent' 
+                      : isHome && !isScrolled 
+                        ? 'text-white/90' 
+                        : 'text-muted-foreground'
+                  }`}
+                  onMouseEnter={item.prefetch}
+                >
+                  {item.label}
+                </Link>
+              ))
+            )}
           </nav>
 
           {/* User Actions */}
-          <div className="flex items-center gap-4">
-            <div className="hidden md:flex items-center gap-4 min-w-[124px] justify-end">
+          <div className="flex-1 flex items-center justify-end gap-4">
+            <div className="hidden md:flex items-center gap-4 justify-end">
               {user ? (
                 /* Session found - show user UI immediately (profile data may fill in later) */
                 <>
