@@ -24,7 +24,7 @@ interface BrandingContextType {
 const BrandingContext = createContext<BrandingContextType | undefined>(undefined);
 
 const DEFAULT_SETTINGS: BrandingSettings = {
-  logo_url: null,
+  logo_url: 'https://lh3.googleusercontent.com/d/1Ymee2CCTVo-HFCJ0TqzZdqktpKt6YiqQ',
   site_name: 'Voo Certo',
   features: {
     microcourses: true,
