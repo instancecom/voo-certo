@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Plane, BookOpen, Crown, ArrowRight, Timer, Zap, Layers, ShieldCheck, Lock, BadgeCheck, Users, Sparkles } from 'lucide-react';
+import { Plane, BookOpen, Crown, ArrowRight, Timer, Zap, Layers, ShieldCheck, Lock, BadgeCheck, Users, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
@@ -42,6 +42,38 @@ export default function SimuladosPage() {
   const { canAccessModoLivre, canAccessModoBloco, canAccessModoBanca } = usePlan();
   const [blockDialogOpen, setBlockDialogOpen] = useState(false);
   const [selectedProfession, setSelectedProfession] = useState<ProfessionWithBlocks | null>(null);
+  
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  const checkScroll = () => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      setCanScrollLeft(scrollLeft > 10);
+      setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 10);
+    }
+  };
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, clientWidth } = scrollContainerRef.current;
+      const scrollTo = direction === 'left' 
+        ? scrollLeft - clientWidth * 0.75 
+        : scrollLeft + clientWidth * 0.75;
+      scrollContainerRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+    }
+  };
+
+  useEffect(() => {
+    checkScroll();
+    const timer = setTimeout(checkScroll, 500);
+    window.addEventListener('resize', checkScroll);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', checkScroll);
+    };
+  }, [professions]);
   
   // Modais de conversão
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -172,14 +204,38 @@ export default function SimuladosPage() {
               </div>
             ) : (
               /* Wrapper com fade nas bordas */
-              <div className="relative">
+              <div className="relative group">
                 {/* Fade esquerda */}
                 <div className="pointer-events-none absolute left-0 top-0 bottom-4 w-8 bg-gradient-to-r from-background to-transparent z-10 hidden md:block" />
                 {/* Fade direita */}
                 <div className="pointer-events-none absolute right-0 top-0 bottom-4 w-16 bg-gradient-to-l from-background to-transparent z-10" />
 
+                {/* Scroll buttons - Estilo Netflix */}
+                {canScrollLeft && (
+                  <button 
+                    onClick={() => scroll('left')}
+                    className="absolute left-2 top-[40%] -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-background/80 backdrop-blur-md border border-border/85 shadow-lg flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-background transition-all hover:scale-110 md:opacity-0 md:group-hover:opacity-100 opacity-100"
+                    aria-label="Scroll left"
+                  >
+                    <ChevronLeft className="w-6 h-6" />
+                  </button>
+                )}
+                {canScrollRight && (
+                  <button 
+                    onClick={() => scroll('right')}
+                    className="absolute right-2 top-[40%] -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-background/80 backdrop-blur-md border border-border/85 shadow-lg flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-background transition-all hover:scale-110 md:opacity-0 md:group-hover:opacity-100 opacity-100"
+                    aria-label="Scroll right"
+                  >
+                    <ChevronRight className="w-6 h-6" />
+                  </button>
+                )}
+
                 {/* Carrossel */}
-                <div className="flex gap-5 overflow-x-auto pb-4 scrollbar-none scroll-smooth -mx-4 px-4">
+                <div 
+                  ref={scrollContainerRef}
+                  onScroll={checkScroll}
+                  className="flex gap-5 overflow-x-auto pb-4 scrollbar-none scroll-smooth -mx-4 px-4"
+                >
                   {professions?.map((profession, index) => (
                     <motion.div
                       key={profession.id}
