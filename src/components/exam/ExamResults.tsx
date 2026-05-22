@@ -43,12 +43,10 @@ export function ExamResults({
   const overallPercentage = totalQuestions > 0 ? (totalCorrect / totalQuestions) * 100 : 0;
   const isApproved = overallPassed && totalQuestions > 0;
 
-  // Sync badges on result show
+  // Sync badges on every exam result (approved or not)
   useEffect(() => {
-    if (isApproved) {
-      syncBadges();
-    }
-  }, [isApproved]);
+    syncBadges();
+  }, []);
 
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);

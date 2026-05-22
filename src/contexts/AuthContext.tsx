@@ -93,15 +93,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
 
-        // Defer profile fetch with setTimeout to avoid deadlock
         if (session?.user) {
+          // Defer profile fetch to avoid Supabase deadlock
           setTimeout(() => {
             fetchProfile(session.user.id);
           }, 0);
+
+          // Conceder insígnia "Check-in Feito" somente no primeiro login
+          if (event === 'SIGNED_IN') {
+            setTimeout(async () => {
+              try {
+                // Busca a insígnia de first_login
+                const { data: badge } = await supabase
+                  .from('insignias')
+                  .select('id')
+                  .eq('condition_type', 'first_login')
+                  .eq('is_active', true)
+                  .maybeSingle();
+
+                if (badge?.id) {
+                  // Insere ignorando duplicata (UNIQUE constraint na tabela user_insignias)
+                  await supabase
+                    .from('user_insignias')
+                    .insert({ user_id: session.user.id, insignia_id: badge.id })
+                    .throwOnError();
+                }
+              } catch (err: any) {
+                // Código 23505 = duplicate key — usuário já tem a insígnia, ignorar
+                if (err?.code !== '23505') {
+                  console.error('Erro ao conceder insígnia de primeiro login:', err);
+                }
+              }
+            }, 500);
+          }
         } else {
           setProfile(null);
           setIsAdmin(false);

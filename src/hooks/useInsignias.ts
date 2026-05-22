@@ -97,7 +97,7 @@ export const useGrantInsignia = () => {
 
       if (error) {
         if (error.code === "23505") {
-          // Duplicate - user already has this badge
+          // Duplicate — user already has this badge
           return null;
         }
         throw error;
@@ -110,121 +110,165 @@ export const useGrantInsignia = () => {
   });
 };
 
+// Stats passados pelo useInsigniaSync
+interface BadgeStats {
+  examsCompleted?: number;
+  correctAnswers?: number;
+  questionsAnswered?: number;
+  trainingStreak?: number;
+  trainingDays?: number;
+  blocksCompleted?: number;
+  anacApprovals?: number;
+  avgScore?: number;
+  avgScore10?: number;    // média dos últimos 10 simulados (só válido se examsCompleted >= 10)
+  avgScore20?: number;    // média dos últimos 20 simulados (só válido se examsCompleted >= 20)
+  avgScore30?: number;    // média dos últimos 30 simulados (só válido se examsCompleted >= 30)
+  firstExam?: boolean;
+  security_correct?: number;
+  security_score?: number;
+  security_perfect?: number;
+  emergency_block_perfect?: number;
+  consecutive_score?: number;
+  free_exam_max_score?: number;
+}
+
 export const useCheckAndGrantBadges = () => {
   const { user } = useAuth();
   const { data: insignias } = useInsignias();
   const { data: userInsignias } = useUserInsignias();
   const grantInsignia = useGrantInsignia();
 
-  const checkBadges = async (stats: {
-    examsCompleted?: number;
-    correctAnswers?: number;
-    questionsAnswered?: number;
-    trainingStreak?: number;
-    trainingDays?: number;
-    blocksCompleted?: number;
-    anacApprovals?: number;
-    avgScore?: number;
-    firstLogin?: boolean;
-    firstExam?: boolean;
-    english_correct?: number;
-    security_correct?: number;
-    consecutive_score?: number;
-  }) => {
+  const checkBadges = async (stats: BadgeStats) => {
     if (!user?.id || !insignias || !userInsignias) return [];
 
     const earnedIds = new Set(userInsignias.map((ui) => ui.insignia_id));
     const newBadges: Insignia[] = [];
 
     for (const insignia of insignias) {
+      // Pular já conquistadas ou inativas
       if (earnedIds.has(insignia.id)) continue;
+      if (!insignia.is_active) continue;
 
       let shouldGrant = false;
 
       switch (insignia.condition_type) {
-        case "first_login":
-          shouldGrant = stats.firstLogin === true;
-          break;
+        // ─── Primeiro simulado completado ───────────────────────────────
         case "first_exam_completed":
-          shouldGrant = stats.firstExam === true || (stats.examsCompleted || 0) >= 1;
+          shouldGrant = (stats.examsCompleted || 0) >= 1;
           break;
+
+        // ─── Acertos totais ─────────────────────────────────────────────
         case "correct_answers":
           shouldGrant = (stats.correctAnswers || 0) >= insignia.condition_value;
           break;
+
+        // ─── Questões respondidas ────────────────────────────────────────
         case "questions_answered":
           shouldGrant = (stats.questionsAnswered || 0) >= insignia.condition_value;
           break;
+
+        // ─── Dias seguidos (streak) ──────────────────────────────────────
         case "training_streak":
           shouldGrant = (stats.trainingStreak || 0) >= insignia.condition_value;
           break;
+
+        // ─── Dias totais treinando ───────────────────────────────────────
         case "training_days":
           shouldGrant = (stats.trainingDays || 0) >= insignia.condition_value;
           break;
+
+        // ─── Blocos completados ──────────────────────────────────────────
         case "blocks_completed":
+        case "profession_complete":
           shouldGrant = (stats.blocksCompleted || 0) >= insignia.condition_value;
           break;
+
+        // ─── Aprovações em Banca ANAC ────────────────────────────────────
         case "anac_approvals":
           shouldGrant = (stats.anacApprovals || 0) >= insignia.condition_value;
           break;
-        case "badges_earned":
-          shouldGrant = (userInsignias.length + newBadges.length) >= insignia.condition_value;
+
+        // ─── Média geral (qualquer qtd de simulados) ─────────────────────
+        case "all_modes_score":
+        case "profession_mastery":
+        case "profession_perfect":
+          shouldGrant = (stats.avgScore || 0) >= insignia.condition_value;
           break;
-        case "english_correct":
-          shouldGrant = (stats.english_correct || 0) >= insignia.condition_value;
+
+        // ─── Média em 10 simulados (mín. 10 completados) ────────────────
+        case "avg_score_exams":
+        case "avg_score_exams_10":
+          shouldGrant = (stats.avgScore10 || 0) >= insignia.condition_value;
           break;
-        case "english_score":
-          shouldGrant = (stats.english_score || 0) >= insignia.condition_value;
+
+        // ─── Média em 20 simulados (mín. 20 completados) ────────────────
+        case "avg_score_exams_20":
+          shouldGrant = (stats.avgScore20 || 0) >= insignia.condition_value;
           break;
-        case "security_score":
-          shouldGrant = (stats.security_score || 0) >= insignia.condition_value;
+
+        // ─── Média em 30 simulados (mín. 30 completados) ────────────────
+        case "avg_score_exams_30":
+          shouldGrant = (stats.avgScore30 || 0) >= insignia.condition_value;
           break;
+
+        // ─── Score em simulado modo livre ────────────────────────────────
+        case "free_exam_score":
+          shouldGrant = (stats.free_exam_max_score || 0) >= insignia.condition_value;
+          break;
+
+        // ─── Questões de segurança acertadas ────────────────────────────
         case "security_correct":
           shouldGrant = (stats.security_correct || 0) >= insignia.condition_value;
           break;
-        case "security_streak":
-          shouldGrant = (stats.security_streak || 0) >= insignia.condition_value;
-          break;
-        case "security_perfect":
-          shouldGrant = (stats.security_perfect || 0) >= insignia.condition_value;
-          break;
+
+        // ─── Score em simulados de segurança ─────────────────────────────
+        case "security_score":
         case "security_block_score":
           shouldGrant = (stats.security_score || 0) >= insignia.condition_value;
           break;
+
+        // ─── Nota 100% em segurança ──────────────────────────────────────
+        case "security_perfect":
+          shouldGrant = (stats.security_perfect || 0) >= insignia.condition_value;
+          break;
+
+        // ─── Bloco de emergência com 100% ────────────────────────────────
         case "emergency_block_perfect":
           shouldGrant = (stats.emergency_block_perfect || 0) >= insignia.condition_value;
           break;
-        case "behavioral_score":
-        case "behavioral_exams":
-          shouldGrant = (stats.behavioral_score || 0) >= insignia.condition_value;
-          break;
-        case "stress_score":
-          shouldGrant = (stats.stress_score || 0) >= insignia.condition_value;
-          break;
-        case "multilingual_score":
-        case "multilingual_perfect":
-          shouldGrant = (stats.multilingual_score || 0) >= insignia.condition_value;
-          break;
+
+        // ─── Simulados consecutivos com score >= 70% ─────────────────────
         case "consecutive_score":
           shouldGrant = (stats.consecutive_score || 0) >= insignia.condition_value;
           break;
-        case "all_modes_score":
-          shouldGrant = (stats.avgScore || 0) >= insignia.condition_value;
+
+        // ─── Quantidade de insígnias conquistadas ────────────────────────
+        case "badges_earned":
+          shouldGrant =
+            (userInsignias.length + newBadges.length) >= insignia.condition_value;
           break;
-        case "avg_score_exams":
-        case "avg_score_exams_10":
-        case "avg_score_exams_20":
-        case "avg_score_exams_30":
-          shouldGrant = (stats.avgScore || 0) >= insignia.condition_value;
+
+        // ─── Tipos desativados / sem suporte ─────────────────────────────
+        case "first_login":
+        case "english_correct":
+        case "english_score":
+        case "spanish_score":
+        case "security_streak":
+        case "behavioral_score":
+        case "behavioral_exams":
+        case "stress_score":
+        case "multilingual_score":
+        case "multilingual_perfect":
+        case "companies_completed":
+          // Estas condições não têm simulados correspondentes na plataforma.
+          // Tratadas via migration (is_active = false) ou gerenciadas separadamente.
+          shouldGrant = false;
           break;
-        case "free_exam_score":
-          shouldGrant = (stats.avgScore || 0) >= insignia.condition_value;
+
+        default:
+          // Tipo desconhecido — nunca conceder automaticamente
+          shouldGrant = false;
           break;
-        case "profession_complete":
-        case "profession_mastery":
-        case "profession_perfect":
-          shouldGrant = (stats.blocksCompleted || 0) >= 4; // Assuming 4 blocks per profession
-          break;
-        // Add more condition types as needed
       }
 
       if (shouldGrant) {

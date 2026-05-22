@@ -8,9 +8,7 @@ import { BadgeCard } from "@/components/badges/BadgeCard";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useInsignias, useUserInsignias, BadgeRarity } from "@/hooks/useInsignias";
-import { useInsigniaSync } from "@/hooks/useInsigniaSync";
 import { cn } from "@/lib/utils";
-import { useEffect } from "react";
 
 const rarityConfig: Record<BadgeRarity, { icon: React.ElementType; label: string; color: string; bgColor: string; borderColor: string }> = {
   bronze: { icon: Award, label: "Bronze", color: "text-amber-600", bgColor: "bg-amber-500/10", borderColor: "border-amber-500/20" },
@@ -93,16 +91,9 @@ const ConquistasPage = () => {
   const { user, isLoading: authLoading } = useAuth();
   const { data: insignias, isLoading: insigniasLoading } = useInsignias();
   const { data: userInsignias, isLoading: userInsigniasLoading } = useUserInsignias();
-  const { syncBadges } = useInsigniaSync();
 
   const isLoading = authLoading || insigniasLoading || userInsigniasLoading;
 
-  // Auto-sync badges on mount to unlock retroactively
-  useEffect(() => {
-    if (user && !isLoading) {
-      syncBadges();
-    }
-  }, [user, isLoading]);
 
   const earnedBadgeIds = useMemo(() => new Set(userInsignias?.map((ui) => ui.insignia_id) || []), [userInsignias]);
   const earnedBadgesMap = useMemo(() => {
