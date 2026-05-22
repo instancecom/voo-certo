@@ -77,9 +77,10 @@ export function ProfessionsManager({ onSelectProfession }: ProfessionsManagerPro
               key={profession.id}
             >
               <Card className="transition-colors">
-                <CardContent className="py-4 px-3 sm:px-6">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-                    <div className="flex items-center gap-3 min-w-0">
+                <CardContent className="py-4 px-4 sm:px-6">
+                  <div className="flex flex-col gap-3">
+                    {/* Top Row: Icon/Image + Title + Description */}
+                    <div className="flex items-start gap-3 min-w-0">
                       <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-[5px] bg-muted flex items-center justify-center shrink-0 overflow-hidden border border-border/50">
                         {profession.image_url ? (
                           <img 
@@ -95,49 +96,52 @@ export function ProfessionsManager({ onSelectProfession }: ProfessionsManagerPro
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <h3 className="font-semibold text-foreground text-sm sm:text-base truncate">{profession.name}</h3>
+                        <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                          <h3 className="font-semibold text-foreground text-sm sm:text-base">{profession.name}</h3>
                           {!profession.is_active && (
                             <Badge variant="secondary" className="text-[10px] shrink-0">Inativo</Badge>
                           )}
                         </div>
-                        <p className="text-xs sm:text-sm text-muted-foreground truncate">
+                        <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 leading-relaxed">
                           {profession.description || 'Sem descrição'}
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1.5 flex-wrap pl-9 sm:pl-0">
-                      <Badge variant="outline" className="gap-1 text-[10px] sm:text-xs">
-                        <Blocks className="w-3 h-3" />
-                        {profession.block_count} blocos
-                      </Badge>
-                      <Badge variant="outline" className="text-[10px] sm:text-xs">
-                        {profession.question_count} questões
-                      </Badge>
-                      <Badge variant="outline" className="gap-1 text-[10px] sm:text-xs">
-                        <Clock className="w-3 h-3" />
-                        {profession.total_time || 120} min
-                      </Badge>
-                      {profession.active_modes?.includes('banca_anac') && (
-                        <Badge className="bg-primary/10 text-primary text-[10px] sm:text-xs">Banca</Badge>
-                      )}
-                      {profession.active_modes?.includes('livre') && (
-                        <Badge className="bg-accent/10 text-accent text-[10px] sm:text-xs">Livre</Badge>
-                      )}
-                    </div>
+                    {/* Divider and bottom details section */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2.5 border-t border-border/40 sm:border-t-0 sm:pt-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <Badge variant="outline" className="gap-1 text-[10px] sm:text-xs">
+                          <Blocks className="w-3 h-3" />
+                          {profession.block_count} blocos
+                        </Badge>
+                        <Badge variant="outline" className="text-[10px] sm:text-xs">
+                          {profession.question_count} questões
+                        </Badge>
+                        <Badge variant="outline" className="gap-1 text-[10px] sm:text-xs">
+                          <Clock className="w-3 h-3" />
+                          {profession.total_time || 120} min
+                        </Badge>
+                        {profession.active_modes?.includes('banca_anac') && (
+                          <Badge className="bg-primary/10 text-primary text-[10px] sm:text-xs">Banca</Badge>
+                        )}
+                        {profession.active_modes?.includes('livre') && (
+                          <Badge className="bg-accent/10 text-accent text-[10px] sm:text-xs">Livre</Badge>
+                        )}
+                      </div>
 
-                    <div className="flex items-center gap-2 pl-9 sm:pl-0 sm:ml-auto shrink-0">
-                      <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => openEditDialog(profession)}>
-                        <Edit2 className="w-3.5 h-3.5" />
-                      </Button>
-                      <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => { setSelectedProfession(profession); setShowDeleteDialog(true); }}>
-                        <Trash2 className="w-3.5 h-3.5 text-destructive" />
-                      </Button>
-                      <Button size="sm" className="text-xs h-8" onClick={() => onSelectProfession(profession.id, profession.name)}>
-                        Gerenciar
-                        <ChevronRight className="w-3.5 h-3.5 ml-1" />
-                      </Button>
+                      <div className="flex items-center gap-2 shrink-0 justify-end sm:justify-start w-full sm:w-auto mt-1 sm:mt-0">
+                        <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => openEditDialog(profession)}>
+                          <Edit2 className="w-3.5 h-3.5" />
+                        </Button>
+                        <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => { setSelectedProfession(profession); setShowDeleteDialog(true); }}>
+                          <Trash2 className="w-3.5 h-3.5 text-destructive" />
+                        </Button>
+                        <Button size="sm" className="text-xs h-8 flex-1 sm:flex-none" onClick={() => onSelectProfession(profession.id, profession.name)}>
+                          Gerenciar
+                          <ChevronRight className="w-3.5 h-3.5 ml-1" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </CardContent>

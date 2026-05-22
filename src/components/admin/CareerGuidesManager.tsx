@@ -90,12 +90,12 @@ export function CareerGuidesManager() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-foreground">Guias de Carreira</h2>
-          <p className="text-muted-foreground">Crie e gerencie guias com etapas sequenciais.</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-foreground">Guias de Carreira</h2>
+          <p className="text-sm text-muted-foreground">Crie e gerencie guias com etapas sequenciais.</p>
         </div>
-        <Button onClick={() => setShowForm(!showForm)}>
+        <Button onClick={() => setShowForm(!showForm)} className="w-full sm:w-auto shrink-0">
           <Plus className="w-4 h-4 mr-2" />Novo Guia
         </Button>
       </div>
@@ -129,22 +129,27 @@ export function CareerGuidesManager() {
         {guides?.map(guide => (
           <Card key={guide.id}>
             <CardHeader className="pb-3">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <CardTitle className="text-lg flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <CardTitle className="text-base sm:text-lg flex flex-wrap items-center gap-2">
                     {guide.title}
-                    <Badge variant={guide.is_active ? 'default' : 'secondary'} className="text-xs">
+                    <Badge variant={guide.is_active ? 'default' : 'secondary'} className="text-xs shrink-0">
                       {guide.is_active ? 'Ativo' : 'Inativo'}
                     </Badge>
                   </CardTitle>
-                  {guide.description && <CardDescription className="mt-1">{guide.description}</CardDescription>}
+                  {guide.description && <CardDescription className="mt-1.5 leading-relaxed">{guide.description}</CardDescription>}
                 </div>
-                <div className="flex items-center gap-2">
-                  <Switch checked={guide.is_active} onCheckedChange={() => handleToggleActive(guide.id, guide.is_active)} />
-                  <Button variant="outline" size="sm" onClick={() => setEditingGuideId(guide.id)}>
-                    <Edit className="w-4 h-4 mr-1" />Etapas
+                <div className="flex items-center gap-2.5 self-end sm:self-start shrink-0 mt-2 sm:mt-0">
+                  <div className="flex items-center gap-1.5 mr-2">
+                    <span className="text-xs font-semibold text-muted-foreground sm:hidden">
+                      {guide.is_active ? 'Ativo' : 'Inativo'}
+                    </span>
+                    <Switch checked={guide.is_active} onCheckedChange={() => handleToggleActive(guide.id, guide.is_active)} />
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => setEditingGuideId(guide.id)} className="h-9 px-3">
+                    <Edit className="w-4 h-4 mr-1.5" />Etapas
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={() => handleDelete(guide.id)} className="text-destructive">
+                  <Button variant="ghost" size="icon" onClick={() => handleDelete(guide.id)} className="text-destructive h-9 w-9 p-0">
                     <Trash2 className="w-4 h-4" />
                   </Button>
                 </div>
@@ -411,22 +416,22 @@ function GuideStepsEditor({ guideId, onBack }: { guideId: string; onBack: () => 
           ) : (
             <Card key={step.id} className="border-l-4 border-l-accent">
               <CardHeader className="pb-2">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex items-center gap-3 flex-1">
-                    <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-sm font-bold text-accent shrink-0">
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                  <div className="flex items-start gap-3 flex-1 min-w-0">
+                    <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-sm font-bold text-accent shrink-0 mt-0.5">
                       {index + 1}
                     </div>
                     <div className="flex-1 min-w-0">
                       <CardTitle className="text-base">{step.title}</CardTitle>
-                      {step.description && <CardDescription className="mt-1 line-clamp-2">{step.description}</CardDescription>}
+                      {step.description && <CardDescription className="mt-1 line-clamp-2 leading-relaxed">{step.description}</CardDescription>}
                     </div>
                   </div>
-                  <div className="flex gap-1 shrink-0">
-                    <Button variant="outline" size="sm" onClick={() => handleEditStep(step)}>
-                      <Edit className="w-3 h-3" />
+                  <div className="flex gap-1.5 self-end sm:self-start shrink-0 mt-1 sm:mt-0">
+                    <Button variant="outline" size="sm" onClick={() => handleEditStep(step)} className="h-8">
+                      <Edit className="w-3.5 h-3.5 mr-1" />Editar
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={() => handleDeleteStep(step.id)} className="text-destructive">
-                      <Trash2 className="w-3 h-3" />
+                    <Button variant="ghost" size="sm" onClick={() => handleDeleteStep(step.id)} className="text-destructive h-8 w-8 p-0">
+                      <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>
