@@ -169,7 +169,7 @@ export default function SimuladosPage() {
               /* Skeleton — carrossel */
               <div className="flex gap-5 overflow-x-auto pb-4 scrollbar-none">
                 {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="flex-none w-[300px] md:w-[340px] p-6 rounded-[5px] border border-border bg-card h-[340px] space-y-4">
+                  <div key={i} className="flex-none w-[270px] md:w-[310px] p-5 md:p-6 rounded-[5px] border border-border bg-card h-[330px] space-y-4">
                     <div className="flex justify-between">
                       <Skeleton className="w-12 h-12 rounded-[5px]" />
                       <Skeleton className="w-20 h-6 rounded-[5px]" />
@@ -197,14 +197,14 @@ export default function SimuladosPage() {
                 {/* Scroll buttons - Estilo Netflix */}
                 <button 
                   onClick={() => scroll('left')}
-                  className="absolute left-2 top-[40%] -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-background/80 backdrop-blur-md border border-border/85 shadow-lg flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-background transition-all hover:scale-110 md:opacity-0 md:group-hover:opacity-100 opacity-100"
+                  className="hidden md:flex absolute left-2 top-[40%] -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-background/80 backdrop-blur-md border border-border/85 shadow-lg items-center justify-center text-muted-foreground hover:text-primary hover:bg-background transition-all hover:scale-110 opacity-0 group-hover:opacity-100"
                   aria-label="Scroll left"
                 >
                   <ChevronLeft className="w-6 h-6" />
                 </button>
                 <button 
                   onClick={() => scroll('right')}
-                  className="absolute right-2 top-[40%] -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-background/80 backdrop-blur-md border border-border/85 shadow-lg flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-background transition-all hover:scale-110 md:opacity-0 md:group-hover:opacity-100 opacity-100"
+                  className="hidden md:flex absolute right-2 top-[40%] -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-background/80 backdrop-blur-md border border-border/85 shadow-lg items-center justify-center text-muted-foreground hover:text-primary hover:bg-background transition-all hover:scale-110 opacity-0 group-hover:opacity-100"
                   aria-label="Scroll right"
                 >
                   <ChevronRight className="w-6 h-6" />
@@ -221,9 +221,9 @@ export default function SimuladosPage() {
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.06 }}
-                      className="flex-none w-[300px] md:w-[340px]"
+                      className="flex-none w-[270px] md:w-[310px]"
                     >
-                      <div className="p-6 md:p-8 rounded-[5px] bg-card border border-border hover:border-primary/30 hover:shadow-xl transition-all h-full flex flex-col group relative overflow-hidden">
+                      <div className="p-5 md:p-6 rounded-[5px] bg-card border border-border hover:border-primary/30 hover:shadow-xl transition-all h-full flex flex-col group relative overflow-hidden">
                         <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
                            <Plane className="w-32 h-32 rotate-12" />
                         </div>
