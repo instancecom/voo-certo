@@ -150,15 +150,18 @@ export default function SimuladosPage() {
             </div>
             
             {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="p-6 rounded-[5px] border border-border bg-card h-[280px] space-y-4">
+              /* Skeleton — carrossel */
+              <div className="flex gap-5 overflow-x-auto pb-4 scrollbar-none">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="flex-none w-[300px] md:w-[340px] p-6 rounded-[5px] border border-border bg-card h-[340px] space-y-4">
                     <div className="flex justify-between">
                       <Skeleton className="w-12 h-12 rounded-[5px]" />
                       <Skeleton className="w-20 h-6 rounded-[5px]" />
                     </div>
                     <Skeleton className="w-3/4 h-6" />
                     <Skeleton className="w-full h-16" />
+                    <Skeleton className="w-full h-10" />
+                    <Skeleton className="w-full h-10" />
                   </div>
                 ))}
               </div>
@@ -168,80 +171,95 @@ export default function SimuladosPage() {
                 <p className="text-muted-foreground font-medium italic">Nenhum simulado disponível para esta categoria no momento.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {professions?.map((profession, index) => (
-                  <motion.div key={profession.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }}>
-                    <div className="p-8 rounded-[5px] bg-card border border-border hover:border-primary/30 hover:shadow-xl transition-all h-full flex flex-col group relative overflow-hidden">
-                      <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
-                         <Plane className="w-32 h-32 rotate-12" />
-                      </div>
+              /* Wrapper com fade nas bordas */
+              <div className="relative">
+                {/* Fade esquerda */}
+                <div className="pointer-events-none absolute left-0 top-0 bottom-4 w-8 bg-gradient-to-r from-background to-transparent z-10 hidden md:block" />
+                {/* Fade direita */}
+                <div className="pointer-events-none absolute right-0 top-0 bottom-4 w-16 bg-gradient-to-l from-background to-transparent z-10" />
 
-                      <div className="flex items-start justify-between mb-6">
-                        <div className="w-14 h-14 rounded-[5px] bg-primary/5 flex items-center justify-center text-3xl overflow-hidden border border-border/50">
-                          {profession.image_url ? (
-                            <img 
-                              src={getDrivePreviewUrl(profession.image_url)} 
-                              alt={profession.name} 
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src = 'https://placehold.co/100x100?text=Erro';
-                              }}
-                            />
-                          ) : (
-                            profession.icon || '✈️'
+                {/* Carrossel */}
+                <div className="flex gap-5 overflow-x-auto pb-4 scrollbar-none scroll-smooth -mx-4 px-4">
+                  {professions?.map((profession, index) => (
+                    <motion.div
+                      key={profession.id}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.06 }}
+                      className="flex-none w-[300px] md:w-[340px]"
+                    >
+                      <div className="p-6 md:p-8 rounded-[5px] bg-card border border-border hover:border-primary/30 hover:shadow-xl transition-all h-full flex flex-col group relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
+                           <Plane className="w-32 h-32 rotate-12" />
+                        </div>
+
+                        <div className="flex items-start justify-between mb-6">
+                          <div className="w-14 h-14 rounded-[5px] bg-primary/5 flex items-center justify-center text-3xl overflow-hidden border border-border/50">
+                            {profession.image_url ? (
+                              <img 
+                                src={getDrivePreviewUrl(profession.image_url)} 
+                                alt={profession.name} 
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = 'https://placehold.co/100x100?text=Erro';
+                                }}
+                              />
+                            ) : (
+                              profession.icon || '✈️'
+                            )}
+                          </div>
+                          <Badge variant="outline" className="rounded-[5px] border-primary/20 bg-primary/5 font-bold uppercase text-[9px] tracking-widest shrink-0">{profession.block_count} blocos</Badge>
+                        </div>
+
+                        <h3 className="text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors">{profession.name}</h3>
+                        <p className="text-sm text-muted-foreground mb-5 flex-1 font-medium line-clamp-2">{profession.description || 'Simulados profissionais de alta performance.'}</p>
+                        
+                        <div className="flex items-center gap-4 text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-5">
+                           <span className="flex items-center gap-1.5"><Layers className="w-3 h-3" />{profession.question_count} Qs</span>
+                           <span className="w-1 h-1 rounded-full bg-border" />
+                           <span className="flex items-center gap-1.5"><Timer className="w-3 h-3" />{profession.total_time || 120} min</span>
+                        </div>
+
+                        <div className="space-y-2">
+                          {profession.active_modes?.includes('banca_anac') && (
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className={`w-full h-11 justify-start rounded-[5px] border-border/50 transition-all ${!canAccessModoBanca ? 'bg-muted/30 opacity-80' : 'hover-yellow'}`} 
+                              onClick={() => handleStartSimulado(profession.id, 'banca_anac')}
+                            >
+                              <Timer className={`w-4 h-4 mr-3 ${!canAccessModoBanca ? 'text-muted-foreground' : 'text-[#F7CE87]'}`} />
+                              <span className={!canAccessModoBanca ? 'text-muted-foreground' : ''}>Modo Banca</span>
+                              {!canAccessModoBanca ? <Lock className="w-3 h-3 ml-auto text-muted-foreground/50" /> : <ArrowRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />}
+                            </Button>
+                          )}
+                          {profession.active_modes?.includes('livre') && (
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="w-full h-11 justify-start rounded-[5px] hover-yellow border-border/50" 
+                              onClick={() => handleStartSimulado(profession.id, 'livre')}
+                            >
+                              <Zap className="w-4 h-4 mr-3 text-accent" />Modo Livre<ArrowRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </Button>
+                          )}
+                          {profession.block_count > 0 && (
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className={`w-full h-11 justify-start rounded-[5px] border-border/50 transition-all ${!canAccessModoBloco ? 'bg-muted/30 opacity-80' : 'hover-yellow'}`} 
+                              onClick={() => handleOpenBlockSelection(profession)}
+                            >
+                              <Layers className={`w-4 h-4 mr-3 ${!canAccessModoBloco ? 'text-muted-foreground' : 'text-warning'}`} />
+                              <span className={!canAccessModoBloco ? 'text-muted-foreground' : ''}>Modo Bloco</span>
+                              {!canAccessModoBloco ? <Lock className="w-3 h-3 ml-auto text-muted-foreground/50" /> : <ArrowRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />}
+                            </Button>
                           )}
                         </div>
-                        <Badge variant="outline" className="rounded-[5px] border-primary/20 bg-primary/5 font-bold uppercase text-[9px] tracking-widest">{profession.block_count} blocos</Badge>
                       </div>
-
-                      <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">{profession.name}</h3>
-                      <p className="text-sm text-muted-foreground mb-6 flex-1 font-medium">{profession.description || 'Simulados profissionais de alta performance.'}</p>
-                      
-                      <div className="flex items-center gap-4 text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-8">
-                         <span className="flex items-center gap-1.5"><Layers className="w-3 h-3" />{profession.question_count} Qs</span>
-                         <span className="w-1 h-1 rounded-full bg-border" />
-                         <span className="flex items-center gap-1.5"><Timer className="w-3 h-3" />{profession.total_time || 120} min</span>
-                      </div>
-
-                      <div className="space-y-2">
-                        {profession.active_modes?.includes('banca_anac') && (
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className={`w-full h-11 justify-start rounded-[5px] border-border/50 transition-all ${!canAccessModoBanca ? 'bg-muted/30 opacity-80' : 'hover-yellow'}`} 
-                            onClick={() => handleStartSimulado(profession.id, 'banca_anac')}
-                          >
-                            <Timer className={`w-4 h-4 mr-3 ${!canAccessModoBanca ? 'text-muted-foreground' : 'text-[#F7CE87]'}`} />
-                            <span className={!canAccessModoBanca ? 'text-muted-foreground' : ''}>Modo Banca</span>
-                            {!canAccessModoBanca ? <Lock className="w-3 h-3 ml-auto text-muted-foreground/50" /> : <ArrowRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />}
-                          </Button>
-                        )}
-                        {profession.active_modes?.includes('livre') && (
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="w-full h-11 justify-start rounded-[5px] hover-yellow border-border/50" 
-                            onClick={() => handleStartSimulado(profession.id, 'livre')}
-                          >
-                            <Zap className="w-4 h-4 mr-3 text-accent" />Modo Livre<ArrowRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
-                          </Button>
-                        )}
-                        {profession.block_count > 0 && (
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className={`w-full h-11 justify-start rounded-[5px] border-border/50 transition-all ${!canAccessModoBloco ? 'bg-muted/30 opacity-80' : 'hover-yellow'}`} 
-                            onClick={() => handleOpenBlockSelection(profession)}
-                          >
-                            <Layers className={`w-4 h-4 mr-3 ${!canAccessModoBloco ? 'text-muted-foreground' : 'text-warning'}`} />
-                            <span className={!canAccessModoBloco ? 'text-muted-foreground' : ''}>Modo Bloco</span>
-                            {!canAccessModoBloco ? <Lock className="w-3 h-3 ml-auto text-muted-foreground/50" /> : <ArrowRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />}
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
+                    </motion.div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
