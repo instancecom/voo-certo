@@ -1,0 +1,824 @@
+﻿bloco_id,text,option_a,option_b,option_c,option_d,correct_answer,difficulty,explanation
+regulamentos_de_trafego_aereo,"Com o objetivo de chamar a atenção para a aeronave entre o pôr e nascer-do-sol, ou em qualquer outro período julgado necessário, todas as aeronaves em vôo deverão exibir luzes:",de táxi,de pouso,anticolisão,,0,medium,PPAV - PP-01
+comunicacoes,"Na prestação do ALRS, quando se receber informações que indiquem que as condições operacionais da aeronave são anormais, mas não indicando que seja possível um pouso forçado, caracteriza a fase de:",perigo,alerta,incerteza,urgência,0,medium,PPAV - PP-01
+comunicacoes,"Não havendo VAC e não sendo recebida nenhuma instrução específica da torre uma aeronave executando o circuito para pouso, ao fim da perna do vento, deverá: curvar a direita e alinhar-se com a RWY curvar a esquerda e alinhar-se com a RWY voar transversalmente ao eixo da RWY para interceptar a reta final voar transversalmente ao eixo da RWY cruzando o segmento de decolagem Os vôos de formação de aeronaves civis deverão ser previamente autorizados pelo órgão competente do(",ANAC,DECEA,CENIPA,COMAR,0,medium,PPAV - PP-01
+comunicacoes,Pode-se afirmar que uma aeronave voando no FL 150 não estará sob:,VFR,IFR,IMC,VMC,0,medium,PPAV - PP-01
+comunicacoes,"O limite vertical superior do espaço aéreo inferior é (inclusive), o FL:",035,145,195,245,0,medium,PPAV - PP-01
+comunicacoes,"Um triângulo vazado, sem estar em negrito, encontrado nas cartas aeronáuticas, indica um:",RELIN,RICEA,RELOS,"RELIAA Uma aeronave será considerada em manobras em área aeroportuária, quando estiver: estiver sendo movimentada ou rebocada com os motores em funcionamento iniciar a corrida de decolagem com as portas fechadas",0,medium,PPAV - PP-01
+comunicacoes,"Quando necessário será dada uma autorização ATC para pouso, através de em um sinal de luz:",verde contínua,vermelha contínua,verde intermitente,branca intermitente,0,medium,PPAV - PP-01
+regulamentos_de_trafego_aereo,"O vôo VFR em espaço aéreo classe G, no FL 095 ou abaixo, terá como limite de velocidade:",alerta,perigo,incerteza,interceptação SAR,0,medium,PPAV - PP-01
+regulamentos_de_trafego_aereo,A autoridade competente para autorizar a realização de uma atividade técnica específica de uma aeronave civil é o(a):,ANAC,SEPC,DECEA,COMAER,0,medium,PPAV - PP-01
+navegacao,"Com o objetivo de indicar a trajetória relativa da aeronave, entre o pôr e o nascer-do-sol, ou em qualquer outro período julgado necessário, todas aeronaves em vôo deverão exibir luzes:",de táxi,de pouso,anticolisão,,0,medium,PPAV - PP-01
+navegacao,"Área restrita de número 08, localizada na jurisdição do COMAR IV, será identificada por:",05 km,10 km,15 km,20 km,0,medium,PPAV - PP-01
+navegacao,"O relatório final de um acidente ocorrido com aeronave civil terá, em princípio, caráter:",secreto,sigiloso,ostensivo,confidencial,0,medium,PPAV - PP-01
+navegacao,"Considerando as condições operacionais ou de segurança, poderão ser utilizados por quaisquer aeronaves, sem distinção de propriedade ou nacionalidade, mediante o ônus da utilização os aeródromos:",SOCORRO,MAYDAY,PANPAN,URGÊNCIA,0,medium,PPAV - PP-01
+navegacao,A aeronave é considerada da nacionalidade do estado em que foi:,projetada,construída,matriculada,homologada,0,medium,PPAV - PP-01
+navegacao,"A área de aeródromo destinada ao pouso, decolagem e táxi de aeronaves, excluído-se os pátios, é a área de:",ONU,ICAO,IATA,ANAC,0,medium,PPAV - PP-01
+navegacao,A circular de informação aeronáutica tem por abreviatura:,ENR,ARC,AIC,AIP,0,medium,PPAV - PP-01
+navegacao,"Os vôos VFR serão efetuados em um nível apropriado à rota, de acordo com a tabela de níveis de cruzeiro, quando em relação ao solo ou água forem realizados acima de:",2000 pés,2500 pés,3000 pés,3500 pés,0,medium,PPAV - PP-01
+navegacao,"As pessoas devidamente habilitadas que, exercem função a bordo de uma aeronave, são os:",aeronautas,aviadores,tripulantes,aeroviários,0,medium,PPAV - PP-01
+navegacao,"A determinação a uma aeronave em vôo de pousar no aeródromo e dirigir-se ao estacionamento, pode ser dada por luz: verde contínua verde intermitente vermelha intermitente branca intermitente A abreviatura correspondente ao Serviço de Informação de Vôo em aeródromo é:",SIPAER,DECEA,COMAR,CENIPA,0,medium,PPAV - PP-01
+navegacao,"No preenchimento do plano de vôo, quando a aeronave não dispuser de um código ICAO para o tipo (TYP), o piloto deverá indicar no campo correspondente:",TBN,RMK,FROM,ZZZZ,0,medium,PPAV - PP-01
+comunicacoes,"Quando aplicável, o menor nível de vôo VFR que poderá ser utilizado por uma aeronave que pretenda voar em rota no rumo magnético 115 graus, é o FL:",035,045,,065,0,medium,PPAV - PP-01
+comunicacoes,"O órgão regional, responsável pela proteção ao vôo no Brasil é o(a):",GER,SRPV,SEPC,COMAR,0,medium,PPAV - PP-01
+comunicacoes,"A área perigosa de número 7, localizada na jurisdição do COMAR III, será identificada por:",SBR 307,SBR 703,SBD 307,SBD 703,0,medium,PPAV - PP-01
+comunicacoes,"A entidade interministerial composta por representantes de vários segmentos da aviação civil e de vários ministérios, é designada por:",CIAA,DIPAA,SIPAA,CNPAA,0,medium,PPAV - PP-01
+regulamentos_de_trafego_aereo,"O comandante de uma aeronave exerce a autoridade inerente a sua função, desde o(a): decolagem até o pouso partida até o corte dos motores sua apresentação até a entrega da aeronave seu embarque na aeronave até o corte dos motores Pessoa civil ou militar que concluiu um estágio de segurança de vôo ou o módulo de prevenção do curso de segurança de vôo (CSV), tem como sigla:",,,ASV,OSV a: 500 pés e 1500 metros 1000 pés e 3000 metros 1500 pés e 5000 metros as previstas na IAC e SID,0,medium,PPAV - PP-01
+regulamentos_de_trafego_aereo,"Nas solicitações de ajustes de velocidade feitas pelo controlador, durante uma vetoração radar, espera-se que os pilotos mantenham a velocidade solicitada, sendo admissível uma variação de até:",05 a,10 a,15 KT,20 KT,0,medium,PPAV - PP-01
+desempenho_e_planejamento,"O documento formal resultante da coleta e da análise de fatos, dados e circunstâncias relacionadas a uma ocorrência de solo, têm como abreviatura:",RICEA,RELIN,RELOS,RELIAA,0,medium,PPAV - PP-01
+desempenho_e_planejamento,"Uma aeronave em aproximação para pouso em um aeródromo cuja elevação é de 2369 pés, QNH 1014.5 hPa, altitude de transição de 6000 pés e sendo 6500 pés o nível de transição, o piloto deverá ajustar o altímetro com o valor do QNH, ao passar pelo:",FL 055,FL 060,FL 065,FL 070,0,medium,PPAV - PP-01
+desempenho_e_planejamento,"A coordenação, do serviço de busca e salvamento é normalmente realizada por um(a):",RCC,ROTA,CTR,TMA a menos veloz fazer curva para a esquerda a mais veloz fazer curva para a esquerda ambas alterarem seus rumos para a direita ambas alterarem seus rumos para a esquerda,0,medium,PPAV - PP-01
+desempenho_e_planejamento,"Quando uma aeronave precisar de tratamento especial, devido transportar enfermo, deverá indicar no item apropriado do plano de vôo (18):",STS/,TBN/,AFIL/,TYP/,0,medium,PPAV - PP-01
+regulamentos_de_trafego_aereo,"O objetivo principal das investigações de acidentes aeronáuticos é: apuração da culpa prevenção de acidentes realização de inquéritos apuração da responsabilidade O serviço de controle de aeródromo, aproximação de área é designado por: ATC AFISd) ADVS O maior nível de vôo VFR a ser utilizado por uma aeronave que pretenda voar em rota, fora de AWY e no rumo magnético 065 graus, é o FL:",135,145,165,195,0,medium,PPAV - PP-02
+regulamentos_de_trafego_aereo,"O órgão regional responsável pela fiscalização do cumprimento das normas relativas à aviação civil no Brasil,",COMAR,ANAC,SRPV,GER,0,medium,PPAV - PP-02
+regulamentos_de_trafego_aereo,"Em caso de interceptação de uma aeronave, salvo instruções em contrário do órgão ATS apropriado,o piloto deverá imediatamente acionar o código transponder:",7600,7700,2000,7500,0,medium,PPAV - PP-02
+regulamentos_de_trafego_aereo,"No preenchimento do formulário do plano de vôo, quando no aeródromo de partida não houver o indicador de localidade (ZZZZ), no item 18, o nome do aeródromo será precedido da abreviatura:",RIF/,TYP/,RMK/,DEP/,0,medium,PPAV - PP-02
+regulamentos_de_trafego_aereo,"Dentre os órgãos abaixo, o que tem competência a nível regional para autorizar e estabelecer as condições relativas ao tráfego aéreo, para vôos de lançamento de objetos, é o:",GER,ANAC,CENIPA,CINDACTA,0,medium,PPAV - PP-02
+regulamentos_de_trafego_aereo,"Antes de partir para um vôo local VFR, o piloto de uma aeronave pousada em um aeródromo que possui todos os órgãos ATS/AIS deve apresentar um plano de vôo:",completo,repetitivo,simplificado,compartilhado,0,medium,PPAV - PP-02
+navegacao,"Sempre que o vôo se realiza de acordo com as normas vigentes, ninguém poderá opor-se, em razão da propriedade na superfície ao(a):",pouso,arremetida,decolagem,sobrevôo,0,medium,PPAV - PP-03
+navegacao,"Quando um aeródromo Brasileiro possuir uma estação de telecomunicações aeronáuticas (AFS), as duas primeiras letras do indicador de localidade serão:",SD,SW,,,0,medium,PPAV - PP-03
+navegacao,"O órgão ATC, que proporciona separação entre as aeronaves em vôo VFR especial, é o(a):",EPTA,ACC,App,TWR,0,medium,PPAV - PP-03
+navegacao,"Em aeródromo não controlado provido de AFIS, uma NTV deverá ser apresentada ao órgão AIS, quando o aeródromo de destino estiver distante até:",20NM,27NM,50NM,54NM,0,medium,PPAV - PP-03
+navegacao,"Quando aplicável, o menor nível de vôo para a realização de um vôo VFR no rumo magnético de 2200 , é o FL:",035,045,145,195,0,medium,PPAV - PP-03
+navegacao,"O documento que contém o relato de fatos perigosos ou potencialmente perigosos para a atividade aérea e que permite que à autoridade competente a adoção de medidas corretivas adequadas, é o:",RELPER,RELOS,RECIN,RELIAA,0,medium,PPAV - PP-03
+navegacao,"Na eventualidade de uma aeronave que disponha de equipamento do SSR, estar sendo interceptada pela defesa aérea, o piloto deverá alocar o código:",2000,7500,7600,7700,0,medium,PPAV - PP-03
+navegacao,As regras gerais devem ser cumpridas em vôo e na área de:,pouso,manobras,movimento,estacionamento,0,medium,PPAV - PP-03
+navegacao,"Uma condição que envolve a segurança da aeronave ou de alguma pessoa a bordo, mas que não requer assistência imediata; é definida como a situação de:",socorro,urgência,emergência,interferência ilícita,0,medium,PPAV - PP-03
+navegacao,"O grupo de pessoas, adequado às características de um acidente aeronáutico, designado para a investigação desse acidente, tem como sigla:",CIAA,CPAA REGULAMÉÑTOS%?,ASV,OSV,0,medium,PPAV - PP-03
+comunicacoes,Aeródromo cujas condições de segurança determinam a suspensão das operações de pouso e decolagem é um aeródromo:,impraticável,interditado,fechado,inoperante,0,medium,PPAV - PP-03
+comunicacoes,"Quando o circuito de tráfego de um aeródromo não for padrão, a circulação da área de pouso será indicada através de uma:",IAC,ADC,VAC,ADP,0,medium,PPAV - PP-03
+comunicacoes,"Considerando-se o MSL, uma aeronave evoluindo em TMA classe ""C"", poderá desenvolver velocidade maior que 250 KT, quando estiver acima de:",8000 FT,10000 FT,14500 FT,19500 FT,0,medium,PPAV - PP-03
+comunicacoes,"Uma cruz de cor contrastante, branca ou amarela colocada na pista de pouso, • indica:",rumo de decolagem,pista impraticável,pista interditada,pouso proibido,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Pretendendo-se realizar um vôo de operação local, cuja hora de calços fora seja 11:00Z, a respectiva NTV entregue a sala AIS terá validade até as:",10:10Z,11:30Z,11:45Z,12:OOZ,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Quando o piloto em comando de uma aeronave solicita os recursos de salvamento e de prestação de socorro para o atendimento de aeronave em emergência (trem de pouso avariado), é a condição de:",alerta amarelo,incerteza,urgência,socorro,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Voando sob VFR em espaço aéreo não controlado na altitude de 3000 FT ou quando aplicável na altura de 1000 FT AGL, o piloto de um avião poderá voar com visibilidade mínima de:",1000 m,3000 m,5000 m,8000 m,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Em um circuito de tráfego de aeródromo, a trajetória de vôo paralela à pista em uso e com sentido contrário ao do pouso, é denominada perna:",base,do vento,de través,contra o vento,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Os elementos civis com curso de segurança de vôo realizado no CENIPA, serão identificados pela sigla:",,IAC,osv,ASV,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"O menor nível de vôo, dos abaixo indicados, que pode ser selecionado para a realização de um vôo VFR em rota, no rumo magnético 060 graus, é o FL:",045,055,065,075,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Quando se receber a informação ou se deduzir que a aeronave fará um pouso forçado ou que já o tenha efetuado, a mesma se encontrará na fase de:",alerta,perigo,urgência,incerteza,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Para a realização de vôo VFR em CTR e TMA, o piloto deverá apresentar na sala AIS da localidade de partida, um(a):",NTV,PLN,RPL,RIF,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Teto é a altura compreendida entre o solo ou a água e a base da mais baixa camada de nuvens que cobre mais da metade do céu, abaixo de:",14500 FT,20000 FT,24500 FT,29000 FT e;PrOva: 08,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,A abreviatura ETA significa hora estimada de:,partida,sobrevôo,chegada,início de táxi,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Espaço aéreo controlado, situado geralmente na confluência de rotas ATS e nas imediações de um ou mais aeródromos, tem como abreviatura:",SISCEAB,SIPAA,SIPAER,CENIPA,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"O indicativo de chamada, em radiotelefonia, do órgão App é:",torre,centro,controle,tráfego,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Um vôo sob VFR em uma FIR, no rumo 045 graus magnéticos, pode ser conduzido no FL:",045,065,135,145,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,A separação vertical em rota é obtida exigindo-se que as aeronaves voem nos níveis que lhes forem destinados e ajustem seus altímetros com valores referentes ao:,QFF,QNE,QNH,QFE,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Em um vôo conduzido segundo VFR, o avião deve manter-se afastado lateralmente de nuvens ou outras formações de opacidade equivalente, no mínimo:",1000 metros,1500 metros,5000 metros,8000 metros,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"As posições em que as aeronaves, no circuito de tráfego e no solo, normalmente recebem autorizações do órgão de controle de aeródromo, por luzes ou via fonia, chama-se:",reta final,perna do vento,posições críticas,tráfego padrão,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"O relatório de investigação, resultante da coleta e da análise de fatos, dados e circunstâncias relacionadas a um acidente aeronáutico; tem como abreviatura:",RELIN,RICEA,RELIAA,REIPER,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"As mensagens inerentes ao plano de vôo, considerando-se a EOBT, serão aceita até o limite de:",60 minutos,45 minutos,35 minutos,30 minutos,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"As pistas orientadas nos rumos magnético 157 e 232 graus, respectivamente, serão identificadas como:",15 e 23,15 e 24,16 e 23,16 e 24,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,Dá-se a designação ALS a um sistema de luzes de:,aproximação,obstáculo,cabeceira,pista,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Quando se saiba ou se suspeite que uma aeronave está sendo objeto de interferência ilícita, fica caracterizada fase de:",salvamento,incerteza,perigo,alerta,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"O órgão que tem por função dar orientação normativa, supervisão técnica e formação de pessoal do SIPAER é conhecido pela sigla:",OSV,DIPAA,CIPAA,CENIPA,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Das alternativas abaixo, a mensagem de posição tem como seqüência correta:","posição, identificação, nível, hora, próxima posição e hora de sobrevôo","identificação, posição, hora, nível, próxima posição e hora de sobrevôo","nível, hora, posição, identificação, próxima posição e hora de sobrevôo","hora posição, nível, identificação, próxima posição e hora de sobrevôo",0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"O limite vertical inferior das aerovias superiores é (exclusive), o FL:",135,145,195,245,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"A publicação que contém informações aeronáuticas duradouras, indispensáveis à navegação aérea, tem como abreviatura:",AIC,AIP,AIRAC,NOTAM,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"O Centro de Coordenação de Salvamento, Servco de Informação de Vôo em aeródromo e área de Controle, respectivamente, tem as abreviaturas:","sn, FIS e CTA","RCC, FIS e UTA","RCC, AFIS e CTA","sn, AFIS e CTZ",0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Havendo durante o vôo alguma ocorrência anormal que envolva a segurança da aeronave, o piloto tem como opção o preenchimento e envio ao CENIPA de um:",RIAA,RELIN,RCSV,RELIAA,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Espaço aéreo de dimensões definidas, onde o vôo só poderá ser realizado sob condições pré-estabelecidas, definem uma área:",perigosa,restrita,proibida,sensível,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Caso uma aeronave deseje ingressar em uma área restrita, além de se ajustar às condições das restrições, deverá obter permissão através do:",GER,ANAC,SRPV,COMAR,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"O serviço prestado para notificar aos órgãos apropriados a respeito das aeronaves que necessitam ajuda de busca e salvamento, e para auxiliar tais órgãos no que for necessário, é designado 'de:",SAR,ADVS,ALRS,AFIS,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Com referência ao solo ou água, os vôos VFR em rota serão efetuados em um nível de vôo apropriados, quando realizados acima de:",abaixo da VMC,acima da IMC,sob IFR,sob VFR,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Na AIP-BRASIL a parte que contém informações sobre espaço aéreo condicionado, é a:",AD,ENR,GEN,RAC,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Exceto nas condições previstas, o vôo de aviões sobre lugares habitados e grupo de pessoas ao ar livre não se realizará abaixo da altura de:",1000 metros,600 metros,500 metros,300 metros,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Quando uma aeronave acidentada estiver sobre a pista, pode-se considerar que o aeródromo está:",fechado,interditado,indisponível,impraticável,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Se houver tráfego na reta final e apenas uma aeronave no ponto de espera, esta deverá manter-se, em relação à direção do pouso, a:",incerteza,alerta,perigo,urgência,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Uma aeronave voando visual em TMA classe C nu D, poderá desenvolver velocidade maior que 250 KT, quando estiver acima do nível de vôo:",035,145,100,150,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Um APP tem a atribuição de emitir autorizações de tráfego aéreo às aeronaves que estejam voando, ou que se proponham a voar, dentro de uma:",ATZ e CTR,AWY e CTA,TMA e/ou CTR,TMA e/ou ATZ,0,medium,PPAV - PP-03
+comunicacoes,"Na AIP-Brasil, as informações sobre busca e salvamento são encontradas na parte:",AD,MAP,GEN,"ENR O circuito de tráfego padrão para aeronaves a jato é efetuado na altura de: 500 pés1000 pes 1500 pés2000 pes Um halter branco com dois traços negros, na área de sinalização, indica que as aeronaves deverão: curvar à esquerda após a decolagem taxiar somente em pistas compactadas precauções na aproximação e no pouso pouso e decolagem em pistas pavimentadas",0,medium,PPAV - PP-03
+comunicacoes,"A hora limite para entrega de um plano de vôo completo de uma aeronave, cuja EOBT seja 13:20 Z, será:",12:20Z,12:35Z,13:10Z,13:15Z,0,medium,PPAV - PP-03
+comunicacoes,"O tipo de manutenção que é realizada através de inspeções ou revisões periódicas, objetivando a preservação da segurança de vôo, é denominado manutenção:",corretiva,avaliativa,preventiva,qualitativa,0,medium,PPAV - PP-03
+comunicacoes,"O nível de vôo mais baixo disponível para uso, acima da altitude de transição, é o nível:",45 minutos,60 minutos,35 minutos,10 minutos,0,medium,PPAV - PP-03
+comunicacoes,O serviço prestado com a finalidade de proporcionar separações entre aeronaves sob responsabilidade de um órgão ATC é o de:,alerta,controle,informação,assessoramento,0,medium,PPAV - PP-03
+comunicacoes,"Durante o dia, uma aeronave em vôo nas proximidades de um aeródromo e com o código SSR 7600 poderá visualizar sinais luminosos emitidos pela TWR, dentro de um raio de até:",01 km,05 km,10 km,15 km,0,medium,PPAV - PP-03
+comunicacoes,"Estando sob controle de um APP, as aeronaves terão entre si uma separação vertical mínima, de:",500 FT,1000 FT,1500 FT,2000 FT,0,medium,PPAV - PP-03
+comunicacoes,"Em uma mensagem de posição, transmitida por uma aeronave ao órgão ATS, após o nível de vôo ou altitude, o piloto deverá informar: autonomia e próxima posição autonomia e condições de vôo próxima posição e condições de vôo próxima posição e hora de sobrevôo Uma pista, orientada na direção magnética 003 graus, terá na sua cabeceira, a seguinte numeração: O deficiente planejamento, erro cometido pelo piloto, decorrente de inadequada preparação para o vôo ou parte dele, está dentro da área do fator:",material,humano,operacional,comportamental,0,medium,PPAV - PP-03
+comunicacoes,A abreviatura ETO significa hora estimada de:,partida,chegada,sobrevôo,calços fora,0,medium,PPAV - PP-03
+comunicacoes,"No plano de vôo, o valor declarado como velocidade de cruzeiro, é a:",VA,VC,,,0,medium,PPAV - PP-03
+comunicacoes,"Dentre as aeronaves abaixo citadas, assinale a que tem prioridade na seqüência para decolagem: grande jato em vôo internacional turboélice militar em manobras helicóptero em missão policial de resgate helicóptero conduzindo o Presidente da República A largura máxima de uma aerovia inferior, entre dois auxílios-rádio que distam 120 NM entre si, é de:",CMV,VMC,VFR,CMVV,0,medium,PPAV - PP-03
+comunicacoes,"O encerramento do plano de vôo para um aeródromo desprovido de órgão ATS ocorrerá, automaticamente, ao se completar a(o):",ETA,EET,ETO,ARR,0,medium,PPAV - PP-03
+comunicacoes,"O deficiente planejamento, erro cometido pelo piloto, decorrente de inadequada preparação para o vôo ou parte dele, está dentro da área do fator:",humano,material,operacional,comportamental,0,medium,PPAV - PP-03
+comunicacoes,"Considere EOBT 09:30Z, se houver necessidade de enviar uma mensagem DLA, a hora limite será:",09:45Z,09:55Z,10:05Z,10:15Z,0,medium,PPAV - PP-03
+comunicacoes,"O vôo VFR de aviões sobre descampados, exceto em operações de pouso e decolagem, deverá ser realizado a uma altura mínima de:",200 pés,300 pés,500 pés,1000 pés,0,medium,PPAV - PP-03
+comunicacoes,"O espaço aéreo de dimensões definidas, dentro do qual existem riscos potenciais ou atuais para a navegação aérea, é uma área:",proibida,restrita,de risco,perigosa,0,medium,PPAV - PP-03
+comunicacoes,"A altitude oficial de um aeródromo será indicada pelo altímetro de bordo, de uma aeronave, quando esta estiver pousada, com o altímetro ajustado em:",altura,altitude,nível de vôo,nível de transição,0,medium,PPAV - PP-03
+comunicacoes,"Os órgãos de controle de tráfego aéreo, ACC, APP e TWR controlam respectivamente os seguintes espaços aéreos:","AWY, ATZ E CTZ","ATZ, AWY E CTR","CTR, ATZ E AWY","CTA, TMA E ATZ",0,medium,PPAV - PP-03
+comunicacoes,"Sobre um auxílio-rádio, uma aerovia inferior tem a largura de:",04 NM,08 NM,11 NM,16 NM,0,medium,PPAV - PP-03
+comunicacoes,O limite vertical superior de uma região de informação de vôo é o:,GND,UNL,FL 145 inclusive,FL 245 exclusive,0,medium,PPAV - PP-03
+comunicacoes,"Espaço aéreo classe G, onde será proporcionado o ALRS a todas as aeronaves e, o FIS para as que disponham de equipamento rádio em operação, tem como abreviatura:",AWY,UTA,,ADR,0,medium,PPAV - PP-03
+comunicacoes,"O AFIS será proporcionado a todo o tráfego na área de movimento e a todas as aeronaves em vôo no espaço aéreo inferior, num raio de:",11 NM,16 NM,27 NM,50,0,medium,PPAV - PP-03
+comunicacoes,"No rumo 145 graus magnéticos, o vôo VFR em rota na FIR, poderá ser conduzido no FL:",155,145,110,095,0,medium,PPAV - PP-03
+comunicacoes,"A distância vertical de um nível, um ponto ou objeto considerado como ponto, medido a partir do MSL, chama-se:",altura,altitude,nível de vôo,ajuste do altímetro,0,medium,PPAV - PP-03
+comunicacoes,"No circuito de tráfego, o segmento perpendicular à pista em uso, mais próximo à cabeceira oposta a do pouso, é denominado perna:",base,de través,do vento,contra o vento,0,medium,PPAV - PP-03
+comunicacoes,"Caso não existam marcas de ponto de espera no táxi, as aeronaves deverão manter posição junto à pista em uso. Sendo esta de 890 m de comprimento, a uma distância não inferior a:",50 metros,40 metros,30 metros,20 metros,0,medium,PPAV - PP-03
+comunicacoes,"Na operação de táxi, durante uma ultrapassagem previamente autorizada pela torre, a aeronave colide com outra. O responsável pelo acidente será o:",controle de solo,piloto em comando,operador da torre,administrador do AD,0,medium,PPAV - PP-03
+comunicacoes,"Um aeródromo estará em condições de operação VFR para aviões, desde que os valores de teto e visibilidade, respectivamente, sejam no mínimo:",600 FT / 1500 m,1000 FT / 3000 m,1500 FT / 3000 m,1500 FT / 5000 m,0,medium,PPAV - PP-03
+comunicacoes,"A situação na qual existe dúvida quanto à segurança de uma aeronave e a de seus ocupantes, caracteriza a fase de:",alerta,perigo,incerteza,apreensão,0,medium,PPAV - PP-03
+comunicacoes,As informações sobre aeródromos e ou helipontos da AIP-BRASIL estão contidas na parte:,AD,ENR,GEN) AGA,,0,medium,PPAV - PP-03
+comunicacoes,"O limite vertical superior para a realização de um vôo VFR, é o nível de vôo:",100 exclusive,145 inclusive,195 exclusive,245 inclusive,0,medium,PPAV - PP-03
+comunicacoes,"RBHA 91, a autonomia mínima exigida para um avião realizar vôo VFR, deverá ser suficiente para chegar ao destino e voar mais.'",15 min,30 min,45 min,60 min,0,medium,PPAV - PP-03
+comunicacoes,"A área do aeródromo destinada ao pouso, decolagem e táxi de aeronaves, incluindo os pátios, chama-se área de:",táxi e pouso,manobras,movimento,pouso e decolagem,0,medium,PPAV - PP-03
+comunicacoes,O limite vertical inferior das regiões de informação de vôo é o:,"FL 245, inclusive","FL 245, exclusive",solo ou água,ilimitado,0,medium,PPAV - PP-03
+comunicacoes,"A aeronave que tiver recebido autorização de pouso e deixar de fazê-lo, passados 5 minutos sem que se tenha conseguido manter contato, será considerada em emergência na fase de:",alerta,perigo,incerteza,apreensão,0,medium,PPAV - PP-03
+comunicacoes,"O sinal de luz vermelha intermitente, emitido por uma TWR a uma aeronave em vôo, significa: aeródromo interditado aeródromo impraticável regresse e pouse neste aeródromo permaneça no circuito de tráfego O relatório de investigação, baseado nos dados do RELIAA, destinado a divulgar a conclusão oficial da Aeronáutica com relação à ocorrência de um acidente aeronáutico, é o:",02:15 h,03:59 h,04:05 h,04:29 h,0,medium,PPAV - PP-03
+comunicacoes,"Dentre as abaixo, a maior velocidade permitida no FL 045, quando em vôo VFR dentro de espaço aéreo de classe B, é de:",170 a,250 KT,280 KT,370 KT,0,medium,PPAV - PP-03
+comunicacoes,"Entrando em uma TMA com plano de vôo VFR e não conseguindo contato rádio com o APP e outras TWR, a aeronave deverá chamar, como última opção o(a): defesa aérea TWR do AD principal ACC com sede na TMA TWR do espaço adjacente Caberá ao piloto em comando de uma aeronave em vôo VFR providenciar sua própria separação em relação a obstáculos e demais aeronaves por meio do uso da visão, exceto no espaço aéreo classe: Quando as condições de tráfego o permitirem os vôos VFR especial poderão ser autorizados pelo(a):",ACC,App,TWR,AFIS,0,medium,PPAV - PP-03
+comunicacoes,"Não será compulsória a apresentação do plano de vôo: antes de ser realizado vôo IFR antes da partida de AD provido de órgão ATS sempre que voar através de fronteiras internacionais sem equipamento rádio dentro de fronteiras nacionais 19- Em um aeródromo, cuja elevação seja de 1700 FT, uma aeronave turboélice deverá efetuar o circuito de tráfego padrão a uma altura de:",1000 FT,1500 FT,2700 FT,3200 FT,0,medium,PPAV - PP-03
+comunicacoes,"Em caso de óbito de pessoa a bordo, o comandante deve providenciar, na próxima escala, a presença de autoridade:",policial,médica,sanitária,aeronáutica,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Uma aerovia inferior entre dois auxílios rádios, distantes entre si 44NM, terá uma largura máxima de:",04 NM,08 NM,11 NM,21 NM,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"O serviço de controle de área, é normalmente prestado por um(a):",ANAC,SRPV,DECEA,CINDACTA,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Quando aplicável, o nível máximo para a realização de um vôo VFR é o FL:",035,045,135,145,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Em espaço aéreo controlado, a visibilidade em vôo para a realização de um vôo VFR de avião no FL 055, deve ser igual ou superior a:",3 km,,,10 km,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"No circuito de tráfego padrão, ""pista em uso 18"", o rumo da perna base será de:",090 0,1800,2700,2800,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"A área do AD destina as operações de pouso e decolagem das aeronaves, é denominada área de:",rolagem,pouso,movimento,manobras,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Sabendo-se que o aeródromo ficou interditado entre 11:55Z e 12:50Z, um plano de vôo apresentado às 11:15Z e com hora estimada de calços fora para 12:00Z, teve validade até as:",12:30Z,13:OOZ,13:20Z,13:35Z,0,medium,PPAV - PP-03
+comunicacoes,"Em pistas, onde as marcas de ponto de espera no táxi sejam inexistentes, as aeronaves deverão manter-se, em relação a RWY, a uma distância mínima de 50 metros quando a mesma tiver um comprimento igual ou maior de:",800 metros,850 metros,900 metros,1200 metros %PfOvav15.,0,medium,PPAV - PP-03
+comunicacoes,Toda aeronave que se encontre em situação de perigo latente ou iminente será considerada uma aeronave em:,identificação,emergência,pouso forçado,fase de incerteza,0,medium,PPAV - PP-03
+comunicacoes,O espaço aéreo condicionado SBP-509 é uma área:,permitida,proibida,restrita,perigosa,0,medium,PPAV - PP-03
+comunicacoes,A largura normal de uma RNAV é de:,43 NM,21 NM,16 NM,11 NM,0,medium,PPAV - PP-03
+comunicacoes,"As aerovias G 678 e UWII pertencem, respectivamente, ao espaço aéreo:",inferior e inferior,inferior e superior,superior e inferior,superior e superior,0,medium,PPAV - PP-03
+comunicacoes,"O serviço que tem como objetivo aumentar a eficiência do controle, pela transmissão automática e repetitiva de informação de rotina, porém essenciais ao tráfego aéreo, tem como sigla:",AFIS,ATIS,ATAS,ADFIS,0,medium,PPAV - PP-03
+comunicacoes,"Um avião em vôo VFR em espaço controlado deverá manter das nuvens,' uma distância vertical, de pelo menos:",150 m,300 m,500 m,1000 m,0,medium,PPAV - PP-03
+comunicacoes,"Quando um avião, no circuito de tráfego, encontrase paralelo à pista em uso, voando no mesmo sentido do pouso, deve reportar a TWR que está na perna:",base,de través,do vento,contra o vento,0,medium,PPAV - PP-03
+comunicacoes,"Em relação ao EOBT, o tempo mínimo para a entrega de uma NTV a sala AIS, é de:",10 min,15 min,30 min,45 min,0,medium,PPAV - PP-03
+comunicacoes,A abreviatura ETD significa hora estimada de:,partida,posição,chegada,sobrevôo,0,medium,PPAV - PP-03
+comunicacoes,"O aeródromo no qual uma aeronave pode pousar, logo após a decolagem, se for necessário, caso não seja possível utilizar o aeródromo de saída é a definição de aeródromo de alternativa:",pós-decolagem,de emergência,de destino,em rota,0,medium,PPAV - PP-03
+comunicacoes,O maior nível de vôo para a realização de um vôo VFR no rumo magnético de 090 graus é o FL:,095,135,145,195,0,medium,PPAV - PP-03
+comunicacoes,"A aeronave que pousar num aeródromo com AFIS, deverá manter-se na escuta da estação aeronáutica, até :",a parada dos motores,livrar a pista em uso,a entrada do pátio,o início do táxi,0,medium,PPAV - PP-03
+comunicacoes,"Após um acidente aeronáutico, todo tripulante terá um de seus documentos cancelado. Indique qual:",CCv,CCF,licença de PPH,habilitação noturna,0,medium,PPAV - PP-03
+comunicacoes,"A autorização ATC ""livre pouso"", consiste em um sinal contínuo de luz:",verde continua,vermelha continua,verde intermitente,branca intermitente,0,medium,PPAV - PP-03
+comunicacoes,"RBHA 91: autonomia mínima para um avião voar VFR entre aeródromos de uma mesma TMA, sabendo-se que o tempo de vôo até o destino é de 45 minutos, será de:",00:45 h,01:05 h,,01:30 h,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,O órgão principal do SIPAER é o(a):,GER,ANAC,DECEA,CENIPA,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"A velocidade de cruzeiro de 220 quilômetros por hora será registrada, no pland de vôo, com a codificação:",1&lt;0220,2201&lt;M,KM220,02201&lt;,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Pode-se afirmar que uma aeronave, voando no FL 050, está voando sob:",IFR,IMC,VFR,VMC,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Requisitos de autonomia para um vôo VFR de um avião (RBHA 91). Tempo de vôo SBMT para SBLO 01:50 h e SBLO para SBML 00:30 h, considerando os tempos fornecidos, indique qual a autonomia necessária para o vôo no período diurno entre os aeródromos envolvidos:",02:10 h,02:35 h,03:05 h,03:16 h,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"A instrução dada pela TWR, a uma aeronave sem rádio, para que esta regresse e pouse, é feita através de um sinal de luz intermitente:",verde,branca,amarela,vermelha,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"As aeronaves que sobrevoarem aeródromos cóm AFIS no espaço aéreo inferior num raio de 27 NM, deverão manter escuta do órgão ATS identificado como:",torre,rádio,centro,controle,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Os avisos e, ou informações emitidos pelos CRN ou CGN, das alterações nas instalações e nos métodos de operação dos SISCEAB, é designado pela abreviatura:",AIP,AIC,NOTAM,ROTAER,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"A abreviatura ""TWY"" significa:",pista,aerovia,pista de táxi,eixo de pista,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"As aeronaves, no circuito de tráfego, deverão reportar a torre de controle a situação do respectivo trem de pouso, quando na perna:",base,do vento,de través,contra o vento,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Qualquer vôo, desde que realizado abaixo do nível mínimo de uma aerovia, será referido em termos de",nível de vôo,elevação,altura,altitude,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,O órgão ATS que proporciona o ATC entre as aeronaves em vôo sob VFR especial é o(a):,EPTA,ACC,App,TWR,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"O vôo visual de aviões sobre o mar, exceto em operações de ARR ou DEP e, ou quando autorizado pelo DECEA, não poderá ser realizado abaixo da altura mínima de:",060 metros,150 metros,300 metros,500 metros,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"O circuito de tráfego de aeródromo, para aeronaves a hélice, deverá ser efetuado a uma altura de:",500 pés,1000 pés,1500 pés,3000 pés,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,A velocidade de cruzeiro da aeronave é de 110 nós. No PLN de Vôo deverá ser registrada da seguinte forma:,NOIIO,110 KT,110 NM/hora,110 KNOTS,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Dentre os abaixo citados, o nível apropriado para a realização de um vôo VFR em rota, no rumo magnético 1900, é o FL:",075,080,085,090,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"O serviço de controle de área é, normalmente, prestado por um(a):",ACC,APP,TWR,AFIS,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"A área de abordagem da segurança de vôo que se refere ao desempenho do ser humano nas atividades relacionadas ao vôo, é o fator:",humano (FH)b) material (FM),,,comportamental (F,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"O FPL, a partir da hora estimada de calços fora, é válido por:",60 min,45 min,30 min,15 min,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Em AD controlado, o AFIS é normalmente prestado por um(a):",App,ACC,TWR,AFIS,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"A fim de prevenir colisões entre aeronaves, acelerar e manter ordenado o fluxo de tráfego aéreo, o serviço de controle de área será proporcionado aos vôos controlados em:",TMA,AWY,CTR,ATZ,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,São espaços aéreos controlados:,TMA/CTR/ATZ,UTA/FIR/TMA,FIR/ATZ/TMA,CTR/TMA/FIR,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Após a partida de localidade desprovida de órgão ATS/ AIS, a aeronave que pretenda voar VFR em rota, deve apresentar em vôo ao órgão ATS apropriado o plano:",diurno,noturno,AFIL,FPL,0,medium,PPAV - PP-03
+instrumentos_de_bordo,"O plano de vôo relativo a uma série de vôos regulares, que se realizam freqüentemente com idênticas características básicas, é denominado de:",PIN,RPL,SPL,CPL,0,medium,PPAV - PP-03
+instrumentos_de_bordo,"No plano de vôo, o item 18 deverá conter compulsoriamente o indicador de localidade ou o nome do aeródromo da última decolagem precedido da abreviatura :",TYP/,RALT/,ALTN/,"FROM/ ef.o.v.a:.wi8, 01— A abreviatura FPC indica uma carta de rota área vôo por contato",0,medium,PPAV - PP-03
+desempenho_e_planejamento,"Quando utilizamos a tabela para a determinação do nível de transição, comparando o valor do QNH com a pressão de 1013.2 HPA, concluímos que se o valor do QNH for igual ou menor, o nível de transição será:",igual,maior,menor,indiferente,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"A posição crítica, a partir da qual se liga o equipamento transponder, é a:",uno,dois,três,cinco,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Na AIP — BRASIL, a parte que contém as abreviaturas internacionais e nacionais utilizadas nas publicações AIS é identificada pela abreviatura:",AD,ENR,GEN,RAC,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Com a finalidade de reduzir os riscos da esteira de turbulência, entre uma aeronave leve ou média que decola da cabeceira da pista; atrás de uma aeronave pesada, a separação mínima será de:",1 min,2 min,3 min,5 min,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"O plano de vôo que abrange as modificações, caso haja, resultante de autorizações posteriores é denominado de plano de vôo:",em vigor,repetitivo,apresentado,suplementar,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Utilizando o equipamento radar, o controlador será o responsável pela navegação da aeronave, quando estiver sendo prestado o serviço de:",vetoração,vigilância,informação,assessoramento,0,medium,PPAV - PP-03
+regulamentos_de_trafego_aereo,"Quando o número de pessoas a bordo for desconhecido no momento da apresentação do FPL, deverá ser inserida a abreviatura:",FROM,VHF,TBN,PAX,0,medium,PPAV - PP-03
+meteorologia,"O movimento que a terra faz em torno de seu próprio eixo a cada 24 horas , responsável pelo dias e noites denomina-se:",rotação,translação,revolução,eclíptica,0,medium,PPAV - PP-04
+meteorologia,"A temperatura Qbtida em vôo e lida diretamente no instrumento de bordo apropriado, denomina-se temperatura:",real,estática,indicada,verdadeira,0,medium,PPAV - PP-04
+meteorologia,A noite a temperatura do solo diminui pelo processo de:,radiação,convecção,condução,advecção,0,medium,PPAV - PP-04
+meteorologia,A dispersão ou difusão da luz solar tem início na camada da:,exosfera,ionosfera,tropopausa,estratosfera,0,medium,PPAV - PP-04
+meteorologia,"Das alternativas relacionadas abaixo, indique aquela que apresenta maior albedo:",pântano,topo de nuvem,floresta,terreno regular,0,medium,PPAV - PP-04
+meteorologia,O gradiente térmico na tropopausa é:,negativo,positivo,normal,isotérmico,0,medium,PPAV - PP-04
+meteorologia,"O limite superior da camada atmosférica, onde tem início a filtragem seletiva, é de aproximadamente:",50 a 100 km,150 a 200 km,200 a 300 km,400 a 500 km,0,medium,PPAV - PP-04
+meteorologia,"As porcentagens médias de nitrogênio e de oxtgênio na atmosfera terrestre, são respectivamente de:",,,31 e 68,68 e 31,0,medium,PPAV - PP-04
+meteorologia,"A camada da atmosfera que apresenta maior concentração gasosa e sofre o efeito direto do aquecimento da superfície terrestre, denomina-se:",exosfera,ionosfera,troposfera,estratosfera,0,medium,PPAV - PP-04
+meteorologia,O altímetro de uma aeronave fornece seus valores baseado no(a):,temperatura,velocidade do vento,pressão atmosférica,umidade,0,medium,PPAV - PP-04
+meteorologia,"Quando o altímetro de uma aeronave é ajustado para o valor da pressão de 1013,2 hPa, suas indicações serão fornecidas em termos de:",altura,altitude pressão,altitude,altitude verdadeira,0,medium,PPAV - PP-04
+meteorologia,"A distância vertical que separa uma superfície isobárica do nível do mar, denomina-se:",1.900 pés,2.200 pés,2.500 pés,2.800 pés,0,medium,PPAV - PP-04
+meteorologia,O FL é sempre em função do:,QNH,QNE,QFF,QFE,0,medium,PPAV - PP-04
+meteorologia,"Uma aeronave sobrevoa Brasília no FL060. A elevação da pista é de 3.450 pés, o QNH no momento do sobrevôo é de 1008,2 hPa. Com todas estas informações, tem-se que altitude pressão da aeronave",6.000 pés,6.150 pés,6.090 pés,5.850 pés,0,medium,PPAV - PP-04
+meteorologia,Quando a visibilidade horizontal de um aeródromo é inferior da 50 metros a mesma é considerada como:,zero,relativa,variável,irrelevante,0,medium,PPAV - PP-04
+meteorologia,"Ao realizar uma observação meteorológica foi constatado que a visibilidade horizontal era de 2100 metros e a umidade relativa de 95%. Com tais informações, como viria a codificação no METAR.",2000 HZ,2100 HZ,2000 BR,2100 BR,0,medium,PPAV - PP-04
+meteorologia,"Quando a proporção de vapor de água atinge 1 por cento de um volume de ar considerado, pode-se afirmar que a umidade relativa é de:",25%,,75%,100%,0,medium,PPAV - PP-04
+meteorologia,"Quando a visibilidade horizontal de um aeródromo for de 1.200 metros e a umidade relativa de 75%, poderá estar ocorrendo:",seca,névo,névo,ar saturado,0,medium,PPAV - PP-04
+instrumentos_de_bordo,"Dos fenômenos abaixo, identifique a precipitação líquida que, dependendo da intensidade poderá reduzir a visibilidade na superfície:",úmida,granizo,chuvisco,névo,0,medium,PPAV - PP-04
+instrumentos_de_bordo,"As latitudes compreendidas entre os círculos polares e os trópicos, denominam-se:",árticas,temperadas,tropicais,equatoriais,0,medium,PPAV - PP-04
+instrumentos_de_bordo,"A camada da atmosfera onde a temperatura do ar sofre um decréscimo de 2 0C/1.000 pés, denomina-se:",tropopausa,baixa atmosfera,estratosfera,atmosfera superior,0,medium,PPAV - PP-04
+instrumentos_de_bordo,A temperatura do ar a 12.000 pés de altitude é de 50 Celsius positivos. Considerando o gradiente térmico padrão ao nível do mar tem-se temperatura de:,100C,290C,300C,25 0C,0,medium,PPAV - PP-04
+instrumentos_de_bordo,Os elementos meteorológicos que sempre decrescem com o aumento da altitude são:,temperatura e pressão,pressão e densidade,umidade e densidade,temperatura e umidade,0,medium,PPAV - PP-04
+instrumentos_de_bordo,"Ao nível do mar a pressão parcial do oxigênio, expressa em hPa, é aproximadamente de:",200,400,600,800,0,medium,PPAV - PP-04
+instrumentos_de_bordo,Os dois instantes do ano em que a iluminação é máxima num hemisfério e mínima no outro são:,3.000 pés,3.930 pés,4.140 pés,4.350 pés,0,medium,PPAV - PP-04
+instrumentos_de_bordo,"Segundo os conceitos da ISA, a altura da atmosfera padrão em metros, é de:",10.000,15.000,20.000,30.000,0,medium,PPAV - PP-04
+instrumentos_de_bordo,"O tipo de nevoeiro normalmente associado aos deslocamentos de massas de ar, denomina-se nevoeiro:",de radiação,convectivo,frontal,de brisa,0,medium,PPAV - PP-05
+instrumentos_de_bordo,"Segundo o atlas internacional, as nuvens médias nas latitudes polares estendem-se de 2.000 metros de altura até:",3.000 metros,4.000 metros,7.000 metros,8.000 metros,0,medium,PPAV - PP-05
+instrumentos_de_bordo,"As nuvens formadas por cristais de gelo são: altas médias baixas de desenvolvimento vertical A altura máxima, segundo convenção internacional das bases das nuvens do estágio baixo, em quilômetros",altitude pressão,altitude,altura,altitude densidade,0,medium,PPAV - PP-05
+instrumentos_de_bordo,"Das nuvens abaixo, a que dá origem a chuva contínua",nublado,esparso,poucas,encoberto 800 metros e 70 a 100%,0,medium,PPAV - PP-05
+instrumentos_de_bordo,"Nuvem isolada, densa, de contornos bem definidos e que apresenta sua base sensivelmente horizontal é a:",nimbostratus,stratus,stratocumulus,cumulus,0,medium,PPAV - PP-05
+instrumentos_de_bordo,"As nuvens com textura fibrosa, sem sombra própria, constituídas exclusivamente de cristais de gelo são:",altocumulus,stratus,cirrus,altostratus,0,medium,PPAV - PP-05
+instrumentos_de_bordo,A camada da atmosfera que situa-se entre a troposfera e a estratosfera denomina-se:,ionosfera,baixa atmosfera,exosfera,tropopausa,0,medium,PPAV - PP-05
+instrumentos_de_bordo,"Uma aeronave sobrevoa Brasília no FL075. A elevação da pista é de 2.450 pés, o QNH no momento do sobrevôo é de 1008,2 hPa. Com estas informações, tem-se que a altitude da aeronave é de:",7.350 pés,7.500 pés,7.650 pés,8.000 pés,0,medium,PPAV - PP-05
+instrumentos_de_bordo,"Uma aeronave voando em FL, por ocasião do pouso ajusta seu altímetro para o QNH. A região onde procedeu o ajuste chama-se:",nível transição,altitude de transição,altitude pressão,elevação da pista,0,medium,PPAV - PP-05
+instrumentos_de_bordo,"A pressão atmosférica ao nível do mar, para fins aeronáuticos é conhecida como:",QNE,QNH,QFF,QFE,0,medium,PPAV - PP-05
+instrumentos_de_bordo,De acordo com os parâmetros estabelecidos pela atmosfera padrão para cada 30 pés de altitude a pressão decresce em média:,1 hPa,2 hPa,3 hPa,4 hPa,0,medium,PPAV - PP-05
+instrumentos_de_bordo,"A temperatura, em graus Celsius, na quai as moléculas de um corpo atingem o repouso absoluto é de:",menos 373,menos 283,zero,menos 273,0,medium,PPAV - PP-05
+instrumentos_de_bordo,A equivalência entre as escalas termométricas Celsius e Fahrenheit ocorre em menos:,200,300,400,500,0,medium,PPAV - PP-05
+instrumentos_de_bordo,A força aparente de Coriólis provoca uma componente devido à rotação da terra. No hemisfério sul esse efeito provoca um desvio para o(a):,direita,esquerda,equador,polo,0,medium,PPAV - PP-05
+instrumentos_de_bordo,"A circulação do ar atmosférico, numa baixa pressão no hemisfério sul é:",ciclônica divergente,ciclônica convergente,anticiclônica divergente,anticiclônica convergente,0,medium,PPAV - PP-05
+instrumentos_de_bordo,"A medida em que as isóbaras estiverem mais próximas entre si, os ventos na região estarão mais:",calmos,fracos,fortes,variáveis,0,medium,PPAV - PP-05
+instrumentos_de_bordo,"Com relação ao vento, o de superfície estende-se desde a superfície até um limite máximo de:",100 metros,200 metros,300 metros,600 metros,0,medium,PPAV - PP-05
+instrumentos_de_bordo,A força do gradiente de pressão faz com que os ventos sempre fluam na direção dos(as):,pólos,anticiclones,pressões mais altas,pressões mais baixas,0,medium,PPAV - PP-05
+instrumentos_de_bordo,"Dos ventos abaixo, identifique aquele que pertence a circulação secundária:",ventos de vale,ventos aliseos,correntes polares,corrente de jato,0,medium,PPAV - PP-05
+instrumentos_de_bordo,"Os ventos que resultam do efeito direto do gradiente de pressão, denominam-se:",gradientes,geostróficos,barostróficos,ciclostróficos,0,medium,PPAV - PP-05
+instrumentos_de_bordo,"Quando os valores de um sistema fechado de pressão vão aumentando gradativamente para o centro, dizemos que se trata de um(a):",ciclone,anticiclone,cunha,cavado,0,medium,PPAV - PP-05
+instrumentos_de_bordo,"Banco, lençol ou camada delgada de nuvens brancas, sem sombra própria, composta por pequenos elementos em forma de grânulos, é a definição da nuvem:",cumulus,cumulonimbus,cirrostratus,cirrocumulus,0,medium,PPAV - PP-05
+instrumentos_de_bordo,"A presença de nuvens cirrus com aspecto alongado, ""rabo de galo"" caracteriza:",brisa marítima,chuva forte,vento forte em altitude,chuva leve,0,medium,PPAV - PP-05
+instrumentos_de_bordo,"A passagem do vapor de água diretamente para o estado sólido, denomina-se:",fusão,congelação,sublimação,condensação,0,medium,PPAV - PP-05
+instrumentos_de_bordo,"As condiçãos de pressão e temperatura, respectivamente, na atmosfera padrão, sao","1013,2 hPa e 15 0C","29,92 mm e Hg 20 0C",760 mm e Hg OOC,"1013,2 hPa e O O C",0,medium,PPAV - PP-05
+instrumentos_de_bordo,"Nuvens cumulus possuem suas bases a 1.500 m de altura. Sabendo-se que a temperatura do ponto de orvalho a 700 m é de 140 C positivos. A temperatura do ar na base das nuvens, será de mais:",,"12,40 c","20,40 c","6,0 0 c",0,medium,PPAV - PP-05
+instrumentos_de_bordo,"O gradiente térmico de 1,60C/100 m é considerado:",normal,auto-convectivo,adiabático seco,superadiabático,0,medium,PPAV - PP-05
+instrumentos_de_bordo,A razão adiabática seca tem valor de:,"0,6 0C/100 metros","0,65 0 C/100 metros","0,8 0 C/100 metros",I O C/IOO metros,0,medium,PPAV - PP-05
+instrumentos_de_bordo,A nuvem que caracteriza o equilíbrio condicional do ar,cumulonimbus,stratus,cumulus,stratocumulus,0,medium,PPAV - PP-05
+instrumentos_de_bordo,As nuvens cumuliformes formam-se em ar:,neutro,estável,instável,condicional,0,medium,PPAV - PP-05
+instrumentos_de_bordo,"Na base de uma determinada nuvem que encontrase a 800 metros de altura a temperatura do ar é de 20 0 C positivos, portanto a temperatura do ponto de orvalho na superfície é de mais:",28 0 C,"21,6 0 C","23,6 0 C","18,40 C",0,medium,PPAV - PP-05
+instrumentos_de_bordo,"Considerando as temperaturas do ar e do ponto de orvalho, na superfície, respectivamente, de 32 0 C e 240 C, pode-se afirmar que a altura média da base das nuvens convectivas, em metros, será de:",1.000,1.100,1.200,1.300,0,medium,PPAV - PP-05
+instrumentos_de_bordo,Das nuvens especificadas abaixo identifique a que ocorre normalmente em ar instável:,nimbostratus,altocumulus,cirrostratus,altostratus,0,medium,PPAV - PP-05
+instrumentos_de_bordo,"A pressão atmosférica determinada ao nível da pista de um aeródromo, também conhecida como ajuste a zero, possui a sigla:",QNE,QNH,QFF,QFE,0,medium,PPAV - PP-05
+instrumentos_de_bordo,"O halo é um fenômeno meteorológico que se verifica, comumente nas nuvens:",nimbostratus,cirrostratus,cumulonimbus,stratocumulus,0,medium,PPAV - PP-05
+instrumentos_de_bordo,Isotacas são linhas que unem pontos de igual:,direção do vento,pressão,velocidade do vento,temperatura,0,medium,PPAV - PP-05
+instrumentos_de_bordo,"A circulação que ocorre a noite, devido ao resfriamento do ar, forçando-o a descer ao longo da encosta por efeito da gravidade, denomina-se vento:",catabático,de vale,anabático,Fohen,0,medium,PPAV - PP-05
+instrumentos_de_bordo,"Uma massa de ar polar, fria, formada no pacífico, é identificada pela designação:",mPk,mPw,,mTw,0,medium,PPAV - PP-06
+instrumentos_de_bordo,"As nuvens associadas a uma frente quente, são tipicamente:",vermelha,azul,roxa,"preta Após a passagem de uma frente fria, geralmente ocorre: aumento da temperatura diminuição da pressão diminuição da temperatura aumento da precipitação",0,medium,PPAV - PP-06
+instrumentos_de_bordo,Uma frente em formação é conhecida como:,frontogênese,frontólise,oclusão,linha de instabilidade,0,medium,PPAV - PP-06
+instrumentos_de_bordo,"Dentre as alternativas relacionadas abaixo, indique aquela que apresenta características de uma massa de ar quente: ar estável com nebulosidade cumuliforme ar estável com nebulosidade estratiforme ar instável com nebulosidade cumuliforme ar instável com nebulosidade estratiforme Os sistemas frontais frios, no hemisfério norte, tem um deslocamento predominante de:",lentas e severas,rápidas e suaves,rápidas e violentas,lentas e violentas,0,medium,PPAV - PP-06
+instrumentos_de_bordo,"O tempo presente ""BCFG"" codificado no METAR, significa:",nevoeiro parcial,banco de nevoeiro,nevoeiro de superfície,nevoeiro baixo,0,medium,PPAV - PP-06
+instrumentos_de_bordo,Nuvens estratificadas com névoas restringindo a visibilidade são características do ar em equilíbrio:,neutro,estável,instável,condicional,0,medium,PPAV - PP-06
+instrumentos_de_bordo,"A circulação que ocorre durante o dia, devido a diferença de temperatura entre a terra e a água, denomina-se:",brisa terrestre,vento de vale,brisa marítima,vento anabático,0,medium,PPAV - PP-06
+instrumentos_de_bordo,"Uma aeronave no hemisfério sul, mantendo rumo magnético 1200, sobrevoa o centro de um anticiclone, ao aproximar-se da periferia do mesmo a aeronave sofrerá vento de:",cauda,direita,esquerda,proa P,0,medium,PPAV - PP-06
+instrumentos_de_bordo,"A faixa equatorial que separa a circulação geral dos dois hemisférios, denomina-se: doldruns ondas de este confluência intertropical frente fria Como viria codificado no METAR o grupo de visibilidade e condições de tempo, se o observador verificar que a visibilidade horizontal é de 40 metros com nevoeiro:",0000 FG,RA,0050 BR,"0050 HZ Quando na carta SIG WX PROG for encontrado, numa determinada região o símbolo =, sabe-se que: há nevoeiro a visibilidade prevista é inferior a 1.000 metros a visibilidade prevista é superior a 5.000 metros a umidade relativa é maior ou igual a 80%",0,medium,PPAV - PP-06
+instrumentos_de_bordo,"A turbulência por cortantes a baixa altura provocada pela variação brusca da intensidade e/ou direção do vento próximo a superfície, denomina-se:",convectiva,frontal,CAT,windshear,0,medium,PPAV - PP-06
+instrumentos_de_bordo,"Chuvas intensas associadas as turbulências, são fenômenos geralmente associados as(aos):",trovoadas,anticiclones,frentes quentes,centros de alta pressão,0,medium,PPAV - PP-06
+instrumentos_de_bordo,A primeira fase de uma trovoada é denominada:,cumulus,maturidade,dissipação,formação,0,medium,PPAV - PP-06
+instrumentos_de_bordo,"A turbulência dinâmica, provocada pelo deslocamento de massas de ar, denomina-se turbulência:",frontal,convectiva,wind shear,de ar claro,0,medium,PPAV - PP-06
+instrumentos_de_bordo,"O tipo de gelo pesado e aderente que se forma sobre a aeronave, quando esta sobrevoa regiões com nebulosidade convectiva, denomina-se:",amorfo,geada,cristal,,0,medium,PPAV - PP-06
+instrumentos_de_bordo,"Dos fenômenos abaixo, identifique o que é caracterizado pela estabilidade atmosférica:",frente quente,sistema de baixa,pancada de chuva,frente fria,0,medium,PPAV - PP-06
+instrumentos_de_bordo,"Quando uma mPk é impulsionada na direção a uma cTw, em principio tem-se a formação de um(a):",massa de ar quente,frente quente,massa de ar fria,frente fria,0,medium,PPAV - PP-06
+instrumentos_de_bordo,"O nevoeiro pós-frontal ocorre, normalmente, associado:",ao sistema frontal frio,a massa de ar quente,a advecção,ao sistema frontal quente,0,medium,PPAV - PP-06
+instrumentos_de_bordo,"O fluxo dos ventos de superfície, sofre o mínimo efeito de fricção:",no mar,acima de 100 metros,sobre montanhas,no nível gradiente,0,medium,PPAV - PP-06
+instrumentos_de_bordo,"O fenômeno pertencente a circulação regional que apresenta características próprias e ocorre de forma irregular no interior da circulação geral, denomina-se:",aliseos,brisa,ventos de oeste,corrente de jato,0,medium,PPAV - PP-06
+instrumentos_de_bordo,"O vento que flui pelo efeito da força do gradiente de pressão e Coriólis, denomina-se:",10.000 pés,15.000 pés,20.000 pés,30.000 pés,0,medium,PPAV - PP-06
+instrumentos_de_bordo,"No METAR SBJV 030900Z OOOOOKT 5000 -DZ BR FEW004 BKN012 BKN080 22/21 Q1013 RERA, tem-se:",seca,chuva leve,névo,visibilidade 5.000 pés,0,medium,PPAV - PP-06
+instrumentos_de_bordo,"No METAR SBCT 101000Z 15004a 0800 FG SCT003 BKN005 18/18 Q1016, tem-se:",úmida,ar saturado,céu encoberto,nuvens esparsas a 500 pés,0,medium,PPAV - PP-06
+instrumentos_de_bordo,O sistema frontal representa uma frente: b) oclusa,,,estacionária,frontogênese,0,medium,PPAV - PP-06
+instrumentos_de_bordo,O sistema bárico de circulação convergente está previsto com:,1004 hPa,1017 hPa,1022 mm/Hg,deslocamento com Kt,0,medium,PPAV - PP-06
+instrumentos_de_bordo,"Ao longo das coordenadas (040 N - 087 0W) e (040 N 060 0 W), temos:",FIT moderada,corrente de jato,ITCZ leve,cumulonimbus esparsos,0,medium,PPAV - PP-06
+instrumentos_de_bordo,O vento plotado no ponto de coordenadas (25 0 S 0650W) é de: 35015KT e temperatura de mais 60C 17015KT e temperatura de mais 60 C 35020KT e temperatura de menos 6 0 C 17020KT e temperatura de menos 6 0C O símbolo plotado no ponto de coordenadas (17 0S 056 0 W) representa:,trovoada,formação de gelo,turbulência,pancada de chuva O anticiclone está: estacionário deslocando-se com IOKT com 1004 hPa associado a uma frente quente,0,medium,PPAV - PP-06
+instrumentos_de_bordo,Uma aeronave voando de SBPA (30 0S — 051 0W) para SGAS (25 0 S — 058 0W) encontrará vento de:,cauda,direita,esquerda,proa,0,medium,PPAV - PP-06
+instrumentos_de_bordo,A condição de temperatura no cume de uma montanha de 7.500 pés de altitude é igual a ISA menos 5. Conclui-se que a temperatura ambiente no referido ponto é de:,-200C,-5 0C,5 0C,15 0 C,0,medium,PPAV - PP-07
+instrumentos_de_bordo,"A temperatura de 100 graus Celsius corresponde, em Fahrenheit, a:",102 graus,148 graus,212 graus,373 graus,0,medium,PPAV - PP-07
+instrumentos_de_bordo,A pressão padrão no nível do mar é de:,"1013,2 hPa","1012,3 hPa","1010,2 hPa","1007,2 hPa",0,medium,PPAV - PP-07
+instrumentos_de_bordo,"A transformação do vapor de água para a forma líquida, denomina-se:",saturação,sublimação,evaporação,condensação,0,medium,PPAV - PP-07
+instrumentos_de_bordo,"Dentre os fenômenos relacionados abaixo, indique o que pode provocar uma coloração avermelhada na atmosfera :",névoa seca,chuvisco,chuva,névoa úmida,0,medium,PPAV - PP-07
+instrumentos_de_bordo,"Uma massa de ar polar quente do pacífico, e Identificada pela designação:",mPk,mPw,,cPk,0,medium,PPAV - PP-07
+instrumentos_de_bordo,"No METAR SACO 171700Z 20007KT 0900 +DZ OVC005 16/16 Q1020, tem-se:",chuva forte,céu nublado a 150 metros,ar instável e úmido,umidade relativa elevada,0,medium,PPAV - PP-07
+instrumentos_de_bordo,"No METAR SBSP 102000Z 17008KT 2500 BR BKN003 ovcol() 17/15 Q1020, foi observado:",úmida,névo,visibilidade 2500 Ft,ar saturado,0,medium,PPAV - PP-07
+instrumentos_de_bordo,"Segundo a SIG WX PROG em anexo, a zona de convergência intertropical está prevista com:",ventos de 20KT,chuva,pancada de chuva,CB ocasional,0,medium,PPAV - PP-07
+instrumentos_de_bordo,"Uma aeronave no hemisfério sul voando para um sistema de baixa pressão, sofrerá incidência de ventos de:",proa,cauda,direita,esquerda 02- centro de alta pressão atmosférica é aquele onde: há condições de formação de cumulonimbus as condições de tempo são péssimas para os vôos,0,medium,PPAV - PP-07
+instrumentos_de_bordo,A distância vertical que separa uma superfície isobárica qualquer e o nível do mar é denominada:,nível,altura,altitude absoluta,altitude,0,medium,PPAV - PP-07
+instrumentos_de_bordo,Um determinado volume de ar é considerado saturado quando contém uma quantidade de vapor de água equivalente a:,4 por cento,20 por cento,50 por cento,100 por cento,0,medium,PPAV - PP-07
+instrumentos_de_bordo,"Um piloto posicionado na cabine de uma aeronave alinhada com o eixo longitudinal da pista, obtém ao longo da mesma um alcance visual cuja sigla é:",VSB,RVR,CLM,VRB,0,medium,PPAV - PP-07
+instrumentos_de_bordo,As nuvens do estágio baixo são compostas de:,agua,agua e gelo,cristais de gelo,granizo,0,medium,PPAV - PP-07
+instrumentos_de_bordo,O fenômeno formado pelo atrito entre ventos fortes superpostos que fluem com direções e/ou velocidades diferentes denomina-se:,anticiclone polar,turbulência térmica,anticiclone tropical,turbulência dinâmica,0,medium,PPAV - PP-07
+instrumentos_de_bordo,"Dentre as condições apresentadas abaixo, indique a que se relaciona com um sistema ciclônico:",vento fraco,nevoeiro,céu claro,cumulonimbus,0,medium,PPAV - PP-07
+instrumentos_de_bordo,"A camada de fricção ou de atrito, estende-se desde a superfície até a altura de:",600 m,500 m,200 m,100 m,0,medium,PPAV - PP-07
+instrumentos_de_bordo,A região de origem de uma frente fria é denominada:,verão,outono,inverno,"primavera No METAR SBMN 100900Z 12008KT 4000 BR BKN025 28/26 Q1015, tem-se: ar saturado ventos com 08 nós visibilidade de 4.000 pés QFE de 1015 hPa",0,medium,PPAV - PP-07
+instrumentos_de_bordo,"No SPECI SBMT 141913Z 12004a 3500 -RA BKN015 scT030 FEW040TCU 21/18 1009, foi observado:",mensagem de rotina,vento calmo,teto de 1500 pés,ar estável,0,medium,PPAV - PP-07
+instrumentos_de_bordo,"A camada atmosférica subseqüente à superfície terrestre, denomina-se:",exosfera,ionosfera,estratosfera,troposfera,0,medium,PPAV - PP-07
+instrumentos_de_bordo,"O ar atmosférico acompanha a curvatura terrestre, em virtude do(a):",umidade relativa,força da gravidade,gradiente térmico,vento de superfície,0,medium,PPAV - PP-07
+instrumentos_de_bordo,A latitude compreendida entre os trópicos denomina-,ártica,temperada,tropical,equatorial,0,medium,PPAV - PP-07
+instrumentos_de_bordo,"Considerando a temperatura a 10.000 pés de 5 0 C positivos e o gradiente térmico padrão, pode-se concluir que a temperatura ao nível do mar, é de:",100 C,150C,200 c,25 0 C,0,medium,PPAV - PP-07
+instrumentos_de_bordo,"Um piloto ao aproximar uma aeronave para o pouso, observa que a atmosfera está com um coloração avermelhada e a umidade relativa é inferior a 80%. O fenômeno que está restringindo a visibilidade é:",seca,chuvisco,névo,névo,0,medium,PPAV - PP-07
+instrumentos_de_bordo,"Uma aeronave a 4.000 pés de altura, sobrevoa uma região com bastante nebulosidade. Considerando-se que o ar encontra-se instável, pode-se concluir que a nuvem predominante é:",AS,CU,ST,AC,0,medium,PPAV - PP-07
+instrumentos_de_bordo,"Dentre as nuvens especificadas abaixo, indique aquela formada, normalmente, em ar instável:",AS,,cs,AC,0,medium,PPAV - PP-07
+instrumentos_de_bordo,"Como a atmosfera tende a homogeneidade, quanto maior for a diferença de pressão entre dois sistemas adjacentes, maior será o(a):",efeito estufa,gradiente térmico,turbulência mecânica,intensidade do vento,0,medium,PPAV - PP-07
+instrumentos_de_bordo,"O vento pertencente a circulação secundária, identificado por nuvens lenticulares e comum sobre regiões montanhosas, denomina-se:",onda orográfica,vento de vale,onda de oeste,vento catabático,0,medium,PPAV - PP-07
+instrumentos_de_bordo,"A atmosfera em equilíbrio estável e com higrometeoros restringindo a visibilidade, são fenômenos característicos de um(a):",frente fria,ciclone tropical,massa de ar quente,trovoada convectiva,0,medium,PPAV - PP-07
+instrumentos_de_bordo,"Um grande volume de ar, repousando sobre uma região, acaba adquirindo as características físicas de pressão, temperatura e umidade, tornando-se um(a):",frente,tornado,massa de ar,ciclone tropical,0,medium,PPAV - PP-07
+instrumentos_de_bordo,"A turbulência que ocorre com maior frequência no verão e que é identificada pela presença de nuvens cumuliformes, denomina-se:",de solo,mecânica,convectiva,de céu claro,0,medium,PPAV - PP-07
+instrumentos_de_bordo,"O tipo de gelo pesado e aderente que se forma sobre a aeronave,- quando esta voa em regiões com nebulosidade convectiva, denomina-se:",amorfo,escarcha,cristal,granulado,0,medium,PPAV - PP-07
+instrumentos_de_bordo,"No METAR SBFL 020900Z OOOOOKT 2000 BR BKNOIO 21/20 QIOII RERA, tem-se:",chuva na hora passada,névoa seca,ar saturado,chuvisco na hora passada,0,medium,PPAV - PP-07
+instrumentos_de_bordo,"A camada da atmosfera que apresenta o maior grau de concentração molecular, denomin",exosfera,troposfera,tropopausa,estratosfera,0,medium,PPAV - PP-08
+instrumentos_de_bordo,"A condição de temperatura ISA mais cinco, para o FLIOO, corresponde a: zero graus Celsius dez graus Celsius negativos cinco graus Celsius negativos cinco graus Celsius positivos A temperatura de 150 C equivale na escala Fahrenheit a:",alta e aberto,alta e fechado,baixa e aberto,baixa e fechado,0,medium,PPAV - PP-08
+instrumentos_de_bordo,"Nevoeiro que se forma pelo deslocamento do ar frio sobre uma superfície líquida e quente, denomina-se:",orográfico,de vapor,de brisa,marítimo,0,medium,PPAV - PP-08
+instrumentos_de_bordo,"Determinar o nível de condensação por convecção, sabendo-se que a temperatura do ponto de orvalho e do ar são, respectivamente de 260C e 340C.",1.000.-n,875 m,750 m,650 m,0,medium,PPAV - PP-08
+instrumentos_de_bordo,"Quando uma acft sobrevoa uma região montanhosa, sem nebulosidade e encontra uma turbulência. Podese afirmar que o fenômeno encontrado é de origem:",térmica,frontal,dinâmica,mecânica,0,medium,PPAV - PP-08
+instrumentos_de_bordo,"Os ventos alísios, no hemisfério sul e no hemisfério norte, fluem respectivamente de:","NW, SW","SW, NW","SE, NE","NE, SE",0,medium,PPAV - PP-08
+instrumentos_de_bordo,A sequência mais provável de nuvens pré-frontais de uma frente quente é a seguinte:,"AS, AC, CS, Cl e NS","CO, Cl, CS, AS e NS i","Cl, CS, AS, NS e ST","NS, SC, AS, AC e Cl",0,medium,PPAV - PP-08
+instrumentos_de_bordo,"Linha de trovoada que precede algumas frentes frias, denomina-se:",frontólise,frontogênese,frente oclusa,linha de instabilidade,0,medium,PPAV - PP-08
+instrumentos_de_bordo,"A porção da energia solar que consegue atingir a superfície terrestre, denomina-se:",albedo,radiação ultravioleta,insolação,radiação infravermelha,0,medium,PPAV - PP-08
+instrumentos_de_bordo,"A mensagem meteorológica SIGMET é expedida por um órgão, cuja sigla é:",CMA,EMS,CNMA,CMV,0,medium,PPAV - PP-08
+instrumentos_de_bordo,O transporte de energia térmica realizada pelos fluxos dos ventos na atmosfera terrestre denomina-se:,albedo,advecção,radiação,convecção,0,medium,PPAV - PP-08
+instrumentos_de_bordo,"A temperatura de 200 Celsius positivos, eqüivale na escala Fahrenheit a:",- 040,+ 040,,+ 680,0,medium,PPAV - PP-08
+instrumentos_de_bordo,"O instrumento meteorológico destinado a registrar graficamente, as variações da umidade atmosférica, denomina-se:",barômetro,higrógrafo,barógrafo,higrômetro,0,medium,PPAV - PP-08
+instrumentos_de_bordo,A última fase de vida das trovoadas denomina-se:,cumulus,congestus,maturidade,dissipação,0,medium,PPAV - PP-08
+instrumentos_de_bordo,"Uma aeronave sobrevoa uma região no FL 100. A pressão reduzida ao nível do mar é de 1003,2 hPa. Com tais informações, pode-se afirmar que a altitude pressão da aeronave é de:",10.000 pés,10.300 pés,10.090 pés,9.700 pés,0,medium,PPAV - PP-08
+instrumentos_de_bordo,"Das alternativas abaixo, indique aquela que representa um higrometeoro depositante:",neve,chuva,granizo,orvalho,0,medium,PPAV - PP-08
+instrumentos_de_bordo,"Dentre as alternativas abaixo, indique aquela que representa um hidrometeoro precipitante que normalmente menos restringe a visibilidade horizontal no momento do pouso:",chuva,fumaça,poeira,nevoeiro,0,medium,PPAV - PP-08
+instrumentos_de_bordo,"Dentre os tipos de nuvens relacionadas abaixo, a que pode gerar precipitação mais ou menos intensa:",stratus,nimbostratus,cirrustratus,cirrus,0,medium,PPAV - PP-08
+instrumentos_de_bordo,"Quando o gradiente térmico vertical estiver na razão de 20C/1.000 metros, tem-se uma atmosfera:",estável,instável,condicional,superadiabática,0,medium,PPAV - PP-08
+instrumentos_de_bordo,"O vento que é obtido quando há o equilíbrio entre três forças: gradiente de pressão, Coriólis e centrífuga, denomina-se:",barostrófico,gradiente,geostrófico,ITCZ,0,medium,PPAV - PP-08
+conhecimentos_tecnicos,"No TAF SBGL 172100Z 1800/1824 18010KT 6000 RA OVC030 TN24/1803Z TX35/1819z FM181214 19010KT 3000 BR ovcol() , temos previsão de ocorrer: chuva leve céu nublado durante todo o período visibilidade de 3.000 m a partir das 12:14 UTC visibilidade de 3 km a partir das 1400 UTC A transferência do calor solar, através da conversão da energia térmica em radiação eletromagnética e a reconversão desta radiação em calor, denomina-se:",condução,radiação,advecção,convecção,0,medium,PPAV - PP-08
+conhecimentos_tecnicos,"Dentre as nuvens relacionadas abaixo, assinale a alternativa que contenha tipos, exclusivamente, do estágio baixo:",AS e CU,CS e AC,SC e ST,Cl e ST,0,medium,PPAV - PP-08
+conhecimentos_tecnicos,"A temperatura denominada ""zero absoluto"" equivale a:",0 grau F,-273 graus C,-359 graus F,0 grau C,0,medium,PPAV - PP-08
+conhecimentos_tecnicos,"Dentre os elementos atmosféricos relacionados abaixo, numa situação de céu claro, aquele que decresce com a elevação da altitude, mesmo ultrapassando a tropopausa, é o(a):",vento,umidade,densidade,temperatura,0,medium,PPAV - PP-09
+conhecimentos_tecnicos,Dos fenômenos meteorológicos relacionados abaixo indique aquele que pode ser formado pela advecção:,nuvens cumulus,pancada de chuva,turbulência,nevoeiro,0,medium,PPAV - PP-09
+conhecimentos_tecnicos,"Uma aeronave no hemisfério norte, ao se deslocar do centro para a periferia de um sistema ciclônico fechado, com rumo magnético de 090 graus, encontrará ventos de:",proa,cauda,direita,esquerda,0,medium,PPAV - PP-09
+conhecimentos_tecnicos,A pressão atmosférica reduzida ao nível do mar para fins meteorológicos é o:,QNH,QNE,QFE,QFF,0,medium,PPAV - PP-09
+conhecimentos_tecnicos,"Quando a proporção de vapor de água atinge 4% de um volume de ar considerado, pode-se afirmar que o ar está :",seco,árido,saturado,úmido,0,medium,PPAV - PP-09
+conhecimentos_tecnicos,"Das latitudes abaixo, aquela que não propicia a formação de massa de ar é a:",polar,quente,oclusa,"estacionária areronave voando no hemisfério sul, com vento de cauda terá a sua: direita um centro de alta pressão frente um centro de alta pressão direita um centro de baixa pressão frente um centro de baixa pressão",0,medium,PPAV - PP-09
+conhecimentos_tecnicos,"A transferência de calor por movimentos verticais do ar, formando correntes ascendentes e descendentes, denomina-se:",florestas,neve,nuvens,água,0,medium,PPAV - PP-09
+conhecimentos_tecnicos,As pressões atmosféricas mínimas ocorrem normalmente às:,04h e 16h local,00h e 12h local,10h e 22h local,12h e 24h local IS,0,medium,PPAV - PP-09
+conhecimentos_tecnicos,"A temperatura padrão ao nível do mar, na escala Fahrenheit, equivale a:",+ 03 0 F,+ 050 F,+ 590 F,+ 690 F,0,medium,PPAV - PP-09
+conhecimentos_tecnicos,"Condução é a transferência do calor diretamente de molécula a molécula, passando de uma para a outra de sua agitação, paulatinamente. Portanto, dentre as alternativas abaixo, a que contém o elemento de maior grau de condutividade térmica é o/a:",cobre,feltro,amianto,cortiça,0,medium,PPAV - PP-09
+conhecimentos_tecnicos,"Em determinado momento a temperatura no FL250 é de menos 20 0 C, logo podemos representá-la da seguinte maneira:",ISA + 5,ISA + 15,ISA + 10,ISA + 20,0,medium,PPAV - PP-09
+conhecimentos_tecnicos,Área alongada de baixa pressão atmosférica denomina- se:,cavado,crista,cunha,colo,0,medium,PPAV - PP-09
+conhecimentos_tecnicos,"A distância vertical que separa dois pontos no espaço, sendo que um dos pontos considerados encontra-se no nível de 1013,2 hPa, denomina-se altitude:",nuvens cumulus,nevoeiros,geadas,"correntes de jato Com base na lei de Buys Ballot, pode-se afirmar que um observador, no hemisfério: Sul, voltando as costas ao vento, saberá que as menores pressões estarão a sua direita Sul, voltando as costas ao vento, saberá que as menores pressões estarão a sua esquerda Norte, voltando as costas ao vento, saberá que as menores pressões estarão a sua direita Norte, voltando as costas ao vento, saberá que as maiores pressões estarão a sua esquerda",0,medium,PPAV - PP-09
+conhecimentos_tecnicos,"Vento pertencente a circulação secundária, que ocorre durante o dia, devido o maior aquecimento da superfície da terra em relação ao oceano, denomina-se:",brisa terrestre,vento de vale,brisa marítima,vento catabático,0,medium,PPAV - PP-09
+conhecimentos_tecnicos,"Dentre os tipos de gelo relacionados abaixo, indique aquele que se forma com a presença de micro-gotículas:",duro,vidrado,cristal,granulado,0,medium,PPAV - PP-09
+conhecimentos_tecnicos,"Quando, no METAR, a temperatura do ar for de 20C positivos e a do ponto de orvalho for de 3 0C negativos, o grupo de temperatura terá a seguinte codificação:",02/P3,02/M03,P02/03,P02/M03,0,medium,PPAV - PP-09
+meteorologia,"As superfícies mais claras e brilhantes refletem melhor a luz solar portanto, possuem albedo:",nulo,médio,menor,elevado,0,medium,PPAV - PP-09
+meteorologia,"A noite, no inverno, quando o céu apresentar-se sem nebulosidade e com vento calmo, haverá probabilidade de de ocorrer na manhã seguinte:",chuva,frente,trovoada,nevoeiro de radiação,0,medium,PPAV - PP-09
+meteorologia,"Dos fenômenos abaixo, identifique o que caracterizado pela estabilidade atmosférica:",pancada de chuva,sistema de baixa,massa de ar quente,trovoada convectiva,0,medium,PPAV - PP-09
+meteorologia,"A formação do fenômeno meteorológico ""halo"" e comum em nuvens: 'MÉTEOROWGIA. 371",,SC,cs,AS,0,medium,PPAV - PP-09
+meteorologia,"O tipo e gelo formado devido as grandes gotas de água superesfriadas, com temperatura abaixo de zero graus Celsius, é identificado como:",opaco,vidrado,amorfo,granulado,0,medium,PPAV - PP-09
+meteorologia,"Dentre as condições apresentadas abaixo, indique a que se relaciona com um sistema de alta pressão:","menos 2,60C","mais 2,60C","menos 1,6 0C","mais 1,60C",0,medium,PPAV - PP-09
+meteorologia,"O levantamento do ar para altitudes maiores, provocando sua expansão adiabática e produzindo seu resfriamento, denomina-se:",condução,advecção,sublimação,convecção,0,medium,PPAV - PP-09
+meteorologia,"O céu claro e a ausência de tempo significativo é uma característica geralmente, associada ao(a):",anticiclone,tormenta,sistema convergente,confluência intertropical,0,medium,PPAV - PP-09
+meteorologia,"O piloto de uma aeronave no FL095, constata que a altitude verdadeira é de 7.250 pés. Pode-se concluir que a pressão ao nível do mar, é de:",1013 hPa,938 hPa,1075 hPa,945 hPa,0,medium,PPAV - PP-09
+meteorologia,Uma aeronave no hemisfério sul voando na direção de um anticiclone terá ventos de:,cauda,esquerda,proa,direita,0,medium,PPAV - PP-09
+meteorologia,"Dos elementos relacionados abaixo, indique o litometeoro que mais restringe a visibilidade no momento de um pouso:",névoa seca,nevoeiro,chuvisco,névoa úmida,0,medium,PPAV - PP-09
+meteorologia,"Dos fenômenos meteorológicos abaixo, aquele provocado pelo deslocamento de massa de ar, sendo comum a qualquer tipo de sistema frontal é o(",corrente de jato,linha de estabilidade,turbulência frontal,confluência inter-tropical,0,medium,PPAV - PP-09
+meteorologia,A presença de nuvens cirrocumuius indicam turbulência em níveis:,médios,altos,altos e médios,baixos e altos,0,medium,PPAV - PP-09
+meteorologia,A frente fria no hemisfério sul tem um deslocamento predominante de:,altitude verdadeira,altitude densidade,altitude pressão,altura,0,medium,PPAV - PP-09
+meteorologia,"Uma aeronave sobrevoa uma região a 4.000 metros de altitude onde a atmosfera encontra-se estável e com bastante umidade, considerando o gradiente térmico padrão e sabendo-se que a temperatura ao nível do mar é de 120 C positivos. Conclui-se que a aeronave está sujeita a:",turbulência,rajadas de vento,formação de gelo,convectivas térmicas,0,medium,PPAV - PP-09
+meteorologia,"A absorção da energia solar, pela atmosfera terrestre, tem início na:",ionosfera,tropopausa,troposfera,estratosfera,0,medium,PPAV - PP-09
+meteorologia,"O percentual médio do gás nitrogênio, na atmosfera padrão internacional, é de:",onze por cento,dezoito por cento,vinte e um por cento,setenta e oito por cento,0,medium,PPAV - PP-09
+meteorologia,"Considerando-se os parâmetros da atmosfera padrão (ISA), a temperatura do ar, em graus Celsius, para o FI-100 será de:",- 05 0C,- 100C,,,0,medium,PPAV - PP-09
+meteorologia,"O processo de transferência de calor, molécula a molécula, sem a mudança da posição das mesmas e comum nos sólidos, porém podendo ocorrer próximo a superfície terrestre, denomina-se:",advecção,condução,reflexão,convecção,0,medium,PPAV - PP-09
+meteorologia,"As áreas de condições adversas de tempo, tais como nuvens cumulus, chuva forte, trovoada, etc. São comuns no seguinte sistema de pressão:",cunha,alta,cavado,anticiclone,0,medium,PPAV - PP-09
+meteorologia,"Uma aeronave encontra-se pousada numa pista, cuja elevação é de 2.500 pés. A pressão reduzida ao nível do mar é de 1003,2 hPa. Com tais informações, podese afirmar que a altitude pressão da aeronave é de:",2.200 pés,2.500 pés,2.800 pés,3.100 pés,0,medium,PPAV - PP-09
+meteorologia,O código da pressão atmosférica conhecida como ajuste a zero é o:,QNH,QNE,QFF,QFE,0,medium,PPAV - PP-09
+meteorologia,"Das alternativas abaixo, a precipitação líquida que reduz a visibilidade de forrHa mais acentuada é o(a):",úmida,nevoeiro,névo,pancada de chuva,0,medium,PPAV - PP-09
+meteorologia,"Dentre as nuvens abaixo, indique a que normalmente surge no topo de um CB:",ST,,AC,SC,0,medium,PPAV - PP-09
+meteorologia,"Quando a condensação do vapor de água ocorre próximo a superfície, geralmente, ocasiona:",seca,efeito estufa,pancada de chuva,restrição a visibilidade,0,medium,PPAV - PP-09
+meteorologia,"Na atmosfera real o gradiente de temperatura ""não"" é constante na troposfera, podendo ocorrer, além de outros fenômenos, inversões térmicas, tal circunstância determina uma condição de:",frontal,térmica,dinâmica,orográfica Os fluxos dos ventos tendem a fluir: ao longo das isóbaras ao longo das isotermas das pressões mais baixas para as mais altas das pressões mais altas para as mais baixas,0,medium,PPAV - PP-09
+meteorologia,"No METAR SBGR 042000Z 15010KT 2500 -RA BR BKN020 SCT030 26/20 QIOII, tem-se: vento de rajada com 10 KT tempestade de poeira chuva leve e névoa úmida visibilidade vertical igual a 8.000 metros No TAF quando a direção do vento ""não"" for constante, a primeira parte do referido grupo será informada como:",VO,,00000,"NCONST No TAF SBCG 100900Z 1012/1112 22008KT 3000 HZ SCT020 TN21/1013Z TEMPO 1017/1022 27010G20KT TSRA SCT025 FEW030CB, previu-se: trovoada com chuva forte visibilidade de 3.000 m durante todo o período névoa-úmida vento de rajada com 20KT a partir das 22 UTC",0,medium,PPAV - PP-09
+meteorologia,"A tropopausa é uma camada com pouca espessura, que normalmente varia de:",1 a 2 km,3 a 5 km,100 a 200 m,300 a 400 m,0,medium,PPAV - PP-10
+meteorologia,A escala termométrica utilizada na aviação brasileira é a:,Kelvin,Rankine,Celsius,Fahrenheit,0,medium,PPAV - PP-10
+conhecimentos_tecnicos,"Indique, entre as alternativas relacionadas abaixo, a que designa o código para informação (obsevação) meteorológica aeronáutica regular:",TAF,METAR,SPECI,SIGMET,0,medium,PPAV - PP-10
+conhecimentos_tecnicos,As letras do grupo de nuvens que são codificadas no TAF para representar o céu completamente tomado por um determinado tipo de nuvem são:,FEVV,OVC,SCT,BKN,0,medium,PPAV - PP-10
+meteorologia,"Uma aeronave pousada em um aeródromo com elevação de 2120 pés e pressão de 1014,2 hPa, para zerar o altímetro deve ajustar:",QNE,QFE,QFF,"QNH Quantas NM no Equador o Sol percorrerá em 8 segundos: 1300 11/1250 11/22/09/2004 0700 h/0710 11/23/09/2004 1300 11/1250 h/23/09/2004 0700 h/0710 11/22/09/2004 A abreviatura ""NNW"" pertence ao grupo de pontos e seu valor em graus é de, respectivamente: cardeais/337,5 0 laterais/337,5 0 colaterais/ 337,5 0 subcolaterais/337,5 0",0,medium,PPAV - PP-12
+meteorologia,Uma aeronave mantém a PM de 205 0 voando numa região onde corta isogônicas de 5 0 W a 5 0 E. de:,195 0,200 0,205 0,215 0,0,medium,PPAV - PP-12
+meteorologia,"Ao projetar o pólo Norte em um plano, a menor distorção seria se a origem da projeção fosse:",cilíndrica,cônica,ortogônica,estereográfica,0,medium,PPAV - PP-12
+meteorologia,"Quando na carta WAC aparecer uma linha indicando NO VARIATION, significa que é uma linha:",antagônica,isogônica,agônica,anagônica,0,medium,PPAV - PP-12
+meteorologia,"Ao medir 2,5 cm em uma carta WAC, tem-se:",NM,"2,5 km",25,25 km,0,medium,PPAV - PP-12
+meteorologia,"O espaço aéreo perigoso, n o 6 do COMAR 3 vem designado, na carta WAC, como:",D306,D603,"""306",P603,0,medium,PPAV - PP-12
+meteorologia,"A abreviatura ""SSW"" pertence ao grupo de pontos:",cardeais,colaterais,subcardeais,subcolaterais,0,medium,PPAV - PP-12
+meteorologia,"Em uma projeção Lambert, uma rota loxodrômica é representada por um (a):",linha reta,linha curva,círculo menor,circulo máximo,0,medium,PPAV - PP-12
+meteorologia,"O ângulo formado entre o rumo e a proa, denomina-",desvio,deriva,correção de desvio,correção de deriva,0,medium,PPAV - PP-12
+meteorologia,"Dados: número MACH indicação .55 e temperatura indicada do ar 20 0 C, a TAS é de:",370 KT,390 KT,410 KT,430 KT,0,medium,PPAV - PP-12
+meteorologia,"Dados altitude pressão 15000 FT, temperatura 30 0 Celsius e altitude indicada 12000 FT, a altitude verdadeira será de:",4150 m,4260 m,4400 m,4560 m,0,medium,PPAV - PP-12
+meteorologia,"As horas UTC, HLE e HLO são iguais no meridiano:",005 0,010 0,015 0,zero grau,0,medium,PPAV - PP-12
+meteorologia,Na carta WAC os dados do AD são 471LH18. Portanto o comprimento da RWY é de:,471 m,471 FT,1800 m,1800 FT,0,medium,PPAV - PP-12
+meteorologia,"Com relação as ondas de rádio, a distância compreendida entre duas cristas consecutivas de um ciclo, denomina-se:",difração,refração,freqüência,comprimento de onda,0,medium,PPAV - PP-12
+meteorologia,"O rádio receptor com uma antena loop, que é capaz de determinar a direção das ondas emitidas por uma estação e que comumente sofre com os problemas de descargas elétricas da atmosfera, denomina-se:",ADF,VOR,,ALS,0,medium,PPAV - PP-12
+meteorologia,"Uma acft decolou às 2130 P e pousou às 2140 Q, o tempo de vôo foi de:",0010 h,0040 h,0100 h,0110 h,0,medium,PPAV - PP-12
+meteorologia,"Na carta WAC, representando parte do hemisfério Sul, observa-se os meridianos convergindo para o pólo, essa projeção é do tipo:",10100 FT,11000 FT,11500 FT,12700 FT,0,medium,PPAV - PP-12
+meteorologia,"Uma aeronave, para voar no RV 135 0 com VA de 130 KT recebendo um vento de 360 0/20 KT, terá deriva de:",-6 0,,-3 0,3 0,0,medium,PPAV - PP-12
+meteorologia,"Uma aeronave,durante 42 min percorreu 113 NM consumiu 60 litros de combustível. Sua velocidade e consumo horário, respectivamente, serão de:",113 KT/ 60 1/h,162 KT/ 42 1/h,113 KT/ 86 1/h,162 KT/ 86 1/h,0,medium,PPAV - PP-12
+meteorologia,"Convertendo 121 NM em km, tem-se:",,194,224,242,0,medium,PPAV - PP-12
+meteorologia,O piloto observa no velocímetro 135 KT e no altímetro 9500 FT. Sua VA aproximada é de:,135 KT,148 KT,153 KT,161 KT,0,medium,PPAV - PP-12
+meteorologia,"Em seu movimento de rotação, a Terra gira em torno de seu eixo imaginário, no sentido:",Norte - Sul,Sul - Norte,Oeste - Leste,Leste - Oeste,0,medium,PPAV - PP-12
+meteorologia,"A medida angular do arco de meridiano, compreendido entre dois paralelos, chama-se:",latitude média,longitude média,diferença de latitude,diferença de longitude,0,medium,PPAV - PP-12
+meteorologia,Uma linha reta traçada em uma carta Lambert Conformal representa uma rota:,loxodrômica,ortodrômica,cônica dupla,de círculo mínimo,0,medium,PPAV - PP-12
+meteorologia,"Quando o altímetro é ajustado para 1013.2 hPa, é obtida a altitude:",pressão,indicada,absoluta,verdadeira,0,medium,PPAV - PP-12
+meteorologia,"Dados: PB 2000 DMG 20 0 W, e Db 5 0 E. serão, respectivamente: - 195 0",,,205 0 - 225 0,185 0 - 205 0,0,medium,PPAV - PP-12
+meteorologia,"Dados: PB 150 0 , DMG 15 0 W, Db 10 0 W, VA 350 KT e DV/W 250 0 / 20 KT. A PB de regresso será de:",320 0,324 0,330 0,335 0,0,medium,PPAV - PP-12
+meteorologia,"Sendo dados: temperatura do ar verdadeira -20 0 C e o número MACH .42, a TAS será de:",VOR,NDB,DME,RDL 403,0,medium,PPAV - PP-12
+meteorologia,Um piloto decolará às 1000 h (HLE) no fuso 060 0 W; o horário que deverá preencher no plano de vôo será:,0600 Z,1000 Z,1400 z,1600 z,0,medium,PPAV - PP-12
+meteorologia,Quando uma aeronave seguindo o RV 090 0 recebe um vento de 090 0 tem-se a seguinte situação:,VS = VA,,VS &gt; VA,PV &gt; RV,0,medium,PPAV - PP-12
+meteorologia,"Ao traçarmos uma rota entre NE e E na carta WAC, devemos medir o RV no(na):",paralelo padrão,meridiano médio,menor latitude,menor longitude,0,medium,PPAV - PP-12
+meteorologia,A correção que se aplica à PM é chamada de:,305 FT,333 FT,3000 FT,3280 FT,0,medium,PPAV - PP-12
+meteorologia,"Uma aeronave no FL095 com VI de 155 KT, tendo como temperatura do ar -5 0 C, sua VA é de:",178 KT,182 KT,185 KT,191 KT,0,medium,PPAV - PP-12
+meteorologia,"Uma aeronave mantendo PM 050 0 e VA 170 a em uma região de DMG 10 0 W, recebe um vento de 120 0/ 20 KT. O RV e a VS serão, respectivamente de:",056 0/162 KT,0440/175 KT,033 0 /168 KT,056 0/178 KT,0,medium,PPAV - PP-12
+meteorologia,O piloto aplicou uma correção de deriva perfeita de 8 0 para a esquerda e manteve PB 004 0 em uma região com DMG 13 0 W e Db 5 0 E. O RV voado era de:,348 0,356 0,004 0,008 0,0,medium,PPAV - PP-12
+meteorologia,"O menor arco de paralelo ou de Equador compreendido entre os meridianos dos pontos considerados, denominase:",latitude,longitude,diferença da latitude,diferença de longitude,0,medium,PPAV - PP-12
+meteorologia,"A projeção ortogonal na superfície da Terra, da trajetória desejada ou percorrida pela aeronave, é denominada como:",direção,proa,rumo,rota,0,medium,PPAV - PP-12
+meteorologia,"A projeção que apresenta grandes distorções das áreas projetadas em altas latitudes, denomina-se:",Lambert,zenital,azimutal,Mercator,0,medium,PPAV - PP-12
+navegacao,"Uma aeronave voando com PV 140 0 , corta linhas isogônicas de 20 0 W a 28 0 W. A PM média com que deverá voar, será de:",1420,152 0,164 0,188 0,0,medium,PPAV - PP-12
+navegacao,"Considerando-se a PV menor do que o RV e VA menor do que a VS, o vento soprará do setor de:",proa pela direita,proa pela esquerda,cauda pela direita,cauda pela esquerda,0,medium,PPAV - PP-12
+navegacao,"Para as localidades que estejam do lado Leste, a hora legal em relação a UTC, é:",a mesma,mais cedo,mais tarde,igual a HLO,0,medium,PPAV - PP-12
+navegacao,A diferença de longitude do meridiano 060 0 E ao seu antimeridiano é:,060 0 w,120 0 w,180 0,240 0 E,0,medium,PPAV - PP-12
+navegacao,A distância em NM do ponto de latitude 75 0 30 ' N ao pólo Norte será de:,870,910,1430,1470,0,medium,PPAV - PP-12
+navegacao,"Se a DLO entre dois pontos for de 50 0 e a LOM entre eles for de 010 0 E, as longitudes dos pontos serão:",015 0 W e 035 0 E,010 0 E e 050 0 W,040 0 E e 060 0 E,045 0 E e 055 0 E,0,medium,PPAV - PP-12
+navegacao,Duas aeronaves recebem o mesmo vento lateral. Terá maior deriva aquela que:,tiver menor VA,tiver maior VA,for mais leve,for mais pesada,0,medium,PPAV - PP-12
+navegacao,"Maneira de se conduzir uma aeronave de um lugar para outro, seguindo-se o resultado de cálculos predeterminados em função do vento reinante no trajeto desejado, denomina-se navegação:",visual,astronômica,estimada,celestial,0,medium,PPAV - PP-12
+navegacao,A unidade de velocidade KT (Nó) é a relação entre:,NM e hora,km e hora,m e hora,FT e hora,0,medium,PPAV - PP-12
+navegacao,"Em uma projeção Lambert, a escala de distância é considerada:",constante,igual a Mercator,variável com a latitude,variável com a longitude,0,medium,PPAV - PP-12
+navegacao,"A distância vertical de um ponto ou de uma aeronave, acima do nível do mar, corrigida para as variações de pressão e temperatura, denomina-se altitude:",pressão,absoluta,calibrada,verdadeira,0,medium,PPAV - PP-12
+navegacao,"A componente da força do campo magnético da Terra, que causa o ângulo de inclinação, é a:",vertical,horizontal,do Equador,do círculo máximo,0,medium,PPAV - PP-12
+navegacao,"Uma aeronave, para se manter sobre a linha de rota desejada, com um vento do setor de cauda e da esquerda, deverá ter:",ACD nulo,deriva nula,ACD negativo,deriva negativa,0,medium,PPAV - PP-12
+navegacao,Em uma cidade situada na longitude 120 0 W são 10 horas (HLO). A UTC é:,0200 Z,0700 Z,1300 z,1800 z,0,medium,PPAV - PP-12
+navegacao,"O espaço aéreo designado como ""D403"", numa carta WAC, vem a ser uma área: proibida número 3, do quarto COMAR perigosa número 3, do quarto COMAR proibida número 4, do terceiro COMAR perigosa número 4, do terceiro COMAR O ângulo formado entre uma linha Norte/Sul magnética que passa pela estação e a linha que liga a acft a estação denomina-se:",ALS,ILS,AVAS,VASIS,0,medium,PPAV - PP-12
+navegacao,"Considerando-se as distâncias diretas entre Tubarão, Canela, Tramandaí, Torres e São Joaquim, na carta anexa, a autonomia mínima para cumprir o vôo será de:",02h 47min,02h 37min,02h 27min,02h 03min,0,medium,PPAV - PP-13
+navegacao,O tempo gasto durante a subida será de:,20 min,23 min,27 min,31 min,0,medium,PPAV - PP-13
+navegacao,"A distância entre Tubarão e o ponto onde atingirá o FL125, será de:",70 NM,75 NM,80 NM,85,0,medium,PPAV - PP-13
+navegacao,"A PM para Canela, após nivelar, será de:",237 0,242 0,249 0,265 0,0,medium,PPAV - PP-13
+navegacao,O estimado em Canela será:,11:41 Z,11:47 Z,11:53 z,11:59 z,0,medium,PPAV - PP-13
+navegacao,"Considerando-se uma VI de 100 KT na descida, a PB que manterá para Tramandaí, após nivelar no FL115, será de:",125 0,130 0,137 0,142 0,0,medium,PPAV - PP-13
+navegacao,"O combustível consumido até Tramandaí, mantendo o FL115 será de:",58 litros,64 litros,70 litros,76 litros,0,medium,PPAV - PP-13
+navegacao,O estimado em Torres será:,12:10 Z,12:16 Z,12:22 z,12:29 Z,0,medium,PPAV - PP-13
+navegacao,Qual a PB após Torres:,010 0,015 0,020 0,025 0,0,medium,PPAV - PP-13
+navegacao,Qual o estimado no través de Rio do Salto (28 0 51' S - 0490 46' W):,060 0 E,060 0 W,150 0 E,150 0 W,0,medium,PPAV - PP-13
+navegacao,"Durante 01h e 30min, uma ACFT percorrerá 232 NM. A velocidade desenvolvida será de:",148 KT,155 km/h,275 KT,285 km/h,0,medium,PPAV - PP-13
+navegacao,Ao complemento da latitude dá-se o nome de:,colatitude,antilatitude,latitude inferior,latitude superior,0,medium,PPAV - PP-13
+navegacao,"A linha que une pontos de DMG nula, denomina-se:",isoípsa,agônica,isogônica,isoclínica,0,medium,PPAV - PP-13
+navegacao,"O ângulo formado entre um meridiano magnético e uma linha de rota, chama-se:",proa magnética,rumo magnético,proa verdadeira,rumo verdadeiro,0,medium,PPAV - PP-13
+navegacao,"Sendo dados: altitude pressão 10000 FT, temperatura verdadeira do ar 15 0 C negativos e altitude calibrada 15000 FT, a altitude verdadeira será de:",14400 FT,14800 FT,15200 FT,"15600 FT %ÑAVÉGÀCÂO Aeronave civil, da aviação geral (RBHA-91) DEP ..... ..... . . ... ...... 14:ooz Altitude de Júlio Cesar...... ..... .. ... ... ..... vide carta Temperatura em Júlio Cesar...... ..... ..... 35 C Razão de subida . 450 FT/min Vento médio de subida . . 010 0 / 20 KT VI de subida . 120 KT Procedimento de subida . . em rota Vento no FL 125 ..... ..... 050 0 / 30 a Vento no FL 095 . 035 0 / 25 KT VI nos FL de cruzeiro ..... ..... ....135 KT Desvio da bússola .05 0 E Altitude de S. Sebastião da Boa Vista.... nível do mar VI nas descidas ..... , ..... ...110 a Razão de descida .500 FT/min Consumo horário de combustível por etapa: Subida .. 50 1 No FL 125 .. . .. ..... ..... ......... No FL 095 .. . 40 1 Nas descidas .. 25 1 Abastecimento da aeronave ..... .... Obs: Para cálculo da autonomia mínima utilize as VA nos FL de cruzeiro.",0,medium,PPAV - PP-13
+navegacao,"Considere as distâncias diretas da carta anexa, entre Júlio Cesar / Fernão Dias / Tucuruí e São Sebastião da Boa Vista, a autonomia mínima para cumprir o vôo será de:",Olh46,02h06,02h31,02h41,0,medium,PPAV - PP-13
+navegacao,O estimado no ponto de nivelamento será:,14:23 z,14:28 z,14:33 z,14:38 z,0,medium,PPAV - PP-13
+navegacao,"A PM para Fernão Dias, após o ponto de nivelamento, será:",179 0,184 0,190 0,197 0,0,medium,PPAV - PP-13
+navegacao,O sobrevôo de Fernão Dias será as:,14:31 z,14:36 z,14:41 z,14:46 z,0,medium,PPAV - PP-13
+navegacao,"A PV para Tucuruí, após Fernão Dias, será de:",222 0,228 0,233 0,242 0,0,medium,PPAV - PP-13
+navegacao,O combustível consumido até o sobrevôo de Tucuruí será de:,20 litros,26 litros,32 litros,38 litros,0,medium,PPAV - PP-13
+navegacao,"Considerando-se o DV/W 0420 / 27 KT na descida; a PB para São Sebastião da Boa Vista, ao nivelar no FL095, após o sobrevôo de Tucuruí, será de:",005 0,016 0,021 0,026 0,0,medium,PPAV - PP-13
+navegacao,O estimado no través de Baião (02 049' S / 049 0 40' W) será:,15:17 Z,15:23 Z,15:29 z 15:35 z,,0,medium,PPAV - PP-13
+navegacao,"Passará o través de Baião no estimado prosseguindo para São Sebastião da Boa Vista.Considerando na descida o mesmo vento da questão 07, a que distância de São Sebastião da Boa Vista iniciará a descida:",Oestesudeste,Oestenoroeste,Oestenordeste,Oestesudoeste,0,medium,PPAV - PP-13
+navegacao,Numa projeção Mercator os meridianos e paralelos cortam-se em ângulos:,retos,agudos,obtusos,diferentes,0,medium,PPAV - PP-13
+navegacao,"O círculo menor, cujo plano é perpendicular ao eixo imaginário da Terra, é o:",Equador,antimeridiano,meridiano,paralelo,0,medium,PPAV - PP-13
+navegacao,"A velocidade lida no velocímetro, sem qualquer correção, tem a sigla:",VC ou CAS,VI ou IAS,VA ou TAS,VS ou GS,0,medium,PPAV - PP-13
+navegacao,"Se uma aeronave consome 23 litros em 50 minutos, em 13 minutos consumirá:",1.0 US Gal,1.6 US Gal,2.3 US Gal,5.9 US Gal,0,medium,PPAV - PP-13
+navegacao,"Dados: temperatura verdadeira do ar 30 0 C negativos e MACH .45, a TAS será de:",273 km/h,305 km/h,506 km/h,515 km/h,0,medium,PPAV - PP-13
+navegacao,"A perda de energia eletromagnética de um rádiotransmissor, absorvida por objetos próximos ao mesmo, tais como árvores e edifícios, chama-se:",absorção,refração,reflexão,difração,0,medium,PPAV - PP-13
+navegacao,"Considerando-se as distâncias diretas da carta anexa, entre Santo Ângelo, Santiago, Rosário dó Sul e Granja São vicente, a autonomia mínima necessária para realizar o vôo será de :",011154,02h19,02h29,021-139,0,medium,PPAV - PP-14
+navegacao,A PM durante a subida será de:,208,218,228,238,0,medium,PPAV - PP-14
+navegacao,O estimado no ponto de nivelamento será:,1609 Z,1616 Z,1623 z,1630 z,0,medium,PPAV - PP-14
+navegacao,A distância percorrida durante a subida será de:,53 NM,58 NM,63 NM,68 NM,0,medium,PPAV - PP-14
+navegacao,A PV para voar do ponto de nivelamento até Santiago será de:,204,210,216,222,0,medium,PPAV - PP-14
+navegacao,"O combustível consumido até o sobrevôo de Rosário do Sul, mantendo o FL125, será de:",318,327,336,341,0,medium,PPAV - PP-14
+navegacao,Ao nivelar no FL105 manterá o rumo de Granja São Vicente. Qual o estimado sobre a linha limite da área SBR 517:,1705 Z,1710 Z,1715 z,1720 z,0,medium,PPAV - PP-14
+navegacao,"A distância que estará de Rosário do SuL ao iniciar a descida para pouso, considerando R/D de 700 FT/min e o mesmo vento de cruzeiro:",1063 m,1200 m,1063 FT,1200 FT,0,medium,PPAV - PP-14
+navegacao,"As distâncias na carta Mercator, em relação a região que a ACFT estiver operando, devem ser medidas na:",latitude média,longitude média,colatitude média,colongitude média,0,medium,PPAV - PP-14
+navegacao,"Quando a altitude indicada é corrigida para os êrros de instrumento e de instalação do mesmo, denominase altitude:",absoluta,calibrada,densidade,verdadeira,0,medium,PPAV - PP-14
+navegacao,Uma ACFT voará com o ajuste QNE a 10500 FT e sobrevoará um lugar onde o QNH naquele momento será de 1015 hPa. Neste caso a altitude pressão será de:,9600 FT,10500 FT,11100 FT,11150 FT,0,medium,PPAV - PP-14
+navegacao,Uma ACFT mantém PM 030 e VA 200 KT em um lugar onde a DMG é de 100 W. Em um determinado momento encontra um vento de 100 0 /20 KT. O RV e a VS encontradas serão:,0140 - 197 KT,0140 - 204 KT,0240 - 197 a,0240 - 204 KT,0,medium,PPAV - PP-14
+navegacao,"Em felação a hora legal, para locais que estejam do lado Oeste, a hora UTC será:",mais cedo,mais tarde,"no Brasil, mais cedo","na França, mais tarde",0,medium,PPAV - PP-14
+navegacao,O RM entre Fazenda Santa Catarina e Fazendinha será de:,137 0,143 0,1490,155 0,0,medium,PPAV - PP-14
+navegacao,A distância percorrida na subida será de:,051 0,056 0,062 0,068 0,0,medium,PPAV - PP-14
+navegacao,"A PB para Belém, ao nivelar, será de:",055 0,061 0,066 0,071 0,0,medium,PPAV - PP-14
+navegacao,"O estimado em Abaetetuba, AD localizado no eixo da rota, será:",30 0,90 0,120 0,180 0,0,medium,PPAV - PP-14
+navegacao,"A latitude média, entre as latitudes 34 0 20 ' S e 35 0 40 ' N, será de:",00 0 40 ' N,01 0 20 ' S,17 0 10 ' N,35 0 00 ' S,0,medium,PPAV - PP-14
+navegacao,"Dados PV 200 0 , VA 150 KT, DV/VV 120 0/25 KT, o ângulo de correção de deriva será:",desconsiderada,contra o vento,a favor do vento,para qualquer lado,0,medium,PPAV - PP-14
+navegacao,"Na conversão das distâncias, 12 kM eqüivalem a:","6,5 ST","7,5 ST","8,5 ST","9,5 ST",0,medium,PPAV - PP-14
+instrumentos_de_bordo,O piloto terá sempre a proa igual a rota voada quando o vento for:,de proa,de cauda,nulo,todas as citadas,0,medium,PPAV - PP-14
+instrumentos_de_bordo,Que velocidade deverá ter uma aeronave para realizar um percurso de 425 NM em 02 h e 30 min :,170 km/h,160 a,315 km/h,320 KT,0,medium,PPAV - PP-14
+instrumentos_de_bordo,Numa projeção gnomônica polar o ponto de origem da projeção é o:,pólo,Equador,centro da Terra,infinito,0,medium,PPAV - PP-14
+instrumentos_de_bordo,"A distância angular com origem no centro da Terra, cujo ângulo é lido do plano do Equador para o paralelo de um lugar, no sentido dos pólos, denomina-se:",latitude,longitude,círculo menor,círculo maior,0,medium,PPAV - PP-14
+instrumentos_de_bordo,"Dados: PB 120 0 DMG 10 0 W, desvio de bússola 5 0 E, VA 150 KT e DV/W 100 0/20 KT o RM será de:",115 0,1220,127 0,,0,medium,PPAV - PP-14
+instrumentos_de_bordo,Qual a direção e a distância de A para B situados nas coordenadas: A = 20 0 40 'S - 045 0 W e B = 22 0 50 'S - 045 0 w:,Norte/120 NM,Norte/130,Sul/120 NM,Sul/130 NM,0,medium,PPAV - PP-14
+instrumentos_de_bordo,"Sendo dados: PB 230 0 DMG 19 0 W, desvio bússola 5 0 E, VA 400 a e DV/W 270 0/30KT, a PB de regresso será de:",043 0,050 0,058 0,065 0,0,medium,PPAV - PP-14
+instrumentos_de_bordo,Uma projeção Lambert tem sua superfície gerada num:,cone,plano,cilindro,grupo de cones,0,medium,PPAV - PP-14
+instrumentos_de_bordo,"Uma aeronave mantém PV 350 0 e sua linha de rota corta as isogônicas de 12 0 W a 18 0 W, qual a PM média que deverá manter:",365 0,335 0,005 0,356 0,0,medium,PPAV - PP-14
+navegacao,10 NM equivalem a:,"9,5 ST","10,2 ST","12,9 km","18,5 km",0,medium,PPAV - PP-14
+navegacao,A rota que corta todos os meridianos em ângulos iguais é chamada:,ortodrômica,magnética,loxodrômica,bússola,0,medium,PPAV - PP-14
+navegacao,"Dados A = 220 00' S - 040 0 20' W e B = 38 0 43' S - 040 0 20' W, calcule a latitude média:","08 0 21 ' 30""","16 0 21' 30""","24 0 21 ' 30""","30 0 21' 30""",0,medium,PPAV - PP-14
+navegacao,A componente cuja força direcional é mínima nos pólos magnéticos chama-se:,agônica,vertical „.eü..,inclinada,horizontal,0,medium,PPAV - PP-14
+navegacao,Os compensadores magnéticos de uma bússola destinam a: corrigir a PM amortecer as oscilações do cartão manter lubrificado o pivot de sustentação neutralizar as influências magnéticas próximas a bússola A velocidade calibrada corrigida para a altitude e temperatura chama-se:,,VS,,VC ajuste ângulo de acerto correção de desvio ângulo de correção de deriva,0,medium,PPAV - PP-14
+navegacao,"Uma aeronave que mantém PM 030 0 e VA 250 KT, num lugar onde a DMG é de 10 0 W, encontra num determinado momento um vento de 080 0/30 KT. RV e VS serão, respectivamente:",0140/236 KT,024 0/262 KT,026 0 /238 KT,036 0/262 KT,0,medium,PPAV - PP-14
+navegacao,Qual das alternativas abaixo é considerada como um círculo menor:,Equador,paralelo,meridiano,antimeridiano,0,medium,PPAV - PP-14
+navegacao,"Para voar no RV 120 0 a aeronave mantém PV 125 0 Qual será a PV de regresso, sabendo-se que o vento e o mesmo?",140 km,135 NM,260 km,150 NM,0,medium,PPAV - PP-14
+navegacao,"A rota ortodrômica, também conhecida como rota de círculo máximo, corta os meridianos em ângulos:",iguais,agudos,diferentes,retos,0,medium,PPAV - PP-14
+navegacao,A abreviatura ESE refere-se ao ponto sub-colateral denominado:,Estesudoeste,Estenoroeste,EstenordesteEstesudeste,,0,medium,PPAV - PP-14
+navegacao,"Considerando-se PV 020 0 RM 050 0 DMG 22 0 W, distância 45 NM, TEV 16 min e VA 150 KT, o vento será de:",144 0/25 KT,160 0 /27 KT,253 0/29 KT,343 0/30 KT,0,medium,PPAV - PP-14
+navegacao,O ajuste altimétrico utilizado normalmente nas operações de pouso e decolagem de uma aeronave é o:,QNH,QNE,QFE,QFF,0,medium,PPAV - PP-14
+navegacao,"O Sol percorrerá em seu movimento aparente um arco de longitude correspondente a 046 0 30', no tempo de:",03h03min,03h04min,03h05min,03h06min,0,medium,PPAV - PP-14
+navegacao,"A direção e a distância de uma aeronave voando de um ponto A = 23 0 40' S - 044 0 10' W, para um ponto B = 220 20' S - 044 0 10' W é de:",180 0/40 NM,180 0/80 NM,360 0/40 NM,360 0/80 NM,0,medium,PPAV - PP-14
+navegacao,O semicírculo máximo cujo plano coincide com o eixo da Terra é o:,Equador,paralelo,meridiano,colatitude,0,medium,PPAV - PP-14
+navegacao,A projeção em que os paralelos e meridianos cortamse a 90 0 é a:,gnomônica,Mercator,policônica,estereográfica,0,medium,PPAV - PP-14
+navegacao,"Dados PV 100 0 DV/W 080 0/20 a, VA 120 a o RV será de:",091 0,094 0,097 0,103 0,0,medium,PPAV - PP-14
+navegacao,O ângulo de correção de deriva é o ângulo formado entre a proa da aeronave e o(a):,Norte verdadeiro,Norte magnético,rumo a seguir,linha Norte/Sul da bússola,0,medium,PPAV - PP-14
+navegacao,"A rota ortodrômica, numa projeção Mercator, é representada por uma linha:",curva,reta,cônica,loxodrômica A VA de uma aeronave aumenta aproximadamente de 2 por cento da VI para cada: 1000 m de altitude 100 m de altitude 100 FT de altitude 1000 FT de altitude,0,medium,PPAV - PP-14
+navegacao,"Dados PV 200 0 VA 140 KT, DV/VV 150 0/20 KT. Qual o RV e a VS, respectivamente?",207 0/128 a,194 0/153 KT,168 0 /140 KT,185 0/140 KT,0,medium,PPAV - PP-14
+navegacao,"O círculo máximo que divide a Terra em dois hemisférios, Norte e Sul, cujo plano passa pelo centro da Terra e é perpendicular ao seu eixo chama-se:",círculo menor,paralelo,meridiano,Equador,0,medium,PPAV - PP-14
+navegacao,Uma aeronave no FL 090 com temperatura do ar de 10 0 positivos e uma VI de 140 KT terá uma VA de:,164 km/h,292 km/h,294 km/h,304 km/h,0,medium,PPAV - PP-14
+navegacao,A que distância em NM do Equador está uma cidade localizada nas coordenadas 20 0 05' S - 040 0 00' W?,12150,1205,1125,2400,0,medium,PPAV - PP-14
+navegacao,Em que se baseia a projeção Mercator?,cone,vários cones,cilindro,infinito,0,medium,PPAV - PP-14
+navegacao,Qual seria a PV de uma aeronave que mantinha a PB 120 0 desvio de bússola 2 0 E e com DMG 15 0 W?,137 0,133 0,122 0,107 0,0,medium,PPAV - PP-14
+navegacao,"Considerando a latitude 23 0 39' S, a colatitude será:",156 0 21' S,66 0 39' S,66 0 21 's,55 0 49' N,0,medium,PPAV - PP-14
+navegacao,Ao nível do mar a temperatura é 17 0 positivos. No nível 110 será:,5 0 negativos,7 0 negativos,22 0 positivos,39 0 negativos,0,medium,PPAV - PP-14
+navegacao,Uma aeronave mantém uma VI de 150 KT durante uma subida de um AD a 3500 pés até o FL085. A VA média aproximada será de:,150 a,163 KT,168 KT,202 KT,0,medium,PPAV - PP-14
+navegacao,"Em um lugar de longitude 155 0 E são 0800 UTC. A HLE e a HLO serão, respectivamente:",0140 e 0200,0200 e 0140,1800 e 1820,1820 e 1800,0,medium,PPAV - PP-14
+navegacao,"Numa carta de escala 1 por 3.500.000, representam:",10500 km,1050 km,105 NM,56.5 NM 3 cm,0,medium,PPAV - PP-14
+navegacao,"Na conversão de distâncias, 05 0 25 '30"" de latitude corresponde a:","325,3 NM","325,5 NVI","525,3 NM","525,5 NM",0,medium,PPAV - PP-14
+navegacao,"A PB é 150 0 , a DMG é 16 0 W, o desvio é 1 0 E, a correção de deriva é '5 0 positivos. O RV será:",130 0,140 0,160 0,170 0,0,medium,PPAV - PP-14
+navegacao,200 metros equivalem a,65 FT,600 FT,655 FT,700 FT,0,medium,PPAV - PP-14
+navegacao,Uma aeronave percorre um trecho em 02h10min consumindo 510 galões de combustível. O consumo de combustível por hora é de:,,159,215,235,0,medium,PPAV - PP-14
+navegacao,O movimento aparente do Sol em torno da superfície terrestre é no sentido:,Norte - Sul,Sul - Norte,Oeste - Leste,Leste - Oeste,0,medium,PPAV - PP-14
+navegacao,"Quantas NM possui um fuso horário, no Equador?",135 0,125 0,115 0,105,0,medium,PPAV - PP-14
+navegacao,"A latitude média entre os pontos A = 270 47' s 035 0 15' VV e B - 54 0 35' N - 040 0 20' W, será de:",26 0 48' N,40 0 41' N,26 0 48' s,13 0 24' N,0,medium,PPAV - PP-14
+navegacao,Numa projeção Lambert um círculo máximo é representado por uma linha:,reta,curva,ondulada,conformal,0,medium,PPAV - PP-14
+navegacao,"Dados PV 240 0 , TAS 100 KT e DV/VV 080 0/20 KT, o RV e VS serão, respectivamente:",237 0 /82 KT,243 0 /118 KT,237 0 /118 KT,243 0/82 KT,0,medium,PPAV - PP-14
+instrumentos_de_bordo,"Um acft para manter-se sobre a linha de rota desejada, com um vento do setor de proa e pela direita deverá ter:",ACD positivo,ACI) nulo,ACD negativo,deriva nulo,0,medium,PPAV - PP-14
+instrumentos_de_bordo,As projeções em que o ponto de origem se encontra no infinito são chamadas:,azimutais,estereográficas,gnomônicas,ortográficas,0,medium,PPAV - PP-14
+instrumentos_de_bordo,Calcule entre os pontos A e B a longitude média. Coordenadas: A = 20 0 43 ' S - 045 0 15 ' W e 16 0 27' N - 025 0 10' E.,020 0 05' W,"010 0 02' 30"" W","015 0 17' 26"" w","035 0 12' 30"" W",0,medium,PPAV - PP-14
+instrumentos_de_bordo,"Em quanto tempo o Sol percorrerá, em seu movimento aparente, um arco de longitude correspondente a",05h11min,05h12min,05h13min,05h14min,0,medium,PPAV - PP-14
+instrumentos_de_bordo,A altitude pressão corrigida para erros de temperatura é a altitude:,calibrada,indicada,densidadeverdadeira,,0,medium,PPAV - PP-14
+instrumentos_de_bordo,Dizemos que o vento sempre sopra da proa para o rumo e com isso determina um ângulo chamado:,deriva,desvio,correção,declinação,0,medium,PPAV - PP-14
+instrumentos_de_bordo,"Voando entre as DMG 5 0 E e 9 0 W, para manter uma PM média, qual a DMG a ser usada?",2 0 W,5 0 W,,,0,medium,PPAV - PP-14
+instrumentos_de_bordo,"A maneira pela qual se representa num plano a superfície da Terra ou parte dela, aparecendo com perfeição os seus meridianos e paralelos, denomina-se:",carta,escala,mapa,projeção,0,medium,PPAV - PP-14
+instrumentos_de_bordo,"Conhecendo o RV, para se obter um RM, a DMG será:",subtraída se for W,somada se for W,subtraída se for S,somada se for E,0,medium,PPAV - PP-14
+instrumentos_de_bordo,"Um piloto que esteja na latitude 32 0 40' S, deseja saber qual a sua colatitude. Está será de:",90 0 00',75 0 40',70 0 20',57 0 20',0,medium,PPAV - PP-14
+instrumentos_de_bordo,"Dados PV 245 0 , VA 120 a, DV/VV 075 0/20KT, RV e VS serão, respectivamente:",067 0/130 KT,246 0 /140 KT,200 0/180 KT,025 0 /200 KT,0,medium,PPAV - PP-14
+instrumentos_de_bordo,"A projeção que apresenta os meridianos como linhas retas, paralelas e equidistantes e os paralelos como linhas retas, paralelas e não equidistantes, é chamada de:",Mercator,Lambert,azimutal,gnomônica polar,0,medium,PPAV - PP-14
+instrumentos_de_bordo,"Os fatores capazes de modificar o valor da VA são: vento de proa mudança de nível, temperatura e VI mudança de nível, vento vento de cauda Ao efetuar uma subida numa atmosfera padrão, o piloto observa que a temperatura decresce em 2 0 C para cada:",1000 pés,500 pés,1000 metros,500 metros Proa magnética é o ângulo formado entre o meridiano: magnético e o eixo longitudinal da aeronave verdadeiro e o eixo longitudinal da aeronave magnético e a linha de rota verdadeiro e magnético,0,medium,PPAV - PP-14
+instrumentos_de_bordo,Numa aeronave o piloto mantém sua proa bússola igual a 090 0 . O desvio de bússola é de 5 0 E. Pede-se a proa magnética:,095 0,090 0,085 0,080 0,0,medium,PPAV - PP-14
+instrumentos_de_bordo,"Para se manter em sua rota, o piloto necessitou usar proa maior do que a rota e uma VA maior do que a VS. Pergunta-se: o vento vem de:",direita e proa,direita e cauda,esquerda e proa,esquerda e cauda,0,medium,PPAV - PP-14
+instrumentos_de_bordo,Uma aeronave percorre 105 NM em 45 min. Em uma hora percorrerá:,258,140 NM,140 km,147 NM,0,medium,PPAV - PP-14
+instrumentos_de_bordo,"Se uma aeronave localizada na latitude 05 0 25 s percorrer no sentido Norte, na mesma longitude, uma distância de 1320 NM, a latitude do destino será de",16 0 35 'N,17 0 00 'N,22 0 00 'N,27 0 35 'N,0,medium,PPAV - PP-14
+instrumentos_de_bordo,"Se a temperatura de um aeródromo, cuja elevação é de 2500 FT, estiver com 0 0 C, pode-se afirmar que a condição é:",5 0,IS,IS,ISA,0,medium,PPAV - PP-14
+instrumentos_de_bordo,Uma aeronave percorreu 150 NM em 34 min e manteve PB 070 0 e VA 280 KT. O RM era de 060 0 DMG 24 0 E e desvio de bússola 05 0 W. Qual o vento encontrado?,160 0 /40 KT,150 0 /35 KT,140 0/30 KT,130 0 /20 KT,0,medium,PPAV - PP-14
+instrumentos_de_bordo,"O altímetro é ligado a(s) linha(s) de pressão: de impacto estática estática e impacto de impacto e dinâmica A linha irregular equidistante dos pólos magnéticos na qual a componente vertical da bússola magnética é mínima e a horizontal é máxima, é chamada: componente horizontal componente vertical Equador magnético linha de inclinação Sendo dados PM 050 0 e DR -6 0 . Qual 0 RM?",1 0 W,2 0 W,ortodrômica,"loxodrômica • NAv$4gAq* :59:,.:",0,medium,PPAV - PP-14
+instrumentos_de_bordo,"Quando o vento for de proa, de cauda ou nulo, a PV em relação ao RV será:",maior,igual,menor,diferente,0,medium,PPAV - PP-14
+instrumentos_de_bordo,Sobre o Equador um arco de 2 0 15 ' equivale a uma distância de:,135 NM,135 km,165 NM,165 km,0,medium,PPAV - PP-14
+instrumentos_de_bordo,A abreviatura SW pertence ao grupo de pontos:,cardeais,colaterais,su,colaterais,0,medium,PPAV - PP-14
+instrumentos_de_bordo,"Na longitude de 120 0 W são 18:00 horas UTC. No mesmo instante, a hora UTC na longitude de 135 0 de:",06:00 h,09:00 h,18:00 h,22:00 h,0,medium,PPAV - PP-14
+instrumentos_de_bordo,"Calcular entre os pontos ""A"" e ""B"" a latitude média: A = 20 0 30' N e B = 20 0 33' S",01' 30 1' S,"00 0 01' 30"" N","01 0 30' 30"" s","01 0 30' 30"" N",0,medium,PPAV - PP-14
+instrumentos_de_bordo,"Em latitudes elevadas, as linhas traçadas nas cartas, unindo os pontos de mesma inclinação magnética, chamam-se:",desvios,agônicas,isogônicas,isoclínicas,0,medium,PPAV - PP-14
+instrumentos_de_bordo,"Dados PM 300 0 DMG 10 0 E, desvio de bússola 6 ovv pede-se, respectivamente, a PB e a PV:",absoluta,indicada,calibrada,densidade,0,medium,PPAV - PP-14
+instrumentos_de_bordo,"Latitudes crescentes de baixo para cima e longitudes crescentes da direita para a esquerda, a carta representa os hemisférios:",,N e w,S E,S e W,0,medium,PPAV - PP-14
+instrumentos_de_bordo,"Quando a origem de uma projeção é um dos pólos e a superfície tangente está no polo oposto, ela é classificada como:",gnomônica,estereográfica,ortográfica,infinita,0,medium,PPAV - PP-14
+instrumentos_de_bordo,"Quando uma ACFT voa de uma região de alta pressão para uma de baixa pressão, a altitude verdadeira:",diminui,aumenta,não se altera,é igual a absoluta,0,medium,PPAV - PP-14
+instrumentos_de_bordo,O método de navegação no qual a posição de uma ACFT é obtida por ondas de rádio é chamada de navegação:,estimada,celestial,eletrônica,radiogoniométrica,0,medium,PPAV - PP-14
+instrumentos_de_bordo,"A representação gráfica da superfície da Terra desenvolvida num plano, sem grandes detalhes de projeção, chama-se:",mapa,visão,projeção,,0,medium,PPAV - PP-14
+navegacao,A VA sofrendo a influência de um componente de vento positivo ou negativo passará a ser:,VS,VC,,,0,medium,PPAV - PP-14
+navegacao,A longitude de um ponto é medida sobre um arco de:,paralelo,meridiano,círculo máximo,milhas náuticas,0,medium,PPAV - PP-14
+navegacao,"Uma aeronave no FLIOO, mantém VI de 120 KT. Neste caso, a VA aproximada é de:",120 a,130 KT,135 KT,144 KT,0,medium,PPAV - PP-14
+navegacao,Dados: RV 100 0 ' ACD +5 0 ' DMG 10 0 W; distância 25 NM; tempo de vôo 10 min e VA 140 KT. O vento será de:,206 0/02 KT,212 0/06 KT,220 0 /10 KT,231 0 /16 KT,0,medium,PPAV - PP-14
+navegacao,"Em um recipiente dotado de um êmbolo móvel, é introduzido um gás que ocupa determinado volume. Se este for reduzido à metade, sem haver variação de temperatura, a pressão do gás:",duplicará,triplicará,ficará inalterada,quadruplicará,0,medium,PPAV - PP-16
+navegacao,"Uma aeronave recebe vento de frente de 25 Km/h. Considerando sua velocidade de 270 Km/h, a velocidade com relação ao solo será:",295 Km/h,220 Km/h,320 Km/h,nenhuma das citadas,0,medium,PPAV - PP-16
+navegacao,"Um automóvel trafega a 80 Km/h. Se o vento sopra no sentido contrário com 20 Km/h, a velocidade do automóvel em relação ao ar será de:",60 Km/h,80 Km/h,100 Km/h,nenhuma das citadas,0,medium,PPAV - PP-16
+navegacao,"Ao grau de variação da velocidade de um corpo que cai em queda livre no espaço, damos o nome de: velocidade de queda livre aceleração uniforme aceleração da gravidade velocidade angular A força por unidade de área denomin",pressão maior na parte superior devido ao peso do fluido deslocado,"pressão maior na parte inferior, devido ao peso do fluido deslocado",peso,pressão Um corpo mergulhado em um fluido sofre: pressões iguais em todos os sentidos nenhuma das acima,0,medium,PPAV - PP-16
+navegacao,A pressão exercido sobre um corpo pode ser medida em quilograma-força por:,centímetro quadrado,massa quadrada,centímetro cúbico,segundo quadrado,0,medium,PPAV - PP-16
+navegacao,"A resistência que os corpos oferecem à modificação do seu estado de repouso ou de movimento, chama-",inércia,sustentação,força de atrito,resistência ao avanço,0,medium,PPAV - PP-16
+navegacao,Inércia é a tendência que os corpos tem de permanecer em seu estado de:,movimento,repouso,movimentação,repouso ou de movimento,0,medium,PPAV - PP-16
+navegacao,"A variação da velocidade, na unidade de tempo, damos o nome de:",aceleração,sustentação,resultante,resistência,0,medium,PPAV - PP-16
+navegacao,"O ângulo formado entre a corda e a trajetória, chamase ângulo de:",incidência,ataque,planeio,subida,0,medium,PPAV - PP-16
+navegacao,A menor velocidade na qual se consegue voar reto e horizontal é a velocidade:,de cruzeiro,máxima,mínima,de estol,0,medium,PPAV - PP-16
+navegacao,"A reta perpendicular à corda, que liga esta à linha de curvatura média, no ponto de maior distância entre as duas, é denominada: linha de curvatura média corda flecha ponto de espessura Num vôo de dorso, podemos afirmar que: As fendas que, em grandes ângulos de ataque, permitem a passagem do ar mais energizado dinamicamente, do intradorso para o extradorso, possibilitando maiores ângulos de ataque, são denominados:",flaps,slats,slots,frise,0,medium,PPAV - PP-16
+navegacao,"O tipo de flape que quando atuado aumenta a área da asa e o Cl, é denominado:",simples,ventral,fowler,diferencial,0,medium,PPAV - PP-16
+navegacao,"O disco perpendicular ao vento relativo, cuja área provoca uma resistência ao avanço equivalente ao arrasto parasita da aeronave, é denomanaõo•",área de fuselagem,perfil de um aerof0110,spiner,área plana eawvalente,0,medium,PPAV - PP-16
+navegacao,"Para se determinar a velocidade necessária para manter um vôo reto e horizontal, temos de partir do princípio que I = W, onde:",CL . (pp . s . v = w) b) c . (p /2 . s . v = w),,CL . (p . s . = w) d) Cd . (p /2 . s . = w),,0,medium,PPAV - PP-16
+navegacao,"Quanto maior for o ângulo de ataque: menor será o CL até o ângulo crítico menor será o Cd em função do turbilhonamento maior será o CL até o ângulo crítico CL e Cd não variam em função do ângulo de.ataque Para se manter a velocidade de um avião constante, é necessário que: A força que dificulta a trajetória de qualquer corpo, denomina-se:",arrasto,arrasto parasita,resistência ao avanço,arrasto induzido,0,medium,PPAV - PP-16
+navegacao,"Considerando-se a forma de um avião, a mais aerodinâmica possível, se alterarmos o ângulo de ataque em 5 graus para cima, a resistência parasita:",aumenta,diminui,não se altera,impossível determinar,0,medium,PPAV - PP-16
+navegacao,O avião com equilíbrio indiferente é um avião:,perigoso,com estabilidade estática,confiável,com estabilidade dinâmica,0,medium,PPAV - PP-17
+navegacao,O Teorema de Bernoulli forneceu base para a construção do:,altímetro,velocímetro,Tubo de Venturi,Tubo de Pitot,0,medium,PPAV - PP-17
+navegacao,"O movimento de cabrar e picar, é realizado em torno do eixo:",longitudinal,vertical,lateral,direcional,0,medium,PPAV - PP-17
+navegacao,"As fendas de bordo de ataque que funcionam como dispositivos hipersustentadores, são conhecidas como:",wing fences,flight spoilers,slots,spoilers,0,medium,PPAV - PP-17
+navegacao,"Na atmosfera padrão (ISA) a temperatura ao nível do mar é, em graus Celsius, de:",08 graus,15 graus,10 graus,20 graus,0,medium,PPAV - PP-17
+navegacao,"Quanto maior for o peso de um avião, maior será a:",velocidade máxima,velocidade de estol,razão de subida,tração,0,medium,PPAV - PP-17
+navegacao,"A pressão atmosférica padrão, ao nível do mar, em milímetros de mercúrio, vale:",067,670,076,760,0,medium,PPAV - PP-17
+navegacao,"O ponto de cruzamento dos três eixos imaginários, em torno dos quais o avião executa seus movimentos básicos, é o centro:",de gravidade,de pressão,de movimento,aerodinâmico,0,medium,PPAV - PP-17
+navegacao,A superfície de comando que tem a maior amplitude de movimentos é o(a):,aileron,compensador,profundor,leme de direção,0,medium,PPAV - PP-17
+navegacao,A superfície de comando que não tem nenhuma influência na recuperação de um parafuso é o:,aileron,leme de direção,profundor,compensador,0,medium,PPAV - PP-17
+navegacao,Na sua grande maioria as asas dos aviões são feitas com um perfil do tipo:,simétrico,assimétrico,regular,irregular,0,medium,PPAV - PP-17
+navegacao,"O produto entre a massa e a aceleração, chama-se:",força,trabalho,impulso,energia,0,medium,PPAV - PP-17
+navegacao,A força de sustentação depende somente de:,"ângulo de ataque, densidade do ar e velocidade de deslocamento","coeficiente de sustentação, área da asa, velocidade de deslocamento ângulo de ataque, formato do aerofólio, área da asa, densidade do ar e velocidade de deslocamento'",,,0,medium,PPAV - PP-17
+instrumentos_de_bordo,0 ângulo correspondente ao coeficiente máximo de sustentação é chamado de ângulo:,critico,de incidência,diedro,de enflechamento.,0,medium,PPAV - PP-17
+instrumentos_de_bordo,A parte da asa que sofre aumento de velocidade do,intradorso,ventre,extradorso,ponta da asa,0,medium,PPAV - PP-17
+instrumentos_de_bordo,0 centro de pressão é o ponto de aplicação da sustentação e deverá ficar sempre:,atrás do CG,na frente do CG,coincidente com o CG,no centro da tração,0,medium,PPAV - PP-17
+instrumentos_de_bordo,Numa aeronave as partes que possuem pequena resistência ao avanço são chamadas:,aerofólios,superfícies aerodinâmicas,fuselagem,superfícies de comando,0,medium,PPAV - PP-17
+instrumentos_de_bordo,A linha que vai do nariz à cauda da aeronave chama-se eixo:,lateral,vertical,direcional,,0,medium,PPAV - PP-17
+instrumentos_de_bordo,"O ""ZERO ABSOLUTO"" corresponde a:",-4600 F,2730 C,4600 F,longitudinal,0,medium,PPAV - PP-17
+instrumentos_de_bordo,Os hipersustentadores que facilitam do ar no extradorso são:,spoilers,flaps,slots e slats,ailerons o escoamento,0,medium,PPAV - PP-17
+instrumentos_de_bordo,"A resistência ao avanço causado pelo turbilhonamento de ponta de asa, chama-se resistência:",induzida,parasita,total,do perfil,0,medium,PPAV - PP-17
+instrumentos_de_bordo,"O dispositivo responsável por captar pressão para o altímetro e velocímetro, é chamado de tubo de:",Pitoti,Torricelli,Venturi,Bernoulli,0,medium,PPAV - PP-17
+instrumentos_de_bordo,Os fatores de carga elevados podem ser produzidos através de:,cabrada,rajadas de vento,vôos em curva,todas as anteriores,0,medium,PPAV - PP-17
+instrumentos_de_bordo,O fator de carga produzido numa cabrada pode ser:,positivo,negativo,nulo,qualquer das acima,0,medium,PPAV - PP-17
+instrumentos_de_bordo,O fator de carga produzido no início de uma picada pode ser:,positivo,nulo,negativo,qualquer das acima,0,medium,PPAV - PP-17
+instrumentos_de_bordo,O fator de carga é definido como sendo a razão entre:,peso e área da asa,sustentação e o peso,peso e carga útil,sustentação e arrasto,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,"Em vôo planado, uma acft consegue atingir a máxima distância com vento:",de proa,de través,de cauda,nulo,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,"Os dispositivos que permitem as acfts se aproximarem com maiores ângulos de planeio e menores velocidades, são os:",flaps,slats,slots,todos os anteriores,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,O pouso de pista em relação ao pouso de três pontos: geralmente pode ser realizado com mais suavidade geralmente é realizado com menos suavidade só poder ser realizado em ACTF com trem triciclo só pode ser realizado em acft com trem de pouso convencional choque do nariz da acft com o solo chama-se:,cavalo de pau,pilonagem,derrapagem,glissagem,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,As melhores condições de pouso são:,baixa altitude,baixa temperatura,aclive,todas as anteriores,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,"A manobra no solo que consiste numa mudança de proa de 180 graus e que é própria da acft com trem de pouso convencional, denomina-se:",cavalo de pau,pouso 180 graus,pilonagem,glissagem,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,Numa cabrada o fator de carga será:,igual a um,superior a um,inferior a um,zero,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,"A soma entre a carga paga e o combustível à decolagem, chama-se:",carga unitária,carga útil,carga alar,fator carga,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,"Para que um avião seja estaticamente estável, é necessário que o CG, em relação ao CP, esteja localizado:",atrás,à frente,no lado direito,no lado esquerdo,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,A variação do espaço na unidade de tempo é denominada:,velocidade,força centrífuga,aceleração,pressão,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,O produto da força aplicada a um corpo pela velocidade de seu deslocamento é denominado:,momento,trabalho,potência,impulso,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,"Duas aeronaves iguais com pesos diferentes, iniciam um vôo planado com mesmo ângulo de planeio. A mais pesada, estando mais baixa, terá uma distância de planeio:",inalterada,maior,menor,igual,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,"para medir a velocidade, o velocímetro usará somente a pressão:",estática,atmosférica,dinâmica,gravitacional,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,"A superfície aerodinâmica que produz reações úteis ao vôo, chama-se:",perfil,spiner,envergadura,aerofólio,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,"A quantidade de matéria contida por unidade de volume, é denominada:",massa,densidade,potência,pressão,0,medium,PPAV - PP-17
+desempenho_e_planejamento,"O ângulo formado entre a linha do horizonte e o eixo longitudinal da aeronave, chama-se ângulo:",diedro,de atitude,de enflexamento,de subida,0,medium,PPAV - PP-17
+desempenho_e_planejamento,"O efeito de fuselagem influencia, principalmente, a estabilidade:",nulo,positivo,negativo,"longitudinal 08- Quando a aeronave executa um vôo de dorso, diz-se",0,medium,PPAV - PP-17
+desempenho_e_planejamento,"A menor velocidade com a qual o piloto consegue manter-se em velocidade constante, chama-se velocidade:",mínima,de estol,de perda,a potência necessária será a mesma,0,medium,PPAV - PP-17
+desempenho_e_planejamento,"Durante um vôo planado, o vento de cauda fará com que, respectivamente, a distância de planeio e o ângulo de planeio:","aumentem, ambos",diminua e aumente,aumente e diminua,"diminuam, ambos",0,medium,PPAV - PP-17
+desempenho_e_planejamento,A velocidade de maior razão de subida em relação à de maior ângulo de subida é:,igual,maior,menor,impossível determinar,0,medium,PPAV - PP-17
+instrumentos_de_bordo,"O vento relativo em relação ao deslocamento da aeronave, possui:",mesmo sentido,velocidade inferior,mesma direção,velocidade superior,0,medium,PPAV - PP-17
+instrumentos_de_bordo,As asas e as superfícies de comando de um avião são:,estabilizadores,aerofólios,comandos,perturbadores de vôo,0,medium,PPAV - PP-17
+instrumentos_de_bordo,Para se conhecer o ângulo de ataque é necessário que se leve em consideração a direção do vento relativo e o(a):,eixo longitudinal,corda do aerofólio,linha do horizonte,eixo transversal,0,medium,PPAV - PP-17
+instrumentos_de_bordo,A parte da asa que sofre aumento de pressão ocasionado pelo escoamento do ar é o(a):,extradorso,dorso,intradorso,cambra,0,medium,PPAV - PP-17
+instrumentos_de_bordo,Para se manter um vôo horizontal é necessário aumentar a velocidade sempre que diminuir o(a):,peso,área da asa carga alard) altitude igual à de vôo nivelado,,,0,medium,PPAV - PP-17
+instrumentos_de_bordo,"Considerando-se a forma de um avião, a mais aerodinâmica possível, se alterarmos o ângulo de ataque em 6 graus para cima, a resistência parasita:",não se altera,aumenta,diminui,impossível determinar,0,medium,PPAV - PP-17
+instrumentos_de_bordo,A distância a ser percorrida em vôo planando varia com o(a):,inclinação,altura,peso,velocidade,0,medium,PPAV - PP-17
+instrumentos_de_bordo,A menor velocidade com que o avião consegue manter o vôo reto e horizontal é a velocidade:,mínima,de estol,de descida,crítica,0,medium,PPAV - PP-17
+instrumentos_de_bordo,A força centrífuga atua em uma curva para:,dentro,fora,baixo,cima,0,medium,PPAV - PP-17
+instrumentos_de_bordo,A linha imaginária que vai do nariz até a cauda do avião é chamada:,corda,eixo longitudinal,eixo transversal,eixo de arfagem,0,medium,PPAV - PP-17
+instrumentos_de_bordo,"Quando um corpo afastado de sua posição tende a ela voltar, diz-se que o mesmo possui equilíbrio:",instável,estável,indiferente,neutro,0,medium,PPAV - PP-17
+instrumentos_de_bordo,O ponto de aplicação do peso é chamado de centro de:,tração,gravidade,pressão,sustentação,0,medium,PPAV - PP-17
+instrumentos_de_bordo,"A relação entre os esforços que o avião suporta em manobras e o esforço que o mesmo suportaria em vôo horizontal, chama-se:",fator carga,carga útil,carga de ruptura,alongamento,0,medium,PPAV - PP-17
+instrumentos_de_bordo,O movimento realizado em torno do eixo vertical é chamado de:,guinada,tangagem,cabragem,rolamento,0,medium,PPAV - PP-17
+instrumentos_de_bordo,"As cargas dinâmicas que podem destruir um avião, se forem excessivas são as:",transversais,longitudinais,verticais,horizontais,0,medium,PPAV - PP-17
+instrumentos_de_bordo,"A altitude máxima que uma aeronave consegue alcançar, chama-se teto:",prático,absoluto,de serviço,operacional,0,medium,PPAV - PP-17
+instrumentos_de_bordo,Uma aeronave em vôo nivelado sofre um fator de carga:,igual a 1,maior que 1,menor que 1,igual a zero,0,medium,PPAV - PP-17
+instrumentos_de_bordo,"Um avião sofre um desequilíbrio lateral e, ao tentar voltar à posição original, desequilibra-se cada vez mais. Neste caso, o avião tem um comportamento estaticamente:",normal,estável,instável,indiferente,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,"Em caso de decolagens atrás de aeronaves pesadas, o piloto deve procurar:",manter a trajetória de subida abaixo da mantida pela aeronave pesada,manter a trajetória de subida acima da mantida pela aeronave pesada manter a mesma trajetória decolar imediatamente atrás da aeronave pesada,,,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,No teto absoluto a acft ainda consegue manter uma razão de:,100 ft/min,"0,51 ft/min",100 m/min,,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,A potência necessária para deslocar uma acft aumenta com a redução de:,carga alar,altitude,peso,densidade,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,Potência disponível é a mesma coisa que;,potência útil,potência necessária,potência de tração,"""a"" e ""c"" estão corretas",0,medium,PPAV - PP-17
+conhecimentos_tecnicos,"A potência efetiva transformada em tração pela ação das hélices, é denominada:",potência disponível,potência útil,potência de tração,qualquer das anteriores,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,Para pousar com baixa velocidade é necessário reduzir a velocidade de estol. Isso pode ser conseguido com o aumento de:,Cl da asa,área da asa,ângulo crítico,todas acima,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,A velocidade com a qual se pode voar a maior distância possível é a velocidade de:,máxima autonomia,cruzeiro,regime econômico,máximo alcance,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,O altímetro nos fornece altitude:,pressão,densidade,verdadeira,calibrada,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,"Quando a corda de um perfil assimétrico confundir-se com a direção do vento relativo, teremos um ângulo",sustentação nula,perda,ataque positivo,ataque nulo,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,"A razão entre a força e a área aplicada, chama-se:",trabalho,momento,pressão,densidade,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,Ao arrasto provocado nas pontas da asa damos o nome de arrasto:,positivo,positivo ou nulo,negativo,"positivo, negativo ou nulo 13- O valor ""Cl Máximo"" corresponde ao ângulo de: ataque nulo ataque de sustentação nula estol ataque para alta velocidade",0,medium,PPAV - PP-17
+conhecimentos_tecnicos,A deriva é um perfil:,"assimétrico, pois a corda coincide com a linha de curvatura média","simétrico, pois a corda não coincide com a linha de curvatura média simétrico, pois a corda coincide com a linha de curvatura média assimétrico, pois a corda não coincide com a linha de curvatura média",,,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,O nome técnico da parte superior de um aerofólio é:,corda,ventre,intradorso,extradorso,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,"Para aumento de ângulo de ataque acima do ângulo crítico, os valores de Cl: a) aumentam rapidamente",,diminuem rapidamente,anulam-se imediatamente,aumetam lentamente,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,"A resistência ao avanço, devido ao turbilhonamento na ponta da asa, chama-se resistência:",parasita,do perfil,ao avanço induzida,de atrito induzida,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,O movimento de guinada é realizado com o(s):,leme de direção,ailerons,flaps,profundor,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,"Quando aciona-se o manche para a esquerda, o avião deverá girar em torno do eixo:",aileron,profundor,leme de direção,leme de profundidade,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,A altitude máxima que uma aeronave consegue alcançar chama-se teto:,prático,absoluto,de serviço,operacional,0,medium,PPAV - PP-17
+conhecimentos_tecnicos,"As partes do avião que produzem pequena resistência ao avanço e nenhuma força útil ao vôo, são denominadas:",aerofólios,envergaduras,estabilizadores,superfícies aerodinâmicas,0,medium,PPAV - PP-18
+instrumentos_de_bordo,"Partindo da posição neutra, o manche ao ser movido para a esquerda, fará com que o avião gire em torno do eixo:",lateral,vertical,inclinado,longitudinal,0,medium,PPAV - PP-18
+instrumentos_de_bordo,Uma aeronave em vôo reto horizontal quando atinge ângulo de ataque crítico fica na seguinte situação:,estolada,com Cl mínimo,prestes a estolar,com velocidade máxima,0,medium,PPAV - PP-18
+instrumentos_de_bordo,"Uma aeronave decolando do Campo de Marte com vento de proa de 10 KT e com 3/4 da RWY. Se fizesse outra decolagem nas mesmas condições, porém com vento de cauda, a distância de decolagem seria:",maior,menor,a mesma,a critério do piloto,0,medium,PPAV - PP-18
+instrumentos_de_bordo,Em uma aeronave o fator carga pode ser provocado pelos(as):,curvas,subidas,mergulhos,ventos calmos,0,medium,PPAV - PP-18
+instrumentos_de_bordo,"A pressão exercida por fluidos em movimento, levando em consideração a velocidade do fluido, é denominada pressão:",estática,barométrica,dinâmica,atmoférica,0,medium,PPAV - PP-18
+instrumentos_de_bordo,"As cargas dinâmicas que são, geralmente, fracas e não afetam a estrutura do avião, são chamadas de:",úteis,leves,verticais,horizontais,0,medium,PPAV - PP-19
+instrumentos_de_bordo,"Pode-se afirmar que uma aeronave em vôo, no seu teto absoluto, terá uma RIS:",nula,de 50 ft/min,de 100 ft/min,de 150 ft/min,0,medium,PPAV - PP-19
+instrumentos_de_bordo,"Uma aeronave em vôo planado consegue atingir a máxima distância, com vento:",nulo,de proa,de cauda,de través,0,medium,PPAV - PP-19
+instrumentos_de_bordo,"Durante uma corrida de decolagem, com o aumento da velocidade, o valor da força de atrito dos pneus com o solo :",aumenta,diminui,é variável,é constante,0,medium,PPAV - PP-19
+instrumentos_de_bordo,"O raio limite que uma aeronave executa, durante uma curva, depende da: potência efetiva e da altitude altitude e da potência disponível potência efetiva e da potência nominal potência nominal e da potência disponível Havendo uma inclinação exagerada das asas, o avião tenderá a escorregar para dentro da curva, perdendo altitude. Tal movimento é chamado de:",glissada,derrapagem,estol de curva,estol de velocidade,0,medium,PPAV - PP-19
+instrumentos_de_bordo,"Os limites do CG de um avião são, normalmente, expressos em porcentagem da:",CGA,CMA,CMG,CAM,0,medium,PPAV - PP-19
+instrumentos_de_bordo,"Em um perfil assimétrico, aumentando-se o ângulo de ataque, a resultante aerodinâmica será :",menor,maior,a mesma,negativa,0,medium,PPAV - PP-19
+instrumentos_de_bordo,"A potência necessária para deslocar uma aeronave, em vôo nivelado, diminui com o aumento do(a):",peso,altitude,densidade,carga alar,0,medium,PPAV - PP-19
+instrumentos_de_bordo,"O tipo de flape que permite o vôo com a menor velocidade de estol possível, é o flape:",comum,fowler,ventral,de mergulho,0,medium,PPAV - PP-19
+instrumentos_de_bordo,"Duas acft iguais com pesos diferentes iniciam um vôo planado, com mesmo ângulo de planeio. A mais pesada terá, em relação a outra , distância e velocidade de planeio, respectivamente:",igual/menor,maior/igual,igual/maior,menor/igual,0,medium,PPAV - PP-19
+instrumentos_de_bordo,"Das alternativas abaixo, o tipo de piso de pista em que a corrida de decolagem será maior é o de:",grama,saibro,asfalto,concreto,0,medium,PPAV - PP-19
+instrumentos_de_bordo,O fator de carga vertical é definido como sendo a razão entre o(a): peso e a carga útil sustentação e o peso,,sustentação e o arrasto,,carga útil e a área da asa,0,medium,PPAV - PP-19
+instrumentos_de_bordo,O ângulo de diedro é formado pelo eixo: lateral e o plano das asas lateral e o bordo de ataque longitudinal e o plano das asas longitudinal e o bordo de ataque A diferença entre o peso zero combustível e o peso básico operacional denomina-se carga:,,paga,alar,,0,medium,PPAV - PP-19
+conhecimentos_tecnicos,"O ângulo formado entre o eixo longitudinal da acft e o plano que contém a corda da asa, denomina-se",diedro,de ataque,de incidência,de enflechamento,0,medium,PPAV - PP-19
+conhecimentos_tecnicos,"Em um perfil assimétrico, o ângulo de ataque de sustentação nula, é:",nulo,negativo,positivo,variável,0,medium,PPAV - PP-19
+conhecimentos_tecnicos,"Numa curva para a esquerda, a posição do leme de direção será para:",a direita,baixo,cima,a esquerda,0,medium,PPAV - PP-19
+conhecimentos_tecnicos,"Dentre as condições abaixo, indique a que possibilita uma maior razão de subida:",excesso de peso,altitude elevada,grande área de asa,alta potência disponível,0,medium,PPAV - PP-19
+conhecimentos_tecnicos,"A distância, em vôo planado, que será atingida por um avião vazio, em relação ao mesmo avião pesado, partindo de uma mesma altura e com o mesmo ângulo de planeio, será:",menor,maior,igual,variável,0,medium,PPAV - PP-19
+conhecimentos_tecnicos,"O regime de cruzeiro que permite voar a maior distância possível, com dada quantidade de combustível, denomina-se velocidade de:",cruzeiro,vôo nivelado,máximo alcance,máxima autonomia,0,medium,PPAV - PP-19
+conhecimentos_tecnicos,A energia armazenada em sistemas físicos é:,de passo fixo,de velocidade constante,carenadas,turbo-hélices,0,medium,PPAV - PP-19
+conhecimentos_tecnicos,A esfera quando colocada no plano horizontal e exemplo de um corpo em equilíbrio:,estável,aparente,instável,indiferente,0,medium,PPAV - PP-19
+conhecimentos_tecnicos,"O vento aparente que sopra sobre um corpo em movimento na atmosfera, geralmente na mesma direção e sentido contrário ao seu movimento, denomina-se vento:",paralelo,relativo,magnético,contrario,0,medium,PPAV - PP-19
+conhecimentos_tecnicos,"A potência necessária para deslocar uma aeronave, aumenta com a redução do(a):",altitude,densidade,carga alar,ângulo de ataque,0,medium,PPAV - PP-19
+conhecimentos_tecnicos,"Em um mergulho vertical, a velocidade final depende do(a):",peso,Cl máximo,área da asa,,0,medium,PPAV - PP-19
+conhecimentos_tecnicos,"Para que um avião seja estaticamente estável, é necessário que o CG, em relação ao CP, esteja localizado:",atrás,a frente,do lado direito,do lado esquerdo,0,medium,PPAV - PP-19
+conhecimentos_tecnicos,O enflechamento produz estabilidades dos tipos:,lateral e direcional,vertical e direcional,longitudinal e lateral,longitudinal e vertical,0,medium,PPAV - PP-19
+conhecimentos_tecnicos,"O peso máximo de decolagem, quando limitado pelas condições da RWY, tais como comprimento, resistência do piso e outros, é também conhecido como:",PAD,PMD,PAED,PMED,0,medium,PPAV - PP-19
+conhecimentos_tecnicos,"Em um avião, o ponto de aplicação da tração é chamado de centro de",gravidade,aerodinâmico,tração,pressão,0,medium,PPAV - PP-19
+conhecimentos_tecnicos,Valores de CI negativos relacionam-se com ângulos de ataque próprios para vôos:,de dorso,em alta velocidade,em velocidade média,em cabradas violentas,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,A medida em que uma aeronave for subindo a potência disponível e a potência necessária irão respectivamente:,diminuir / diminuir,aumentar / aumentar,diminuir / aumentar,aumentar / diminuir,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,Uma aeronave estará no seu teto prático quando ainda conseguir manter uma razão de subida de:,50 ft/min,100 ft/min,150 ft/min,200 ft/min,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,"Ao iniciar um parafuso, a aeronave normalmente estará com velocidade:",máxima,de perda,de descida,de cruzeiro,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,O nome técnico da parte superior de um aerofólio é:,corda,ventre,intradorso,extradorso,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,"Quando o manche é acionado para a esquerda, o avião executará o movimento de:",picagem,tangagem,cabragem,rolamento,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,"Um avião realiza uma curva nivelada, com inclinação das asas igual a 60 graus. Nestas condições, o fator de carga sobre a acft será:",maior que IG,menor que IG,igual a zero G,menor que zero G,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,Peso Básico Operacional - PBO (Basic Operational,glissada Weigth BOW) ou Peso Operacional Sem Combustível,derrapagem (Dry Operating Weigth - DOW) perda de altitude aumento na força centrípeta,,,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,A estabilidade lateral em um avião pode ser obtida por intermedio do ângulo de: Weigth - AZFW),diedro,ataque,trajetória,incidência,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,"As aeronaves mais pesadas que o ar, que se deslocam graças a reações aerodinâmicas, são classificadas genericamente como:",aeróstatos,aeródinos,aviões,convertíveis,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,0 perfil aerodinâmico da asa de um avião é dado pelas(os):,suportes,montantes,carenagens,nervuras,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,"Abertura com carenagens de fácil remoção, destinadas a verificação do interior de asas e fuselagens, recebem o nome de:",janelas,orifícios de inspeção,janelas de inspeção,observadoras,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,"Quando uma asa é presa à fuselagem, dispensando a amarração por meio de montantes, estais ou suporte, e do tipo:",semi-monocoque,semi-cantilever,cantilever,monocoque,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,A forma aerodinâmica de uma fuselagem monocoque é dada por:,longarinas,nervuras,estais,cavernas,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,"Quando sobre um corpo aparecem os esforços de tração e compressão, dizemos que o mesmo está sofrendo um esforço de:",torção,cisalhamento,flexão,compressão,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,Quando uma ou mais forças atuam sobre um corpo tendendo a aumentar suas dimensões diz-se que ele está sujeito a um esforço de:,torção,compressão,distensão,tração,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,"O componente estrutural da asa de um avião que tem a finalidade de suportar os principais esforços de flexão que a mesma estará sujeita, a:",nervuras,tirantes,montantes,longarinas,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,"A estrutura de fuselagem que suporta os esforços estruturais graças a cavernas, reforçadores e revestimento, é a:",monocoque,semi-cantilever,cantilever,semi-monocoque,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,"Os cabos ou tiras de aço, empregados nos aviões para fins de amarração, recebem o nome de:",estais,cantilever,suporte,monocoque â3ÇONHECi:üENTOS:;,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,"A ação de cabrar ou picar (nariz para cima ou nariz para baixo) com aeronave em vôo, damos o nome de:",picagem,glissagem,cabr,arfagem,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,"Na classificação dos aviões quanto à quantidade de asas, considera-se a asa direita e a esquerda como:",duas asas,um plano de asas,uma única asa,dois planos de asas,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,As válvulas de escapamento geralmente portam em seu interior um perfil oco que é preenchido com:,sódio,ar atmosférico,bicarbonato,sulfato de alumínio,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,"O tipo de mancal empregado na junção da biela com o eixo de manivelas, denomina-se:",moente,casquilhos,pino de eixo,bucha,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,Os anéis de segmentos são instalados na:,cabeça do pistão,biela,saia do pistão,câmara de combustão,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,"Após a queima, os gases são expulsos do interior do cilindro, através:",da biela,de bombas,do pistão,de sucção,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,A relação entre a potência produzida por um motor e a potência admita da sob forma de calor e denominada:,leveza,compacidade,eficiência térmica,potência útil,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,"Se a potência de um motor é 100 HP e seu consumo horário 20 L/h, o seu consumo específico será:",L/h. HP,,80 L/HP,120 HP/L/h,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,A peça de um motor a pistão que transmite O movimento retilíneo alternativo do êmbolo para o eixo de manivelas é ala:,pistão,biela,mancais,conjunto de válvulas,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,A máquina que transforma um determinado tipo de energia em energia mecânica é conhecida como:,gerador,rotor,compressor,motor,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,"Num motor convencional, quando ocorrer o conjunto de fases, ocorrerá:",um tempo,um curso,um ciclo,a cilindrada,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,"Nos motores aeronáuticos, a câmara de combustão tem, geralmente, a forma:",esférica,cônica,plana,semi-esférica,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,"Quando um pistão se desloca de um ponto morto ao outro percorre um caminho, no interior do cilindro, denominado:",curso,cilindrada,meia volta,tempo,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,"0 motor a pistão que possui apenas uma biela (mestra) ligada ao eixo de manivelas e as demais bielas (articuladas), ligadas à biela mestra é do tipo:",horizontal oposto,em linha invertida,em duplo V,radial ou estrela,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,"Os anéis de segmento são, em relação à camisa do cilindro, feitos de liga metálica:",mais dura,de mesma dureza,mais mole,contendo alumínio,0,medium,PPAV - PP-20
+conhecimentos_tecnicos,"A capacidade volumétrica do cilindro entre os pontos mortos, é denominada:",cilindrada,cilindro,câmara,volume do cilindro,0,medium,PPAV - PP-21
+conhecimentos_tecnicos,"A potência utilizada por um motor a pistão para o acionamento dos acessórios (tais como gerador, magneto, bombas, etc.) é denominada:",efetiva,útil ou tratora,de atrito,indicada,0,medium,PPAV - PP-21
+conhecimentos_tecnicos,"A potência que os gases possuem ao se expandirem, atuando sobre os pistões, é também conhecida como potência:",efetiva,indicada,inútil,de atrito,0,medium,PPAV - PP-21
+conhecimentos_tecnicos,"A divisão da pressão da mistura combustível no fim da compressão pela pressão no início da mesma, dá-se o nome de:",potência indicada,taxa de compressão,cilindrada,câmara de combustão,0,medium,PPAV - PP-21
+conhecimentos_tecnicos,As pás de uma hélice podem ser metálicas ou de madeira. As hélices com pás de madeira podem ser utilizadas em motores aeronáuticos com potência de até:,100 HP,150 HP,300 HP,1000 HP,0,medium,PPAV - PP-21
+conhecimentos_tecnicos,"Uma hélice capaz de modificar o ângulo da pá, automaticamente, é do tipo:",passo variável,passo ajustável,passo bandeira,velocidade variável,0,medium,PPAV - PP-21
+conhecimentos_tecnicos,As hélices de passo variável são também conhecidas como hélices de:,velocidade constante,velocidade variável,velocidade instável,passo reverso,0,medium,PPAV - PP-21
+conhecimentos_tecnicos,Em uma pá de hélice a parte curva do perfil recebe o nome de:,face,dorso,cubo,raiz,0,medium,PPAV - PP-21
+conhecimentos_tecnicos,"Em uma hélice de passo variável, a velocidade de rotação (RPM) é mantida constante através do (a):",cubo da hélice,governador da hélice,manete de potência,manete da hélice,0,medium,PPAV - PP-21
+conhecimentos_tecnicos,"Em um motor a reação direta de quanto será em média o aproveitamento da energia cinética, contida nos gases de escapamento, para promover o empuxo:",25%,,75%,100%,0,medium,PPAV - PP-21
+conhecimentos_tecnicos,"Nos motores a reação, a quantidade de ar que não é queimado, tem seu aproveitamento para fins de arrefecimento da câmara de combustão. Essa quantidade é cerca de:",25%,,75%,85%,0,medium,PPAV - PP-21
+conhecimentos_tecnicos,Os tipos de compressores mais usados nos motores a reação são:,axial e centrífugo,root e axial,axial de pistão,excentrífugo e axial,0,medium,PPAV - PP-21
+conhecimentos_tecnicos,"Nos motores à reação, após a massa de ar sair do estágio de compressão, vai para o(a):",descarga,câmara de combustão,turbina,ventoinha,0,medium,PPAV - PP-21
+conhecimentos_tecnicos,"Durante o funcionamento de um motor do tipo turbojato, a turbina aciona o(a):",25%,50%,75%,100%,0,medium,PPAV - PP-21
+conhecimentos_tecnicos,"O motor a reação mais simples, que não possui qualquer peça móvel é denominado:",turbo - jato,pulso - jato,estato - reator,turbo - estato,0,medium,PPAV - PP-21
+conhecimentos_tecnicos,"No compressor de um motor a reação, o ar é comprimido por um processo denominado:",difusão,expansão,desaceleração,tração ou empuxo,0,medium,PPAV - PP-21
+conhecimentos_tecnicos,As unidades mais usadas para designar o empuxo ou tranção dos reatores são:,HP e CV,Ibf e kgf,dyn e Joules,watts e ergs,0,medium,PPAV - PP-21
+conhecimentos_tecnicos,O motor a reação do tipo turbo-foguete comporta um reservatório de:,ar atmosférico,combustível,oxigênio (02)d) hidrogênio,,0,medium,PPAV - PP-21
+conhecimentos_tecnicos,"Nos motores não superalimentados, a pressão de admissão com relação à pressão atmosférica é:",maior,igual,menor,maior no aquecimento,0,medium,PPAV - PP-21
+conhecimentos_tecnicos,"Num sistema hidráulico, cujo rendimento mecânico é igual a 10, a força aplicada é 30 kgf e o deslocamento do pistão primário 20 cm. Neste caso a força resultante e o deslocamento do cilindro atuador serão, respectivamente:",3 kgf e 200 cm,300 kgf e 200 cm,300 kgf e 2 cm,3 kgf e 2 cm,0,medium,PPAV - PP-21
+conhecimentos_tecnicos,"No filtro do sistema de lubrificação, nós poderemos encontrar uma:",válvula unidirecional,um manômetro,válvula by-pass,válvula redutora,0,medium,PPAV - PP-22
+conhecimentos_tecnicos,"Após passar pelo radiador, a temperatura e a viscosidade do óleo lubrificante, respectivamente, irão:",diminuir - diminuir,diminuir - aumentar,aumentar - aumentar,aumentar - diminuir,0,medium,PPAV - PP-22
+conhecimentos_tecnicos,"O óleo que penetra dentro dos cilindros, em pequena quantidade, durante o funcionamento do motor:",é recuperado,sai pelo escapamento,é queimado,é prejudicial à combustão,0,medium,PPAV - PP-22
+conhecimentos_tecnicos,"Geralmente, nos motores a pistão aeronáuticos, o sistema de lubrificação usado é do tipo:",pressão,misto,salpique,gravidade,0,medium,PPAV - PP-22
+conhecimentos_tecnicos,Os motores a pistão que utilizam o próprio cárter como depósito de óleo lubrificante são classificados como motores a cárter:,seco,molhado,úmido,rígido,0,medium,PPAV - PP-22
+conhecimentos_tecnicos,"Se o atrito interno de um motor aumentar, a potência útil do motor tende a:",aumentar,diminuir,não se alterar,anular-se,0,medium,PPAV - PP-22
+conhecimentos_tecnicos,Os óleos mais utilizados na lubrificação de motores a pistão aeronáuticos são de origem:,animal,vegetal,mineral,sintética,0,medium,PPAV - PP-22
+conhecimentos_tecnicos,"O sistema responsável pela admissão, filtragem e eventual aquecimento do ar é denominado sistema de:",superalimentação,formação de mistura,indução,alimentação,0,medium,PPAV - PP-22
+conhecimentos_tecnicos,O sistema de superalimentação tem a finalidade de fazer com que o ar captado pelo sistema de indução seja enviado aos cilindros com uma pressão: constante com a da atmosfera acima da pressão atmosférica ambiente abaixo da pressão atmosférica ambiente máxima que o compressor poderá fornecer Os compressores do sistema de superalimentação são do tipo:,centrífugo,centrípeta,axial,"rotativos No sistema de superalimentação do tipo turbocompressor a ventoinha é acionada por: engrenagens, acionadas pelo eixo de manivelas eletricamente rotação da hélice gás de escapamento",0,medium,PPAV - PP-22
+conhecimentos_tecnicos,"A quantidade de calor que uma determinada quantidade de combustível pode liberar quando por ocasião da sua queima, recebe o nome de:",poder calorífico,poder expansivo,calor específico,expansão calorífica,0,medium,PPAV - PP-22
+conhecimentos_tecnicos,"Para que seja aumentada a octanagem de uma combustível que possui um índice de octana igual a 100, é adicionado nesse combustível:",etila,etileno-glicol,iso-octano,normal-heptano.,0,medium,PPAV - PP-22
+conhecimentos_tecnicos,"Nos sistemas de superalimentação o compressor mais utilizado, por ser compacto, é do tipo:",a pistão,axial,centrífugo,axial - centrífugo,0,medium,PPAV - PP-22
+conhecimentos_tecnicos,A equalização das pressões interna e externa de um tanque de combustível é feita pelo sistema de:,drenagem,alimentação,pressão,ventilação,0,medium,PPAV - PP-22
+conhecimentos_tecnicos,"0 aditivo adicionado ao combustível para aumentar seu índice de octana, denomina-se:",poder anti-detonante,iso-octano,chumbo tetra-etila . d) octanagem,,0,medium,PPAV - PP-22
+conhecimentos_tecnicos,"O sistema de formação de mistura, cuja a mistura é processada no tubo de admissão, sem o auxilio de um carburador, recebe o nome:",injeção direta,injeção indireta,injeção mista,injetor de partida,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,Tecnicamente denominamos de mistura combustível como sendo a combinação de: volume de ar e volume de combustível massa de ar e massa de combustível massa de combustível e volume de ar massa de ar e volume de combustível A formação da mistura ar-gasolina vaporizada é conhecida por:,carburação,ignição,inflamação,"explosão fechada mistura rica mistura pobre intermediária, dependendo das condições o avião",0,medium,PPAV - PP-23
+conhecimentos_tecnicos,"Para queimar totalmente 0,5k de gasolina são necessários:","5,0 kg de ar",5 kg de oxigênio,"7,5 kg de ar","7,5 kg de oxigênio",0,medium,PPAV - PP-23
+conhecimentos_tecnicos,"Quando há excesso de gasolina, fornecida pelo carburador, causando a parada do motor, diz-se que houve:",afundamento,empobrecimento,afogamento,entupimento,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,"O fluxo de ar que resfria o motor é, em algumas aeronaves, controlável através de pequenas janelas instaladas nas capotas; as quais denominam-se:",defletores,alhetas,dissipadores,flapes de capota,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,O componente do motor que mais sofre com a detonação e a pré-ignição é o(,cilindro,biela,eixo de manivelas,pistão,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,O tipo de combustão anormal que é causada por pontos incandescentes na câmara de combustão é a:,explosão,detonação,pré-ignição,pré-combustão,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,As máquinas capazes de transformar energia mecânica em energia elétrica são chamadas:,transformadores,contadores,reguladores,geradores,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,"No dínamo, o componente que serve para retificar a corrente do induzido é chamado:",retificador,anel coletor,conversor,comutador,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,A tensão elétrica é medida pelo:,freqüencímetro,amperímetro,vatímetro,voltímetro,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,O dispositivo elétrico que tem como finalidade aumentar ou diminuir o valor da voltagem é chamado:,gerador,alternador,retificador,transformador,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,A corrente fornecida pelos dínamos é:,em série,contínua,alternada,pulsativa,0,medium,PPAV - PP-23
+instrumentos_de_bordo,O processo de transformação da corrente alternada em corrente continua é chamada:,retificação,variação,conversão,continuidade.,0,medium,PPAV - PP-23
+instrumentos_de_bordo,"Os dínamos em que a bobina de campo recebe uma corrente elétrica do induzido a fim de formar o campo magnético onde os fios do induzido girarão, são chamados:",de campo fixo,de campo móvel,auto-excitados,automáticos,0,medium,PPAV - PP-23
+instrumentos_de_bordo,Em um dínamo a corrente alternada do induzido é tornada continua no(a):,escova,coletor ou comutador,bobina de campo,retificador,0,medium,PPAV - PP-23
+instrumentos_de_bordo,"Quem envia a alta tensão gerada pelo magneto, para as velas, controlando também a ordem de ignição, é o:",ignitor,condensador,distribuidor,regulador de voltagem,0,medium,PPAV - PP-23
+instrumentos_de_bordo,"Uma vela que, em relação a outra, tem facilidade de eliminar o calor, é classificado como vela:",fria,normal,quente,morna,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,A ordem de fogo ou ordem de ignição para os cilindros é determinada pelo:,distribuidor,condensador,magneto,platinado,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,O enrolamento secundário da bobina de um magneto funciona como um:,alternador,transformador,retificador,distribuidor,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,"Nos testes de magneto, antes de cada vôo espera-se uma queda de RPM quando o motor operar com um único magneto. Isto ocorre porque: com um magneto,- metade dos cilindros não funciona todas as velas passam a receber alimentação de um único magneto em apenas uma das velas de cada cilindro haverá ignição d) os magnetos passam a operar sem a corrente da bateria A vela de ignição que possui uma grande área de contato entre o isolador e o corpo e denominada vela:",quente,,morna,normal A alta tensão para o centelhamento das velas na partida do motor a conseguida através: dos distribuidores dos condensadores auxiliares das unidades de partida de fontes sobressalentes,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,"Em uma aeronave que tem bateria, se a mesma não estiver funcionando corretamente, após a partida do motor, o mesmo:",para,não sofre nada,vibra,aumenta a RPM,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,"O magneto gera energia elétrica para o sistema de ignição, sendo que essa geração é em corrente:",contínua,retificada,alternada,dente de serra,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,"O avanço de ignição de um motor a pistão é 8 graus em marcha lenta (1000 RPM). Quando esse motor for acelerado a 3000 RPM, o avanço:",diminui,se mantém constante,aumenta,será 24 graus,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,O melhor tipo de vela de ignição que deve ser usada num motor aeronáutico a pistão é a:,quente,,normal,indicada pelo fabricante,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,A inspeção que visa detectar alguma rachadura ou falha no material de uma peça é denominada:,visual,dimensional,qualitativa,corretiva,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,"A inspeção na aeronave ou em seus componentes feita a olho nu ou com o auxílio de lentes ou lupas, recebe o nome de:",dimensional,qualitativa,corretiva,visual,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,"A única inspeção que é atribuição do piloto, chamase:",dimensional,pré-vôo,qualitativa,de verificação,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,"Nos incêndios da classe ""C"" o extintor que pode ser utilizado é o de:",,C02 (dióxido de carbono),espuma química,água pressurizável,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,A reação química que produz calor e pode ou não produzir chama é denominada:,combustão,ignição,expansão térmica,volatilização,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,Os sistemas de detecção de fogo mais usados nos motores das aeronaves são do tipo:,manual,elétrico,hidráulico,mecânico,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,O termo-elemento ligado na cabeça do cilindro do motor indica:,pressão,densidade,temperatura,compressão,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,O termômetro indicado para medir a temperatura da cabeça do cilindro é o:,par termo-elérico,elétrico,pressão de vapor,de resistência,0,medium,PPAV - PP-23
+instrumentos_de_bordo,No interior da cápsula aneróide é:,colocado óleo,colocado ar,feito vácuo parcial,colocado líquido especial,0,medium,PPAV - PP-23
+instrumentos_de_bordo,O funcionamento do tacômetro mecânico se baseia no(a):,força centrífuga,magnetismo,cápsula aneróide,tubo de Bourdon,0,medium,PPAV - PP-23
+instrumentos_de_bordo,O manômetro de pressão de admissão pertence ao tipo pressão:,absoluta,induzida,relativa,aplicada,0,medium,PPAV - PP-23
+navegacao,Os manômetros de pressão relativa utilizam como elemento sensível às variações de pressão:,tubo de Bourdon,cápsula aneróide,diafragma,contrapesos,0,medium,PPAV - PP-23
+instrumentos_de_bordo,A fonte de energia para o funcionamento do tacômetro elétrico é conseguida por:,baterias,gerador da aeronave,sistema de ignição,gerador de tacômetro,0,medium,PPAV - PP-23
+instrumentos_de_bordo,O sistema giroscópico de um avião pode dispor de até:,um eixo,dois eixos,três eixos,quatro eixos,0,medium,PPAV - PP-23
+instrumentos_de_bordo,"O instrumento constituído de um tubo recurvado de vidro, contendo em seu interior uma esfera de ágata ou aço, denomina-se:",indicador de curva,inclinômetro,liquidômetro,sextante,0,medium,PPAV - PP-23
+instrumentos_de_bordo,A transformação isotérmica é baseada na Lei de:,Charles,Boyle-Mariotti,Gay-Lussac,Bernoulli,0,medium,PPAV - PP-23
+instrumentos_de_bordo,"O produto de uma força aplicada a um corpo pelo deslocamento que esta produz, é conhecido como:",potência,aceleração,trabalho,pressão,0,medium,PPAV - PP-23
+instrumentos_de_bordo,A potência é o trabalho realizado num intervalo de:,tempo,espaço,temperatura,velocidade,0,medium,PPAV - PP-23
+instrumentos_de_bordo,Um corpo efetua um deslocamento sob o efeito de uma força. O mesmo está realizando:,trabalho,aceleração,potência,velocidade,0,medium,PPAV - PP-23
+instrumentos_de_bordo,"A força que mantém um corpo em movimento circular, atuando na horizontal e para o centro da curva, é denominada:",centrífuga,de inércia,tangencial,centrípeta,0,medium,PPAV - PP-23
+instrumentos_de_bordo,O princípio físico de ação e reação aplicado nas aeronaves propulsionadas a jato foi enunciado por:,0.2 N/m 2,0.5 N/m 2,5.0 N/m 2,2000 N/m 2,0,medium,PPAV - PP-23
+instrumentos_de_bordo,"A transformação que ocorre em um gás, quando seu volume é mantido constante, denomina-se:",isotérmica,isobárica,isométrica,adiabática,0,medium,PPAV - PP-23
+instrumentos_de_bordo,O núcleo de um átomo é formado por:,prótons e elétrons,elétrons e neutrons,prótons e neutrons,neutrons e elétrons,0,medium,PPAV - PP-23
+instrumentos_de_bordo,A unidade fundamental de medida da freqüência elétrica é o(a):,Farad,Ciclo,Hertz,RPM,0,medium,PPAV - PP-23
+instrumentos_de_bordo,Todo corpo mergulhado num fluido recebe um empuxo para cima igual ao peso do fluido deslocado. Este enunciado refere-se ao princípio de:,Newton,Pascal,Arquimedes,Venturi,0,medium,PPAV - PP-23
+instrumentos_de_bordo,"""A pressão aplicada a um ponto de um fluido encerrado num recipiente transmite-se igualmente a todas as partes desse fluido"". Este enunciado se refere à Lei de:",Arquimedes,Pascal,Charles,Gay-Lussac,0,medium,PPAV - PP-23
+instrumentos_de_bordo,"""PSI"" é a designação de uma unidade de medida da grandeza física:",pressão,temperatura,força,trabalho,0,medium,PPAV - PP-23
+instrumentos_de_bordo,Os corpos fluidos são aqueles que se encontram nos estados:,sólido e líquido,líquido e semi-sólido,vapor e gasoso,líquido e gasoso,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,As áreas com rebites não necessitam de inspeção mais cuidadosa e freqüente nas fuselagens do tipo:,tubular,monocoque,cantilever,semi-monocoque,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,"Em um motor convencional, no tempo de compressão, as duas válvulas deverão estar:",no PMA,no PMB,abertas,fechadas,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,O piloto encontra todas as informações de performance e limitações de uma aeronave no(a):,manual de vôo,lista de verificações,manual de serviços,manual de manutenção,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,"O conjunto que admite, filtra e aquece o ar, chama-se sistema de:",indução,ignição,carburação,alimentação,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,"Com uma diminuição da altitude de vôo, a mistura combustível tende a ser mais:",rica,pobre,volátil,equalizada,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,"No sistema de ignição, com a RPM já restabelecida, a geração de eletricidade é obtida por:",dínamo,bateria,magneto,distribuidor,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,"A qualidade do óleo lubrificante que indica a ausência de acidez no mesmo, denomina-se:",fluidez,anti-acidez,estabilidade,neutralidade,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,"O dispositivo elétrico que utiliza o eletroímã para produzir um acionamento mecânico, denomina-se:",dínamo,bobina,inversor,solenóide,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,"O sistema que tem como finalidade acionar componentes mecanicamente, através da energia do ar sob pressão é denominado sistema:",elétrico,mecânico,pneumático,hidráulico,0,medium,PPAV - PP-23
+conhecimentos_tecnicos,A garrafa de oxigênio dos sistemas de alta pressão é caracterizada por ser da cor:,azul,amarela,verde,vermelha,0,medium,PPAV - PP-23
+instrumentos_de_bordo,"O dióxido de carbono é recomendado para a extinção de incêndios classe ""C"", pois essencialmente:",é espumoso,não é corrosivo,atua por abafamento,não conduz eletricidade,0,medium,PPAV - PP-23

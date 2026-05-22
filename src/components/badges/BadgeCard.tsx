@@ -73,7 +73,7 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
         whileTap={{ scale: 0.95 }}
         className={cn(
           "relative cursor-pointer transition-all duration-300 flex flex-col items-center justify-start group mx-auto",
-          large ? "w-32" : "w-28",
+          large ? "w-28 sm:w-32" : "w-24 sm:w-28",
           hasPendingVerification && "opacity-90"
         )}
         onClick={handleClick}
@@ -81,7 +81,7 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
         {/* Icon Container */}
         <div className={cn(
           "relative flex items-center justify-center rounded-full transition-all duration-500",
-          large ? "w-24 h-24 mb-4" : "w-20 h-20 mb-3",
+          large ? "w-20 h-20 sm:w-24 sm:h-24 mb-3 sm:mb-4" : "w-16 h-16 sm:w-20 sm:h-20 mb-2 sm:mb-3",
           earned ? "" : "grayscale opacity-50 group-hover:opacity-80"
         )}>
           {/* Animated Glow behind the image if earned */}
@@ -119,8 +119,8 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
             ) : null}
             <DynamicIcon
               name={insignia.icon}
-              size={large ? 56 : 42}
-              className={cn(imageUrl ? "hidden" : "transform group-hover:rotate-3 transition-transform duration-500", earned ? colors.text : "text-muted-foreground")}
+              size={large ? 48 : 36}
+              className={cn(imageUrl ? "hidden" : "transform group-hover:rotate-3 transition-transform duration-500", earned ? colors.text : "text-muted-foreground", "sm:w-[56px] sm:h-[56px]")}
             />
           </div>
         </div>
@@ -128,7 +128,7 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
         {/* Name */}
         <h3 className={cn(
           "font-bold text-center leading-tight line-clamp-2 transition-colors duration-300",
-          large ? "text-sm" : "text-xs",
+          large ? "text-xs sm:text-sm" : "text-[10px] sm:text-xs",
           earned ? "text-[#1A233A] group-hover:text-primary" : "text-muted-foreground group-hover:text-slate-600"
         )}>
           {insignia.name}

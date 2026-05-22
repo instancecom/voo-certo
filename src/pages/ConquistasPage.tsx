@@ -68,7 +68,7 @@ function ScrollRow({ rarity, badges, earnedIds, earnedMap }: {
       </div>
 
       {/* Grid container em vez de scroll horizontal */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 py-2">
+      <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-x-2 gap-y-6 sm:gap-4 py-4">
         {badges.map((insignia: any, i: number) => (
           <motion.div
             key={insignia.id}
@@ -229,7 +229,7 @@ const ConquistasPage = () => {
                 <Sparkles className="w-5 h-5 text-accent" />
                 <h2 className="text-lg font-bold text-foreground">Últimas Conquistas</h2>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pb-3">
+              <div className="grid grid-cols-3 gap-2 sm:gap-4 pb-3">
                 {[...userInsignias]
                   .sort((a, b) => new Date(b.earned_at).getTime() - new Date(a.earned_at).getTime())
                   .slice(0, 3)
