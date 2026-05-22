@@ -48,32 +48,45 @@ export default function SimuladosPage() {
   const [canScrollRight, setCanScrollRight] = useState(true);
 
   const checkScroll = () => {
-    if (scrollContainerRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
-      setCanScrollLeft(scrollLeft > 10);
-      setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 10);
+    try {
+      if (scrollContainerRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+        setCanScrollLeft(scrollLeft > 10);
+        setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 10);
+      }
+    } catch (e) {
+      console.error('Error checking scroll:', e);
     }
   };
 
   const scroll = (direction: 'left' | 'right') => {
-    if (scrollContainerRef.current) {
-      const { scrollLeft, clientWidth } = scrollContainerRef.current;
-      const scrollTo = direction === 'left' 
-        ? scrollLeft - clientWidth * 0.75 
-        : scrollLeft + clientWidth * 0.75;
-      scrollContainerRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+    try {
+      if (scrollContainerRef.current) {
+        const { scrollLeft, clientWidth } = scrollContainerRef.current;
+        const scrollTo = direction === 'left' 
+          ? scrollLeft - clientWidth * 0.75 
+          : scrollLeft + clientWidth * 0.75;
+        scrollContainerRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+      }
+    } catch (e) {
+      console.error('Error scrolling:', e);
     }
   };
 
   useEffect(() => {
-    checkScroll();
-    const timer = setTimeout(checkScroll, 500);
+    if (!isLoading) {
+      checkScroll();
+      const timer = setTimeout(checkScroll, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading]);
+
+  useEffect(() => {
     window.addEventListener('resize', checkScroll);
     return () => {
-      clearTimeout(timer);
       window.removeEventListener('resize', checkScroll);
     };
-  }, [professions]);
+  }, []);
   
   // Modais de conversão
   const [showAuthModal, setShowAuthModal] = useState(false);
