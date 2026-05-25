@@ -252,23 +252,30 @@ export default function Index() {
           </div>
         </section>
 
-        {/* ═══════ TRUST BAR ═══════ */}
-        <section className="py-12 bg-card/50 backdrop-blur-sm border-b border-border/50 overflow-hidden">
-          <div className="container mx-auto">
-            <div className="grid grid-cols-2 md:flex md:flex-wrap justify-center items-center gap-6 md:gap-12 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">
+        {/* ═══════ TRUST BAR (TARJA HORIZONTAL) ═══════ */}
+        <section className="bg-slate-950/80 backdrop-blur-md border-y border-slate-800/80 py-5 w-full overflow-hidden relative shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05),0_4px_20px_0_rgba(0,0,0,0.3)]">
+          <div className="container mx-auto px-4">
+            <div className="flex flex-row items-center justify-between md:justify-center gap-6 md:gap-16 overflow-x-auto scrollbar-none py-1">
               {[
                 { icon: Shield, text: 'Privacidade' },
                 { icon: BadgeCheck, text: 'Atualizados' },
                 { icon: Heart, text: 'Qualidade' },
                 { icon: Globe, text: 'Acesso' },
               ].map((item, i) => (
-                <motion.div key={i} 
-                  initial={{ opacity: 0, y: 10 }} 
-                  whileInView={{ opacity: 1, y: 0 }} 
-                  transition={{ delay: i * 0.1 }}
-                  className="flex items-center gap-3 grayscale hover:grayscale-0 transition-all duration-500">
-                  <item.icon className="w-5 h-5 text-accent" />
-                  <span>{item.text}</span>
+                <motion.div 
+                  key={i} 
+                  initial={{ opacity: 0, scale: 0.95 }} 
+                  whileInView={{ opacity: 1, scale: 1 }} 
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08 }}
+                  className="flex items-center gap-2 md:gap-3 shrink-0 group"
+                >
+                  <div className="w-8 h-8 rounded-[5px] bg-accent/10 border border-accent/20 flex items-center justify-center group-hover:bg-accent/20 transition-all duration-300">
+                    <item.icon className="w-4 h-4 text-accent" />
+                  </div>
+                  <span className="text-[10px] md:text-xs font-black uppercase tracking-[0.15em] text-slate-300 group-hover:text-accent transition-colors duration-300">
+                    {item.text}
+                  </span>
                 </motion.div>
               ))}
             </div>
