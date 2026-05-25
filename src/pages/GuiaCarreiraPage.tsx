@@ -265,83 +265,74 @@ export default function GuiaCarreiraPage() {
         <section className="py-16 md:py-24 overflow-hidden">
           <div className="container mx-auto px-4 md:px-8">
             <div className="max-w-7xl mx-auto">
-              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 pl-2">
+              <div className="mb-12 pl-2">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   className="text-left"
                 >
-                  <h2 className="text-2xl md:text-3xl font-black tracking-tight text-foreground mb-2">
+                  <h2 className="text-2xl md:text-3xl font-black tracking-tight text-foreground mb-2 flex items-center gap-3">
                     Guias Disponíveis
+                    {!isLoading && guides && guides.length > 0 && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button 
+                            variant="outline" 
+                            size="icon" 
+                            className={`h-9 w-9 rounded-[5px] transition-all relative ${
+                              selectedCategory !== 'todos' 
+                              ? 'border-primary bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary' 
+                              : 'bg-card border-border hover:bg-muted text-foreground'
+                            }`}
+                          >
+                            <Filter className="w-4 h-4" />
+                            {selectedCategory !== 'todos' && (
+                              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-primary rounded-full border-2 border-background animate-pulse" />
+                            )}
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start" className="w-64 p-2 rounded-[5px] border-border backdrop-blur-md bg-card/95 shadow-xl">
+                          <DropdownMenuLabel className="px-2 pb-2 text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                            Filtrar por Categoria
+                          </DropdownMenuLabel>
+                          <DropdownMenuSeparator className="bg-border/50 mb-1" />
+                          <div className="space-y-1">
+                            {[
+                              { value: 'todos', label: 'Todas as Categorias', emoji: '✨', count: guides.filter(g => g.is_active).length },
+                              { value: 'comissaria', label: 'Comissários', emoji: '✈️', count: guides.filter(g => g.is_active && getGuideCategory(g.title) === 'comissaria').length },
+                              { value: 'piloto', label: 'Pilotos', emoji: '🛫', count: guides.filter(g => g.is_active && getGuideCategory(g.title) === 'piloto').length },
+                              { value: 'mecanico', label: 'Mecânicos', emoji: '🔧', count: guides.filter(g => g.is_active && getGuideCategory(g.title) === 'mecanico').length },
+                              { value: 'geral', label: 'Geral / Dicas', emoji: '📚', count: guides.filter(g => g.is_active && getGuideCategory(g.title) === 'geral').length }
+                            ].map(cat => (
+                              <DropdownMenuItem
+                                key={cat.value}
+                                onClick={() => setSelectedCategory(cat.value as any)}
+                                className={`flex items-center gap-3 cursor-pointer py-2 px-2.5 rounded-[5px] transition-all ${
+                                  selectedCategory === cat.value 
+                                  ? 'bg-primary/10 text-primary font-semibold focus:bg-primary/15 focus:text-primary' 
+                                  : 'text-foreground/80 font-medium focus:bg-accent focus:text-accent-foreground'
+                                }`}
+                              >
+                                <span className="text-base shrink-0">{cat.emoji}</span>
+                                <span className="flex-1 text-sm truncate">{cat.label}</span>
+                                <span className="text-[10px] font-bold text-muted-foreground bg-muted border border-border px-1.5 py-0.5 rounded-[5px] shrink-0">
+                                  {cat.count}
+                                </span>
+                                {selectedCategory === cat.value && (
+                                  <Check className="w-4 h-4 text-primary shrink-0" />
+                                )}
+                              </DropdownMenuItem>
+                            ))}
+                          </div>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
                   </h2>
                   <p className="text-muted-foreground text-sm md:text-base font-medium">
                     Escolha um guia e siga o passo a passo rumo à sua meta
                   </p>
                 </motion.div>
-
-                {/* Filter Dropdown */}
-                {!isLoading && guides && guides.length > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 15 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="flex items-center justify-end shrink-0 z-40"
-                  >
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button 
-                          variant="outline" 
-                          size="icon" 
-                          className={`h-11 w-11 rounded-[5px] transition-all relative ${
-                            selectedCategory !== 'todos' 
-                            ? 'border-primary bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary' 
-                            : 'bg-card border-border hover:bg-muted text-foreground'
-                          }`}
-                        >
-                          <Filter className="w-5 h-5" />
-                          {selectedCategory !== 'todos' && (
-                            <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full border-2 border-background animate-pulse" />
-                          )}
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-64 p-2 rounded-[5px] border-border backdrop-blur-md bg-card/95 shadow-xl">
-                        <DropdownMenuLabel className="px-2 pb-2 text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                          Filtrar por Categoria
-                        </DropdownMenuLabel>
-                        <DropdownMenuSeparator className="bg-border/50 mb-1" />
-                        <div className="space-y-1">
-                          {[
-                            { value: 'todos', label: 'Todas as Categorias', emoji: '✨', count: guides.filter(g => g.is_active).length },
-                            { value: 'comissaria', label: 'Comissários', emoji: '✈️', count: guides.filter(g => g.is_active && getGuideCategory(g.title) === 'comissaria').length },
-                            { value: 'piloto', label: 'Pilotos', emoji: '🛫', count: guides.filter(g => g.is_active && getGuideCategory(g.title) === 'piloto').length },
-                            { value: 'mecanico', label: 'Mecânicos', emoji: '🔧', count: guides.filter(g => g.is_active && getGuideCategory(g.title) === 'mecanico').length },
-                            { value: 'geral', label: 'Geral / Dicas', emoji: '📚', count: guides.filter(g => g.is_active && getGuideCategory(g.title) === 'geral').length }
-                          ].map(cat => (
-                            <DropdownMenuItem
-                              key={cat.value}
-                              onClick={() => setSelectedCategory(cat.value as any)}
-                              className={`flex items-center gap-3 cursor-pointer py-2 px-2.5 rounded-[5px] transition-all ${
-                                selectedCategory === cat.value 
-                                ? 'bg-primary/10 text-primary font-semibold focus:bg-primary/15 focus:text-primary' 
-                                : 'text-foreground/80 font-medium focus:bg-accent focus:text-accent-foreground'
-                              }`}
-                            >
-                              <span className="text-base shrink-0">{cat.emoji}</span>
-                              <span className="flex-1 text-sm truncate">{cat.label}</span>
-                              <span className="text-[10px] font-bold text-muted-foreground bg-muted border border-border px-1.5 py-0.5 rounded-[5px] shrink-0">
-                                {cat.count}
-                              </span>
-                              {selectedCategory === cat.value && (
-                                <Check className="w-4 h-4 text-primary shrink-0" />
-                              )}
-                            </DropdownMenuItem>
-                          ))}
-                        </div>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </motion.div>
-                )}
               </div>
 
               {isLoading ? (
