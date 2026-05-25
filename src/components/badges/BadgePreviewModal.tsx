@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Lock, ShieldCheck, CheckCircle2, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -64,6 +64,17 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt, appr
   const [isGenerating, setIsGenerating] = useState(false);
   const [showAuthenticity, setShowAuthenticity] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [open]);
 
   const displayName = user?.full_name || user?.email?.split('@')[0] || 'Piloto';
   const formattedDate = earnedAt ? new Date(earnedAt).toLocaleDateString('pt-BR', {
