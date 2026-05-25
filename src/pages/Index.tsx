@@ -170,21 +170,21 @@ export default function Index() {
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: 'spring' }}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-accent/20 rounded-[5px] text-accent mb-6 mx-auto lg:mx-0">
                   <Sparkles className="w-4 h-4" />
-                  <span className="text-sm font-bold uppercase tracking-wider">Metodologia Padrão ANAC</span>
+                  <span className="text-sm font-bold uppercase tracking-wider">Simulador Teórico de Preparação</span>
                 </motion.div>
 
                 <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground mb-6 leading-tight">
-                  Simulados ANAC para <br className="hidden md:block" />
-                  <span className="text-accent">Comissário de Bordo.</span>
+                  Sua Preparação Completa para a <br className="hidden md:block" />
+                  <span className="text-accent">Banca ANAC de Comissário.</span>
                 </h1>
 
-                <p className="text-lg md:text-xl text-primary-foreground/80 mb-4 max-w-xl mx-auto lg:mx-0 font-medium">
-                  A plataforma mais completa de preparação para a ANAC. Simulados realistas, Chat IA por questão, Guia de Carreira e Construtor de Currículo.
+                <p className="text-lg md:text-xl text-primary-foreground/80 mb-4 max-w-xl mx-auto lg:mx-0 font-medium leading-relaxed">
+                  Estude de forma inteligente com simulados de alta fidelidade que preparam você de verdade para o dia da banca. Esclareça dúvidas na hora com nosso Chat IA explicativo, acompanhe seu progresso real por matéria e crie seu currículo padrão de aviação.
                 </p>
 
-                <p className="text-sm text-success/90 mb-8 flex items-center justify-center lg:justify-start gap-2">
+                <p className="text-sm text-success/90 mb-8 flex items-center justify-center lg:justify-start gap-2 font-semibold">
                   <BadgeCheck className="w-4 h-4" />
-                  Passe de primeira na prova da ANAC com treinamento inteligente.
+                  Acelere seus estudos com simulados, guias de carreira e suporte de IA 24/7.
                 </p>
 
                 <div className="flex flex-wrap justify-center lg:justify-start gap-4">
@@ -196,7 +196,7 @@ export default function Index() {
                   <Button variant="outline" size="xl" asChild className="bg-white/5 text-white border-white/20 hover-yellow rounded-[5px] w-full sm:w-fit">
                     <Link to="/premium" className="flex items-center justify-center gap-2">
                       Ver Recursos
-                    </Link>
+                  </Link>
                   </Button>
                 </div>
 
@@ -214,6 +214,10 @@ export default function Index() {
                     </div>
                   ))}
                 </motion.div>
+
+                <p className="text-[10px] text-primary-foreground/45 mt-8 max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium text-center lg:text-left">
+                  * AVISO DE ISENÇÃO: O Voo Certo é uma plataforma independente de simulados, guias de carreira e ferramentas de estudo para fins educacionais de preparação complementar. Não somos um órgão governamental, não representamos e não possuímos afiliação oficial com a ANAC, e não substituímos o curso de formação teórica ou prática obrigatório exigido por escolas oficiais de aviação homologadas.
+                </p>
               </motion.div>
 
               {/* Right side - floating cards preview */}
@@ -714,6 +718,73 @@ export default function Index() {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ═══════ TESTIMONIALS (PROVA SOCIAL) ═══════ */}
+        <section className="py-16 md:py-24 bg-background">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-16">
+              <Badge variant="outline" className="mb-4 text-accent border-accent/20 rounded-[5px] bg-accent/5 font-bold uppercase h-6 px-3">
+                <Star className="w-3 h-3 mr-2 fill-current" /> Prova Social
+              </Badge>
+              <h2 className="text-2xl md:text-5xl font-bold text-foreground mb-4">
+                O que dizem os futuros comissários
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Mais de 1.200 alunos usam nossos simulados e guias teóricos para acelerar seus estudos rumo à aprovação na banca da ANAC.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              {[
+                {
+                  quote: "O Chat IA Contextual mudou completamente minha forma de estudar. Quando eu errava, ele me explicava a lógica imediatamente, economizando horas de pesquisa.",
+                  author: "Mariana Silva",
+                  role: "Estudante de Curso Homologado",
+                  rating: 5,
+                },
+                {
+                  quote: "Os simulados são muito fiéis ao formato da banca real. Treinar com a pressão do tempo me deu a segurança necessária para passar de primeira na escola.",
+                  author: "Thiago Rocha",
+                  role: "Futuro Comissário de Bordo",
+                  rating: 5,
+                },
+                {
+                  quote: "Além de responder as questões, o construtor de currículo aeronáutico e o selo LinkedIn me ajudaram a apresentar meu perfil de forma profissional para as empresas.",
+                  author: "Amanda Lima",
+                  role: "Aluna de Preparatório Teórico",
+                  rating: 5,
+                }
+              ].map((t, i) => (
+                <motion.div 
+                  key={i} 
+                  initial={{ opacity: 0, y: 20 }} 
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }} 
+                  transition={{ delay: i * 0.1 }}
+                >
+                  <Card className="bg-card border-border h-full flex flex-col rounded-[5px] hover:shadow-xl transition-all duration-300">
+                    <CardContent className="pt-8 flex-1 flex flex-col justify-between">
+                      <div>
+                        <div className="flex gap-1 mb-4 text-accent">
+                          {Array.from({ length: t.rating }).map((_, idx) => (
+                            <Star key={idx} className="w-4 h-4 fill-current animate-pulse" />
+                          ))}
+                        </div>
+                        <p className="text-sm text-muted-foreground leading-relaxed italic mb-6">
+                          "{t.quote}"
+                        </p>
+                      </div>
+                      <div className="mt-auto border-t border-border/50 pt-4">
+                        <p className="font-bold text-foreground text-sm">{t.author}</p>
+                        <p className="text-xs text-muted-foreground">{t.role}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
             </div>
           </div>
         </section>
