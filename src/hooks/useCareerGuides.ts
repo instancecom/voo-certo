@@ -19,6 +19,7 @@ export interface CareerGuide {
   description: string | null;
   display_order: number;
   is_active: boolean;
+  category?: string;
   created_at: string;
   updated_at: string;
   steps?: CareerGuideStep[];
@@ -64,7 +65,7 @@ export function useCareerGuideWithSteps(guideId: string | undefined) {
 export function useCreateCareerGuide() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (data: { title: string; description: string }) => {
+    mutationFn: async (data: { title: string; description: string; category?: string }) => {
       const { data: maxOrder } = await supabase
         .from('career_guides')
         .select('display_order')
@@ -75,7 +76,7 @@ export function useCreateCareerGuide() {
 
       const { data: guide, error } = await supabase
         .from('career_guides')
-        .insert({ title: data.title, description: data.description, display_order: nextOrder })
+        .insert({ title: data.title, description: data.description, category: data.category || 'geral', display_order: nextOrder })
         .select()
         .single();
       if (error) throw error;
@@ -88,7 +89,7 @@ export function useCreateCareerGuide() {
 export function useUpdateCareerGuide() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, ...data }: { id: string; title?: string; description?: string; is_active?: boolean; display_order?: number }) => {
+    mutationFn: async ({ id, ...data }: { id: string; title?: string; description?: string; is_active?: boolean; category?: string; display_order?: number }) => {
       const { error } = await supabase.from('career_guides').update(data).eq('id', id);
       if (error) throw error;
     },

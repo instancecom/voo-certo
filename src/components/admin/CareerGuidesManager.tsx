@@ -51,18 +51,51 @@ export function CareerGuidesManager() {
 
   const [showForm, setShowForm] = useState(false);
   const [editingGuideId, setEditingGuideId] = useState<string | null>(null);
+  const [editingGuide, setEditingGuide] = useState<any | null>(null);
   const [formTitle, setFormTitle] = useState('');
   const [formDesc, setFormDesc] = useState('');
+  const [formCategory, setFormCategory] = useState('geral');
 
   const handleCreate = async () => {
     if (!formTitle.trim()) return toast.error('Título obrigatório');
     try {
-      await createGuide.mutateAsync({ title: formTitle.trim(), description: formDesc.trim() });
+      await createGuide.mutateAsync({ 
+        title: formTitle.trim(), 
+        description: formDesc.trim(),
+        category: formCategory 
+      });
       toast.success('Guia criado!');
       setShowForm(false);
       setFormTitle('');
       setFormDesc('');
+      setFormCategory('geral');
     } catch { toast.error('Erro ao criar guia'); }
+  };
+
+  const handleStartEdit = (guide: any) => {
+    setEditingGuide(guide);
+    setFormTitle(guide.title);
+    setFormDesc(guide.description || '');
+    setFormCategory(guide.category || 'geral');
+    setShowForm(false);
+  };
+
+  const handleUpdateDetails = async () => {
+    if (!editingGuide) return;
+    if (!formTitle.trim()) return toast.error('Título obrigatório');
+    try {
+      await updateGuide.mutateAsync({
+        id: editingGuide.id,
+        title: formTitle.trim(),
+        description: formDesc.trim(),
+        category: formCategory
+      });
+      toast.success('Guia atualizado!');
+      setEditingGuide(null);
+      setFormTitle('');
+      setFormDesc('');
+      setFormCategory('geral');
+    } catch { toast.error('Erro ao atualizar guia'); }
   };
 
   const handleDelete = async (id: string) => {
@@ -95,14 +128,22 @@ export function CareerGuidesManager() {
           <h2 className="text-xl sm:text-2xl font-bold text-foreground">Guias de Carreira</h2>
           <p className="text-sm text-muted-foreground">Crie e gerencie guias com etapas sequenciais.</p>
         </div>
-        <Button onClick={() => setShowForm(!showForm)} className="w-full sm:w-auto shrink-0">
+        <Button onClick={() => { setShowForm(!showForm); setEditingGuide(null); setFormTitle(''); setFormDesc(''); setFormCategory('geral'); }} className="w-full sm:w-auto shrink-0">
           <Plus className="w-4 h-4 mr-2" />Novo Guia
         </Button>
       </div>
 
-      {showForm && (
-        <Card>
-          <CardContent className="pt-6 space-y-4">
+      {(showForm || editingGuide) && (
+        <Card className="border-primary bg-card">
+          <CardHeader>
+            <CardTitle className="text-lg text-primary">
+              {editingGuide ? 'Editar Guia de Carreira' : 'Novo Guia de Carreira'}
+            </CardTitle>
+            <CardDescription>
+              {editingGuide ? 'Atualize as informações principais do guia.' : 'Preencha as informações básicas para criar o novo guia.'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4 pt-0">
             <div>
               <Label>Título do Guia</Label>
               <Input value={formTitle} onChange={e => setFormTitle(e.target.value)} placeholder="Ex: Como ser Comissário de Bordo" />
@@ -111,12 +152,35 @@ export function CareerGuidesManager() {
               <Label>Descrição</Label>
               <Textarea value={formDesc} onChange={e => setFormDesc(e.target.value)} placeholder="Descrição geral do guia..." />
             </div>
-            <div className="flex gap-2 justify-end">
-              <Button variant="ghost" onClick={() => setShowForm(false)}>Cancelar</Button>
-              <Button onClick={handleCreate} disabled={createGuide.isPending}>
-                {createGuide.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                <Save className="w-4 h-4 mr-2" />Criar
+            <div>
+              <Label>Categoria / Tópico</Label>
+              <Select value={formCategory} onValueChange={setFormCategory}>
+                <SelectTrigger className="w-full bg-background border-border rounded-[5px]">
+                  <SelectValue placeholder="Selecione a categoria..." />
+                </SelectTrigger>
+                <SelectContent className="bg-card border-border">
+                  <SelectItem value="comissaria">✈️ Comissários</SelectItem>
+                  <SelectItem value="piloto">🛫 Pilotos</SelectItem>
+                  <SelectItem value="mecanico">🔧 Mecânicos</SelectItem>
+                  <SelectItem value="geral">📚 Geral / Dicas</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex gap-2 justify-end pt-2">
+              <Button variant="ghost" onClick={() => { setShowForm(false); setEditingGuide(null); setFormTitle(''); setFormDesc(''); setFormCategory('geral'); }}>
+                Cancelar
               </Button>
+              {editingGuide ? (
+                <Button onClick={handleUpdateDetails} disabled={updateGuide.isPending}>
+                  {updateGuide.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                  <Save className="w-4 h-4 mr-2" />Salvar
+                </Button>
+              ) : (
+                <Button onClick={handleCreate} disabled={createGuide.isPending}>
+                  {createGuide.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                  <Save className="w-4 h-4 mr-2" />Criar
+                </Button>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -138,6 +202,12 @@ export function CareerGuidesManager() {
                     <Badge variant={guide.is_active ? 'default' : 'secondary'} className="text-xs shrink-0 rounded-[5px]">
                       {guide.is_active ? 'Ativo' : 'Inativo'}
                     </Badge>
+                    <Badge variant="outline" className="text-xs shrink-0 bg-primary/5 border-primary/20 text-primary rounded-[5px]">
+                      {guide.category === 'comissaria' && '✈️ Comissários'}
+                      {guide.category === 'piloto' && '🛫 Pilotos'}
+                      {guide.category === 'mecanico' && '🔧 Mecânicos'}
+                      {(!guide.category || guide.category === 'geral') && '📚 Geral / Dicas'}
+                    </Badge>
                   </div>
                   {guide.description && <CardDescription className="mt-1.5 leading-relaxed line-clamp-2">{guide.description}</CardDescription>}
                 </div>
@@ -149,8 +219,11 @@ export function CareerGuidesManager() {
                     <Switch checked={guide.is_active} onCheckedChange={() => handleToggleActive(guide.id, guide.is_active)} />
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" onClick={() => setEditingGuideId(guide.id)} className="h-9 px-3 rounded-[5px]">
-                      <Edit className="w-4 h-4 mr-1.5" />Etapas
+                    <Button variant="outline" size="sm" onClick={() => handleStartEdit(guide)} className="h-9 px-2.5 rounded-[5px]">
+                      <Edit className="w-4 h-4 mr-1.5" />Editar
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => setEditingGuideId(guide.id)} className="h-9 px-2.5 rounded-[5px] bg-primary/5 hover:bg-primary/10 border-primary/10">
+                      <Layers className="w-4 h-4 mr-1.5 text-primary" />Etapas
                     </Button>
                     <Button variant="ghost" size="icon" onClick={() => handleDelete(guide.id)} className="text-destructive hover:bg-destructive/10 h-9 w-9 p-0 rounded-[5px]">
                       <Trash2 className="w-4 h-4" />

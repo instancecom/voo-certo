@@ -24,7 +24,10 @@ import {
 } from 'lucide-react';
 
 
-const getGuideCategory = (title: string) => {
+const getGuideCategory = (guide: any) => {
+  if (guide?.category) return guide.category;
+  
+  const title = guide?.title || '';
   const t = title.toLowerCase();
   if (t.includes('comissaria') || t.includes('comissário') || t.includes('comissario') || t.includes('bordo')) {
     return 'comissaria';
@@ -142,7 +145,7 @@ function CareerGuideRow({ title, icon, guides, navigate }: CareerGuideRowProps) 
           className="flex gap-5 overflow-x-auto scrollbar-none scroll-smooth pb-4 -mx-4 px-4"
         >
           {guides.map((guide, index) => {
-            const category = getGuideCategory(guide.title);
+            const category = getGuideCategory(guide);
             const CategoryIcon = category === 'mecanico' ? Wrench : Plane;
             return (
               <motion.div
@@ -300,10 +303,10 @@ export default function GuiaCarreiraPage() {
                           <div className="space-y-1">
                             {[
                               { value: 'todos', label: 'Todas as Categorias', emoji: '✨', count: guides.filter(g => g.is_active).length },
-                              { value: 'comissaria', label: 'Comissários', emoji: '✈️', count: guides.filter(g => g.is_active && getGuideCategory(g.title) === 'comissaria').length },
-                              { value: 'piloto', label: 'Pilotos', emoji: '🛫', count: guides.filter(g => g.is_active && getGuideCategory(g.title) === 'piloto').length },
-                              { value: 'mecanico', label: 'Mecânicos', emoji: '🔧', count: guides.filter(g => g.is_active && getGuideCategory(g.title) === 'mecanico').length },
-                              { value: 'geral', label: 'Geral / Dicas', emoji: '📚', count: guides.filter(g => g.is_active && getGuideCategory(g.title) === 'geral').length }
+                              { value: 'comissaria', label: 'Comissários', emoji: '✈️', count: guides.filter(g => g.is_active && getGuideCategory(g) === 'comissaria').length },
+                              { value: 'piloto', label: 'Pilotos', emoji: '🛫', count: guides.filter(g => g.is_active && getGuideCategory(g) === 'piloto').length },
+                              { value: 'mecanico', label: 'Mecânicos', emoji: '🔧', count: guides.filter(g => g.is_active && getGuideCategory(g) === 'mecanico').length },
+                              { value: 'geral', label: 'Geral / Dicas', emoji: '📚', count: guides.filter(g => g.is_active && getGuideCategory(g) === 'geral').length }
                             ].map(cat => (
                               <DropdownMenuItem
                                 key={cat.value}
@@ -354,10 +357,10 @@ export default function GuiaCarreiraPage() {
                   <p className="text-muted-foreground font-medium">Nenhum guia disponível no momento.</p>
                 </div>
               ) : (() => {
-                const comissariaGuides = guides?.filter(g => g.is_active && getGuideCategory(g.title) === 'comissaria') || [];
-                const pilotoGuides = guides?.filter(g => g.is_active && getGuideCategory(g.title) === 'piloto') || [];
-                const mecanicoGuides = guides?.filter(g => g.is_active && getGuideCategory(g.title) === 'mecanico') || [];
-                const geralGuides = guides?.filter(g => g.is_active && getGuideCategory(g.title) === 'geral') || [];
+                const comissariaGuides = guides?.filter(g => g.is_active && getGuideCategory(g) === 'comissaria') || [];
+                const pilotoGuides = guides?.filter(g => g.is_active && getGuideCategory(g) === 'piloto') || [];
+                const mecanicoGuides = guides?.filter(g => g.is_active && getGuideCategory(g) === 'mecanico') || [];
+                const geralGuides = guides?.filter(g => g.is_active && getGuideCategory(g) === 'geral') || [];
 
                 const hasVisibleGuides = guides && (
                   (selectedCategory === 'todos' && guides.some(g => g.is_active)) ||
