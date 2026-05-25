@@ -11,7 +11,7 @@ import { useCareerGuides } from '@/hooks/useCareerGuides';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePlan } from '@/hooks/usePlan';
 import {
-  ArrowRight, Plane, Loader2, Lock, BookOpen, Crown, ChevronLeft, ChevronRight,
+  ArrowRight, Plane, Loader2, Lock, BookOpen, Crown, Wrench,
 } from 'lucide-react';
 
 const GRADIENT_THEMES = [
@@ -28,62 +28,30 @@ export default function GuiaCarreiraPage() {
   const { canAccessGuideContent } = usePlan();
   const navigate = useNavigate();
 
-  const sliderRef = useRef<HTMLDivElement>(null);
-  const [showLeftArrow, setShowLeftArrow] = useState(false);
-  const [showRightArrow, setShowRightArrow] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState<'todos' | 'comissaria' | 'piloto' | 'mecanico' | 'geral'>('todos');
 
   // Free users can see guide structure but linked content is locked
   const hasAccess = true; // Everyone can see the guides list
 
-  const scroll = (direction: 'left' | 'right') => {
-    if (sliderRef.current) {
-      const { scrollLeft, clientWidth } = sliderRef.current;
-      const scrollTo = direction === 'left' 
-        ? scrollLeft - clientWidth * 0.75 
-        : scrollLeft + clientWidth * 0.75;
-      
-      sliderRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+  const getGuideCategory = (title: string) => {
+    const t = title.toLowerCase();
+    if (t.includes('comissaria') || t.includes('comissário') || t.includes('comissario') || t.includes('bordo')) {
+      return 'comissaria';
     }
+    if (t.includes('piloto') || t.includes('pp') || t.includes('pc') || t.includes('voar')) {
+      return 'piloto';
+    }
+    if (t.includes('mecanico') || t.includes('mecânico') || t.includes('manutenção') || t.includes('manutencao')) {
+      return 'mecanico';
+    }
+    return 'geral';
   };
 
-  const handleScroll = () => {
-    if (sliderRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
-      // Show left arrow if we have scrolled a bit
-      setShowLeftArrow(scrollLeft > 10);
-      // Show right arrow if there is still content to scroll (with some tolerance)
-      setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 10);
-    }
-  };
-
-  useEffect(() => {
-    const slider = sliderRef.current;
-    if (slider) {
-      slider.addEventListener('scroll', handleScroll);
-      // Run once initially
-      handleScroll();
-      
-      // Resize observer or window listener to update arrow states when screen size changes
-      window.addEventListener('resize', handleScroll);
-    }
-    return () => {
-      if (slider) {
-        slider.removeEventListener('scroll', handleScroll);
-      }
-      window.removeEventListener('resize', handleScroll);
-    };
-  }, [guides]);
-
-  // Re-trigger scroll check after loading finishes
-  useEffect(() => {
-    if (!isLoading && guides) {
-      // Timeout to ensure DOM has rendered
-      const timer = setTimeout(() => {
-        handleScroll();
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [isLoading, guides]);
+  const filteredGuides = guides?.filter(g => {
+    if (!g.is_active) return false;
+    if (selectedCategory === 'todos') return true;
+    return getGuideCategory(g.title) === selectedCategory;
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -145,10 +113,42 @@ export default function GuiaCarreiraPage() {
                 </p>
               </motion.div>
 
+              {/* Barra de Filtros (Abas) */}
+              {!isLoading && guides && guides.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-8 pl-2 overflow-x-auto pb-2 scrollbar-none">
+                  {[
+                    { id: 'todos', label: '✨ Todos', count: guides.filter(g => g.is_active).length },
+                    { id: 'comissaria', label: '✈️ Comissários', count: guides.filter(g => g.is_active && getGuideCategory(g.title) === 'comissaria').length },
+                    { id: 'piloto', label: '🛫 Pilotos', count: guides.filter(g => g.is_active && getGuideCategory(g.title) === 'piloto').length },
+                    { id: 'mecanico', label: '🔧 Mecânicos', count: guides.filter(g => g.is_active && getGuideCategory(g.title) === 'mecanico').length },
+                    { id: 'geral', label: '📚 Geral / Dicas', count: guides.filter(g => g.is_active && getGuideCategory(g.title) === 'geral').length },
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setSelectedCategory(tab.id as any)}
+                      className={`px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 flex items-center gap-2 shrink-0 border ${
+                        selectedCategory === tab.id
+                          ? 'bg-accent border-accent text-white shadow-lg shadow-accent/20 scale-105'
+                          : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
+                      }`}
+                    >
+                      {tab.label}
+                      {tab.count !== undefined && (
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
+                          selectedCategory === tab.id ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'
+                        }`}>
+                          {tab.count}
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
+
               {isLoading ? (
-                <div className="flex gap-6 overflow-hidden py-4 pl-2">
-                  {[1, 2, 3, 4].map(i => (
-                    <Skeleton key={i} className="h-[230px] sm:h-[290px] md:h-[340px] w-[170px] sm:w-[240px] md:w-[310px] shrink-0 rounded-xl" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 pt-4 pl-2">
+                  {[1, 2, 3].map(i => (
+                    <Skeleton key={i} className="h-[290px] sm:h-[320px] md:h-[340px] w-full rounded-xl" />
                   ))}
                 </div>
               ) : guides?.length === 0 ? (
@@ -156,50 +156,31 @@ export default function GuiaCarreiraPage() {
                   <BookOpen className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
                   <p className="text-muted-foreground font-medium">Nenhum guia disponível no momento.</p>
                 </div>
+              ) : filteredGuides?.length === 0 ? (
+                <div className="text-center py-20 bg-muted/20 rounded-[5px] pl-2 border border-slate-800/50">
+                  <BookOpen className="w-12 h-12 text-slate-600 mx-auto mb-4" />
+                  <p className="text-slate-400 font-medium text-sm">Nenhum guia encontrado nesta categoria no momento.</p>
+                </div>
               ) : (
-                <div className="relative group/slider w-full pl-2">
-                  {/* Left Arrow Button */}
-                  {showLeftArrow && (
-                    <button
-                      onClick={() => scroll('left')}
-                      className="absolute -left-4 md:-left-6 top-1/2 -translate-y-1/2 z-30 w-12 h-12 bg-background/95 hover:bg-background border border-border/80 text-foreground hover:text-accent rounded-full flex items-center justify-center shadow-lg hover:shadow-accent/10 transition-all duration-300 hover:scale-110 pointer-events-auto backdrop-blur-md"
-                      aria-label="Scroll left"
-                    >
-                      <ChevronLeft className="w-6 h-6" />
-                    </button>
-                  )}
-
-                  {/* Right Arrow Button */}
-                  {showRightArrow && (
-                    <button
-                      onClick={() => scroll('right')}
-                      className="absolute -right-4 md:-right-6 top-1/2 -translate-y-1/2 z-30 w-12 h-12 bg-background/95 hover:bg-background border border-border/80 text-foreground hover:text-accent rounded-full flex items-center justify-center shadow-lg hover:shadow-accent/10 transition-all duration-300 hover:scale-110 pointer-events-auto backdrop-blur-md"
-                      aria-label="Scroll right"
-                    >
-                      <ChevronRight className="w-6 h-6" />
-                    </button>
-                  )}
-
-                  {/* Scrollable Row */}
-                  <div
-                    ref={sliderRef}
-                    className="flex gap-6 overflow-x-auto scrollbar-none scroll-smooth pb-8 pt-4 px-2 -mx-2 snap-x snap-mandatory"
-                  >
-                    {guides?.filter(g => g.is_active).map((guide, index) => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 pt-4 pl-2">
+                  {filteredGuides?.map((guide, index) => {
+                    const category = getGuideCategory(guide.title);
+                    return (
                       <motion.div
                         key={guide.id}
-                        initial={{ opacity: 0, x: 50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: index * 0.05, duration: 0.5 }}
-                        className="snap-start shrink-0 w-[170px] sm:w-[240px] md:w-[310px]"
+                        layout
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.3 }}
+                        className="w-full"
                       >
                         <Card 
-                          className="group h-[230px] sm:h-[290px] md:h-[340px] flex flex-col bg-slate-950 border border-slate-800/80 hover:border-accent/40 shadow-lg hover:shadow-accent/10 hover:scale-[1.05] transition-all duration-300 cursor-pointer rounded-xl overflow-hidden relative" 
+                          className="group h-[290px] sm:h-[320px] md:h-[340px] flex flex-col bg-slate-950 border border-slate-800/80 hover:border-accent/40 shadow-lg hover:shadow-accent/10 hover:scale-[1.02] transition-all duration-300 cursor-pointer rounded-xl overflow-hidden relative" 
                           onClick={() => navigate(`/guia-carreira/${guide.id}`)}
                         >
                           {/* Premium Top Half visual thumbnail */}
-                          <div className={`relative h-[95px] sm:h-[125px] md:h-[150px] w-full bg-gradient-to-br ${GRADIENT_THEMES[index % GRADIENT_THEMES.length]} flex items-center justify-center overflow-hidden shrink-0`}>
+                          <div className={`relative h-[110px] sm:h-[130px] md:h-[150px] w-full bg-gradient-to-br ${GRADIENT_THEMES[index % GRADIENT_THEMES.length]} flex items-center justify-center overflow-hidden shrink-0`}>
                             {/* Technical Grid Overlay */}
                             <svg className="absolute inset-0 w-full h-full opacity-10 mix-blend-overlay" xmlns="http://www.w3.org/2000/svg">
                               <defs>
@@ -211,7 +192,7 @@ export default function GuiaCarreiraPage() {
                             </svg>
 
                             {/* Badge */}
-                            <div className="absolute top-2 left-2 z-10 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded bg-accent/20 border border-accent/40 backdrop-blur-md text-[8px] sm:text-[10px] font-black uppercase tracking-wider text-accent">
+                            <div className="absolute top-3 left-3 z-10 px-2 py-0.5 sm:py-1 rounded bg-accent/20 border border-accent/40 backdrop-blur-md text-[8px] sm:text-[10px] font-black uppercase tracking-wider text-accent">
                               Guia
                             </div>
 
@@ -219,45 +200,49 @@ export default function GuiaCarreiraPage() {
                             <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
 
                             {/* Floating Glassmorphic Icon */}
-                            <div className="relative z-10 w-9 h-9 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/15 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 transform text-white group-hover:text-accent">
-                              {index % 2 === 0 ? (
-                                <Plane className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 -rotate-45" />
+                            <div className="relative z-10 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/15 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 transform text-white group-hover:text-accent">
+                              {category === 'comissaria' ? (
+                                <Plane className="w-5 h-5 -rotate-45" />
+                              ) : category === 'piloto' ? (
+                                <Plane className="w-5 h-5 -rotate-45" />
+                              ) : category === 'mecanico' ? (
+                                <Wrench className="w-5 h-5" />
                               ) : (
-                                <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+                                <BookOpen className="w-5 h-5" />
                               )}
                             </div>
                           </div>
 
                           {/* Content Section */}
-                          <div className="p-3 sm:p-5 md:p-6 flex-1 flex flex-col justify-between">
+                          <div className="p-4 sm:p-5 md:p-6 flex-1 flex flex-col justify-between">
                             <div className="space-y-1 sm:space-y-2">
-                              <h3 className="text-xs sm:text-base md:text-lg font-extrabold tracking-tight text-white leading-snug transition-colors group-hover:text-accent line-clamp-2">
+                              <h3 className="text-sm sm:text-base md:text-lg font-extrabold tracking-tight text-white leading-snug transition-colors group-hover:text-accent line-clamp-2">
                                 {guide.title}
                               </h3>
                               {guide.description && (
-                                <p className="hidden sm:block text-[10px] md:text-xs text-slate-400 line-clamp-2 md:line-clamp-3 leading-relaxed">
+                                <p className="text-[10px] sm:text-xs text-slate-400 line-clamp-2 md:line-clamp-3 leading-relaxed">
                                   {guide.description}
                                 </p>
                               )}
                             </div>
 
                             {/* Action Footer */}
-                            <div className="pt-2 flex items-center justify-between mt-auto">
+                            <div className="pt-3 flex items-center justify-between mt-auto border-t border-slate-900">
                               <div className="flex items-center gap-1.5 text-slate-400">
-                                <BookOpen className="w-3 h-3 text-accent/80 shrink-0" />
-                                <span className="text-[9px] sm:text-[11px] font-bold tracking-wide uppercase">
-                                  Começar
+                                <BookOpen className="w-3.5 h-3.5 text-accent/80 shrink-0" />
+                                <span className="text-[10px] sm:text-[11px] font-bold tracking-wide uppercase">
+                                  Começar Guia
                                 </span>
                               </div>
-                              <div className="w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-white hover:bg-accent text-slate-950 hover:text-white flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-md">
+                              <div className="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-white hover:bg-accent text-slate-950 hover:text-white flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-md">
                                 <ArrowRight className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5" />
                               </div>
                             </div>
                           </div>
                         </Card>
                       </motion.div>
-                    ))}
-                  </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
