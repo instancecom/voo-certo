@@ -15,13 +15,6 @@ import {
   ArrowRight, Plane, Loader2, Lock, BookOpen, Crown, Wrench, ChevronLeft, ChevronRight,
 } from 'lucide-react';
 
-const GRADIENT_THEMES = [
-  'from-indigo-600 via-indigo-950 to-slate-950',
-  'from-sky-600 via-slate-900 to-indigo-950',
-  'from-amber-600 via-slate-900 to-amber-950',
-  'from-purple-600 via-slate-900 to-purple-950',
-  'from-teal-600 via-slate-900 to-teal-950',
-];
 
 const getGuideCategory = (title: string) => {
   const t = title.toLowerCase();
@@ -93,30 +86,34 @@ function CareerGuideRow({ title, icon, guides, navigate }: CareerGuideRowProps) 
   if (!guides || guides.length === 0) return null;
 
   return (
-    <div className="mb-14 relative group/slider w-full pl-2">
-      {/* Title Block */}
-      <div className="flex items-center gap-2.5 mb-4 border-b border-slate-900 pb-3">
-        <div className="text-accent shrink-0">
-          {icon}
-        </div>
-        <h3 className="text-lg md:text-xl font-extrabold tracking-tight text-white">
+    <div className="mb-14 relative w-full">
+      {/* Row Title */}
+      <div className="flex items-center gap-2.5 mb-5 pb-3 border-b border-border">
+        <div className="text-primary shrink-0">{icon}</div>
+        <h3 className="text-base md:text-lg font-bold text-foreground uppercase tracking-tight">
           {title}
         </h3>
-        <span className="text-[10px] font-bold text-slate-400 bg-slate-900 border border-slate-800 px-2 py-0.5 rounded-full shrink-0">
+        <span className="text-[10px] font-bold text-muted-foreground bg-muted border border-border px-2 py-0.5 rounded-[5px] shrink-0">
           {guides.length}
         </span>
+        <div className="h-px flex-1 bg-border/50 hidden md:block" />
       </div>
 
       {/* Slider Container */}
-      <div className="relative w-full">
+      <div className="relative group">
+        {/* Fade esquerda */}
+        <div className="pointer-events-none absolute left-0 top-0 bottom-4 w-8 bg-gradient-to-r from-background to-transparent z-10 hidden md:block" />
+        {/* Fade direita */}
+        <div className="pointer-events-none absolute right-0 top-0 bottom-4 w-16 bg-gradient-to-l from-background to-transparent z-10 hidden md:block" />
+
         {/* Left Arrow */}
         {showLeftArrow && (
           <button
             onClick={() => scroll('left')}
-            className="absolute -left-4 md:-left-6 top-1/2 -translate-y-1/2 z-30 w-12 h-12 bg-background/95 hover:bg-background border border-border/80 text-foreground hover:text-accent rounded-full flex items-center justify-center shadow-lg hover:shadow-accent/10 transition-all duration-300 hover:scale-110 pointer-events-auto backdrop-blur-md"
+            className="hidden md:flex absolute left-2 top-[40%] -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-background/80 backdrop-blur-md border border-border/85 shadow-lg items-center justify-center text-muted-foreground hover:text-primary hover:bg-background transition-all hover:scale-110 opacity-0 group-hover:opacity-100"
             aria-label="Scroll left"
           >
-            <ChevronLeft className="w-6 h-6" />
+            <ChevronLeft className="w-5 h-5" />
           </button>
         )}
 
@@ -124,94 +121,76 @@ function CareerGuideRow({ title, icon, guides, navigate }: CareerGuideRowProps) 
         {showRightArrow && (
           <button
             onClick={() => scroll('right')}
-            className="absolute -right-4 md:-right-6 top-1/2 -translate-y-1/2 z-30 w-12 h-12 bg-background/95 hover:bg-background border border-border/80 text-foreground hover:text-accent rounded-full flex items-center justify-center shadow-lg hover:shadow-accent/10 transition-all duration-300 hover:scale-110 pointer-events-auto backdrop-blur-md"
+            className="hidden md:flex absolute right-2 top-[40%] -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-background/80 backdrop-blur-md border border-border/85 shadow-lg items-center justify-center text-muted-foreground hover:text-primary hover:bg-background transition-all hover:scale-110 opacity-0 group-hover:opacity-100"
             aria-label="Scroll right"
           >
-            <ChevronRight className="w-6 h-6" />
+            <ChevronRight className="w-5 h-5" />
           </button>
         )}
 
         {/* Scrollable Row */}
         <div
           ref={sliderRef}
-          className="flex gap-6 overflow-x-auto scrollbar-none scroll-smooth pb-6 pt-2 px-2 -mx-2 snap-x snap-mandatory"
+          className="flex gap-5 overflow-x-auto scrollbar-none scroll-smooth pb-4 -mx-4 px-4"
         >
           {guides.map((guide, index) => {
             const category = getGuideCategory(guide.title);
+            const CategoryIcon = category === 'mecanico' ? Wrench : Plane;
             return (
               <motion.div
                 key={guide.id}
-                initial={{ opacity: 0, x: 30 }}
+                initial={{ opacity: 0, x: 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.05, duration: 0.4 }}
-                className="snap-start shrink-0 w-[200px] sm:w-[260px] md:w-[310px]"
+                transition={{ delay: index * 0.06, duration: 0.4 }}
+                className="flex-none w-[240px] sm:w-[270px] md:w-[310px]"
               >
-                <Card 
-                  className="group h-[270px] sm:h-[310px] md:h-[340px] flex flex-col bg-slate-950 border border-slate-800/80 hover:border-accent/40 shadow-lg hover:shadow-accent/10 hover:scale-[1.03] transition-all duration-300 cursor-pointer rounded-xl overflow-hidden relative" 
+                <div
+                  className="p-5 md:p-6 rounded-[5px] bg-card border border-border hover:border-primary/30 hover:shadow-xl transition-all h-full flex flex-col group relative overflow-hidden cursor-pointer"
                   onClick={() => navigate(`/guia-carreira/${guide.id}`)}
                 >
-                  {/* Premium Top Half visual thumbnail */}
-                  <div className={`relative h-[100px] sm:h-[120px] md:h-[140px] w-full bg-gradient-to-br ${GRADIENT_THEMES[index % GRADIENT_THEMES.length]} flex items-center justify-center overflow-hidden shrink-0`}>
-                    {/* Technical Grid Overlay */}
-                    <svg className="absolute inset-0 w-full h-full opacity-10 mix-blend-overlay" xmlns="http://www.w3.org/2000/svg">
-                      <defs>
-                        <pattern id={`grid-${index}`} width="10" height="10" patternUnits="userSpaceOnUse">
-                          <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" strokeWidth="0.5" />
-                        </pattern>
-                      </defs>
-                      <rect width="100%" height="100%" fill={`url(#grid-${index})`} className="text-white" />
-                    </svg>
+                  {/* Decorative bg icon */}
+                  <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity">
+                    <CategoryIcon className="w-28 h-28 rotate-12" />
+                  </div>
 
-                    {/* Badge */}
-                    <div className="absolute top-3 left-3 z-10 px-2 py-0.5 sm:py-1 rounded bg-accent/20 border border-accent/40 backdrop-blur-md text-[8px] sm:text-[10px] font-black uppercase tracking-wider text-accent">
-                      Guia
-                    </div>
-
-                    {/* Border highlight */}
-                    <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
-
-                    {/* Floating Glassmorphic Icon */}
-                    <div className="relative z-10 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/15 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 transform text-white group-hover:text-accent">
-                      {category === 'comissaria' ? (
-                        <Plane className="w-5 h-5 -rotate-45" />
-                      ) : category === 'piloto' ? (
-                        <Plane className="w-5 h-5 -rotate-45" />
-                      ) : category === 'mecanico' ? (
-                        <Wrench className="w-5 h-5" />
+                  {/* Header: icon + badge */}
+                  <div className="flex items-start justify-between mb-5">
+                    <div className="w-12 h-12 rounded-[5px] bg-primary/5 border border-border/50 flex items-center justify-center">
+                      {category === 'mecanico' ? (
+                        <Wrench className="w-6 h-6 text-primary" />
+                      ) : category === 'geral' ? (
+                        <BookOpen className="w-6 h-6 text-primary" />
                       ) : (
-                        <BookOpen className="w-5 h-5" />
+                        <Plane className="w-6 h-6 text-primary -rotate-45" />
                       )}
                     </div>
+                    <span className="text-[9px] font-bold uppercase tracking-widest border border-primary/20 bg-primary/5 text-primary px-2 py-1 rounded-[5px]">
+                      Guia
+                    </span>
                   </div>
 
-                  {/* Content Section */}
-                  <div className="p-4 sm:p-5 md:p-6 flex-1 flex flex-col justify-between">
-                    <div className="space-y-1 sm:space-y-2">
-                      <h3 className="text-sm sm:text-base md:text-lg font-extrabold tracking-tight text-white leading-snug transition-colors group-hover:text-accent line-clamp-2">
-                        {guide.title}
-                      </h3>
-                      {guide.description && (
-                        <p className="text-[10px] sm:text-xs text-slate-400 line-clamp-2 md:line-clamp-3 leading-relaxed">
-                          {guide.description}
-                        </p>
-                      )}
-                    </div>
+                  {/* Title + description */}
+                  <h3 className="text-base font-bold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2 leading-snug">
+                    {guide.title}
+                  </h3>
+                  {guide.description && (
+                    <p className="text-sm text-muted-foreground mb-4 flex-1 font-medium line-clamp-3 leading-relaxed">
+                      {guide.description}
+                    </p>
+                  )}
 
-                    {/* Action Footer */}
-                    <div className="pt-3 flex items-center justify-between mt-auto border-t border-slate-900">
-                      <div className="flex items-center gap-1.5 text-slate-400">
-                        <BookOpen className="w-3.5 h-3.5 text-accent/80 shrink-0" />
-                        <span className="text-[10px] sm:text-[11px] font-bold tracking-wide uppercase">
-                          Começar Guia
-                        </span>
-                      </div>
-                      <div className="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-white hover:bg-accent text-slate-950 hover:text-white flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-md">
-                        <ArrowRight className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5" />
-                      </div>
+                  {/* Footer */}
+                  <div className="mt-auto pt-3 border-t border-border flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 text-muted-foreground">
+                      <BookOpen className="w-3.5 h-3.5 text-primary/70 shrink-0" />
+                      <span className="text-[10px] font-bold tracking-wide uppercase">Começar Guia</span>
+                    </div>
+                    <div className="w-8 h-8 rounded-[5px] bg-primary/5 border border-border/50 hover:bg-primary hover:border-primary text-primary hover:text-white flex items-center justify-center transition-all duration-200 shadow-sm group-hover:bg-primary group-hover:text-white">
+                      <ArrowRight className="w-4 h-4" />
                     </div>
                   </div>
-                </Card>
+                </div>
               </motion.div>
             );
           })}
