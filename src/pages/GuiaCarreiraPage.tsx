@@ -23,40 +23,31 @@ const GRADIENT_THEMES = [
   'from-teal-600 via-slate-900 to-teal-950',
 ];
 
-export default function GuiaCarreiraPage() {
-  const { data: guides, isLoading } = useCareerGuides();
-  const { user, isPremium, isLoading: authLoading } = useAuth();
-  const { canAccessGuideContent } = usePlan();
-  const navigate = useNavigate();
+const getGuideCategory = (title: string) => {
+  const t = title.toLowerCase();
+  if (t.includes('comissaria') || t.includes('comissário') || t.includes('comissario') || t.includes('bordo')) {
+    return 'comissaria';
+  }
+  if (t.includes('piloto') || t.includes('pp') || t.includes('pc') || t.includes('voar')) {
+    return 'piloto';
+  }
+  if (t.includes('mecanico') || t.includes('mecânico') || t.includes('manutenção') || t.includes('manutencao')) {
+    return 'mecanico';
+  }
+  return 'geral';
+};
 
-  const [selectedCategory, setSelectedCategory] = useState<'todos' | 'comissaria' | 'piloto' | 'mecanico' | 'geral'>('todos');
+interface CareerGuideRowProps {
+  title: string;
+  icon: React.ReactNode;
+  guides: any[];
+  navigate: any;
+}
 
+function CareerGuideRow({ title, icon, guides, navigate }: CareerGuideRowProps) {
   const sliderRef = useRef<HTMLDivElement>(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
-
-  // Free users can see guide structure but linked content is locked
-  const hasAccess = true; // Everyone can see the guides list
-
-  const getGuideCategory = (title: string) => {
-    const t = title.toLowerCase();
-    if (t.includes('comissaria') || t.includes('comissário') || t.includes('comissario') || t.includes('bordo')) {
-      return 'comissaria';
-    }
-    if (t.includes('piloto') || t.includes('pp') || t.includes('pc') || t.includes('voar')) {
-      return 'piloto';
-    }
-    if (t.includes('mecanico') || t.includes('mecânico') || t.includes('manutenção') || t.includes('manutencao')) {
-      return 'mecanico';
-    }
-    return 'geral';
-  };
-
-  const filteredGuides = guides?.filter(g => {
-    if (!g.is_active) return false;
-    if (selectedCategory === 'todos') return true;
-    return getGuideCategory(g.title) === selectedCategory;
-  });
 
   const scroll = (direction: 'left' | 'right') => {
     if (sliderRef.current) {
@@ -90,16 +81,156 @@ export default function GuiaCarreiraPage() {
       }
       window.removeEventListener('resize', handleScroll);
     };
-  }, [filteredGuides]);
+  }, [guides]);
 
   useEffect(() => {
-    if (!isLoading && filteredGuides) {
-      const timer = setTimeout(() => {
-        handleScroll();
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [isLoading, filteredGuides]);
+    const timer = setTimeout(() => {
+      handleScroll();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [guides]);
+
+  if (!guides || guides.length === 0) return null;
+
+  return (
+    <div className="mb-14 relative group/slider w-full pl-2">
+      {/* Title Block */}
+      <div className="flex items-center gap-2.5 mb-4 border-b border-slate-900 pb-3">
+        <div className="text-accent shrink-0">
+          {icon}
+        </div>
+        <h3 className="text-lg md:text-xl font-extrabold tracking-tight text-white">
+          {title}
+        </h3>
+        <span className="text-[10px] font-bold text-slate-400 bg-slate-900 border border-slate-800 px-2 py-0.5 rounded-full shrink-0">
+          {guides.length}
+        </span>
+      </div>
+
+      {/* Slider Container */}
+      <div className="relative w-full">
+        {/* Left Arrow */}
+        {showLeftArrow && (
+          <button
+            onClick={() => scroll('left')}
+            className="absolute -left-4 md:-left-6 top-1/2 -translate-y-1/2 z-30 w-12 h-12 bg-background/95 hover:bg-background border border-border/80 text-foreground hover:text-accent rounded-full flex items-center justify-center shadow-lg hover:shadow-accent/10 transition-all duration-300 hover:scale-110 pointer-events-auto backdrop-blur-md"
+            aria-label="Scroll left"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+        )}
+
+        {/* Right Arrow */}
+        {showRightArrow && (
+          <button
+            onClick={() => scroll('right')}
+            className="absolute -right-4 md:-right-6 top-1/2 -translate-y-1/2 z-30 w-12 h-12 bg-background/95 hover:bg-background border border-border/80 text-foreground hover:text-accent rounded-full flex items-center justify-center shadow-lg hover:shadow-accent/10 transition-all duration-300 hover:scale-110 pointer-events-auto backdrop-blur-md"
+            aria-label="Scroll right"
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
+        )}
+
+        {/* Scrollable Row */}
+        <div
+          ref={sliderRef}
+          className="flex gap-6 overflow-x-auto scrollbar-none scroll-smooth pb-6 pt-2 px-2 -mx-2 snap-x snap-mandatory"
+        >
+          {guides.map((guide, index) => {
+            const category = getGuideCategory(guide.title);
+            return (
+              <motion.div
+                key={guide.id}
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.05, duration: 0.4 }}
+                className="snap-start shrink-0 w-[200px] sm:w-[260px] md:w-[310px]"
+              >
+                <Card 
+                  className="group h-[270px] sm:h-[310px] md:h-[340px] flex flex-col bg-slate-950 border border-slate-800/80 hover:border-accent/40 shadow-lg hover:shadow-accent/10 hover:scale-[1.03] transition-all duration-300 cursor-pointer rounded-xl overflow-hidden relative" 
+                  onClick={() => navigate(`/guia-carreira/${guide.id}`)}
+                >
+                  {/* Premium Top Half visual thumbnail */}
+                  <div className={`relative h-[100px] sm:h-[120px] md:h-[140px] w-full bg-gradient-to-br ${GRADIENT_THEMES[index % GRADIENT_THEMES.length]} flex items-center justify-center overflow-hidden shrink-0`}>
+                    {/* Technical Grid Overlay */}
+                    <svg className="absolute inset-0 w-full h-full opacity-10 mix-blend-overlay" xmlns="http://www.w3.org/2000/svg">
+                      <defs>
+                        <pattern id={`grid-${index}`} width="10" height="10" patternUnits="userSpaceOnUse">
+                          <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" strokeWidth="0.5" />
+                        </pattern>
+                      </defs>
+                      <rect width="100%" height="100%" fill={`url(#grid-${index})`} className="text-white" />
+                    </svg>
+
+                    {/* Badge */}
+                    <div className="absolute top-3 left-3 z-10 px-2 py-0.5 sm:py-1 rounded bg-accent/20 border border-accent/40 backdrop-blur-md text-[8px] sm:text-[10px] font-black uppercase tracking-wider text-accent">
+                      Guia
+                    </div>
+
+                    {/* Border highlight */}
+                    <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
+
+                    {/* Floating Glassmorphic Icon */}
+                    <div className="relative z-10 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/15 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 transform text-white group-hover:text-accent">
+                      {category === 'comissaria' ? (
+                        <Plane className="w-5 h-5 -rotate-45" />
+                      ) : category === 'piloto' ? (
+                        <Plane className="w-5 h-5 -rotate-45" />
+                      ) : category === 'mecanico' ? (
+                        <Wrench className="w-5 h-5" />
+                      ) : (
+                        <BookOpen className="w-5 h-5" />
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Content Section */}
+                  <div className="p-4 sm:p-5 md:p-6 flex-1 flex flex-col justify-between">
+                    <div className="space-y-1 sm:space-y-2">
+                      <h3 className="text-sm sm:text-base md:text-lg font-extrabold tracking-tight text-white leading-snug transition-colors group-hover:text-accent line-clamp-2">
+                        {guide.title}
+                      </h3>
+                      {guide.description && (
+                        <p className="text-[10px] sm:text-xs text-slate-400 line-clamp-2 md:line-clamp-3 leading-relaxed">
+                          {guide.description}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Action Footer */}
+                    <div className="pt-3 flex items-center justify-between mt-auto border-t border-slate-900">
+                      <div className="flex items-center gap-1.5 text-slate-400">
+                        <BookOpen className="w-3.5 h-3.5 text-accent/80 shrink-0" />
+                        <span className="text-[10px] sm:text-[11px] font-bold tracking-wide uppercase">
+                          Começar Guia
+                        </span>
+                      </div>
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-white hover:bg-accent text-slate-950 hover:text-white flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-md">
+                        <ArrowRight className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5" />
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function GuiaCarreiraPage() {
+  const { data: guides, isLoading } = useCareerGuides();
+  const { user, isPremium, isLoading: authLoading } = useAuth();
+  const { canAccessGuideContent } = usePlan();
+  const navigate = useNavigate();
+
+  const [selectedCategory, setSelectedCategory] = useState<'todos' | 'comissaria' | 'piloto' | 'mecanico' | 'geral'>('todos');
+
+  // Free users can see guide structure but linked content is locked
+  const hasAccess = true; // Everyone can see the guides list
 
   return (
     <div className="min-h-screen bg-background">
@@ -147,7 +278,7 @@ export default function GuiaCarreiraPage() {
         <section className="py-16 md:py-24 overflow-hidden">
           <div className="container mx-auto px-4 md:px-8">
             <div className="max-w-7xl mx-auto">
-              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 pl-2">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 pl-2">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -168,14 +299,14 @@ export default function GuiaCarreiraPage() {
                     initial={{ opacity: 0, y: 15 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    className="w-full md:w-[260px] shrink-0 z-40"
+                    className="w-full md:w-[280px] shrink-0 z-40"
                   >
                     <Select value={selectedCategory} onValueChange={(val: any) => setSelectedCategory(val)}>
                       <SelectTrigger className="w-full bg-slate-950 border-slate-800 text-white rounded-xl h-11 focus:ring-accent focus:border-accent">
                         <SelectValue placeholder="Filtrar por profissão" />
                       </SelectTrigger>
                       <SelectContent className="bg-slate-950 border-slate-800 text-slate-300">
-                        <SelectItem value="todos" className="hover:bg-slate-900 focus:bg-slate-900 text-white">✨ Todos ({guides.filter(g => g.is_active).length})</SelectItem>
+                        <SelectItem value="todos" className="hover:bg-slate-900 focus:bg-slate-900 text-white">✨ Todas as Categorias ({guides.filter(g => g.is_active).length})</SelectItem>
                         <SelectItem value="comissaria" className="hover:bg-slate-900 focus:bg-slate-900 text-white">✈️ Comissários ({guides.filter(g => g.is_active && getGuideCategory(g.title) === 'comissaria').length})</SelectItem>
                         <SelectItem value="piloto" className="hover:bg-slate-900 focus:bg-slate-900 text-white">🛫 Pilotos ({guides.filter(g => g.is_active && getGuideCategory(g.title) === 'piloto').length})</SelectItem>
                         <SelectItem value="mecanico" className="hover:bg-slate-900 focus:bg-slate-900 text-white">🔧 Mecânicos ({guides.filter(g => g.is_active && getGuideCategory(g.title) === 'mecanico').length})</SelectItem>
@@ -187,9 +318,16 @@ export default function GuiaCarreiraPage() {
               </div>
 
               {isLoading ? (
-                <div className="flex gap-6 overflow-hidden py-4 pl-2">
-                  {[1, 2, 3, 4].map(i => (
-                    <Skeleton key={i} className="h-[270px] sm:h-[310px] md:h-[340px] w-[200px] sm:w-[260px] md:w-[310px] shrink-0 rounded-xl" />
+                <div className="flex flex-col gap-10">
+                  {[1, 2].map(rowIndex => (
+                    <div key={rowIndex} className="space-y-4 pl-2">
+                      <Skeleton className="h-6 w-48 bg-slate-800 rounded" />
+                      <div className="flex gap-6 overflow-hidden py-2">
+                        {[1, 2, 3, 4].map(i => (
+                          <Skeleton key={i} className="h-[270px] sm:h-[310px] md:h-[340px] w-[200px] sm:w-[260px] md:w-[310px] shrink-0 rounded-xl" />
+                        ))}
+                      </div>
+                    </div>
                   ))}
                 </div>
               ) : guides?.length === 0 ? (
@@ -197,123 +335,69 @@ export default function GuiaCarreiraPage() {
                   <BookOpen className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
                   <p className="text-muted-foreground font-medium">Nenhum guia disponível no momento.</p>
                 </div>
-              ) : filteredGuides?.length === 0 ? (
-                <div className="text-center py-20 bg-muted/20 rounded-[5px] pl-2 border border-slate-800/50">
-                  <BookOpen className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-                  <p className="text-slate-400 font-medium text-sm">Nenhum guia encontrado nesta categoria no momento.</p>
-                </div>
-              ) : (
-                <div className="relative group/slider w-full pl-2">
-                  {/* Left Arrow Button */}
-                  {showLeftArrow && (
-                    <button
-                      onClick={() => scroll('left')}
-                      className="absolute -left-4 md:-left-6 top-1/2 -translate-y-1/2 z-30 w-12 h-12 bg-background/95 hover:bg-background border border-border/80 text-foreground hover:text-accent rounded-full flex items-center justify-center shadow-lg hover:shadow-accent/10 transition-all duration-300 hover:scale-110 pointer-events-auto backdrop-blur-md"
-                      aria-label="Scroll left"
-                    >
-                      <ChevronLeft className="w-6 h-6" />
-                    </button>
-                  )}
+              ) : (() => {
+                const comissariaGuides = guides?.filter(g => g.is_active && getGuideCategory(g.title) === 'comissaria') || [];
+                const pilotoGuides = guides?.filter(g => g.is_active && getGuideCategory(g.title) === 'piloto') || [];
+                const mecanicoGuides = guides?.filter(g => g.is_active && getGuideCategory(g.title) === 'mecanico') || [];
+                const geralGuides = guides?.filter(g => g.is_active && getGuideCategory(g.title) === 'geral') || [];
 
-                  {/* Right Arrow Button */}
-                  {showRightArrow && (
-                    <button
-                      onClick={() => scroll('right')}
-                      className="absolute -right-4 md:-right-6 top-1/2 -translate-y-1/2 z-30 w-12 h-12 bg-background/95 hover:bg-background border border-border/80 text-foreground hover:text-accent rounded-full flex items-center justify-center shadow-lg hover:shadow-accent/10 transition-all duration-300 hover:scale-110 pointer-events-auto backdrop-blur-md"
-                      aria-label="Scroll right"
-                    >
-                      <ChevronRight className="w-6 h-6" />
-                    </button>
-                  )}
+                const hasVisibleGuides = guides && (
+                  (selectedCategory === 'todos' && guides.some(g => g.is_active)) ||
+                  (selectedCategory === 'comissaria' && comissariaGuides.length > 0) ||
+                  (selectedCategory === 'piloto' && pilotoGuides.length > 0) ||
+                  (selectedCategory === 'mecanico' && mecanicoGuides.length > 0) ||
+                  (selectedCategory === 'geral' && geralGuides.length > 0)
+                );
 
-                  {/* Scrollable Row */}
-                  <div
-                    ref={sliderRef}
-                    className="flex gap-6 overflow-x-auto scrollbar-none scroll-smooth pb-8 pt-4 px-2 -mx-2 snap-x snap-mandatory"
-                  >
-                    {filteredGuides?.map((guide, index) => {
-                      const category = getGuideCategory(guide.title);
-                      return (
-                        <motion.div
-                          key={guide.id}
-                          layout
-                          initial={{ opacity: 0, x: 50 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: -50 }}
-                          transition={{ delay: index * 0.05, duration: 0.5 }}
-                          className="snap-start shrink-0 w-[200px] sm:w-[260px] md:w-[310px]"
-                        >
-                          <Card 
-                            className="group h-[270px] sm:h-[310px] md:h-[340px] flex flex-col bg-slate-950 border border-slate-800/80 hover:border-accent/40 shadow-lg hover:shadow-accent/10 hover:scale-[1.03] transition-all duration-300 cursor-pointer rounded-xl overflow-hidden relative" 
-                            onClick={() => navigate(`/guia-carreira/${guide.id}`)}
-                          >
-                            {/* Premium Top Half visual thumbnail */}
-                            <div className={`relative h-[100px] sm:h-[120px] md:h-[140px] w-full bg-gradient-to-br ${GRADIENT_THEMES[index % GRADIENT_THEMES.length]} flex items-center justify-center overflow-hidden shrink-0`}>
-                              {/* Technical Grid Overlay */}
-                              <svg className="absolute inset-0 w-full h-full opacity-10 mix-blend-overlay" xmlns="http://www.w3.org/2000/svg">
-                                <defs>
-                                  <pattern id={`grid-${index}`} width="10" height="10" patternUnits="userSpaceOnUse">
-                                    <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" strokeWidth="0.5" />
-                                  </pattern>
-                                </defs>
-                                <rect width="100%" height="100%" fill={`url(#grid-${index})`} className="text-white" />
-                              </svg>
+                if (!hasVisibleGuides) {
+                  return (
+                    <div className="text-center py-20 bg-muted/20 rounded-[5px] pl-2 border border-slate-800/50">
+                      <BookOpen className="w-12 h-12 text-slate-600 mx-auto mb-4" />
+                      <p className="text-slate-400 font-medium text-sm">Nenhum guia encontrado nesta categoria no momento.</p>
+                    </div>
+                  );
+                }
 
-                              {/* Badge */}
-                              <div className="absolute top-3 left-3 z-10 px-2 py-0.5 sm:py-1 rounded bg-accent/20 border border-accent/40 backdrop-blur-md text-[8px] sm:text-[10px] font-black uppercase tracking-wider text-accent">
-                                Guia
-                              </div>
+                return (
+                  <div className="flex flex-col gap-4">
+                    {(selectedCategory === 'todos' || selectedCategory === 'comissaria') && (
+                      <CareerGuideRow
+                        title="Comissários de Bordo"
+                        icon={<Plane className="w-5 h-5 -rotate-45 text-accent" />}
+                        guides={comissariaGuides}
+                        navigate={navigate}
+                      />
+                    )}
 
-                              {/* Border highlight */}
-                              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
+                    {(selectedCategory === 'todos' || selectedCategory === 'piloto') && (
+                      <CareerGuideRow
+                        title="Pilotos"
+                        icon={<Plane className="w-5 h-5 -rotate-45 text-accent" />}
+                        guides={pilotoGuides}
+                        navigate={navigate}
+                      />
+                    )}
 
-                              {/* Floating Glassmorphic Icon */}
-                              <div className="relative z-10 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/15 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 transform text-white group-hover:text-accent">
-                                {category === 'comissaria' ? (
-                                  <Plane className="w-5 h-5 -rotate-45" />
-                                ) : category === 'piloto' ? (
-                                  <Plane className="w-5 h-5 -rotate-45" />
-                                ) : category === 'mecanico' ? (
-                                  <Wrench className="w-5 h-5" />
-                                ) : (
-                                  <BookOpen className="w-5 h-5" />
-                                )}
-                              </div>
-                            </div>
+                    {(selectedCategory === 'todos' || selectedCategory === 'mecanico') && (
+                      <CareerGuideRow
+                        title="Mecânicos de Voo"
+                        icon={<Wrench className="w-5 h-5 text-accent" />}
+                        guides={mecanicoGuides}
+                        navigate={navigate}
+                      />
+                    )}
 
-                            {/* Content Section */}
-                            <div className="p-4 sm:p-5 md:p-6 flex-1 flex flex-col justify-between">
-                              <div className="space-y-1 sm:space-y-2">
-                                <h3 className="text-sm sm:text-base md:text-lg font-extrabold tracking-tight text-white leading-snug transition-colors group-hover:text-accent line-clamp-2">
-                                  {guide.title}
-                                </h3>
-                                {guide.description && (
-                                  <p className="text-[10px] sm:text-xs text-slate-400 line-clamp-2 md:line-clamp-3 leading-relaxed">
-                                    {guide.description}
-                                  </p>
-                                )}
-                              </div>
-
-                              {/* Action Footer */}
-                              <div className="pt-3 flex items-center justify-between mt-auto border-t border-slate-900">
-                                <div className="flex items-center gap-1.5 text-slate-400">
-                                  <BookOpen className="w-3.5 h-3.5 text-accent/80 shrink-0" />
-                                  <span className="text-[10px] sm:text-[11px] font-bold tracking-wide uppercase">
-                                    Começar Guia
-                                  </span>
-                                </div>
-                                <div className="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-white hover:bg-accent text-slate-950 hover:text-white flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-md">
-                                  <ArrowRight className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5" />
-                                </div>
-                              </div>
-                            </div>
-                          </Card>
-                        </motion.div>
-                      );
-                    })}
+                    {(selectedCategory === 'todos' || selectedCategory === 'geral') && (
+                      <CareerGuideRow
+                        title="Geral / Dicas de Carreira"
+                        icon={<BookOpen className="w-5 h-5 text-accent" />}
+                        guides={geralGuides}
+                        navigate={navigate}
+                      />
+                    )}
                   </div>
-                </div>
-              )}
+                );
+              })()}
             </div>
           </div>
         </section>
