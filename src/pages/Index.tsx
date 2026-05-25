@@ -742,19 +742,19 @@ export default function Index() {
                 {
                   quote: "O Chat IA Contextual mudou completamente minha forma de estudar. Quando eu errava, ele me explicava a lógica imediatamente, economizando horas de pesquisa.",
                   author: "Mariana Silva",
-                  role: "Estudante de Curso Homologado",
+                  role: "Assinante Voo Certo",
                   rating: 5,
                 },
                 {
-                  quote: "Os simulados são muito fiéis ao formato da banca real. Treinar com a pressão do tempo me deu a segurança necessária para passar de primeira na escola.",
+                  quote: "Os simulados são muito fiéis ao formato da banca real. Treinar com a pressão do tempo me deu a segurança necessária para ser aprovado de primeira na ANAC.",
                   author: "Thiago Rocha",
-                  role: "Futuro Comissário de Bordo",
+                  role: "Assinante Voo Certo",
                   rating: 5,
                 },
                 {
                   quote: "Além de responder as questões, o construtor de currículo aeronáutico e o selo LinkedIn me ajudaram a apresentar meu perfil de forma profissional para as empresas.",
                   author: "Amanda Lima",
-                  role: "Aluna de Preparatório Teórico",
+                  role: "Assinante Voo Certo",
                   rating: 5,
                 }
               ].map((t, i) => (
