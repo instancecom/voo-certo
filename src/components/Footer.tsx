@@ -5,6 +5,16 @@ import { useBranding } from '@/contexts/BrandingContext';
 export function Footer() {
   const { settings: branding } = useBranding();
 
+  const getDriveImageUrl = (url: string | null): string | null => {
+    if (!url) return null;
+    if (url.includes('lh3.googleusercontent.com')) return url;
+    const ucMatch = url.match(/drive\.google\.com\/uc\?export=view&id=([^&]+)/);
+    if (ucMatch) return `https://lh3.googleusercontent.com/d/${ucMatch[1]}`;
+    const fileMatch = url.match(/drive\.google\.com\/file\/d\/([^/]+)/);
+    if (fileMatch) return `https://lh3.googleusercontent.com/d/${fileMatch[1]}`;
+    return url;
+  };
+
   return (
     <footer className="bg-primary text-primary-foreground">
       <div className="container mx-auto py-16">
@@ -13,7 +23,11 @@ export function Footer() {
           <div className="md:col-span-1 flex flex-col items-center md:items-start">
             <Link to="/" className="flex items-center gap-2 mb-6 group">
               {branding.logo_url ? (
-                <img src={branding.logo_url} alt={branding.site_name} className="h-10 w-auto object-contain brightness-0 invert" />
+                <img 
+                  src={getDriveImageUrl(branding.logo_url) || ''} 
+                  alt={branding.site_name} 
+                  className="h-10 w-auto object-contain" 
+                />
               ) : (
                 <>
                   <Plane className="w-8 h-8 text-accent" />
