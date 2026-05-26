@@ -39,10 +39,11 @@ import { PlansAndCouponsManager } from '@/components/admin/PlansAndCouponsManage
 import { ConnectionsManager } from '@/components/admin/ConnectionsManager';
 import { BrandingManager } from '@/components/admin/BrandingManager';
 import { FeaturesManager } from '@/components/admin/FeaturesManager';
+import { StrategicTestersManager } from '@/components/admin/StrategicTestersManager';
 import { Palette, Activity } from 'lucide-react';
 
 type AdminView = 'professions' | 'blocks' | 'questions';
-type AdminTab = 'content' | 'microcourses' | 'guia' | 'insignias-models' | 'verifications' | 'stats' | 'plans' | 'connections' | 'branding' | 'recursos';
+type AdminTab = 'content' | 'microcourses' | 'guia' | 'insignias-models' | 'verifications' | 'stats' | 'plans' | 'connections' | 'branding' | 'recursos' | 'testers';
 
 export default function AdminPage() {
   const { user, isAdmin, isLoading: authLoading } = useAuth();
@@ -202,6 +203,7 @@ export default function AdminPage() {
                 { value: 'plans', label: 'Planos & Cupons', icon: Tag },
                 { value: 'connections', label: 'Conexões', icon: Plug },
                 { value: 'branding', label: 'Branding', icon: Palette },
+                { value: 'testers', label: 'Testers Estratégicos', icon: Users },
               ];
 
               const currentTab = tabs.find(t => t.value === activeTab);
@@ -268,6 +270,7 @@ export default function AdminPage() {
                   <div className={activeTab === 'connections' ? 'block' : 'hidden'}><ConnectionsManager /></div>
                   <div className={activeTab === 'branding' ? 'block' : 'hidden'}><BrandingManager /></div>
                   <div className={activeTab === 'recursos' ? 'block' : 'hidden'}><FeaturesManager /></div>
+                  <div className={activeTab === 'testers' ? 'block' : 'hidden'}><StrategicTestersManager /></div>
                 </div>
               );
 

@@ -954,6 +954,7 @@ export type Database = {
           full_name: string | null
           id: string
           is_premium: boolean | null
+          is_tester: boolean
           plan_expires_at: string | null
           plan_type: string
           premium_expires_at: string | null
@@ -970,6 +971,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           is_premium?: boolean | null
+          is_tester?: boolean
           plan_expires_at?: string | null
           plan_type?: string
           premium_expires_at?: string | null
@@ -986,6 +988,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           is_premium?: boolean | null
+          is_tester?: boolean
           plan_expires_at?: string | null
           plan_type?: string
           premium_expires_at?: string | null
@@ -1062,6 +1065,92 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "subcategories"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      strategic_testers: {
+        Row: {
+          created_at: string
+          duration_days: number | null
+          email: string
+          expires_at: string | null
+          id: string
+          invited_at: string
+          name: string
+          notes: string | null
+          registered_at: string | null
+          status: string
+          tags: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          duration_days?: number | null
+          email: string
+          expires_at?: string | null
+          id?: string
+          invited_at?: string
+          name: string
+          notes?: string | null
+          registered_at?: string | null
+          status?: string
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          duration_days?: number | null
+          email?: string
+          expires_at?: string | null
+          id?: string
+          invited_at?: string
+          name?: string
+          notes?: string | null
+          registered_at?: string | null
+          status?: string
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      strategic_tester_feedback: {
+        Row: {
+          bugs_found: string | null
+          confused_most: string | null
+          created_at: string
+          email: string
+          id: string
+          liked_most: string | null
+          rating: number
+          user_id: string
+        }
+        Insert: {
+          bugs_found?: string | null
+          confused_most?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          liked_most?: string | null
+          rating: number
+          user_id: string
+        }
+        Update: {
+          bugs_found?: string | null
+          confused_most?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          liked_most?: string | null
+          rating?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "strategic_tester_feedback_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
           },
         ]
       }

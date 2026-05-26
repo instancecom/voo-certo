@@ -13,6 +13,7 @@ interface Profile {
   plan_type: string;
   plan_expires_at: string | null;
   ai_questions_count?: number;
+  is_tester: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -23,6 +24,7 @@ interface AuthContextType {
   profile: Profile | null;
   isAdmin: boolean;
   isPremium: boolean;
+  isTester: boolean;
   hasActivePlan: boolean;
   isLoading: boolean;
   signOut: () => Promise<void>;
@@ -37,6 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
+  const [isTester, setIsTester] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchProfile = async (userId: string) => {
@@ -54,7 +57,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (profileData) {
         setProfile(profileData);
-        setIsPremium(profileData.is_premium || false);
+        // Expirar premium se a validade passou
+        const hasExpired = profileData.premium_expires_at && new Date(profileData.premium_expires_at) < new Date();
+        setIsPremium((profileData.is_premium && !hasExpired) || false);
+        setIsTester(profileData.is_tester || false);
       }
 
       // Check if user is admin
@@ -88,6 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setProfile(null);
     setIsAdmin(false);
     setIsPremium(false);
+    setIsTester(false);
   };
 
   useEffect(() => {
@@ -134,6 +141,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setProfile(null);
           setIsAdmin(false);
           setIsPremium(false);
+          setIsTester(false);
         }
       }
     );
@@ -171,6 +179,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         profile,
         isAdmin,
         isPremium,
+        isTester,
         hasActivePlan,
         isLoading,
         signOut,
