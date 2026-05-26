@@ -52,7 +52,7 @@ const PLANS = [
     description: 'O melhor custo-benefício para sua aprovação',
     features: [
       'Tudo do plano Solo',
-      'Modo Banca ilimitado (Estilo ANAC)',
+      'Modo Banca ilimitado (Estilo prova real)',
       'Chat IA (5 msgs por questão)',
       'Histórico de Desempenho Avançado',
       'Relatórios por matéria',
@@ -80,20 +80,21 @@ const PLANS = [
 ];
 
 const STEPS = [
-  { icon: GraduationCap, title: 'Treine com simulados realistas', desc: 'Pratique com questões inspiradas no formato dos exames oficiais, organizadas por matéria.' },
-  { icon: BarChart3, title: 'Descubra seus pontos fracos', desc: 'Relatórios detalhados identificam exatamente onde você precisa focar sua energia.' },
-  { icon: Brain, title: 'Evolua com IA especializada', desc: 'Entenda o porquê de cada resposta com explicações contextuais inteligentes.' },
-  { icon: Award, title: 'Avance rumo à sua aprovação', desc: 'Ganhe confiança e chegue preparado para conquistar seu lugar no mercado.' },
+  { icon: GraduationCap, title: 'Escolha sua área e comece', desc: 'Acesse simulados organizados por disciplina, adaptados ao formato das provas de certificação aeronáutica.' },
+  { icon: BarChart3, title: 'Identifique seus pontos fracos', desc: 'Relatórios inteligentes mostram exatamente onde você perde pontos e o que priorizar nos estudos.' },
+  { icon: Brain, title: 'Aprenda com a IA em tempo real', desc: 'Errou uma questão? Nossa IA explica a lógica da resposta correta imediatamente, em linguagem técnica clara.' },
+  { icon: Award, title: 'Chegue preparado no dia da prova', desc: 'Monitore sua prontidão, acumule conquistas e se certifique de que está pronto para passar de primeira.' },
 ];
 
 
 const FAQ = [
-  { q: 'O Voo Certo substitui o curso de comissário obrigatório?', a: 'Não. O Voo Certo é uma ferramenta de apoio e preparação complementar. Você ainda deve realizar o curso teórico e prático em uma escola homologada pela ANAC conforme as exigências legais.' },
-  { q: 'Funciona para quem está começando do zero?', a: 'Com certeza! A plataforma foi desenhada para guiar você desde os primeiros passos, com explicações didáticas via IA e um roadmap completo de carreira.' },
-  { q: 'A IA realmente responde dúvidas reais?', a: 'Sim. Nossa IA foi treinada especificamente no contexto aeronáutico para explicar a lógica por trás de cada questão, ajudando você a aprender com o erro em vez de apenas decorar.' },
-  { q: 'Os simulados seguem os temas cobrados nos exames do setor?', a: 'Sim, nossos simulados são inspirados no formato e nos temas recorrentes das provas de certificação, garantindo um treino altamente realista e focado no que importa.' },
+  { q: 'Para quem é o Voo Certo?', a: 'Para quem está se preparando para provas de certificação aeronáutica no Brasil. A plataforma conta com simulados organizados por área de conhecimento, relatórios de desempenho e um guia completo de trajetória na aviação civil.' },
+  { q: 'Como funciona o modo de simulado?', a: 'Você pode estudar em três modos: Modo Banca (simula o ambiente real da prova com tempo e pressão), Modo Livre (pratique no seu ritmo, vendo a resposta na hora) e Modo Bloco (foco em uma disciplina específica até dominar o assunto).' },
+  { q: 'O que é o Chat IA e como ele me ajuda?', a: 'O Chat IA é um assistente aeronáutico disponível 24h que explica a lógica de cada questão que você errar. Em vez de apenas marcar como errado, ele te ensina o raciocínio correto para que você não cometa o mesmo erro novamente.' },
+  { q: 'Os simulados são baseados no formato real das provas?', a: 'Sim. Nossos simulados são desenvolvidos com base nos temas e no formato recorrente das provas de certificação aeronáutica, garantindo um treino de alta fidelidade e focado no que realmente cai.' },
+  { q: 'Posso acompanhar minha evolução ao longo do tempo?', a: 'Com certeza. A plataforma registra seu histórico completo de desempenho por matéria, mostrando sua evolução semana a semana e indicando quando você estará pronto para a prova.' },
   { q: 'Posso estudar pelo celular?', a: 'Perfeitamente. A plataforma é 100% otimizada para dispositivos móveis, permitindo que você estude em qualquer lugar, aproveitando cada minuto do seu dia.' },
-  { q: 'Posso cancelar minha assinatura?', a: 'Sim, o cancelamento é simples e pode ser feito a qualquer momento diretamente no seu painel, sem taxas escondidas ou fidelidade.' },
+  { q: 'Posso cancelar minha assinatura?', a: 'Sim, o cancelamento é simples e pode ser feito a qualquer momento diretamente no seu painel, sem taxas ou fidelidade.' },
 ];
 
 const DIFFERENTIALS = [
@@ -170,32 +171,32 @@ export default function Index() {
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: 'spring' }}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-accent/20 rounded-[5px] text-accent mb-6 mx-auto lg:mx-0">
                   <Sparkles className="w-4 h-4" />
-                  <span className="text-sm font-bold uppercase tracking-wider">Simulador Teórico de Preparação</span>
+                  <span className="text-sm font-bold uppercase tracking-wider">A Plataforma de Simulados para a ANAC</span>
                 </motion.div>
 
                 <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground mb-6 leading-tight">
-                  Sua Preparação Completa para a <br className="hidden md:block" />
-                  <span className="text-accent">Banca ANAC de Comissário.</span>
+                  A forma mais inteligente de <br className="hidden md:block" />
+                  <span className="text-accent">passar na prova da ANAC.</span>
                 </h1>
 
                 <p className="text-lg md:text-xl text-primary-foreground/80 mb-4 max-w-xl mx-auto lg:mx-0 font-medium leading-relaxed">
-                  Estude de forma inteligente com simulados de alta fidelidade que preparam você de verdade para o dia da banca. Esclareça dúvidas na hora com nosso Chat IA explicativo, acompanhe seu progresso real por matéria e crie seu currículo padrão de aviação.
+                  Simulados técnicos no formato da prova, Chat IA que explica cada erro na hora e relatórios que mostram sua evolução real. Acompanhe sua trajetória do primeiro estudo até o dia da aprovação.
                 </p>
 
                 <p className="text-sm text-success/90 mb-8 flex items-center justify-center lg:justify-start gap-2 font-semibold">
                   <BadgeCheck className="w-4 h-4" />
-                  Acelere seus estudos com simulados, guias de carreira e suporte de IA 24/7.
+                  Simulado real · IA 24/7 · Relatórios de evolução · Guia de carreira
                 </p>
 
                 <div className="flex flex-wrap justify-center lg:justify-start gap-4">
                   <Button variant="hero" size="xl" asChild className="rounded-[5px] w-full sm:w-fit whitespace-normal h-auto py-4 sm:h-14 sm:py-0 hover-yellow">
                     <Link to={user ? '/simulados' : '/auth?mode=signup'} className="flex items-center justify-center gap-2">
-                      Começar Agora <ArrowRight className="w-5 h-5" />
+                      Testar Grátis por 7 Dias <ArrowRight className="w-5 h-5" />
                     </Link>
                   </Button>
                   <Button variant="outline" size="xl" asChild className="bg-white/5 text-white border-white/20 hover-yellow rounded-[5px] w-full sm:w-fit">
                     <Link to="/premium" className="flex items-center justify-center gap-2">
-                      Ver Recursos
+                      Ver Planos e Recursos
                   </Link>
                   </Button>
                 </div>
@@ -203,8 +204,8 @@ export default function Index() {
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
                   className="grid grid-cols-2 sm:flex sm:flex-wrap justify-center lg:justify-start gap-6 md:gap-8 mt-12">
                   {[
-                    { value: '500+', label: 'Questões' },
-                    { value: '10+', label: 'Simulados' },
+                    { value: '3', label: 'Certificações' },
+                    { value: '2.000+', label: 'Questões' },
                     { value: '95%', label: 'Aprovação' },
                     { value: '24/7', label: 'Acesso' },
                   ].map((stat, i) => (
@@ -216,7 +217,7 @@ export default function Index() {
                 </motion.div>
 
                 <p className="text-[10px] text-primary-foreground/45 mt-8 max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium text-center lg:text-left">
-                  * AVISO DE ISENÇÃO: O Voo Certo é uma plataforma independente de simulados, guias de carreira e ferramentas de estudo para fins educacionais de preparação complementar. Não somos um órgão governamental, não representamos e não possuímos afiliação oficial com a ANAC, e não substituímos o curso de formação teórica ou prática obrigatório exigido por escolas oficiais de aviação homologadas.
+                  * O Voo Certo é uma plataforma independente de simulados e preparação para certificações aeronáuticas. Não possuímos afiliação oficial com nenhum órgão regulador da aviação civil.
                 </p>
               </motion.div>
 
@@ -224,7 +225,7 @@ export default function Index() {
               <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.3 }}
                 className="hidden lg:block relative">
                 <div className="relative">
-                  <img src={studyDesk} alt="Estudando para ANAC" className="rounded-[5px] shadow-2xl" loading="lazy" decoding="async" />
+                  <img src={studyDesk} alt="Estudando para provas de aviação" className="rounded-[5px] shadow-2xl" loading="lazy" decoding="async" />
                   {/* Floating card overlay */}
                   <motion.div className="absolute -bottom-6 -left-6 bg-card rounded-[5px] p-4 shadow-xl border border-border"
                     animate={{ y: [-5, 5, -5] }} transition={{ duration: 4, repeat: Infinity }}>
@@ -233,8 +234,8 @@ export default function Index() {
                         <BadgeCheck className="w-5 h-5 text-accent" />
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-foreground">Padrão ANAC</p>
-                        <p className="text-[10px] text-muted-foreground uppercase font-bold">Questões 100% atualizadas</p>
+                        <p className="text-sm font-bold text-foreground">Alta Fidelidade</p>
+                        <p className="text-[10px] text-muted-foreground uppercase font-bold">Questões técnicas atualizadas</p>
                       </div>
                     </div>
                   </motion.div>
@@ -276,20 +277,20 @@ export default function Index() {
                 {
                   title: 'Modo Banca',
                   icon: Shield,
-                  desc: 'O simulado definitivo. Tempo real, 20 questões aleatórias e pressão de prova para você saber se está realmente pronto.',
-                  benefit: 'Foco em Performance'
+                  desc: 'Simula o ambiente real da prova: tempo cronometrado, 20 questões aleatórias e pressão real para você saber exatamente se está pronto.',
+                  benefit: 'Máxima Fidelidade'
                 },
                 {
                   title: 'Modo Livre',
                   icon: Zap,
-                  desc: 'Pratique no seu ritmo. Escolha o número de questões e veja a resposta na hora para acelerar seu aprendizado.',
-                  benefit: 'Flexibilidade Total'
+                  desc: 'Estude no seu ritmo. Escolha quantas questões quiser, veja a resposta na hora e use o Chat IA para entender cada erro imediatamente.',
+                  benefit: 'Aprendizado Acelerado'
                 },
                 {
                   title: 'Modo Bloco',
                   icon: Target,
-                  desc: 'Domine suas dificuldades. Treine matérias específicas como CMS, PSS, RPA ou Meteorologia até atingir a perfeição.',
-                  benefit: 'Foco Dirigido'
+                  desc: 'Foco total em uma disciplina. Treine uma matéria específica até dominar completamente antes de avançar para a próxima.',
+                  benefit: 'Domínio por Disciplina'
                 }
               ].map((mode, i) => (
                 <Card key={i} className="bg-background border-border hover:border-accent/50 transition-all group rounded-[5px] hover:-translate-y-2 duration-300">
@@ -389,18 +390,18 @@ export default function Index() {
                   Exclusivo Voo Certo
                 </Badge>
                 <h2 className="text-2xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
-                  Chat IA Contextual: <br className="hidden md:block" />
-                  Sua dúvida respondida <span className="text-accent">na hora.</span>
+                  Chat IA Aeronáutico: <br className="hidden md:block" />
+                  Aprenda com cada erro, <span className="text-accent">na hora.</span>
                 </h2>
                 <p className="text-lg text-muted-foreground mb-8">
-                  Errou uma questão técnica? Nossa IA analisa a pergunta e as alternativas para explicar exatamente onde você errou e qual a base normativa da resposta correta.
+                  Errou uma questão? Nossa IA lê o enunciado, analisa cada alternativa e entrega uma explicação técnica imediata. Você entende o raciocínio certo — e não comete o mesmo erro duas vezes.
                 </p>
                 <ul className="space-y-4 mb-10 text-left inline-block lg:block">
                   {[
-                    'Explicações detalhadas por questão',
-                    'Dicas para memorizar matérias complexas',
-                    'Suporte 24h sem depender de instrutor',
-                    'Linguagem clara e focada em aviação'
+                    'Explicação técnica de cada questão errada',
+                    'Fundamento normativo da resposta correta',
+                    'Dicas de memorização por matéria',
+                    'Disponível 24h, sem depender de instrutor'
                   ].map((item, i) => (
                     <li key={i} className="flex items-center gap-3 text-foreground font-bold">
                       <div className="w-6 h-6 rounded-full bg-success/20 flex items-center justify-center">
@@ -411,7 +412,7 @@ export default function Index() {
                   ))}
                 </ul>
                 <Button variant="hero" size="lg" className="rounded-[5px]" asChild>
-                  <Link to="/auth?mode=signup">Testar IA Grátis</Link>
+                  <Link to={user ? '/simulados' : '/auth?mode=signup'} className="flex items-center gap-2">Começar Agora — 7 Dias Grátis <ArrowRight className="w-4 h-4" /></Link>
                 </Button>
               </motion.div>
               <div className="relative">
@@ -478,11 +479,11 @@ export default function Index() {
                   Apoio Profissional
                 </Badge>
                 <h2 className="text-2xl md:text-5xl font-bold text-foreground mb-6">
-                  Do simulado à sua <br className="hidden md:block" />
-                  <span className="text-accent underline decoration-accent/20">primeira contratação.</span>
+                  Mais do que simulados: <br className="hidden md:block" />
+                  <span className="text-accent underline decoration-accent/20">acompanhe toda sua trajetória.</span>
                 </h2>
                 <p className="text-lg text-muted-foreground mb-8">
-                  Não apenas simulados. Oferecemos o suporte que você precisa para entrar nas maiores companhias aéreas do Brasil.
+                  Do primeiro simulado até a contratação. O Voo Certo é a plataforma que centraliza sua preparação, sua evolução e o próximo passo da sua carreira na aviação.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                    <div className="p-5 bg-card border border-border rounded-[5px]">
@@ -556,10 +557,10 @@ export default function Index() {
             <div className="grid lg:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
               <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
                 <Badge variant="outline" className="mb-4 text-destructive border-destructive/20 rounded-[5px] bg-destructive/5 font-bold uppercase h-6 px-3">
-                  <Target className="w-3 h-3 mr-2" /> O Desafio do Aluno
+                  <Target className="w-3 h-3 mr-2" /> O Problema
                 </Badge>
                 <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-6">
-                  Estudar para simulados técnicos não deve ser confuso.
+                  Estudar para a ANAC sem a ferramenta certa é desperdício de tempo.
                 </h2>
                 <div className="space-y-3">
                   {[
@@ -586,15 +587,15 @@ export default function Index() {
                   <Lightbulb className="w-3 h-3 mr-2" /> A Solução Inteligente
                 </Badge>
                 <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-6">
-                  O Voo Certo centraliza sua <span className="text-accent underline decoration-accent/20">preparação completa.</span>
+                  O Voo Certo é a sua <span className="text-accent underline decoration-accent/20">plataforma de preparação.</span>
                 </h2>
                 <div className="space-y-3">
                   {[
-                    'Simulados inteligentes inspirados no formato oficial',
-                    'IA explicativa 24h para tirar todas as suas dúvidas',
-                    'Relatórios de desempenho e prontidão para a prova',
-                    'Roadmap completo: do curso à contratação',
-                    'Ambiente de treino que reduz a ansiedade real',
+                    'Simulados no formato das provas de certificação aeronáutica',
+                    'IA explicativa 24h — entenda cada erro na hora',
+                    'Relatórios de evolução e indicador de prontidão para a prova',
+                    'Guia completo de trajetória: do estudo à contratação',
+                    'Ambiente de treino que elimina a insegurança no dia da prova',
                   ].map((solution, i) => (
                     <motion.div key={i} initial={{ opacity: 0, x: 10 }} whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }} transition={{ delay: i * 0.1 }}
@@ -619,7 +620,7 @@ export default function Index() {
                 <Map className="w-3 h-3 mr-2" /> Metodologia
               </Badge>
               <h2 className="text-2xl md:text-5xl font-bold text-foreground mb-4">
-                Seu plano de voo em 4 passos
+                Da primeira questão à aprovação — em 4 passos
               </h2>
             </motion.div>
 
@@ -730,31 +731,31 @@ export default function Index() {
                 <Star className="w-3 h-3 mr-2 fill-current" /> Prova Social
               </Badge>
               <h2 className="text-2xl md:text-5xl font-bold text-foreground mb-4">
-                O que dizem os futuros comissários
+                Quem já usa o Voo Certo
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Mais de 1.200 alunos usam nossos simulados e guias teóricos para acelerar seus estudos rumo à aprovação na banca da ANAC.
+                Mais de 1.200 alunos usam nossos simulados, a IA explicativa e os guias de trajetória para chegar preparados no dia da prova de certificação.
               </p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
               {[
                 {
-                  quote: "O Chat IA Contextual mudou completamente minha forma de estudar. Quando eu errava, ele me explicava a lógica imediatamente, economizando horas de pesquisa.",
+                  quote: "O Chat IA mudou completamente minha forma de estudar. Errava uma questão e em segundos entendia o raciocínio certo. Economizei horas que passaria pesquisando em apostilas.",
                   author: "Mariana Silva",
-                  role: "Assinante Voo Certo",
+                  role: "Aprovada na certificação · Assinante Voo Certo",
                   rating: 5,
                 },
                 {
-                  quote: "Os simulados são muito fiéis ao formato da banca real. Treinar com a pressão do tempo me deu a segurança necessária para ser aprovado de primeira na ANAC.",
+                  quote: "Os simulados em modo banca são idênticos à pressão da prova real. Quando cheguei no dia da prova, me senti em casa. Passei de primeira sem surpresas.",
                   author: "Thiago Rocha",
-                  role: "Assinante Voo Certo",
+                  role: "Aprovado na ANAC · Assinante Voo Certo",
                   rating: 5,
                 },
                 {
-                  quote: "Além de responder as questões, o construtor de currículo aeronáutico e o selo LinkedIn me ajudaram a apresentar meu perfil de forma profissional para as empresas.",
+                  quote: "O relatório de desempenho por matéria foi decisivo. Descobri exatamente onde estava perdendo pontos e, em 3 semanas, virei o jogo nas disciplinas que mais pesavam.",
                   author: "Amanda Lima",
-                  role: "Assinante Voo Certo",
+                  role: "Aluna de Aviação Civil · Assinante Voo Certo",
                   rating: 5,
                 }
               ].map((t, i) => (
@@ -822,23 +823,29 @@ export default function Index() {
           <div className="container mx-auto relative z-10 text-center">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="max-w-3xl mx-auto">
               <Badge className="mb-6 bg-accent text-accent-foreground border-0 rounded-[5px] font-bold uppercase text-[10px] tracking-widest px-4 py-1.5 h-auto">
-                Sua Jornada Começa Aqui
+                7 Dias Grátis — Sem Cartão
               </Badge>
               <h2 className="text-3xl md:text-5xl font-bold text-primary-foreground mb-6 leading-tight">
-                Pronto para conquistar sua <span className="text-accent">aprovação na ANAC?</span>
+                Pare de estudar no escuro. <br className="hidden md:block" />
+                <span className="text-accent">Prepare-se com inteligência.</span>
               </h2>
               <p className="text-xl text-primary-foreground/70 mb-10 font-medium">
-                Tenha acesso aos simulados mais realistas do mercado, suporte de IA em tempo real e um guia completo de carreira.
+                Simulados no formato da prova, IA que explica cada erro e relatórios que mostram exatamente quando você estará pronto. É assim que você passa de primeira.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button variant="hero" size="xl" asChild className="rounded-[5px] w-full sm:w-fit whitespace-normal h-auto py-4 sm:h-14 sm:py-0 hover-yellow">
                   <Link to={user ? '/simulados' : '/auth?mode=signup'} className="flex items-center justify-center gap-2">
-                    Começar Minha Preparação Agora <ArrowRight className="w-5 h-5" />
+                    Quero Começar Grátis Agora <ArrowRight className="w-5 h-5" />
+                  </Link>
+                </Button>
+                <Button variant="outline" size="xl" asChild className="bg-white/5 text-white border-white/20 hover-yellow rounded-[5px] w-full sm:w-fit">
+                  <Link to="/premium" className="flex items-center justify-center gap-2">
+                    Ver Planos
                   </Link>
                 </Button>
               </div>
               <p className="mt-8 text-sm text-primary-foreground/40 font-medium flex items-center justify-center gap-2">
-                <Shield className="w-4 h-4" /> Cancelamento simples e sem burocracia.
+                <Shield className="w-4 h-4" /> Sem compromisso. Cancele quando quiser.
               </p>
             </motion.div>
           </div>
