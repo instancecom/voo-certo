@@ -1,5 +1,6 @@
 // emailTemplates.ts
 
+// Configuração de Cores Baseada no Padrão da Plataforma (index.css)
 const COLORS = {
   primary: '#1D3A63',       // Deep aviation blue
   primaryHover: '#294f84',
@@ -10,11 +11,13 @@ const COLORS = {
   textMuted: '#4b5563',
 };
 
-const EmailHeader = (title: string, subtitle: string) => `
+// --- Componentes Reutilizáveis (Template Literals) ---
+
+const EmailHeader = () => `
   <tr>
     <td
       style="background: linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.primaryHover} 100%);
-      padding:40px 40px 50px 40px;
+      padding:40px 40px 60px 40px;
       text-align:center;">
       
       <!-- Logo da Voo Certo -->
@@ -22,7 +25,7 @@ const EmailHeader = (title: string, subtitle: string) => `
         src="https://voocerto.com.br/logo.png" 
         alt="Voo Certo"
         width="180"
-        style="max-width:180px; display:block; margin:0 auto 25px auto;"
+        style="max-width:180px; display:block; margin:0 auto 30px auto;"
       />
 
       <!-- Badge -->
@@ -30,13 +33,11 @@ const EmailHeader = (title: string, subtitle: string) => `
         display:inline-block;
         background: rgba(255,255,255,0.12);
         border:1px solid rgba(255,255,255,0.18);
-        padding:8px 18px;
+        padding:10px 18px;
         border-radius:999px;
         color:#ffffff;
-        font-size:13px;
-        font-weight:600;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
+        font-size:14px;
+        font-weight:500;
       ">
         🧪 Convite Exclusivo: Tester Estratégico
       </div>
@@ -44,25 +45,25 @@ const EmailHeader = (title: string, subtitle: string) => `
       <!-- Title -->
       <h1 style="
         color:#ffffff;
-        margin:24px 0 12px 0;
-        font-size:32px;
+        margin:28px 0 14px 0;
+        font-size:36px;
         line-height:1.2;
-        font-weight:800;
-        letter-spacing:-0.02em;
+        font-weight:700;
       ">
-        ${title}
+        Você é nosso convidado de elite!
       </h1>
 
       <p style="
         color:#d9e5f5;
         margin:0;
-        font-size:16px;
-        line-height:1.6;
+        font-size:18px;
+        line-height:1.7;
         max-width:480px;
         margin-left:auto;
         margin-right:auto;
       ">
-        ${subtitle}
+        Ajude-nos a validar a plataforma com
+        sua experiência real na aviação.
       </p>
     </td>
   </tr>
@@ -71,21 +72,22 @@ const EmailHeader = (title: string, subtitle: string) => `
 const HighlightCard = (text: string, highlightText: string) => `
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"
     style="
-      margin:30px 0;
+      margin:35px 0;
       background:#f8fbff;
       border-left:5px solid ${COLORS.accent};
-      border-radius:12px;
+      border-radius:18px;
     ">
     <tr>
-      <td style="padding:20px 24px;">
+      <td style="padding:28px;">
         <p style="
           margin:0;
           color:${COLORS.primary};
-          font-size:17px;
-          line-height:1.6;
+          font-size:20px;
+          line-height:1.7;
           font-weight:600;
         ">
           ${text}
+          <br/>
           <span style="color:${COLORS.accent};">
             ${highlightText}
           </span>
@@ -96,7 +98,7 @@ const HighlightCard = (text: string, highlightText: string) => `
 `;
 
 const ButtonCTA = (url: string, text: string) => `
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top:35px; margin-bottom:20px;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top:42px;">
     <tr>
       <td align="center">
         <a
@@ -106,14 +108,12 @@ const ButtonCTA = (url: string, text: string) => `
             background:${COLORS.accent};
             color:${COLORS.primary};
             text-decoration:none;
-            font-size:17px;
-            font-weight:800;
-            padding:16px 36px;
-            border-radius:8px;
+            font-size:18px;
+            font-weight:700;
+            padding:18px 34px;
+            border-radius:14px;
             display:inline-block;
-            box-shadow: 0 4px 12px rgba(249, 169, 31, 0.35);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            box-shadow: 0 4px 14px rgba(249, 169, 31, 0.4);
           "
         >
           ${text}
@@ -123,25 +123,52 @@ const ButtonCTA = (url: string, text: string) => `
   </table>
 `;
 
+const StepItem = (number: string, text: string) => `
+  <tr>
+    <td style="padding: 8px 0; vertical-align: top;">
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+        <tr>
+          <td style="width:36px; vertical-align:top; padding-top:2px;">
+            <div style="
+              width:28px;
+              height:28px;
+              background:${COLORS.accent};
+              border-radius:50%;
+              text-align:center;
+              line-height:28px;
+              font-size:13px;
+              font-weight:700;
+              color:${COLORS.primary};
+            ">${number}</div>
+          </td>
+          <td style="vertical-align:top; padding-left:12px;">
+            <p style="margin:0; font-size:16px; color:${COLORS.textMuted}; line-height:1.7;">${text}</p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+`;
+
 const EmailFooter = () => `
   <tr>
     <td style="
       background:#f8fafc;
-      padding:30px;
+      padding:35px 30px;
       text-align:center;
       border-top:1px solid #e7edf4;
     ">
       <p style="
         margin:0;
-        font-size:14px;
+        font-size:15px;
         color:#64748b;
         line-height:1.8;
       ">
         <strong style="color:${COLORS.primary};">Equipe Voo Certo</strong>
       </p>
       <p style="
-        margin:8px 0 0 0;
-        font-size:13px;
+        margin:12px 0 0 0;
+        font-size:14px;
         color:#94a3b8;
       ">
         Construindo a melhor plataforma de aviação do Brasil.
@@ -149,6 +176,8 @@ const EmailFooter = () => `
     </td>
   </tr>
 `;
+
+// --- Template Principal ---
 
 export const getTesterInviteHtml = (name: string, durationLabel: string, signUpUrl: string) => {
   return `
@@ -159,49 +188,57 @@ export const getTesterInviteHtml = (name: string, durationLabel: string, signUpU
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Convite de Tester Estratégico - Voo Certo</title>
     </head>
-    <body style="margin:0; padding:0; background-color:${COLORS.background}; font-family: Arial, sans-serif;">
+    <body style="margin:0; padding:0; background-color:${COLORS.background}; font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif;">
       <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="${COLORS.background}">
         <tr>
-          <td align="center" style="padding:30px 15px;">
+          <td align="center" style="padding:40px 20px;">
+            <!-- Container Principal -->
             <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"
-              style="max-width:600px; background:${COLORS.cardBg}; border-radius:16px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.06);">
+              style="max-width:640px; background:${COLORS.cardBg}; border-radius:24px; overflow:hidden; box-shadow:0 8px 30px rgba(0,0,0,0.08);">
               
-              ${EmailHeader("Você é nosso convidado de elite!", "Ajude-nos a validar a plataforma com sua experiência real na aviação.")}
+              ${EmailHeader()}
 
               <!-- Conteúdo -->
               <tr>
-                <td style="padding:40px 35px;">
-                  <p style="font-size:17px; color:${COLORS.textMain}; line-height:1.7; margin-top:0; font-weight: bold;">
+                <td style="padding:50px 42px;">
+                  <p style="font-size:18px; color:${COLORS.textMain}; line-height:1.8; margin-top:0;">
                     Olá, ${name}!
                   </p>
                   
-                  <p style="font-size:16px; color:${COLORS.textMuted}; line-height:1.7;">
-                    Você foi selecionado(a) como um **Tester Estratégico** exclusivo da plataforma **Voo Certo** antes do nosso lançamento oficial.
+                  <p style="font-size:17px; color:${COLORS.textMuted}; line-height:1.9;">
+                    Você foi selecionado(a) como um
+                    <strong style="color:${COLORS.primary};">Tester Estratégico exclusivo</strong>
+                    da plataforma <strong style="color:${COLORS.primary};">Voo Certo</strong>
+                    antes do nosso lançamento oficial.
                   </p>
                   
-                  <p style="font-size:16px; color:${COLORS.textMuted}; line-height:1.7;">
-                    Acreditamos que profissionais e entusiastas influentes na aviação são a chave para moldar uma ferramenta perfeita de estudos. Por isso, preparamos uma liberação especial para você:
+                  <p style="font-size:17px; color:${COLORS.textMuted}; line-height:1.9;">
+                    Acreditamos que profissionais e entusiastas influentes na aviação são a chave
+                    para moldar uma ferramenta perfeita de estudos. Por isso, preparamos uma
+                    liberação especial para você:
                   </p>
 
                   ${HighlightCard(
-                    `Seu perfil receberá acesso **Premium 100% Gratuito** por `,
-                    `**${durationLabel}**.`
+                    "Seu perfil receberá acesso Premium 100% Gratuito por",
+                    `${durationLabel}.`
                   )}
 
-                  <p style="font-size:16px; color:${COLORS.textMuted}; line-height:1.7; margin-bottom: 25px;">
-                    **Como funciona?**
-                    <ol style="padding-left: 20px; color:${COLORS.textMuted}; font-size:15px; line-height:1.8;">
-                      <li style="margin-bottom: 8px;">Clique no botão abaixo para ir para a tela de registro.</li>
-                      <li style="margin-bottom: 8px;">Crie sua conta normalmente usando **este endereço de e-mail** e defina sua senha.</li>
-                      <li style="margin-bottom: 8px;">Ao fazer o login, o plano **Premium será ativado automaticamente**, sem qualquer cobrança.</li>
-                      <li style="margin-bottom: 8px;">Durante seu uso, você verá um card discreto para nos enviar feedbacks rápidos sobre bugs, sugestões ou dúvidas.</li>
-                    </ol>
+                  <p style="font-size:17px; color:${COLORS.textMain}; line-height:1.7; font-weight:600; margin-bottom:16px;">
+                    Como funciona?
                   </p>
+
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-bottom:10px;">
+                    ${StepItem("1", "Clique no botão abaixo para ir para a tela de registro.")}
+                    ${StepItem("2", `Crie sua conta normalmente usando <strong>este endereço de e-mail</strong> e defina sua senha.`)}
+                    ${StepItem("3", "Ao fazer o login, o plano <strong>Premium será ativado automaticamente</strong>, sem qualquer cobrança.")}
+                    ${StepItem("4", "Durante seu uso, você verá um card discreto para nos enviar feedbacks rápidos sobre bugs, sugestões ou dúvidas.")}
+                  </table>
 
                   ${ButtonCTA(signUpUrl, "Cadastrar-se & Iniciar Teste ✈️")}
 
-                  <p style="font-size:13px; color:#94a3b8; line-height:1.6; text-align: center; margin-top: 25px;">
-                    *Obs: Certifique-se de registrar-se usando o mesmo e-mail para o qual este convite foi enviado. Caso já possua conta, basta logar nela que o Premium já estará ativo.*
+                  <p style="font-size:14px; color:#94a3b8; line-height:1.7; text-align:center; margin-top:28px;">
+                    Certifique-se de registrar-se usando o mesmo e-mail para o qual este convite
+                    foi enviado. Caso já possua conta, basta logar nela que o Premium já estará ativo.
                   </p>
                 </td>
               </tr>
