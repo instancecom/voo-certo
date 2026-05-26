@@ -7,6 +7,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useBranding } from '@/contexts/BrandingContext';
+
+const getDriveImageUrl = (url: string | null): string | null => {
+  if (!url) return null;
+  if (url.includes('lh3.googleusercontent.com')) return url;
+  const ucMatch = url.match(/drive\.google\.com\/uc\?export=view&id=([^&]+)/);
+  if (ucMatch) return `https://lh3.googleusercontent.com/d/${ucMatch[1]}`;
+  const fileMatch = url.match(/drive\.google\.com\/file\/d\/([^/]+)/);
+  if (fileMatch) return `https://lh3.googleusercontent.com/d/${fileMatch[1]}`;
+  return url;
+};
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -18,6 +29,7 @@ export default function AuthPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
+  const { settings: branding } = useBranding();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -120,10 +132,20 @@ export default function AuthPage() {
           </Link>
 
           <div className="flex items-center gap-3 mb-10">
-            <div className="p-2.5 bg-primary/5 rounded-[5px]">
-               <Plane className="w-6 h-6 text-primary" />
-            </div>
-            <span className="text-xl font-black text-foreground tracking-tight">Voo Certo</span>
+            {branding.logo_url ? (
+              <img
+                src={getDriveImageUrl(branding.logo_url) || ''}
+                alt={branding.site_name}
+                className="h-10 w-auto object-contain"
+              />
+            ) : (
+              <>
+                <div className="p-2.5 bg-primary/5 rounded-[5px]">
+                  <Plane className="w-6 h-6 text-primary" />
+                </div>
+                <span className="text-xl font-black text-foreground tracking-tight">{branding.site_name || 'Voo Certo'}</span>
+              </>
+            )}
           </div>
 
           <h1 className="text-3xl font-black text-foreground mb-2 tracking-tight">
@@ -253,11 +275,19 @@ export default function AuthPage() {
           <motion.div
             animate={{
               y: [-15, 15, -15],
-              rotate: [0, 5, 0],
             }}
             transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+            className="mb-10"
           >
-            <Plane className="w-32 h-32 mx-auto mb-10 text-accent opacity-50" />
+            {branding.logo_url ? (
+              <img
+                src={getDriveImageUrl(branding.logo_url) || ''}
+                alt={branding.site_name}
+                className="h-36 w-auto object-contain mx-auto drop-shadow-2xl"
+              />
+            ) : (
+              <Plane className="w-32 h-32 mx-auto text-accent opacity-50" />
+            )}
           </motion.div>
           
           <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight">
