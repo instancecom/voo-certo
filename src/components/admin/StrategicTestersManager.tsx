@@ -104,47 +104,139 @@ export function StrategicTestersManager() {
   const { data: testers, isLoading: loadingTesters } = useQuery({
     queryKey: ['admin-testers'],
     queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke('invite-tester', {
-        body: { action: 'list' },
-      });
-      if (error) throw error;
-      return (data?.testers || []) as Tester[];
+      try {
+        const { data, error } = await supabase.functions.invoke('invite-tester', {
+          body: { action: 'list' },
+        });
+        if (error) throw error;
+        return (data?.testers || []) as Tester[];
+      } catch (err) {
+        console.warn('Edge function list failed, falling back to direct database query:', err);
+        const { data, error } = await supabase
+          .from('strategic_testers')
+          .select('*')
+          .order('created_at', { ascending: false });
+        if (error) throw error;
+        return (data || []) as Tester[];
+      }
     },
   });
 
   const { data: feedbacks, isLoading: loadingFeedbacks } = useQuery({
     queryKey: ['admin-testers-feedbacks'],
     queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke('invite-tester', {
-        body: { action: 'feedback_list' },
-      });
-      if (error) throw error;
-      return (data?.feedbacks || []) as TesterFeedback[];
+      try {
+        const { data, error } = await supabase.functions.invoke('invite-tester', {
+          body: { action: 'feedback_list' },
+        });
+        if (error) throw error;
+        return (data?.feedbacks || []) as TesterFeedback[];
+      } catch (err) {
+        console.warn('Edge function feedback_list failed, falling back to direct database query:', err);
+        const { data, error } = await supabase
+          .from('strategic_tester_feedback')
+          .select('*')
+          .order('created_at', { ascending: false });
+        if (error) throw error;
+        return (data || []) as TesterFeedback[];
+      }
     },
   });
 
   // Mutations
   const inviteMutation = useMutation({
     mutationFn: async () => {
-      const { data, error } = await supabase.functions.invoke('invite-tester', {
-        body: {
-          action: 'invite',
-          name: form.name,
-          email: form.email,
-          duration_days: form.duration === 'unlimited' ? 'unlimited' : parseInt(form.duration),
-          tags: selectedTags,
-          notes: form.notes || null,
-        },
-      });
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
-      return data;
+      const formattedEmail = form.email.trim().toLowerCase();
+      let expiresAt: string | null = null;
+      if (form.duration !== 'unlimited') {
+        const days = parseInt(form.duration);
+        const expiryDate = new Date();
+        expiryDate.setDate(expiryDate.getDate() + days);
+        expiresAt = expiryDate.toISOString();
+      }
+
+      try {
+        // Try calling the Edge Function first
+        const { data, error } = await supabase.functions.invoke('invite-tester', {
+          body: {
+            action: 'invite',
+            name: form.name,
+            email: form.email,
+            duration_days: form.duration === 'unlimited' ? 'unlimited' : parseInt(form.duration),
+            tags: selectedTags,
+            notes: form.notes || null,
+          },
+        });
+        if (error) throw error;
+        if (data?.error) throw new Error(data.error);
+        return { success: true, viaEdge: true, data };
+      } catch (err: any) {
+        console.warn('Edge function invite failed, using local database fallback:', err);
+        
+        // Database Fallback:
+        // 1. Check if user profile already exists
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('id, user_id')
+          .eq('email', formattedEmail)
+          .maybeSingle();
+
+        const isRegistered = !!profile;
+
+        // 2. Insert into strategic_testers directly
+        const { data: testerData, error: testerError } = await supabase
+          .from('strategic_testers')
+          .upsert(
+            {
+              email: formattedEmail,
+              name: form.name,
+              tags: selectedTags,
+              notes: form.notes || null,
+              duration_days: form.duration === 'unlimited' ? null : parseInt(form.duration),
+              status: isRegistered ? 'registered' : 'invited',
+              invited_at: new Date().toISOString(),
+              registered_at: isRegistered ? new Date().toISOString() : null,
+              expires_at: expiresAt
+            },
+            { onConflict: 'email' }
+          )
+          .select()
+          .single();
+
+        if (testerError) throw new Error(`Erro ao salvar no banco local: ${testerError.message}`);
+
+        // 3. Upgrade user profile if registered
+        if (isRegistered) {
+          const { error: profileUpdateError } = await supabase
+            .from('profiles')
+            .update({
+              is_premium: true,
+              premium_expires_at: expiresAt,
+              plan_type: 'tripulante',
+              is_tester: true
+            })
+            .eq('email', formattedEmail);
+
+          if (profileUpdateError) {
+            console.error('Erro ao promover perfil existente via fallback:', profileUpdateError.message);
+          }
+        }
+
+        return { success: true, viaEdge: false, tester: testerData };
+      }
     },
-    onSuccess: (data) => {
-      if (data?.warning) {
-        toast.warning(data.warning);
+    onSuccess: (res) => {
+      if (res.viaEdge) {
+        const data = res.data;
+        if (data?.warning) {
+          toast.warning(data.warning);
+        } else {
+          toast.success('Tester estratégico convidado com sucesso! E-mail enviado.');
+        }
       } else {
-        toast.success('Tester estratégico convidado com sucesso! E-mail enviado.');
+        toast.warning(
+          'Tester registrado no banco de dados! NOTA: O e-mail automático do Resend não pôde ser enviado porque a Edge Function não está implantada. Implante a função usando "supabase functions deploy invite-tester" no terminal.'
+        );
       }
       queryClient.invalidateQueries({ queryKey: ['admin-testers'] });
       setDialogOpen(false);
@@ -156,15 +248,53 @@ export function StrategicTestersManager() {
   const renewMutation = useMutation({
     mutationFn: async () => {
       if (!selectedTester) return;
-      const { data, error } = await supabase.functions.invoke('invite-tester', {
-        body: {
-          action: 'renew',
-          tester_id: selectedTester.id,
-          duration_days: renewDuration === 'unlimited' ? 'unlimited' : parseInt(renewDuration),
-        },
-      });
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
+      const days = parseInt(renewDuration);
+      let expiresAt: string | null = null;
+      if (renewDuration !== 'unlimited' && days) {
+        const expiryDate = new Date();
+        expiryDate.setDate(expiryDate.getDate() + days);
+        expiresAt = expiryDate.toISOString();
+      }
+
+      try {
+        const { data, error } = await supabase.functions.invoke('invite-tester', {
+          body: {
+            action: 'renew',
+            tester_id: selectedTester.id,
+            duration_days: renewDuration === 'unlimited' ? 'unlimited' : parseInt(renewDuration),
+          },
+        });
+        if (error) throw error;
+        if (data?.error) throw new Error(data.error);
+      } catch (err: any) {
+        console.warn('Edge function renew failed, using local database fallback:', err);
+        
+        // Database Fallback:
+        // Update tester
+        const { error: testerUpdateError } = await supabase
+          .from('strategic_testers')
+          .update({
+            duration_days: renewDuration === 'unlimited' ? null : days,
+            expires_at: expiresAt,
+            status: selectedTester.status === 'expired' ? 'registered' : selectedTester.status,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', selectedTester.id);
+
+        if (testerUpdateError) throw new Error(`Erro ao atualizar banco local: ${testerUpdateError.message}`);
+
+        // Update profile if registered
+        if (selectedTester.email) {
+          await supabase
+            .from('profiles')
+            .update({
+              is_premium: true,
+              premium_expires_at: expiresAt,
+              is_tester: true
+            })
+            .eq('email', selectedTester.email);
+        }
+      }
     },
     onSuccess: () => {
       toast.success('Acesso de tester estendido com sucesso!');
@@ -177,11 +307,41 @@ export function StrategicTestersManager() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { data, error } = await supabase.functions.invoke('invite-tester', {
-        body: { action: 'delete', tester_id: id },
-      });
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
+      try {
+        const { data, error } = await supabase.functions.invoke('invite-tester', {
+          body: { action: 'delete', tester_id: id },
+        });
+        if (error) throw error;
+        if (data?.error) throw new Error(data.error);
+      } catch (err: any) {
+        console.warn('Edge function delete failed, using local database fallback:', err);
+        
+        // Database Fallback:
+        // Get email first to demote in profiles
+        const { data: tester } = await supabase
+          .from('strategic_testers')
+          .select('email')
+          .eq('id', id)
+          .single();
+
+        if (tester?.email) {
+          await supabase
+            .from('profiles')
+            .update({
+              is_premium: false,
+              premium_expires_at: null,
+              is_tester: false
+            })
+            .eq('email', tester.email);
+        }
+
+        const { error } = await supabase
+          .from('strategic_testers')
+          .delete()
+          .eq('id', id);
+
+        if (error) throw new Error(`Erro ao excluir do banco local: ${error.message}`);
+      }
     },
     onSuccess: () => {
       toast.success('Cadastro de tester excluído e acessos revogados.');

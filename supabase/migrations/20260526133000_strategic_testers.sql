@@ -48,6 +48,12 @@ CREATE POLICY "Admins can view all feedback"
   ON public.strategic_tester_feedback FOR SELECT
   USING (public.is_admin(auth.uid()));
 
+-- Allow admins to update profiles directly (essential for fallback operations)
+DROP POLICY IF EXISTS "Admins can update all profiles" ON public.profiles;
+CREATE POLICY "Admins can update all profiles"
+  ON public.profiles FOR UPDATE
+  USING (public.is_admin(auth.uid()));
+
 -- Drop the trigger FIRST to prevent errors
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 
