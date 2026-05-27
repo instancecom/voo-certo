@@ -19,7 +19,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePlan } from '@/hooks/usePlan';
 import {
-  ArrowLeft, ArrowRight, BookOpen, GraduationCap, CheckCircle2, Lock, Crown, Plane,
+  ArrowLeft, ArrowRight, BookOpen, GraduationCap, CheckCircle2, Lock, Crown, Plane, Sparkles, PlayCircle
 } from 'lucide-react';
 
 function useMicrocourseMap() {
@@ -221,7 +221,7 @@ export default function GuiaCarreiraDetailPage() {
           ) : (
             <div className="relative">
               {/* Timeline Connector Line */}
-              <div className="absolute left-[20px] md:left-[24px] top-6 bottom-6 w-[2px] bg-muted-foreground/10 z-0" />
+              <div className="absolute left-[20px] md:left-[24px] top-6 bottom-6 w-[2px] bg-gradient-to-b from-accent/40 via-border to-transparent z-0 rounded-full" />
 
               <div className="space-y-8 relative z-10">
                 {guide?.steps?.map((step, index) => {
@@ -242,35 +242,42 @@ export default function GuiaCarreiraDetailPage() {
                         <div 
                           onClick={() => toggleProgress.mutate({ stepId: step.id, guideId: guideId!, completed: !isCompleted })}
                           className={`
-                            w-10 h-10 md:w-12 md:h-12 rounded-[5px] flex items-center justify-center cursor-pointer transition-all duration-300 ring-offset-background
-                            ${isCompleted ? 'bg-success text-white scale-100 shadow-lg shadow-success/20' : 
-                              isCurrent ? 'bg-accent text-accent-foreground ring-4 ring-accent/20 scale-110' : 
-                              'bg-card border-2 border-muted-foreground/20 text-muted-foreground hover:border-primary/40'}
+                            w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center cursor-pointer transition-all duration-500 ring-offset-background z-10
+                            ${isCompleted ? 'bg-success text-white scale-100 shadow-lg shadow-success/30 hover:scale-110' : 
+                              isCurrent ? 'bg-accent text-accent-foreground ring-4 ring-accent/30 scale-125 shadow-xl shadow-accent/20' : 
+                              'bg-card border-2 border-muted-foreground/20 text-muted-foreground hover:border-accent hover:text-accent hover:scale-110 hover:shadow-md'}
                           `}
                         >
-                          {isCompleted ? <CheckCircle2 className="w-6 h-6" /> : <span className="text-sm font-bold">{index + 1}</span>}
+                          {isCompleted ? <CheckCircle2 className="w-6 h-6" /> : <span className="text-base font-bold">{index + 1}</span>}
                         </div>
                       </div>
 
                       {/* Content Card */}
-                      <div className="flex-1 min-w-0">
+                      <div className="flex-1 min-w-0 py-1">
                         <Card className={`
-                          overflow-hidden transition-all duration-500 border-none shadow-sm hover:shadow-md
-                          ${isCompleted ? 'bg-card/50 opacity-80' : isCurrent ? 'glass-card border-none scale-[1.01]' : 'bg-card'}
+                          overflow-hidden transition-all duration-500 border-none shadow-md hover:shadow-lg
+                          ${isCompleted ? 'bg-card/40 opacity-75 hover:opacity-100 grayscale-[0.2]' : 
+                            isCurrent ? 'bg-gradient-to-br from-card to-accent/5 ring-1 ring-accent/30 scale-[1.02] shadow-xl shadow-accent/5' : 
+                            'bg-card ring-1 ring-border/50 hover:ring-accent/30 hover:-translate-y-1'}
                         `}>
-                          <CardHeader className="p-4 md:p-6 pb-2">
-                            <div className="flex justify-between items-start gap-2">
-                              <div>
-                                <h3 className={`text-lg md:text-xl font-bold transition-colors ${isCompleted ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
+                          <CardHeader className="p-5 md:p-7 pb-4">
+                            <div className="flex flex-col-reverse md:flex-row justify-between items-start gap-4">
+                              <div className="flex-1">
+                                <h3 className={`text-xl md:text-2xl font-extrabold tracking-tight transition-colors ${isCompleted ? 'text-muted-foreground line-through decoration-2' : isCurrent ? 'text-accent' : 'text-foreground'}`}>
                                   {step.title}
                                 </h3>
                                 {step.description && (
-                                  <p className="mt-2 text-muted-foreground text-sm leading-relaxed whitespace-pre-wrap italic opacity-80">
+                                  <div className="mt-4 text-muted-foreground/90 text-[15px] md:text-base leading-relaxed whitespace-pre-wrap">
                                     {renderDescription(step.description)}
-                                  </p>
+                                  </div>
                                 )}
                               </div>
-                              {isCurrent && <Badge className="bg-accent/10 text-accent border-accent/20">Em progresso</Badge>}
+                              {isCurrent && (
+                                <Badge className="bg-accent/10 text-accent border-accent/20 px-3 py-1.5 flex items-center gap-1.5 shrink-0 shadow-sm animate-pulse">
+                                  <PlayCircle className="w-4 h-4" />
+                                  <span className="font-bold">Em progresso</span>
+                                </Badge>
+                              )}
                             </div>
                           </CardHeader>
 
