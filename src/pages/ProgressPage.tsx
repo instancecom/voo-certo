@@ -281,17 +281,36 @@ export default function ProgressPage() {
                     </CardTitle>
                     <CardDescription>Desempenho nos últimos 15 simulados</CardDescription>
                   </CardHeader>
-                  <CardContent className="h-[300px] mt-4">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={stats.evolutionData}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.1} />
-                        <XAxis dataKey="date" axisLine={false} tickLine={false} fontSize={10} />
-                        <YAxis axisLine={false} tickLine={false} fontSize={10} domain={[0, 100]} />
-                        <Tooltip />
-                        <Area type="monotone" dataKey="score" stroke="hsl(var(--primary))" fill="hsl(var(--primary)/0.05)" strokeWidth={2} />
-                        <ReferenceLine y={70} stroke="hsl(var(--success))" strokeDasharray="3 3" opacity={0.5} />
-                      </AreaChart>
-                    </ResponsiveContainer>
+                  <CardContent className="h-[300px] mt-4 flex flex-col">
+                    <div className="flex-1 flex items-end gap-1.5 bg-muted/30 rounded-[5px] p-4 relative">
+                      {/* Reference line for 70% */}
+                      <div className="absolute left-0 right-0 bottom-[70%] border-t border-dashed border-success/50 flex items-center">
+                        <span className="absolute -top-5 left-2 text-[10px] text-success font-bold bg-background/80 px-1 rounded">Meta 70%</span>
+                      </div>
+                      
+                      {stats.evolutionData.map((data, i) => (
+                        <div key={i} className="flex-1 rounded-sm bg-accent/10 relative h-full group">
+                          <motion.div
+                            initial={{ height: 0 }}
+                            whileInView={{ height: `${data.score}%` }}
+                            viewport={{ once: true }}
+                            transition={{ delay: i * 0.06, duration: 0.5 }}
+                            className="absolute bottom-0 left-0 right-0 bg-accent/70 rounded-sm z-10"
+                          />
+                          <div
+                             className="absolute opacity-0 group-hover:opacity-100 transition-opacity left-1/2 -translate-x-1/2 bg-popover text-popover-foreground text-[10px] px-2 py-1 rounded shadow-md whitespace-nowrap z-20 pointer-events-none text-center"
+                             style={{ bottom: `calc(${data.score}% + 8px)` }}
+                          >
+                            <span className="font-bold">{data.score}%</span><br/>
+                            <span className="text-[9px] opacity-80">{data.date}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex justify-between mt-3">
+                      <span className="text-xs text-muted-foreground font-medium">Início</span>
+                      <span className="text-xs text-muted-foreground font-medium">Mais recente</span>
+                    </div>
                   </CardContent>
                 </Card>
 
