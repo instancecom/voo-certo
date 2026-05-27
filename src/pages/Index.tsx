@@ -4,26 +4,22 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
-  Plane, BookOpen, Brain, Users, Clock, Award, ArrowRight, Crown,
-  CheckCircle2, Loader2, Zap, Shield, GraduationCap, BarChart3,
+  Plane, BookOpen, Brain, Users, ArrowRight, Crown,
+  CheckCircle2, Zap, Shield, GraduationCap, BarChart3,
   MessageCircle, Star, Sparkles, Trophy, Map, FileText, Target,
-  Headphones, Globe, Rocket, Heart, TrendingUp, Play, ChevronRight,
-  BadgeCheck, Lightbulb, Timer, Monitor,
+  Headphones, Globe, TrendingUp, Play, ChevronRight,
+  BadgeCheck, AlertTriangle,
 } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { useCategories, useSubcategories } from '@/hooks/useExams';
 import { useAuth } from '@/contexts/AuthContext';
-
 import { PageTransition } from '@/components/PageTransition';
 
 import heroAttendant from '@/assets/hero-attendant.jpg';
 import studyDesk from '@/assets/study-desk.jpg';
 import airplaneSunset from '@/assets/airplane-sunset.jpg';
 
-const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  Plane, BookOpen, Brain, Users,
-};
+// ─── Data ───────────────────────────────────────────────────────────────────
 
 const PLANS = [
   {
@@ -79,135 +75,249 @@ const PLANS = [
   },
 ];
 
-const STEPS = [
-  { icon: GraduationCap, title: 'Escolha sua área e comece', desc: 'Acesse simulados organizados por disciplina, adaptados ao formato das provas de certificação aeronáutica.' },
-  { icon: BarChart3, title: 'Identifique seus pontos fracos', desc: 'Relatórios inteligentes mostram exatamente onde você perde pontos e o que priorizar nos estudos.' },
-  { icon: Brain, title: 'Aprenda com a IA em tempo real', desc: 'Errou uma questão? Nossa IA explica a lógica da resposta correta imediatamente, em linguagem técnica clara.' },
-  { icon: Award, title: 'Chegue preparado no dia da prova', desc: 'Monitore sua prontidão, acumule conquistas e se certifique de que está pronto para passar de primeira.' },
+const PAIN_POINTS = [
+  {
+    icon: BookOpen,
+    title: 'Conteúdo Disperso',
+    desc: 'Cansado de buscar apostilas desatualizadas e simulados aleatórios na internet?',
+  },
+  {
+    icon: Brain,
+    title: 'Dúvidas Sem Resposta',
+    desc: 'Errou uma questão e não entende o porquê? O Google não te ajuda a memorizar a norma.',
+  },
+  {
+    icon: BarChart3,
+    title: 'Falta de Foco',
+    desc: 'Não sabe quais matérias você domina e onde está perdendo pontos preciosos?',
+  },
+  {
+    icon: Target,
+    title: "Medo do 'Branco'",
+    desc: 'A pressão do tempo no dia da prova te assusta? Treinar sem pressão real não prepara.',
+  },
 ];
 
+const EXTRAS = [
+  {
+    icon: Trophy,
+    title: 'Gamificação & Conquistas',
+    desc: 'Mantenha a motivação alta desbloqueando insígnias e medalhas ao longo da jornada.',
+  },
+  {
+    icon: Map,
+    title: 'Guia de Carreira',
+    desc: 'Roteiros estruturados para Comissários, Pilotos e Mecânicos, do início ao fim.',
+  },
+  {
+    icon: FileText,
+    title: 'Gerador de Currículo',
+    desc: 'Crie um currículo otimizado para o padrão exigido pelas grandes companhias aéreas.',
+  },
+  {
+    icon: Headphones,
+    title: 'Suporte a Áudio',
+    desc: 'Treine com áudios reais para as provas de inglês e espanhol da aviação civil.',
+  },
+  {
+    icon: BadgeCheck,
+    title: 'Selo Digital de Aprovação',
+    desc: 'Comprove seu desempenho no LinkedIn com um selo exclusivo após aprovação na ANAC.',
+  },
+];
+
+const STEPS = [
+  {
+    icon: GraduationCap,
+    title: 'Crie sua Conta',
+    desc: 'Inscreva-se em segundos e garanta seus 7 dias gratuitos sem precisar de cartão de crédito.',
+  },
+  {
+    icon: Plane,
+    title: 'Escolha sua Área',
+    desc: 'Acesse simulados específicos para sua certificação: Piloto, Comissário ou Mecânico.',
+  },
+  {
+    icon: BarChart3,
+    title: 'Treine e Identifique Falhas',
+    desc: 'Use os relatórios inteligentes para ver exatamente onde focar sua energia de estudo.',
+  },
+  {
+    icon: Brain,
+    title: 'Aprenda com a IA',
+    desc: 'Entenda cada erro em tempo real e chegue preparado para passar de primeira.',
+  },
+];
 
 const FAQ = [
-  { q: 'Para quem é o Voo Certo?', a: 'Para quem está se preparando para provas de certificação aeronáutica no Brasil. A plataforma conta com simulados organizados por área de conhecimento, relatórios de desempenho e um guia completo de trajetória na aviação civil.' },
-  { q: 'Como funciona o modo de simulado?', a: 'Você pode estudar em três modos: Modo Banca (simula o ambiente real da prova com tempo e pressão), Modo Livre (pratique no seu ritmo, vendo a resposta na hora) e Modo Bloco (foco em uma disciplina específica até dominar o assunto).' },
-  { q: 'O que é o Chat IA e como ele me ajuda?', a: 'O Chat IA é um assistente aeronáutico disponível 24h que explica a lógica de cada questão que você errar. Em vez de apenas marcar como errado, ele te ensina o raciocínio correto para que você não cometa o mesmo erro novamente.' },
-  { q: 'Os simulados são baseados no formato real das provas?', a: 'Sim. Nossos simulados são desenvolvidos com base nos temas e no formato recorrente das provas de certificação aeronáutica, garantindo um treino de alta fidelidade e focado no que realmente cai.' },
-  { q: 'Posso acompanhar minha evolução ao longo do tempo?', a: 'Com certeza. A plataforma registra seu histórico completo de desempenho por matéria, mostrando sua evolução semana a semana e indicando quando você estará pronto para a prova.' },
-  { q: 'Posso estudar pelo celular?', a: 'Perfeitamente. A plataforma é 100% otimizada para dispositivos móveis, permitindo que você estude em qualquer lugar, aproveitando cada minuto do seu dia.' },
-  { q: 'Posso cancelar minha assinatura?', a: 'Sim, o cancelamento é simples e pode ser feito a qualquer momento diretamente no seu painel, sem taxas ou fidelidade.' },
+  {
+    q: 'Como funcionam os 7 dias gratuitos?',
+    a: 'Ao criar sua conta, você tem acesso completo à plataforma por 7 dias sem precisar cadastrar cartão de crédito. Ao final do período, você escolhe o plano ideal para continuar sua preparação.',
+  },
+  {
+    q: 'O Voo Certo é afiliado à ANAC?',
+    a: 'Não. O Voo Certo é uma plataforma independente de simulados e preparação para certificações aeronáuticas. Não possuímos afiliação oficial com a ANAC ou qualquer órgão regulador da aviação civil.',
+  },
+  {
+    q: 'Quantas questões a plataforma possui?',
+    a: 'A plataforma conta com mais de 2.000 questões organizadas por disciplina, desenvolvidas com base nos padrões e temas recorrentes das provas de certificação aeronáutica da ANAC.',
+  },
+  {
+    q: 'Como funciona o suporte da IA nos diferentes planos?',
+    a: 'O Chat IA está disponível a partir do plano Tripulante. No Tripulante, você tem 5 mensagens por questão e até 30 consultas diárias. No plano Comandante, são 15 mensagens por questão e até 100 consultas por dia.',
+  },
+  {
+    q: 'Posso acessar pelo celular?',
+    a: 'Sim! A plataforma é 100% responsiva e otimizada para dispositivos móveis. Estude pelo PC, tablet ou celular — em qualquer lugar, aproveitando cada minuto do seu dia.',
+  },
+  {
+    q: 'Posso cancelar minha assinatura?',
+    a: 'Sim, o cancelamento é simples e pode ser feito a qualquer momento diretamente no seu painel, sem taxas ou fidelidade obrigatória.',
+  },
 ];
 
-const DIFFERENTIALS = [
-  { icon: Brain, title: 'IA Explicativa 24/7', desc: 'Nunca mais fique com dúvida. Nossa IA explica a lógica de cada alternativa, transformando erros em aprendizado imediato.' },
-  { icon: Target, title: 'Treino Estilo Prova Real', desc: 'Simulados com o mesmo tempo, estrutura e pressão dos exames oficiais para você ganhar confiança.' },
-  { icon: BarChart3, title: 'Evolução Mensurável', desc: 'Visualize seu progresso por matéria através de gráficos detalhados e saiba exatamente quando estiver pronto.' },
-  { icon: Map, title: 'Roadmap de Carreira', desc: 'Um guia completo que mostra o passo a passo: do início dos estudos até o dia da sua contratação.' },
-  { icon: FileText, title: 'Currículo Aeronáutico', desc: 'Construtor de currículos otimizado para os padrões exigidos pelas grandes companhias aéreas.' },
-  { icon: Trophy, title: 'Gamificação e Conquistas', desc: 'Mantenha-se motivado com um sistema de insígnias que premia seu esforço e evolução constante.' },
-  { icon: Headphones, title: 'Simulados Especializados', desc: 'Questões técnicas com suporte a áudio para preparação completa em todas as frentes.' },
-  { icon: Monitor, title: 'Plataforma Premium', desc: 'Interface moderna, rápida e intuitiva, desenhada para focar no que importa: seu estudo.' },
+const TESTIMONIALS = [
+  {
+    quote: 'O Chat IA mudou completamente meu jeito de estudar. Toda vez que errava uma questão, entendia o motivo na hora. Passei de primeira como Comissária!',
+    name: 'Ana Paula M.',
+    role: 'Comissária de Bordo — ANAC',
+    stars: 5,
+  },
+  {
+    quote: 'O Modo Banca me preparou para a pressão real da prova. Cheguei no dia com calma total porque já sabia o que esperar. Aprovado no primeiro exame!',
+    name: 'Rafael S.',
+    role: 'Piloto Privado — ANAC',
+    stars: 5,
+  },
+  {
+    quote: 'Os relatórios de desempenho foram essenciais. Via exatamente onde estava errando e focava ali. Plataforma completa e muito bem feita.',
+    name: 'Camila R.',
+    role: 'Mecânica de Aeronaves — ANAC',
+    stars: 5,
+  },
 ];
+
+// ─── Component ───────────────────────────────────────────────────────────────
 
 export default function Index() {
-  const { data: categories, isLoading: loadingCategories } = useCategories();
-  const { data: subcategories, isLoading: loadingSubcategories } = useSubcategories();
   const { user } = useAuth();
-
-  const isLoading = loadingCategories || loadingSubcategories;
-
-  const categoriesWithSubs = categories?.map(cat => ({
-    ...cat,
-    subcategories: subcategories?.filter(s => s.category_id === cat.id) || [],
-  })) || [];
 
   return (
     <PageTransition>
       <div className="min-h-screen bg-background overflow-x-hidden">
-        <Header />
 
         {/* Structured Data for SEO */}
         <script type="application/ld+json">
           {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "SoftwareApplication",
-            "name": "Voo Certo",
-            "operatingSystem": "Web, Android, iOS",
-            "applicationCategory": "EducationalApplication",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.9",
-              "ratingCount": "1250"
+            '@context': 'https://schema.org',
+            '@type': 'SoftwareApplication',
+            name: 'Voo Certo',
+            description: 'Plataforma de simulados ANAC com inteligência artificial para preparação de candidatos a certificações aeronáuticas — Comissário, Piloto e Mecânico.',
+            operatingSystem: 'Web, Android, iOS',
+            applicationCategory: 'EducationalApplication',
+            aggregateRating: {
+              '@type': 'AggregateRating',
+              ratingValue: '4.9',
+              ratingCount: '1250',
             },
-            "offers": {
-              "@type": "Offer",
-              "price": "19.90",
-              "priceCurrency": "BRL"
-            }
+            offers: {
+              '@type': 'Offer',
+              price: '19.90',
+              priceCurrency: 'BRL',
+            },
           })}
         </script>
 
-        {/* ═══════ HERO ═══════ */}
-        <section className="relative min-h-[90vh] md:min-h-screen flex items-center overflow-hidden" style={{ background: 'var(--gradient-hero)' }}>
-          {/* Background image overlay */}
+        {/* 1. HEADER */}
+        <Header />
+
+        {/* ═══════ 2. HERO ═══════ */}
+        <section
+          id="inicio"
+          className="relative min-h-[90vh] md:min-h-screen flex items-center overflow-hidden"
+          style={{ background: 'var(--gradient-hero)' }}
+        >
+          {/* Background image */}
           <div className="absolute inset-0">
-            <img src={heroAttendant} alt="Comissária de bordo" className="w-full h-full object-cover opacity-15" loading="lazy" decoding="async" />
+            <img
+              src={heroAttendant}
+              alt="Comissária de bordo sorrindo com farda — prepare-se para a ANAC"
+              className="w-full h-full object-cover opacity-15"
+              loading="eager"
+              decoding="async"
+            />
             <div className="absolute inset-0 bg-gradient-to-r from-[hsl(215,55%,15%)] via-[hsl(215,55%,15%/0.9)] to-transparent" />
           </div>
-
           <div className="absolute inset-0 overflow-hidden">
-             <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-accent/5 rounded-[5px] blur-3xl" />
-             <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary-foreground/5 rounded-[5px] blur-3xl" />
+            <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-accent/5 rounded-[5px] blur-3xl" />
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary-foreground/5 rounded-[5px] blur-3xl" />
           </div>
-
-          <motion.div className="absolute top-10 md:top-20 right-4 md:right-20 opacity-20 md:opacity-100"
+          <motion.div
+            className="absolute top-10 md:top-20 right-4 md:right-20 opacity-20 md:opacity-100"
             animate={{ y: [-10, 10, -10], rotate: [0, 2, 0] }}
-            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}>
+            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+          >
             <Plane className="w-12 h-12 md:w-24 md:h-24 text-accent/30" />
           </motion.div>
 
           <div className="container mx-auto py-20 md:py-32 relative z-10">
             <div className="grid lg:grid-cols-2 gap-12 items-center text-center lg:text-left">
+
+              {/* Left */}
               <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
-                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: 'spring' }}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-accent/20 rounded-[5px] text-accent mb-6 mx-auto lg:mx-0">
+                <motion.div
+                  initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: 'spring' }}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-accent/20 rounded-[5px] text-accent mb-6 mx-auto lg:mx-0"
+                >
                   <Sparkles className="w-4 h-4" />
-                  <span className="text-sm font-bold uppercase tracking-wider">A Plataforma de Simulados para a ANAC</span>
+                  <span className="text-sm font-bold uppercase tracking-wider">Simulados para ANAC com IA</span>
                 </motion.div>
 
                 <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground mb-6 leading-tight">
-                  A forma mais inteligente de <br className="hidden md:block" />
-                  <span className="text-accent">passar na prova da ANAC.</span>
+                  Passe na ANAC de Primeira.{' '}
+                  <span className="text-accent">Sua Carreira na Aviação Começa Aqui.</span>
                 </h1>
 
-                <p className="text-lg md:text-xl text-primary-foreground/80 mb-4 max-w-xl mx-auto lg:mx-0 font-medium leading-relaxed">
-                  Simulados técnicos no formato da prova, Chat IA que explica cada erro na hora e relatórios que mostram sua evolução real. Acompanhe sua trajetória do primeiro estudo até o dia da aprovação.
+                <p className="text-lg md:text-xl text-primary-foreground/80 mb-6 max-w-xl mx-auto lg:mx-0 font-medium leading-relaxed">
+                  Centralize sua preparação com simulados realistas, inteligência artificial 24h e relatórios de desempenho detalhados. Pare de perder tempo e estude com o método que aprova 95% dos alunos.
                 </p>
 
-                <p className="text-sm text-success/90 mb-8 flex items-center justify-center lg:justify-start gap-2 font-semibold">
-                  <BadgeCheck className="w-4 h-4" />
-                  Simulado real · IA 24/7 · Relatórios de evolução · Guia de carreira
-                </p>
-
-                <div className="flex flex-wrap justify-center lg:justify-start gap-4">
+                {/* CTAs */}
+                <div className="flex flex-wrap justify-center lg:justify-start gap-4 mb-6">
                   <Button variant="hero" size="xl" asChild className="rounded-[5px] w-full sm:w-fit whitespace-normal h-auto py-4 sm:h-14 sm:py-0 hover-yellow">
                     <Link to={user ? '/simulados' : '/auth?mode=signup'} className="flex items-center justify-center gap-2">
-                      Testar Grátis por 7 Dias <ArrowRight className="w-5 h-5" />
+                      COMEÇAR MEU TESTE GRÁTIS DE 7 DIAS <ArrowRight className="w-5 h-5" />
                     </Link>
                   </Button>
                   <Button variant="outline" size="xl" asChild className="bg-white/5 text-white border-white/20 hover-yellow rounded-[5px] w-full sm:w-fit">
-                    <Link to="/premium" className="flex items-center justify-center gap-2">
+                    <a href="#planos" className="flex items-center justify-center gap-2">
                       Ver Planos e Recursos
-                  </Link>
+                    </a>
                   </Button>
                 </div>
 
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
-                  className="grid grid-cols-2 sm:flex sm:flex-wrap justify-center lg:justify-start gap-6 md:gap-8 mt-12">
+                {/* Social proof */}
+                <div className="flex items-center justify-center lg:justify-start gap-2 mb-8">
+                  <div className="flex">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 text-accent fill-accent" />
+                    ))}
+                  </div>
+                  <span className="text-primary-foreground/70 text-sm font-medium">
+                    <strong className="text-accent">4.9/5</strong> · Avaliação dos alunos
+                  </span>
+                </div>
+
+                {/* Stats */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
+                  className="grid grid-cols-2 sm:flex sm:flex-wrap justify-center lg:justify-start gap-6 md:gap-8"
+                >
                   {[
                     { value: '3', label: 'Certificações' },
                     { value: '2.000+', label: 'Questões' },
                     { value: '95%', label: 'Aprovação' },
-                    { value: '24/7', label: 'Acesso' },
+                    { value: '24/7', label: 'IA Disponível' },
                   ].map((stat, i) => (
                     <div key={i} className="text-center">
                       <div className="text-2xl md:text-4xl font-bold text-accent">{stat.value}</div>
@@ -221,26 +331,37 @@ export default function Index() {
                 </p>
               </motion.div>
 
-              {/* Right side - floating cards preview */}
-              <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.3 }}
-                className="hidden lg:block relative">
+              {/* Right — floating cards */}
+              <motion.div
+                initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.3 }}
+                className="hidden lg:block relative"
+              >
                 <div className="relative">
-                  <img src={studyDesk} alt="Estudando para provas de aviação" className="rounded-[5px] shadow-2xl" loading="lazy" decoding="async" />
-                  {/* Floating card overlay */}
-                  <motion.div className="absolute -bottom-6 -left-6 bg-card rounded-[5px] p-4 shadow-xl border border-border"
-                    animate={{ y: [-5, 5, -5] }} transition={{ duration: 4, repeat: Infinity }}>
+                  <img
+                    src={studyDesk}
+                    alt="Candidato estudando para prova ANAC com simulados online e inteligência artificial"
+                    className="rounded-[5px] shadow-2xl"
+                    loading="eager"
+                    decoding="async"
+                  />
+                  <motion.div
+                    className="absolute -bottom-6 -left-6 bg-card rounded-[5px] p-4 shadow-xl border border-border"
+                    animate={{ y: [-5, 5, -5] }} transition={{ duration: 4, repeat: Infinity }}
+                  >
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-[5px] bg-accent/10 flex items-center justify-center">
                         <BadgeCheck className="w-5 h-5 text-accent" />
                       </div>
                       <div>
                         <p className="text-sm font-bold text-foreground">Alta Fidelidade</p>
-                        <p className="text-[10px] text-muted-foreground uppercase font-bold">Questões técnicas atualizadas</p>
+                        <p className="text-[10px] text-muted-foreground uppercase font-bold">Questões padrão ANAC</p>
                       </div>
                     </div>
                   </motion.div>
-                  <motion.div className="absolute -top-4 -right-4 bg-card rounded-[5px] p-4 shadow-xl border border-border"
-                    animate={{ y: [5, -5, 5] }} transition={{ duration: 5, repeat: Infinity }}>
+                  <motion.div
+                    className="absolute -top-4 -right-4 bg-card rounded-[5px] p-4 shadow-xl border border-border"
+                    animate={{ y: [5, -5, 5] }} transition={{ duration: 5, repeat: Infinity }}
+                  >
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-[5px] bg-accent/10 flex items-center justify-center">
                         <Brain className="w-5 h-5 text-accent" />
@@ -257,43 +378,103 @@ export default function Index() {
           </div>
         </section>
 
-        {/* ═══════ STUDY MODES ═══════ */}
+        {/* ═══════ 3. DORES & DESEJOS ═══════ */}
         <section className="py-16 md:py-24 bg-card border-y border-border">
+          <div className="container mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              className="text-center mb-16"
+            >
+              <Badge variant="outline" className="mb-4 text-destructive border-destructive/20 rounded-[5px] bg-destructive/5 font-bold uppercase h-6 px-3">
+                <AlertTriangle className="w-3 h-3 mr-2" /> O Problema
+              </Badge>
+              <h2 className="text-2xl md:text-5xl font-bold text-foreground mb-4">
+                Estudar para a ANAC Não Precisa<br className="hidden md:block" /> Ser uma Turbulência.
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Se você se identifica com algum desses problemas, o Voo Certo foi feito exatamente para você.
+              </p>
+            </motion.div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto mb-12">
+              {PAIN_POINTS.map((pain, i) => {
+                const Icon = pain.icon;
+                return (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                  >
+                    <Card className="bg-background border-destructive/10 h-full rounded-[5px] relative overflow-hidden group hover:border-destructive/30 transition-all duration-300">
+                      <div className="absolute top-0 left-0 w-1 h-full bg-destructive/30 group-hover:bg-destructive/60 transition-colors" />
+                      <CardContent className="pt-6 pl-6">
+                        <div className="w-10 h-10 rounded-[5px] bg-destructive/10 flex items-center justify-center mb-4">
+                          <Icon className="w-5 h-5 text-destructive" />
+                        </div>
+                        <h3 className="font-bold text-foreground mb-2">{pain.title}</h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed">{pain.desc}</p>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {/* Bridge */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              className="text-center"
+            >
+              <div className="inline-flex items-center gap-3 px-6 py-3 bg-success/10 border border-success/20 rounded-[5px]">
+                <CheckCircle2 className="w-5 h-5 text-success shrink-0" />
+                <p className="text-sm font-bold text-foreground">
+                  O Voo Certo foi criado para resolver{' '}
+                  <span className="text-success">cada um desses problemas.</span>
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* ═══════ 4A. SIMULADOS ═══════ */}
+        <section id="funcionalidades" className="py-16 md:py-24 bg-background">
           <div className="container mx-auto">
             <div className="text-center mb-16">
               <Badge variant="outline" className="mb-4 text-accent border-accent/20 rounded-[5px] bg-accent/5 font-bold uppercase h-6 px-3">
-                <Play className="w-3 h-3 mr-2" /> Tecnologia de Estudo
+                <Play className="w-3 h-3 mr-2" /> Centro de Simulados
               </Badge>
               <h2 className="text-2xl md:text-5xl font-bold text-foreground mb-4">
-                3 Modos de Estudo Inteligentes
+                Simulados para Comissário e Piloto<br className="hidden md:block" /> com Padrão ANAC.
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Escolha a melhor forma de treinar de acordo com seu momento de preparação.
+                Três modos de estudo — cada um criado para uma fase diferente da sua preparação para a ANAC.
               </p>
             </div>
-
             <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
               {[
                 {
                   title: 'Modo Banca',
                   icon: Shield,
-                  desc: 'Simula o ambiente real da prova: tempo cronometrado, 20 questões aleatórias e pressão real para você saber exatamente se está pronto.',
-                  benefit: 'Máxima Fidelidade'
+                  desc: 'Sinta a pressão real. 20 questões aleatórias com tempo cronometrado padrão ANAC — para você saber exatamente se está pronto.',
+                  benefit: 'Máxima Fidelidade',
                 },
                 {
-                  title: 'Modo Livre',
+                  title: 'Modo Livre (com IA)',
                   icon: Zap,
-                  desc: 'Estude no seu ritmo. Escolha quantas questões quiser, veja a resposta na hora e use o Chat IA para entender cada erro imediatamente.',
-                  benefit: 'Aprendizado Acelerado'
+                  desc: 'Estude no seu ritmo, veja a resposta na hora e use o Chat IA para entender cada erro instantaneamente. Aprendizado sem barreiras.',
+                  benefit: 'Aprendizado Acelerado',
                 },
                 {
                   title: 'Modo Bloco',
                   icon: Target,
-                  desc: 'Foco total em uma disciplina. Treine uma matéria específica até dominar completamente antes de avançar para a próxima.',
-                  benefit: 'Domínio por Disciplina'
-                }
+                  desc: 'Domine uma disciplina por vez. Treine até ter confiança total em uma matéria antes de avançar para a próxima.',
+                  benefit: 'Domínio por Disciplina',
+                },
               ].map((mode, i) => (
-                <Card key={i} className="bg-background border-border hover:border-accent/50 transition-all group rounded-[5px] hover:-translate-y-2 duration-300">
+                <Card
+                  key={i}
+                  className="bg-card border-border hover:border-accent/50 transition-all group rounded-[5px] hover:-translate-y-2 duration-300"
+                >
                   <CardHeader>
                     <div className="w-12 h-12 rounded-[5px] bg-accent/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                       <mode.icon className="w-6 h-6 text-accent" />
@@ -304,9 +485,7 @@ export default function Index() {
                     </Badge>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {mode.desc}
-                    </p>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{mode.desc}</p>
                   </CardContent>
                 </Card>
               ))}
@@ -314,97 +493,34 @@ export default function Index() {
           </div>
         </section>
 
-        {/* ═══════ PLATFORM SHOWCASE ═══════ */}
-        <section className="py-16 md:py-24 bg-background overflow-hidden">
-          <div className="container mx-auto">
-             <div className="max-w-5xl mx-auto">
-                <div className="relative group">
-                   {/* Decorative elements */}
-                   <div className="absolute -top-12 -left-12 w-48 h-48 bg-accent/10 rounded-full blur-3xl opacity-50" />
-                   <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-primary/10 rounded-full blur-3xl opacity-50" />
-                   
-                   <motion.div 
-                     initial={{ opacity: 0, y: 40 }}
-                     whileInView={{ opacity: 1, y: 0 }}
-                     viewport={{ once: true }}
-                     className="relative bg-card border border-border rounded-[10px] shadow-[0_0_50px_rgba(0,0,0,0.1)] overflow-hidden">
-                      {/* Browser Header */}
-                      <div className="h-10 bg-muted/50 border-b border-border flex items-center px-4 gap-2">
-                         <div className="flex gap-1.5">
-                            <div className="w-2.5 h-2.5 rounded-full bg-destructive/30" />
-                            <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/30" />
-                            <div className="w-2.5 h-2.5 rounded-full bg-success/30" />
-                         </div>
-                         <div className="mx-auto bg-background/50 rounded-md px-4 py-1 text-[10px] text-muted-foreground/60 font-mono">
-                            app.voocerto.com.br/simulados
-                         </div>
-                      </div>
-                      
-                      {/* Dashboard Content Mockup - Can be replaced by an Image, GIF or Video */}
-                      <div className="relative aspect-video w-full overflow-hidden opacity-40 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-1000">
-                         <img 
-                           src="/platform_showcase_mockup_1777986775787.png" 
-                           alt="Preview da Plataforma" 
-                           className="w-full h-full object-cover"
-                         />
-                         {/* To use a video instead, uncomment below and comment the img tag above: */}
-                         {/* 
-                         <video 
-                           src="/seu-video.mp4" 
-                           autoPlay 
-                           loop 
-                           muted 
-                           playsInline 
-                           className="w-full h-full object-cover"
-                         /> 
-                         */}
-                      </div>
-
-                      {/* Floating CTAs over the blur */}
-                      <div className="absolute inset-0 flex items-center justify-center bg-background/20 backdrop-blur-[2px] group-hover:backdrop-blur-0 transition-all duration-700">
-                         <motion.div 
-                           whileHover={{ scale: 1.05 }}
-                           whileTap={{ scale: 0.95 }}
-                           className="bg-card/90 backdrop-blur-md border border-accent/20 p-8 rounded-[10px] shadow-2xl text-center max-w-sm">
-                            <Rocket className="w-12 h-12 text-accent mx-auto mb-4" />
-                            <h3 className="text-xl font-bold mb-2">Interface Intuitiva</h3>
-                            <p className="text-sm text-muted-foreground mb-6">Foque apenas no que importa: seu conhecimento.</p>
-                            <Button variant="hero" className="rounded-[5px] w-full" asChild>
-                               <Link to="/simulados">Ver Agora</Link>
-                            </Button>
-                         </motion.div>
-                      </div>
-                   </motion.div>
-                </div>
-             </div>
-          </div>
-        </section>
-
-        {/* ═══════ AI ASSISTANT ═══════ */}
-        <section className="py-16 md:py-24 bg-background relative overflow-hidden">
+        {/* ═══════ 4B. CHAT IA ═══════ */}
+        <section className="py-16 md:py-24 bg-muted/30 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-1/2 h-full bg-accent/5 skew-x-12 translate-x-20" />
           <div className="container mx-auto relative z-10">
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-              <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="text-center lg:text-left">
+              <motion.div
+                initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }} className="text-center lg:text-left"
+              >
                 <Badge className="mb-4 bg-success text-success-foreground border-0 rounded-[5px] font-bold uppercase text-[10px] tracking-widest px-4 py-1.5 h-auto mx-auto lg:mx-0">
                   Exclusivo Voo Certo
                 </Badge>
                 <h2 className="text-2xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
-                  Chat IA Aeronáutico: <br className="hidden md:block" />
-                  Aprenda com cada erro, <span className="text-accent">na hora.</span>
+                  Seu Professor Particular<br className="hidden md:block" /> de Aviação,{' '}
+                  <span className="text-accent">24/7.</span>
                 </h2>
                 <p className="text-lg text-muted-foreground mb-8">
                   Errou uma questão? Nossa IA lê o enunciado, analisa cada alternativa e entrega uma explicação técnica imediata. Você entende o raciocínio certo — e não comete o mesmo erro duas vezes.
                 </p>
                 <ul className="space-y-4 mb-10 text-left inline-block lg:block">
                   {[
-                    'Explicação técnica de cada questão errada',
-                    'Fundamento normativo da resposta correta',
-                    'Dicas de memorização por matéria',
-                    'Disponível 24h, sem depender de instrutor'
+                    '🤖 Explicação lógica e técnica da resposta correta',
+                    '📄 Indicação do fundamento normativo',
+                    '💡 Dicas de memorização por matéria',
+                    '✅ Respostas instantâneas — sem esperar, 24h por dia',
                   ].map((item, i) => (
                     <li key={i} className="flex items-center gap-3 text-foreground font-bold">
-                      <div className="w-6 h-6 rounded-full bg-success/20 flex items-center justify-center">
+                      <div className="w-6 h-6 rounded-full bg-success/20 flex items-center justify-center shrink-0">
                         <CheckCircle2 className="w-4 h-4 text-success" />
                       </div>
                       {item}
@@ -412,136 +528,178 @@ export default function Index() {
                   ))}
                 </ul>
                 <Button variant="hero" size="lg" className="rounded-[5px]" asChild>
-                  <Link to={user ? '/simulados' : '/auth?mode=signup'} className="flex items-center gap-2">Começar Agora — 7 Dias Grátis <ArrowRight className="w-4 h-4" /></Link>
+                  <Link to={user ? '/simulados' : '/auth?mode=signup'} className="flex items-center gap-2">
+                    Começar Agora — 7 Dias Grátis <ArrowRight className="w-4 h-4" />
+                  </Link>
                 </Button>
               </motion.div>
+
+              {/* Chat Mockup */}
               <div className="relative">
-                 <div className="bg-card border border-border p-6 rounded-[5px] shadow-2xl relative z-10 hover:shadow-accent/5 transition-all duration-500 group/chat">
-                    <div className="flex items-center gap-3 mb-6 pb-4 border-b border-border">
-                       <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center group-hover/chat:rotate-12 transition-transform">
-                          <Brain className="w-6 h-6 text-accent-foreground" />
-                       </div>
-                       <div>
-                          <p className="text-sm font-bold">Assistente de Voo IA</p>
-                          <div className="flex items-center gap-1.5">
-                             <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
-                             <p className="text-[10px] text-success font-bold uppercase tracking-tighter">Pronto para ajudar</p>
-                          </div>
-                       </div>
+                <div className="bg-card border border-border p-6 rounded-[5px] shadow-2xl relative z-10 hover:shadow-accent/5 transition-all duration-500 group/chat">
+                  <div className="flex items-center gap-3 mb-6 pb-4 border-b border-border">
+                    <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center group-hover/chat:rotate-12 transition-transform">
+                      <Brain className="w-6 h-6 text-accent-foreground" />
                     </div>
-                    <div className="space-y-4">
-                       <motion.div 
-                         initial={{ opacity: 0, x: -10 }}
-                         whileInView={{ opacity: 1, x: 0 }}
-                         className="bg-muted p-3 rounded-[10px] rounded-tl-none text-xs max-w-[85%] shadow-sm">
-                          "Por que a resposta 'A' está errada nesta questão de RPA?"
-                       </motion.div>
-                       <motion.div 
-                         initial={{ opacity: 0, x: 10 }}
-                         whileInView={{ opacity: 1, x: 0 }}
-                         transition={{ delay: 0.5 }}
-                         className="bg-accent/10 border border-accent/20 p-4 rounded-[10px] rounded-tr-none text-[11px] ml-auto max-w-[90%] shadow-sm">
-                          <p className="font-bold text-accent mb-1.5 flex items-center gap-1">
-                             <Sparkles className="w-3 h-3" /> Explicação da IA
-                          </p>
-                          <p className="leading-relaxed text-foreground/80">
-                             A alternativa 'A' refere-se ao regime de reserva, mas o enunciado foca no limite de pousos para tripulação simples em voos domésticos...
-                          </p>
-                       </motion.div>
-                       <motion.div 
-                         initial={{ opacity: 0 }}
-                         whileInView={{ opacity: 1 }}
-                         transition={{ delay: 1 }}
-                         className="flex gap-1 items-center pt-2">
-                          <div className="w-1 h-1 bg-accent rounded-full animate-bounce" />
-                          <div className="w-1 h-1 bg-accent rounded-full animate-bounce [animation-delay:0.2s]" />
-                          <div className="w-1 h-1 bg-accent rounded-full animate-bounce [animation-delay:0.4s]" />
-                          <span className="text-[9px] text-muted-foreground ml-1 font-bold italic">IA analisando próxima dúvida...</span>
-                       </motion.div>
+                    <div>
+                      <p className="text-sm font-bold">Capitão Neto — IA Aeronáutica</p>
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
+                        <p className="text-[10px] text-success font-bold uppercase tracking-tighter">Pronto para ajudar</p>
+                      </div>
                     </div>
-                 </div>
-                 <div className="absolute -top-10 -right-10 w-40 h-40 bg-accent/20 rounded-full blur-3xl" />
-                 <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-primary/20 rounded-full blur-3xl" />
+                  </div>
+                  <div className="space-y-4">
+                    <motion.div
+                      initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }}
+                      className="bg-muted p-3 rounded-[10px] rounded-tl-none text-xs max-w-[85%] shadow-sm"
+                    >
+                      "Por que a alternativa A está errada nessa questão de meteorologia?"
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, x: 10 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 }}
+                      className="bg-accent/10 border border-accent/20 p-4 rounded-[10px] rounded-tr-none text-[11px] ml-auto max-w-[90%] shadow-sm"
+                    >
+                      <p className="font-bold text-accent mb-1.5 flex items-center gap-1">
+                        <Sparkles className="w-3 h-3" /> Capitão Neto
+                      </p>
+                      <p className="leading-relaxed text-foreground/80">
+                        A alternativa A confunde camadas de instabilidade com presença de turbulência. O que define o risco de turbulência severa ali é a variação de cisalhamento — conceito diferente que a ANAC adora cobrar nessa matéria...
+                      </p>
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: 1 }}
+                      className="flex gap-1 items-center pt-2"
+                    >
+                      <div className="w-1 h-1 bg-accent rounded-full animate-bounce" />
+                      <div className="w-1 h-1 bg-accent rounded-full animate-bounce [animation-delay:0.2s]" />
+                      <div className="w-1 h-1 bg-accent rounded-full animate-bounce [animation-delay:0.4s]" />
+                      <span className="text-[9px] text-muted-foreground ml-1 font-bold italic">IA analisando próxima dúvida...</span>
+                    </motion.div>
+                  </div>
+                </div>
+                <div className="absolute -top-10 -right-10 w-40 h-40 bg-accent/20 rounded-full blur-3xl" />
+                <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-primary/20 rounded-full blur-3xl" />
               </div>
             </div>
           </div>
         </section>
 
-        {/* ═══════ CAREER & CV ═══════ */}
-        <section className="py-16 md:py-24 bg-muted/30">
+        {/* ═══════ 4C. CENTRAL DE PERFORMANCE ═══════ */}
+        <section className="py-16 md:py-24 bg-background">
           <div className="container mx-auto">
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
-              <div className="order-2 lg:order-1">
-                <img src={airplaneSunset} alt="Carreira na Aviação" className="rounded-[5px] shadow-xl border border-border" />
-              </div>
-              <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="order-1 lg:order-2 text-center lg:text-left">
+            <div className="grid lg:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
+              <motion.div
+                initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }} className="text-center lg:text-left"
+              >
                 <Badge variant="outline" className="mb-4 text-accent border-accent/20 rounded-[5px] bg-accent/5 font-bold uppercase h-6 px-3 mx-auto lg:mx-0">
-                  Apoio Profissional
+                  <BarChart3 className="w-3 h-3 mr-2" /> Dados que Aprovam
                 </Badge>
-                <h2 className="text-2xl md:text-5xl font-bold text-foreground mb-6">
-                  Mais do que simulados: <br className="hidden md:block" />
-                  <span className="text-accent underline decoration-accent/20">acompanhe toda sua trajetória.</span>
+                <h2 className="text-2xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
+                  Tome o Controle da Sua<br className="hidden md:block" />{' '}
+                  <span className="text-accent underline decoration-accent/20">Aprovação com Dados.</span>
                 </h2>
                 <p className="text-lg text-muted-foreground mb-8">
-                  Do primeiro simulado até a contratação. O Voo Certo é a plataforma que centraliza sua preparação, sua evolução e o próximo passo da sua carreira na aviação.
+                  Saiba onde você está falhando antes que a ANAC te mostre. Relatórios detalhados que transformam seu estudo em estratégia real de aprovação.
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                   <div className="p-5 bg-card border border-border rounded-[5px]">
-                      <FileText className="w-8 h-8 text-accent mb-4" />
-                      <h3 className="font-bold mb-2">Gerador de Currículo</h3>
-                      <p className="text-xs text-muted-foreground">Template otimizado para o padrão recrutamento de aviação.</p>
-                   </div>
-                   <div className="p-5 bg-card border border-border rounded-[5px]">
-                      <Map className="w-8 h-8 text-accent mb-4" />
-                      <h3 className="font-bold mb-2">Guia de Carreira</h3>
-                      <p className="text-xs text-muted-foreground">Passo a passo completo: do curso teórico até a seleção.</p>
-                   </div>
-                   <div className="p-5 bg-card border border-border rounded-[5px]">
-                      <Trophy className="w-8 h-8 text-accent mb-4" />
-                      <h3 className="font-bold mb-2">Selo LinkedIn</h3>
-                      <p className="text-xs text-muted-foreground">Comprove seu desempenho e destaque seu perfil profissional.</p>
-                   </div>
-                   <div className="p-5 bg-card border border-border rounded-[5px]">
-                      <MessageCircle className="w-8 h-8 text-accent mb-4" />
-                      <h3 className="font-bold mb-2">Fit Cultural</h3>
-                      <p className="text-xs text-muted-foreground">Preparação para as entrevistas e testes psicológicos.</p>
-                   </div>
+                <ul className="space-y-4 text-left inline-block lg:block">
+                  {[
+                    'Média geral e curva de aprendizado por simulado',
+                    'Identificação visual de Pontos de Atenção e Pontos Fortes',
+                    'Histórico detalhado filtrado por modo de estudo',
+                    'Sequência de estudos e indicador de consistência',
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-center gap-3 text-foreground font-medium">
+                      <div className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center shrink-0">
+                        <CheckCircle2 className="w-4 h-4 text-accent" />
+                      </div>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+
+              {/* Performance Mockup */}
+              <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+                <div className="bg-card border border-border rounded-[5px] p-6 shadow-xl">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h3 className="font-bold text-foreground">Central de Performance</h3>
+                      <p className="text-xs text-muted-foreground">Evolução baseada em padrões ANAC</p>
+                    </div>
+                    <TrendingUp className="w-5 h-5 text-accent" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 mb-6">
+                    {[
+                      { label: 'Média Geral', value: '82%', color: 'text-accent', bg: 'bg-accent/10' },
+                      { label: 'Sequência', value: '7 dias 🔥', color: 'text-orange-500', bg: 'bg-orange-500/10' },
+                      { label: 'Precisão', value: '78%', color: 'text-success', bg: 'bg-success/10' },
+                      { label: 'Questões', value: '340', color: 'text-blue-500', bg: 'bg-blue-500/10' },
+                    ].map((stat, i) => (
+                      <div key={i} className={`${stat.bg} rounded-[5px] p-3`}>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase opacity-70">{stat.label}</p>
+                        <p className={`text-xl font-bold ${stat.color}`}>{stat.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                  {/* Animated bar chart */}
+                  <div>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase mb-3">Curva de Aprendizado — Últimos Simulados</p>
+                    <div className="flex items-end gap-1.5 h-20 bg-muted/30 rounded-[5px] p-2">
+                      {[55, 62, 58, 70, 68, 75, 72, 80, 78, 82].map((h, i) => (
+                        <div key={i} className="flex-1 rounded-sm bg-accent/10 relative overflow-hidden h-full">
+                          <motion.div
+                            initial={{ height: 0 }}
+                            whileInView={{ height: `${h}%` }}
+                            viewport={{ once: true }}
+                            transition={{ delay: i * 0.06, duration: 0.5 }}
+                            className="absolute bottom-0 left-0 right-0 bg-accent/70 rounded-sm"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex justify-between mt-1">
+                      <span className="text-[9px] text-muted-foreground">Início</span>
+                      <span className="text-[9px] text-success font-bold">↑ Evolução constante</span>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             </div>
           </div>
         </section>
 
-        {/* ═══════ DIFFERENTIALS (EX-TESTIMONIALS) ═══════ */}
-        <section className="py-16 md:py-24 bg-background">
+        {/* ═══════ 5. RECURSOS ADICIONAIS ═══════ */}
+        <section className="py-16 md:py-24 bg-card border-y border-border">
           <div className="container mx-auto">
             <div className="text-center mb-16">
               <Badge variant="outline" className="mb-4 text-accent border-accent/20 rounded-[5px] bg-accent/5 font-bold uppercase h-6 px-3">
-                <Sparkles className="w-3 h-3 mr-2" /> Excelência Técnica
+                <Sparkles className="w-3 h-3 mr-2" /> Plataforma Completa
               </Badge>
               <h2 className="text-2xl md:text-5xl font-bold text-foreground mb-4">
-                Por que estudar com o Voo Certo?
+                Muito Além dos Simulados.
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Unimos tecnologia de ponta e metodologia focada para garantir que você chegue na prova com total confiança.
+                Do primeiro estudo até a contratação — o Voo Certo centraliza tudo que você precisa para decolar na aviação civil.
               </p>
             </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              {DIFFERENTIALS.slice(0, 6).map((d, i) => {
-                const Icon = d.icon;
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 max-w-6xl mx-auto">
+              {EXTRAS.map((extra, i) => {
+                const Icon = extra.icon;
                 return (
-                  <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
-                    <Card className="bg-card border-border h-full flex flex-col rounded-[5px] hover:shadow-xl transition-all group border-transparent hover:border-accent/20">
-                      <CardContent className="pt-8 flex-1">
-                        <div className="w-12 h-12 rounded-[5px] bg-accent/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
-                           <Icon className="w-6 h-6 text-accent" />
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                  >
+                    <Card className="bg-background border-border h-full flex flex-col rounded-[5px] hover:shadow-xl transition-all group border-transparent hover:border-accent/20">
+                      <CardContent className="pt-8 flex-1 text-center px-4">
+                        <div className="w-12 h-12 rounded-[5px] bg-accent/10 flex items-center justify-center mb-5 mx-auto group-hover:scale-110 transition-transform duration-500">
+                          <Icon className="w-6 h-6 text-accent" />
                         </div>
-                        <h3 className="text-lg font-bold mb-3 group-hover:text-accent transition-colors">{d.title}</h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed">
-                          {d.desc}
-                        </p>
+                        <h3 className="text-sm font-bold mb-2 group-hover:text-accent transition-colors leading-snug">{extra.title}</h3>
+                        <p className="text-xs text-muted-foreground leading-relaxed">{extra.desc}</p>
                       </CardContent>
                     </Card>
                   </motion.div>
@@ -551,108 +709,117 @@ export default function Index() {
           </div>
         </section>
 
-        {/* ═══════ PROBLEM / SOLUTION ═══════ */}
-        <section className="py-16 md:py-24 bg-background">
+        {/* ═══════ 6. COMO FUNCIONA ═══════ */}
+        <section id="como-funciona" className="py-16 md:py-24 bg-background">
           <div className="container mx-auto">
-            <div className="grid lg:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
-              <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-                <Badge variant="outline" className="mb-4 text-destructive border-destructive/20 rounded-[5px] bg-destructive/5 font-bold uppercase h-6 px-3">
-                  <Target className="w-3 h-3 mr-2" /> O Problema
-                </Badge>
-                <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-6">
-                  Estudar para a ANAC sem a ferramenta certa é desperdício de tempo.
-                </h2>
-                <div className="space-y-3">
-                  {[
-                    'Estudar sem saber se realmente está progredindo',
-                    'Errar questões e não entender o motivo técnico',
-                    'Insegurança e ansiedade para o dia da prova',
-                    'Falta de direção sobre os próximos passos da carreira',
-                    'Materiais de estudo desatualizados ou incompletos',
-                  ].map((problem, i) => (
-                    <motion.div key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-                      className="flex items-start gap-4 p-4 rounded-[5px] bg-destructive/5 border border-destructive/10">
-                      <div className="w-6 h-6 rounded-[5px] bg-destructive/10 flex items-center justify-center shrink-0 mt-0.5">
-                        <span className="text-destructive text-xs font-bold">✕</span>
-                      </div>
-                      <p className="text-foreground text-sm font-medium">{problem}</p>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-
-              <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-                <Badge variant="outline" className="mb-4 text-success border-success/20 rounded-[5px] bg-success/5 font-bold uppercase h-6 px-3">
-                  <Lightbulb className="w-3 h-3 mr-2" /> A Solução Inteligente
-                </Badge>
-                <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-6">
-                  O Voo Certo é a sua <span className="text-accent underline decoration-accent/20">plataforma de preparação.</span>
-                </h2>
-                <div className="space-y-3">
-                  {[
-                    'Simulados no formato das provas de certificação aeronáutica',
-                    'IA explicativa 24h — entenda cada erro na hora',
-                    'Relatórios de evolução e indicador de prontidão para a prova',
-                    'Guia completo de trajetória: do estudo à contratação',
-                    'Ambiente de treino que elimina a insegurança no dia da prova',
-                  ].map((solution, i) => (
-                    <motion.div key={i} initial={{ opacity: 0, x: 10 }} whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-                      className="flex items-start gap-4 p-4 rounded-[5px] bg-success/5 border border-success/10">
-                      <div className="w-6 h-6 rounded-[5px] bg-success/10 flex items-center justify-center shrink-0 mt-0.5">
-                        <CheckCircle2 className="w-4 h-4 text-success" />
-                      </div>
-                      <p className="text-foreground text-sm font-bold">{solution}</p>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-            </div>
-          </div>
-        </section>
-
-        {/* ═══════ HOW IT WORKS ═══════ */}
-        <section className="py-16 md:py-24 bg-muted/30">
-          <div className="container mx-auto">
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }} className="text-center mb-16"
+            >
               <Badge variant="outline" className="mb-4 text-accent border-accent/20 rounded-[5px] bg-accent/5 font-bold uppercase h-6 px-3">
-                <Map className="w-3 h-3 mr-2" /> Metodologia
+                <Map className="w-3 h-3 mr-2" /> Risco Zero — Simples assim
               </Badge>
               <h2 className="text-2xl md:text-5xl font-bold text-foreground mb-4">
-                Da primeira questão à aprovação — em 4 passos
+                Sua Jornada para o Cockpit<br className="hidden md:block" /> em 4 Passos Simples.
               </h2>
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
               {STEPS.map((step, i) => (
-                <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-                  className="relative group">
-                  <div className="w-16 h-16 rounded-[5px] bg-accent/10 flex items-center justify-center mx-auto mb-6 group-hover:bg-accent/20 transition-colors">
+                  className="relative group text-center"
+                >
+                  {/* Connector line */}
+                  {i < STEPS.length - 1 && (
+                    <div className="hidden md:block absolute top-8 left-[calc(50%+32px)] right-[-50%] h-px bg-border z-0" />
+                  )}
+                  <div className="w-16 h-16 rounded-[5px] bg-accent/10 flex items-center justify-center mx-auto mb-6 group-hover:bg-accent/20 transition-colors relative z-10">
                     <step.icon className="w-8 h-8 text-accent" />
                   </div>
-                  <div className="absolute top-0 right-1/2 translate-x-12 w-8 h-8 rounded-[5px] bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">
+                  <div className="absolute top-0 left-1/2 -translate-x-[60px] w-8 h-8 rounded-[5px] bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center z-10">
                     {i + 1}
                   </div>
-                  <h3 className="font-bold text-foreground mb-3 text-center">{step.title}</h3>
-                  <p className="text-xs text-muted-foreground text-center leading-relaxed">{step.desc}</p>
+                  <h3 className="font-bold text-foreground mb-3">{step.title}</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{step.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="text-center mt-14">
+              <Button variant="hero" size="lg" asChild className="rounded-[5px] hover-yellow">
+                <Link to={user ? '/simulados' : '/auth?mode=signup'} className="flex items-center gap-2">
+                  Começar Meu Teste Grátis <ArrowRight className="w-4 h-4" />
+                </Link>
+              </Button>
+              <p className="text-xs text-muted-foreground mt-3">Sem cartão de crédito · Cancele quando quiser</p>
+            </div>
+          </div>
+        </section>
+
+        {/* ═══════ 7. DEPOIMENTOS ═══════ */}
+        <section className="py-16 md:py-24 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-16">
+              <Badge variant="outline" className="mb-4 text-accent border-accent/20 rounded-[5px] bg-accent/5 font-bold uppercase h-6 px-3">
+                <Star className="w-3 h-3 mr-2 fill-current" /> Prova Social
+              </Badge>
+              <h2 className="text-2xl md:text-5xl font-bold text-foreground mb-4">
+                Quem Voou Mais Alto com o Voo Certo.
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Mais de 1.200 candidatos usam nossos simulados, a IA explicativa e os guias de trajetória para chegar preparados no dia da prova.
+              </p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              {TESTIMONIALS.map((t, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                >
+                  <Card className="bg-card border-border h-full rounded-[5px] hover:shadow-xl transition-all">
+                    <CardContent className="pt-8">
+                      <div className="flex mb-4">
+                        {[...Array(t.stars)].map((_, s) => (
+                          <Star key={s} className="w-4 h-4 text-accent fill-accent" />
+                        ))}
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed mb-6 italic">"{t.quote}"</p>
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
+                          <Users className="w-5 h-5 text-accent" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-foreground">{t.name}</p>
+                          <p className="text-xs text-muted-foreground">{t.role}</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </motion.div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ═══════ PRICING ═══════ */}
-        <section className="py-16 md:py-24" style={{ background: 'var(--gradient-hero)' }}>
+        {/* ═══════ 8. PREÇOS ═══════ */}
+        <section id="planos" className="py-16 md:py-24" style={{ background: 'var(--gradient-hero)' }}>
           <div className="container mx-auto">
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }} className="text-center mb-16"
+            >
               <Badge className="mb-4 bg-accent text-accent-foreground border-0 rounded-[5px] font-bold uppercase text-[10px] tracking-widest px-4 py-1.5 h-auto">
-                 Período de Experiência Grátis por 7 Dias
+                Período de Experiência Grátis por 7 Dias
               </Badge>
-              <h2 className="text-2xl md:text-5xl font-bold text-primary-foreground mb-4">Planos de Preparação</h2>
+              <h2 className="text-2xl md:text-5xl font-bold text-primary-foreground mb-4">
+                Escolha o Plano Ideal para Sua Aprovação.
+              </h2>
               <p className="text-primary-foreground/60 max-w-xl mx-auto font-medium">
-                Escolha o nível de suporte que sua carreira exige.
+                Todos os planos incluem 7 dias gratuitos. Cancele quando quiser.
               </p>
             </motion.div>
 
@@ -660,22 +827,19 @@ export default function Index() {
               {PLANS.map((plan, i) => {
                 const Icon = plan.icon;
                 return (
-                  <motion.div key={plan.id} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
-                    <Card className={`h-full flex flex-col relative overflow-hidden rounded-[5px] border-0 shadow-xl ${
-                      plan.highlight
-                        ? 'bg-card ring-2 ring-accent'
-                        : 'bg-card'
-                    }`}>
+                  <motion.div
+                    key={plan.id}
+                    initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                  >
+                    <Card className={`h-full flex flex-col relative overflow-hidden rounded-[5px] border-0 shadow-xl ${plan.highlight ? 'bg-card ring-2 ring-accent' : 'bg-card'}`}>
                       {plan.popular && (
                         <div className="absolute top-0 right-0 bg-accent text-accent-foreground text-[10px] font-bold px-3 py-1 uppercase tracking-wider rounded-bl-[5px]">
-                          Recomendado
+                          Mais Popular
                         </div>
                       )}
                       <CardHeader className="text-center pb-6 pt-10">
-                        <div className={`w-14 h-14 rounded-[5px] flex items-center justify-center mx-auto mb-4 ${
-                          plan.highlight ? 'bg-accent/10' : 'bg-primary/5'
-                        }`}>
+                        <div className={`w-14 h-14 rounded-[5px] flex items-center justify-center mx-auto mb-4 ${plan.highlight ? 'bg-accent/10' : 'bg-primary/5'}`}>
                           <Icon className={`w-7 h-7 ${plan.highlight ? 'text-accent' : 'text-primary'}`} />
                         </div>
                         <CardTitle className="text-xl font-bold">{plan.name}</CardTitle>
@@ -695,9 +859,7 @@ export default function Index() {
                           ))}
                         </ul>
                         <Button variant={plan.highlight ? 'hero' : 'outline'} className="w-full h-11 rounded-[5px] font-bold hover-yellow" asChild>
-                          <Link to="/premium">
-                            Iniciar Grátis
-                          </Link>
+                          <Link to="/premium">Começar Teste Grátis</Link>
                         </Button>
                       </CardContent>
                     </Card>
@@ -705,13 +867,14 @@ export default function Index() {
                 );
               })}
             </div>
+
             <div className="mt-16 bg-white/5 border border-white/10 rounded-[5px] p-8 max-w-4xl mx-auto">
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
                 {[
                   { icon: Shield, text: 'Cancelamento sem burocracia' },
                   { icon: Sparkles, text: '7 dias grátis em todos os planos' },
-                  { icon: Globe, text: 'Acesso pelo PC, Tablet e Celular' },
-                  { icon: Zap, text: 'Dúvidas resolvidas na hora por IA' }
+                  { icon: Globe, text: 'PC, Tablet e Celular' },
+                  { icon: Zap, text: 'Dúvidas resolvidas na hora por IA' },
                 ].map((item, i) => (
                   <div key={i} className="flex flex-col items-center gap-3">
                     <item.icon className="w-6 h-6 text-accent" />
@@ -723,85 +886,24 @@ export default function Index() {
           </div>
         </section>
 
-        {/* ═══════ TESTIMONIALS (PROVA SOCIAL) ═══════ */}
+        {/* ═══════ 9. FAQ ═══════ */}
         <section className="py-16 md:py-24 bg-background">
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto">
             <div className="text-center mb-16">
               <Badge variant="outline" className="mb-4 text-accent border-accent/20 rounded-[5px] bg-accent/5 font-bold uppercase h-6 px-3">
-                <Star className="w-3 h-3 mr-2 fill-current" /> Prova Social
+                <MessageCircle className="w-3 h-3 mr-2" /> Dúvidas Frequentes
               </Badge>
-              <h2 className="text-2xl md:text-5xl font-bold text-foreground mb-4">
-                Quem já usa o Voo Certo
-              </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Mais de 1.200 alunos usam nossos simulados, a IA explicativa e os guias de trajetória para chegar preparados no dia da prova de certificação.
-              </p>
+              <h2 className="text-2xl md:text-5xl font-bold text-foreground mb-4">Perguntas Frequentes</h2>
+              <p className="text-muted-foreground max-w-xl mx-auto">Tudo o que você precisa saber antes de começar.</p>
             </div>
-
-            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              {[
-                {
-                  quote: "O Chat IA mudou completamente minha forma de estudar. Errava uma questão e em segundos entendia o raciocínio certo. Economizei horas que passaria pesquisando em apostilas.",
-                  author: "Mariana Silva",
-                  role: "Aprovada na certificação · Assinante Voo Certo",
-                  rating: 5,
-                },
-                {
-                  quote: "Os simulados em modo banca são idênticos à pressão da prova real. Quando cheguei no dia da prova, me senti em casa. Passei de primeira sem surpresas.",
-                  author: "Thiago Rocha",
-                  role: "Aprovado na ANAC · Assinante Voo Certo",
-                  rating: 5,
-                },
-                {
-                  quote: "O relatório de desempenho por matéria foi decisivo. Descobri exatamente onde estava perdendo pontos e, em 3 semanas, virei o jogo nas disciplinas que mais pesavam.",
-                  author: "Amanda Lima",
-                  role: "Aluna de Aviação Civil · Assinante Voo Certo",
-                  rating: 5,
-                }
-              ].map((t, i) => (
-                <motion.div 
-                  key={i} 
-                  initial={{ opacity: 0, y: 20 }} 
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }} 
-                  transition={{ delay: i * 0.1 }}
-                >
-                  <Card className="bg-card border-border h-full flex flex-col rounded-[5px] hover:shadow-xl transition-all duration-300">
-                    <CardContent className="pt-8 flex-1 flex flex-col justify-between">
-                      <div>
-                        <div className="flex gap-1 mb-4 text-accent">
-                          {Array.from({ length: t.rating }).map((_, idx) => (
-                            <Star key={idx} className="w-4 h-4 fill-current animate-pulse" />
-                          ))}
-                        </div>
-                        <p className="text-sm text-muted-foreground leading-relaxed italic mb-6">
-                          "{t.quote}"
-                        </p>
-                      </div>
-                      <div className="mt-auto border-t border-border/50 pt-4">
-                        <p className="font-bold text-foreground text-sm">{t.author}</p>
-                        <p className="text-xs text-muted-foreground">{t.role}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ═══════ FAQ ═══════ */}
-        <section className="py-16 md:py-24 bg-muted/20">
-          <div className="container mx-auto">
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
-              <h2 className="text-2xl md:text-5xl font-bold text-foreground">Dúvidas Frequentes</h2>
-            </motion.div>
-
             <div className="max-w-3xl mx-auto space-y-3">
               {FAQ.map((faq, i) => (
-                <motion.details key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }}
+                <motion.details
+                  key={i}
+                  initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }} transition={{ delay: i * 0.05 }}
-                  className="group bg-card border border-border rounded-[5px] overflow-hidden shadow-none">
+                  className="group bg-card border border-border rounded-[5px] overflow-hidden shadow-none"
+                >
                   <summary className="flex items-center justify-between p-5 cursor-pointer text-foreground font-bold text-sm hover-yellow list-none transition-all">
                     {faq.q}
                     <ChevronRight className="w-4 h-4 text-muted-foreground group-open:rotate-90 transition-transform shrink-0 ml-2" />
@@ -814,34 +916,40 @@ export default function Index() {
             </div>
           </div>
         </section>
-        {/* ═══════ FINAL CTA ═══════ */}
+
+        {/* ═══════ 10. CTA FINAL ═══════ */}
         <section className="py-16 md:py-24 relative overflow-hidden" style={{ background: 'var(--gradient-hero)' }}>
           <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 left-0 w-full h-full" style={{ backgroundImage: `url(${airplaneSunset})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+            <div
+              className="absolute top-0 left-0 w-full h-full"
+              style={{ backgroundImage: `url(${airplaneSunset})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+            />
           </div>
-          
           <div className="container mx-auto relative z-10 text-center">
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="max-w-3xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }} className="max-w-3xl mx-auto"
+            >
               <Badge className="mb-6 bg-accent text-accent-foreground border-0 rounded-[5px] font-bold uppercase text-[10px] tracking-widest px-4 py-1.5 h-auto">
-                7 Dias Grátis — Sem Cartão
+                7 Dias Grátis — Sem Cartão de Crédito
               </Badge>
               <h2 className="text-3xl md:text-5xl font-bold text-primary-foreground mb-6 leading-tight">
-                Pare de estudar no escuro. <br className="hidden md:block" />
-                <span className="text-accent">Prepare-se com inteligência.</span>
+                Pronto para decolar<br className="hidden md:block" />{' '}
+                <span className="text-accent">sua carreira na aviação?</span>
               </h2>
               <p className="text-xl text-primary-foreground/70 mb-10 font-medium">
-                Simulados no formato da prova, IA que explica cada erro e relatórios que mostram exatamente quando você estará pronto. É assim que você passa de primeira.
+                Simulados no formato da prova, IA que explica cada erro e relatórios que mostram exatamente quando você estará pronto. É assim que você passa de primeira na ANAC.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button variant="hero" size="xl" asChild className="rounded-[5px] w-full sm:w-fit whitespace-normal h-auto py-4 sm:h-14 sm:py-0 hover-yellow">
                   <Link to={user ? '/simulados' : '/auth?mode=signup'} className="flex items-center justify-center gap-2">
-                    Quero Começar Grátis Agora <ArrowRight className="w-5 h-5" />
+                    COMEÇAR MEU TESTE GRÁTIS DE 7 DIAS <ArrowRight className="w-5 h-5" />
                   </Link>
                 </Button>
                 <Button variant="outline" size="xl" asChild className="bg-white/5 text-white border-white/20 hover-yellow rounded-[5px] w-full sm:w-fit">
-                  <Link to="/premium" className="flex items-center justify-center gap-2">
+                  <a href="#planos" className="flex items-center justify-center gap-2">
                     Ver Planos
-                  </Link>
+                  </a>
                 </Button>
               </div>
               <p className="mt-8 text-sm text-primary-foreground/40 font-medium flex items-center justify-center gap-2">
