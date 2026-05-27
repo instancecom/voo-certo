@@ -8,7 +8,7 @@ import {
   CheckCircle2, Zap, Shield, GraduationCap, BarChart3,
   MessageCircle, Star, Sparkles, Trophy, Map, FileText, Target,
   Headphones, Globe, TrendingUp, Play, ChevronRight,
-  BadgeCheck, AlertTriangle,
+  BadgeCheck, AlertTriangle, Flame,
 } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
@@ -514,10 +514,10 @@ export default function Index() {
                 </p>
                 <ul className="space-y-4 mb-10 text-left inline-block lg:block">
                   {[
-                    '🤖 Explicação lógica e técnica da resposta correta',
-                    '📄 Indicação do fundamento normativo',
-                    '💡 Dicas de memorização por matéria',
-                    '✅ Respostas instantâneas — sem esperar, 24h por dia',
+                    'Explicação lógica e técnica da resposta correta',
+                    'Indicação do fundamento normativo',
+                    'Dicas de memorização por matéria',
+                    'Respostas instantâneas — sem esperar, 24h por dia',
                   ].map((item, i) => (
                     <li key={i} className="flex items-center gap-3 text-foreground font-bold">
                       <div className="w-6 h-6 rounded-full bg-success/20 flex items-center justify-center shrink-0">
@@ -633,7 +633,7 @@ export default function Index() {
                   <div className="grid grid-cols-2 gap-3 mb-6">
                     {[
                       { label: 'Média Geral', value: '82%', color: 'text-accent', bg: 'bg-accent/10' },
-                      { label: 'Sequência', value: '7 dias 🔥', color: 'text-orange-500', bg: 'bg-orange-500/10' },
+                      { label: 'Sequência', value: <span className="flex items-center gap-1">7 dias <Flame className="w-5 h-5" /></span>, color: 'text-orange-500', bg: 'bg-orange-500/10' },
                       { label: 'Precisão', value: '78%', color: 'text-success', bg: 'bg-success/10' },
                       { label: 'Questões', value: '340', color: 'text-blue-500', bg: 'bg-blue-500/10' },
                     ].map((stat, i) => (
