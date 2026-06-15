@@ -366,7 +366,7 @@ function BancaExamInner({
             </Button>
 
             {/* Bubbles — desktop */}
-            <div className="hidden md:flex flex-1 min-w-0 justify-start lg:justify-center gap-1.5 overflow-x-auto scrollbar-none py-1 px-2">
+            <div className="hidden md:flex flex-1 min-w-0 justify-start gap-1.5 overflow-x-auto scrollbar-none py-1 px-2">
               {blockQuestions.map((q: ShuffledQuestion, index: number) => {
                 const isAnswered = answers[q.id] !== undefined;
                 const isCurrent = index === currentQuestionIndex;
@@ -384,7 +384,7 @@ function BancaExamInner({
                     className={`w-9 h-9 rounded-[6px] text-xs font-black flex items-center justify-center shrink-0 transition-all duration-200 border ${
                       isCurrent ? 'bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20 scale-110 ring-2 ring-primary/20' :
                       isAnswered ? 'bg-success/15 text-success border-success/45 hover:bg-success/25 hover:border-success/60' :
-                      !isNavigable ? 'bg-slate-50/50 text-slate-300 border-slate-100 cursor-not-allowed opacity-45' :
+                      !isNavigable ? 'bg-slate-100/50 text-slate-400/60 border-slate-200/80 cursor-not-allowed' :
                       'bg-background border-border text-slate-600 hover:bg-primary/5 hover:border-primary/40 hover:text-primary hover:scale-105 shadow-sm'
                     }`}
                   >
