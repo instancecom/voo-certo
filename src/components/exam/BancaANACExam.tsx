@@ -354,7 +354,7 @@ function BancaExamInner({
             </Button>
 
             {/* Bubbles — desktop */}
-            <div className="hidden md:flex flex-1 justify-center gap-1 overflow-x-auto scrollbar-none">
+            <div className="hidden md:flex flex-1 justify-center gap-1.5 overflow-x-auto scrollbar-none py-1 px-2">
               {blockQuestions.map((q: ShuffledQuestion, index: number) => {
                 const isAnswered = answers[q.id] !== undefined;
                 const isCurrent = index === currentQuestionIndex;
@@ -368,11 +368,11 @@ function BancaExamInner({
                     key={q.id}
                     onClick={() => isNavigable && goToQuestion(index)}
                     disabled={!isNavigable}
-                    className={`w-7 h-7 rounded-[5px] text-[11px] font-black flex items-center justify-center shrink-0 transition-all ${
-                      isCurrent ? 'bg-primary text-primary-foreground shadow-md scale-110' :
-                      isAnswered ? 'bg-success/20 text-success border border-success/30' :
-                      !isNavigable ? 'bg-muted text-muted-foreground/40 cursor-not-allowed opacity-50' :
-                      'bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary'
+                    className={`w-9 h-9 rounded-[6px] text-xs font-black flex items-center justify-center shrink-0 transition-all duration-200 border ${
+                      isCurrent ? 'bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20 scale-110 ring-2 ring-primary/20' :
+                      isAnswered ? 'bg-success/15 text-success border-success/45 hover:bg-success/25 hover:border-success/60' :
+                      !isNavigable ? 'bg-slate-50/50 text-slate-300 border-slate-100 cursor-not-allowed opacity-45' :
+                      'bg-background border-border text-slate-600 hover:bg-primary/5 hover:border-primary/40 hover:text-primary hover:scale-105 shadow-sm'
                     }`}
                   >
                     {index + 1}
