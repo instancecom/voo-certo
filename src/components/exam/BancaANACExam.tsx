@@ -458,14 +458,14 @@ function BancaExamInner({
               Todo o seu progresso será perdido e você terá que recomeçar do início.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="flex-col gap-2 mt-4">
+          <div className="flex flex-col gap-2 mt-6">
             <Button className="w-full h-11 rounded-[5px] font-bold" onClick={() => setShowExitDialog(false)}>
               Continuar Simulado
             </Button>
             <Button variant="outline" className="w-full h-11 rounded-[5px] font-bold text-destructive border-destructive/30 hover:bg-destructive/10" onClick={onExit}>
               Sair mesmo assim
             </Button>
-          </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
 
@@ -483,11 +483,11 @@ function BancaExamInner({
               Responda as questões restantes antes que o tempo acabe.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="mt-4">
+          <div className="flex flex-col gap-2 mt-6">
             <Button className="w-full h-11 rounded-[5px] font-black bg-accent hover:bg-accent/90 text-accent-foreground" onClick={() => setShowTimeWarning(false)}>
               Entendi, vou continuar!
             </Button>
-          </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

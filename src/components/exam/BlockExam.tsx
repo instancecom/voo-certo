@@ -482,14 +482,14 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
               )}
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="flex-col gap-2 mt-4">
+          <div className="flex flex-col gap-2 mt-6">
             <Button className="w-full h-11 rounded-[5px] font-black bg-accent hover:bg-accent/90 text-accent-foreground" onClick={handleFinish}>
               Ver Meu Resultado
             </Button>
             <Button variant="outline" className="w-full h-11 rounded-[5px] font-bold" onClick={() => setShowFinishDialog(false)}>
               Continuar Respondendo
             </Button>
-          </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
