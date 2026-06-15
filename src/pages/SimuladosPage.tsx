@@ -15,7 +15,6 @@ import { toast } from 'sonner';
 import { PageTransition } from '@/components/PageTransition';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getDrivePreviewUrl } from '@/lib/media-utils';
-import { TesterFeedbackCard } from '@/components/TesterFeedbackCard';
 
 interface BlockInfo {
   id: string;
@@ -425,9 +424,9 @@ export default function SimuladosPage() {
           </DialogContent>
         </Dialog>
 
-        <TesterFeedbackCard />
         <Footer />
       </div>
+
     </PageTransition>
   );
 }

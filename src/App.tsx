@@ -27,6 +27,7 @@ import NotFound from "./pages/NotFound";
 import { AdminGuard } from "./components/AdminGuard";
 import { FeatureGuard } from "./components/FeatureGuard";
 import { ScrollToTop } from "./components/ScrollToTop";
+import { TesterFeedbackCard } from "./components/TesterFeedbackCard";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <ScrollToTop />
+            <TesterFeedbackCard />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<AuthPage />} />
