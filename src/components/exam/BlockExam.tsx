@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronLeft, ChevronRight, Flag, CheckCircle2, XCircle,
@@ -45,6 +45,18 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
   const [showFinishDialog, setShowFinishDialog] = useState(false);
   const [startTime] = useState(Date.now());
 
+  const activeBubbleRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    if (activeBubbleRef.current) {
+      activeBubbleRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center'
+      });
+    }
+  }, [currentQuestionIndex]);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setShuffledQuestions(prepareExamQuestions(questions, undefined, questionLimit));
@@ -69,19 +81,27 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
     }
   };
 
+  const goToQuestion = (index: number) => {
+    setCurrentQuestionIndex(index);
+    setShowAnswer(answers[shuffledQuestions[index].id] !== undefined);
+  };
+
   const nextQuestion = () => {
-    setShowAnswer(false);
     if (currentQuestionIndex < shuffledQuestions.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
+      const nextIndex = currentQuestionIndex + 1;
+      setCurrentQuestionIndex(nextIndex);
+      setShowAnswer(answers[shuffledQuestions[nextIndex].id] !== undefined);
     } else {
       setShowFinishDialog(true);
     }
   };
 
   const prevQuestion = () => {
-    setShowAnswer(false);
-    if (currentQuestionIndex > 0)
-      setCurrentQuestionIndex(prev => prev - 1);
+    if (currentQuestionIndex > 0) {
+      const prevIndex = currentQuestionIndex - 1;
+      setCurrentQuestionIndex(prevIndex);
+      setShowAnswer(answers[shuffledQuestions[prevIndex].id] !== undefined);
+    }
   };
 
   const handleFinish = () => {
@@ -356,8 +376,37 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
               <span className="hidden sm:inline ml-1">Anterior</span>
             </Button>
 
-            {/* Centro — contador */}
-            <div className="flex-1 flex justify-center">
+            {/* Bubbles — desktop */}
+            <div className="hidden md:flex flex-1 min-w-0 justify-start gap-1.5 overflow-x-auto scrollbar-none py-1 px-2">
+              {shuffledQuestions.map((q: ShuffledQuestion, index: number) => {
+                const isAns = answers[q.id] !== undefined;
+                const isCur = index === currentQuestionIndex;
+                const isNav =
+                  index <= currentQuestionIndex ||
+                  answers[shuffledQuestions[index].id] !== undefined ||
+                  (index === currentQuestionIndex + 1 && answers[shuffledQuestions[currentQuestionIndex].id] !== undefined);
+
+                return (
+                  <button
+                    key={q.id}
+                    ref={isCur ? activeBubbleRef : null}
+                    onClick={() => isNav && goToQuestion(index)}
+                    disabled={!isNav}
+                    className={`w-9 h-9 rounded-[6px] text-xs font-black flex items-center justify-center shrink-0 transition-all duration-200 border ${
+                      isCur ? 'bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20 scale-110 ring-2 ring-primary/20' :
+                      isAns ? 'bg-success/15 text-success border-success/45 hover:bg-success/25 hover:border-success/60' :
+                      !isNav ? 'bg-slate-100/50 text-slate-400/60 border-slate-200/80 cursor-not-allowed' :
+                      'bg-background border-border text-slate-600 hover:bg-primary/5 hover:border-primary/40 hover:text-primary hover:scale-105 shadow-sm'
+                    }`}
+                  >
+                    {index + 1}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Contador — mobile */}
+            <div className="md:hidden flex-1 flex justify-center">
               <div className="flex items-center gap-2">
                 <div className="px-4 py-2 rounded-[5px] bg-primary text-primary-foreground font-black text-sm shadow-lg">
                   {currentQuestionIndex + 1}
