@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Clock, ChevronRight, ChevronLeft, Flag, AlertTriangle,
@@ -89,6 +89,18 @@ function BancaExamInner({
   totalTimeSpent, setTotalTimeSpent,
   onFinish, onExit,
 }: any) {
+  const activeBubbleRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    if (activeBubbleRef.current) {
+      activeBubbleRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center'
+      });
+    }
+  }, [currentQuestionIndex]);
+
   const getBlockQuestions = (block: number): ShuffledQuestion[] =>
     shuffledQuestions.filter((q: ShuffledQuestion) => q.block_number === block);
 
@@ -354,7 +366,7 @@ function BancaExamInner({
             </Button>
 
             {/* Bubbles — desktop */}
-            <div className="hidden md:flex flex-1 justify-center gap-1.5 overflow-x-auto scrollbar-none py-1 px-2">
+            <div className="hidden md:flex flex-1 justify-start lg:justify-center gap-1.5 overflow-x-auto scrollbar-none py-1 px-2">
               {blockQuestions.map((q: ShuffledQuestion, index: number) => {
                 const isAnswered = answers[q.id] !== undefined;
                 const isCurrent = index === currentQuestionIndex;
@@ -366,6 +378,7 @@ function BancaExamInner({
                 return (
                   <button
                     key={q.id}
+                    ref={isCurrent ? activeBubbleRef : null}
                     onClick={() => isNavigable && goToQuestion(index)}
                     disabled={!isNavigable}
                     className={`w-9 h-9 rounded-[6px] text-xs font-black flex items-center justify-center shrink-0 transition-all duration-200 border ${
