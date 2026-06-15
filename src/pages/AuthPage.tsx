@@ -143,7 +143,7 @@ export default function AuthPage() {
                 <div className="p-2.5 bg-primary/5 rounded-[5px]">
                   <Plane className="w-6 h-6 text-primary" />
                 </div>
-                <span className="text-xl font-black text-foreground tracking-tight">{branding.site_name || 'Voo Certo'}</span>
+                <span className="text-xl font-black text-foreground tracking-tight">{branding.site_name || 'Voe Certo'}</span>
               </>
             )}
           </div>

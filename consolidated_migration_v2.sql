@@ -673,7 +673,7 @@ USING (bucket_id = 'badge-proofs' AND is_admin(auth.uid()));
 INSERT INTO public.insignias (name, description, icon, rarity, condition_type, condition_value, display_order, is_active)
 VALUES (
   'Aprovado ANAC',
-  'Conquistou aprovação oficial na banca da ANAC. Certificado verificado pela equipe Voo Certo.',
+  'Conquistou aprovação oficial na banca da ANAC. Certificado verificado pela equipe Voe Certo.',
   'Award',
   'platinum',
   'anac_approval',

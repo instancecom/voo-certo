@@ -285,7 +285,7 @@ WHERE name = 'Conquistador de Companhias';
 
 UPDATE public.insignias 
 SET model_url = '/insignias/lenda-viva.svg', 
-    verso_texto = 'Você conquistou o topo absoluto. Seu nome já faz parte do hall da fama dos maiores aviadores do Voo Certo.', 
+    verso_texto = 'Você conquistou o topo absoluto. Seu nome já faz parte do hall da fama dos maiores aviadores do Voe Certo.', 
     updated_at = now() 
 WHERE name = 'Lenda Viva';
 

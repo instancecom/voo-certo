@@ -116,9 +116,9 @@ serve(async (req) => {
           "Authorization": `Bearer ${RESEND_API_KEY}`
         },
         body: JSON.stringify({
-          from: "Voo Certo <onboarding@resend.dev>",
+          from: "Voe Certo <onboarding@resend.dev>",
           to: [formattedEmail],
-          subject: "🧪 Convite Especial: Seja Tester da Voo Certo e ganhe Premium! ✈️",
+          subject: "🧪 Convite Especial: Seja Tester da Voe Certo e ganhe Premium! ✈️",
           html: htmlContent
         })
       });

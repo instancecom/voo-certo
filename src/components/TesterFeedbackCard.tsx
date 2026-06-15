@@ -32,7 +32,7 @@ export function TesterFeedbackCard() {
 
   useEffect(() => {
     // Show only if user is logged in, flagged as tester, and has not submitted yet in this browser session
-    const hasSubmitted = localStorage.getItem('voocerto-tester-feedback-submitted') === 'true';
+    const hasSubmitted = localStorage.getItem('voecerto-tester-feedback-submitted') === 'true';
     if (user && isTester && !hasSubmitted) {
       // Delay entrance slightly to feel extremely premium
       const timer = setTimeout(() => setIsVisible(true), 2500);
@@ -73,10 +73,10 @@ export function TesterFeedbackCard() {
         origin: { y: 0.6 }
       });
 
-      toast.success('Feedback enviado! Muito obrigado por nos ajudar a melhorar o Voo Certo.');
+      toast.success('Feedback enviado! Muito obrigado por nos ajudar a melhorar o Voe Certo.');
       
       // Save state to localStorage to prevent showing it again
-      localStorage.setItem('voocerto-tester-feedback-submitted', 'true');
+      localStorage.setItem('voecerto-tester-feedback-submitted', 'true');
       setIsOpen(false);
       setIsVisible(false);
       
@@ -123,7 +123,7 @@ export function TesterFeedbackCard() {
 
               <div className="space-y-1 pr-6">
                 <h4 className="text-sm font-extrabold text-foreground flex items-center gap-1.5 leading-none">
-                  Você está testando a Voo Certo
+                  Você está testando a Voe Certo
                 </h4>
                 <p className="text-xs text-muted-foreground leading-relaxed font-medium">
                   Sua opinião sincera de aviação ajuda a construir uma plataforma profissional muito melhor.
@@ -167,7 +167,7 @@ export function TesterFeedbackCard() {
             {/* Reaction Emojis Rating Selector */}
             <div className="space-y-2 text-center bg-muted/20 p-4 rounded-xl border border-border/80">
               <Label className="text-sm font-bold text-foreground block mb-2">
-                Como está sendo sua experiência na Voo Certo?
+                Como está sendo sua experiência na Voe Certo?
               </Label>
               <div className="flex justify-around items-center gap-2 max-w-sm mx-auto">
                 {FEEDBACK_EMOJIS.map((emoji) => {

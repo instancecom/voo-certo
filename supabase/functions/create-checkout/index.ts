@@ -52,7 +52,7 @@ serve(async (req) => {
       console.log(`Found existing customer: ${customerId}`);
     }
 
-    const origin = req.headers.get("origin") || "https://voocerto.app";
+    const origin = req.headers.get("origin") || "https://voecerto.app";
     console.log(`Creating session for price ${priceId} with origin ${origin}`);
 
     const sessionParams: any = {

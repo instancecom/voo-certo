@@ -25,7 +25,7 @@ const BrandingContext = createContext<BrandingContextType | undefined>(undefined
 
 const DEFAULT_SETTINGS: BrandingSettings = {
   logo_url: 'https://lh3.googleusercontent.com/d/1Ymee2CCTVo-HFCJ0TqzZdqktpKt6YiqQ',
-  site_name: 'Voo Certo',
+  site_name: 'Voe Certo',
   features: {
     microcourses: true,
     career_guide: true,

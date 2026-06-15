@@ -248,7 +248,7 @@ export function VideoPlayer({ videoUrl, thumbnailUrl, title, hasAccess, autoplay
                </div>
                <div>
                   <p className="text-[10px] font-black text-white/40 uppercase tracking-widest leading-none">AULA COMPLETA</p>
-                  <p className="text-[9px] font-medium text-accent uppercase tracking-widest mt-1">VOO CERTO EDUCATION</p>
+                  <p className="text-[9px] font-medium text-accent uppercase tracking-widest mt-1">VOE CERTO EDUCATION</p>
                </div>
             </div>
           </div>
@@ -294,7 +294,7 @@ export function VideoPlayer({ videoUrl, thumbnailUrl, title, hasAccess, autoplay
 
         {/* Custom Branding Overlays (Hiding any residual YT icons) */}
         <div className="absolute top-0 right-0 p-6 z-20 pointer-events-none opacity-40">
-           <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em]">Voo Certo Education</span>
+           <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em]">Voe Certo Education</span>
         </div>
 
         {/* Custom Control Bar */}
@@ -345,7 +345,7 @@ export function VideoPlayer({ videoUrl, thumbnailUrl, title, hasAccess, autoplay
                 <div className="flex items-center gap-4">
                   {/* Branding inside controls */}
                   <div className="px-3 py-1.5 bg-accent/10 border border-accent/20 rounded-[5px] hidden sm:block">
-                    <span className="text-[9px] font-black text-accent uppercase tracking-[0.2em]">Voo Certo</span>
+                    <span className="text-[9px] font-black text-accent uppercase tracking-[0.2em]">Voe Certo</span>
                   </div>
 
                   <button onClick={toggleFullscreen} className="text-white hover:text-accent transition-colors">

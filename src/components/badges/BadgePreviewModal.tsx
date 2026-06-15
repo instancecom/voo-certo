@@ -167,18 +167,18 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt, appr
 
       // Bake Metadata (Cisco/Open Badges style)
       const bakedBlob = await bakeBadgeMetadata(canvasBlob, {
-        recipient: user?.email || 'piloto@voocerto.com.br',
+        recipient: user?.email || 'piloto@voecerto.com.br',
         issuedOn: new Date().toISOString(),
         badgeId: insignia.id,
         approvalId: finalApprovalId,
         verifyUrl: `${window.location.origin}/verificar/${finalApprovalId}`,
-        issuerName: "Voo Certo",
+        issuerName: "Voe Certo",
         origin: window.location.origin
       });
 
       const url = URL.createObjectURL(bakedBlob);
       const link = document.createElement('a');
-      link.download = `insignia-voocerto-${finalApprovalId}.png`;
+      link.download = `insignia-voecerto-${finalApprovalId}.png`;
       link.href = url;
       link.click();
       URL.revokeObjectURL(url);

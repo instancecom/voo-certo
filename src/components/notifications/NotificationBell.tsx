@@ -35,7 +35,7 @@ export function NotificationBell({ className }: NotificationBellProps) {
   const { user } = useAuth();
   const { data: userInsignias } = useUserInsignias();
   const [lastViewed, setLastViewed] = useState<string | null>(
-    localStorage.getItem(`voocerto_notifications_last_viewed_${user?.id}`)
+    localStorage.getItem(`voecerto_notifications_last_viewed_${user?.id}`)
   );
   const [isOpen, setIsOpen] = useState(false);
 
@@ -46,7 +46,7 @@ export function NotificationBell({ className }: NotificationBellProps) {
 
   useEffect(() => {
     if (user?.id) {
-      setLastViewed(localStorage.getItem(`voocerto_notifications_last_viewed_${user.id}`));
+      setLastViewed(localStorage.getItem(`voecerto_notifications_last_viewed_${user.id}`));
     }
   }, [user?.id]);
 
@@ -54,7 +54,7 @@ export function NotificationBell({ className }: NotificationBellProps) {
     setIsOpen(open);
     if (open && user?.id) {
       const now = new Date().toISOString();
-      localStorage.setItem(`voocerto_notifications_last_viewed_${user.id}`, now);
+      localStorage.setItem(`voecerto_notifications_last_viewed_${user.id}`, now);
       // Immediately update state so the badges and counts update
       setLastViewed(now);
     }

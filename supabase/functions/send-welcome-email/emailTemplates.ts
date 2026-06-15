@@ -20,10 +20,10 @@ const EmailHeader = () => `
       padding:40px 40px 60px 40px;
       text-align:center;">
       
-      <!-- Logo da Voo Certo -->
+      <!-- Logo da Voe Certo -->
       <img
-        src="https://voocerto.com.br/logo.png" 
-        alt="Voo Certo"
+        src="https://voecerto.com.br/logo.png" 
+        alt="Voe Certo"
         width="180"
         style="max-width:180px; display:block; margin:0 auto 30px auto;"
       />
@@ -50,7 +50,7 @@ const EmailHeader = () => `
         line-height:1.2;
         font-weight:700;
       ">
-        Bem-vindo(a) à Voo Certo
+        Bem-vindo(a) à Voe Certo
       </h1>
 
       <p style="
@@ -137,7 +137,7 @@ const EmailFooter = () => `
         color:#64748b;
         line-height:1.8;
       ">
-        <strong style="color:${COLORS.primary};">Equipe Voo Certo</strong>
+        <strong style="color:${COLORS.primary};">Equipe Voe Certo</strong>
       </p>
       <p style="
         margin:12px 0 0 0;
@@ -159,7 +159,7 @@ export const getWelcomeEmailHtml = (userName: string = "Aeronauta") => {
     <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Bem-vindo à Voo Certo</title>
+    <title>Bem-vindo à Voe Certo</title>
     </head>
     <body style="margin:0; padding:0; background-color:${COLORS.background}; font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif;">
       <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="${COLORS.background}">
@@ -201,12 +201,12 @@ export const getWelcomeEmailHtml = (userName: string = "Aeronauta") => {
                   )}
 
                   <p style="font-size:17px; color:${COLORS.textMuted}; line-height:1.9;">
-                    A <strong>Voo Certo</strong> não foi criada apenas para ser mais
+                    A <strong>Voe Certo</strong> não foi criada apenas para ser mais
                     uma plataforma de simulados. Nosso objetivo é ajudar você a aprender, 
                     evoluir e se sentir mais preparado(a) em cada etapa da sua trajetória na aviação.
                   </p>
 
-                  ${ButtonCTA("https://voocerto.com.br/guias", "Começar minha jornada ✈️")}
+                  ${ButtonCTA("https://voecerto.com.br/guias", "Começar minha jornada ✈️")}
 
                 </td>
               </tr>

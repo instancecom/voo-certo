@@ -309,7 +309,7 @@ export default function SimuladosPage() {
                   <div className="text-left">
                     <div className="flex items-center gap-3 mb-4">
                       <Crown className="w-8 h-8 text-accent fill-accent/20" />
-                      <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent">Voo Certo Premium</span>
+                      <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent">Voe Certo Premium</span>
                     </div>
                     <h3 className="text-3xl md:text-4xl font-black mb-4">Acesso total à elite dos simulados</h3>
                     <p className="text-primary-foreground/70 font-medium">Relatórios de performance avançados, Chat IA ilimitado e muito mais.</p>

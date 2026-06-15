@@ -1,4 +1,4 @@
-﻿-- Create enum for user roles
+-- Create enum for user roles
 CREATE TYPE public.app_role AS ENUM ('user', 'premium', 'admin');
 
 -- Create enum for difficulty levels
@@ -643,7 +643,7 @@ USING (bucket_id = 'badge-proofs' AND is_admin(auth.uid()));
 INSERT INTO public.insignias (name, description, icon, rarity, condition_type, condition_value, display_order, is_active)
 VALUES (
   'Aprovado ANAC',
-  'Conquistou aprovaÃ§Ã£o oficial na banca da ANAC. Certificado verificado pela equipe Voo Certo.',
+  'Conquistou aprovaÃ§Ã£o oficial na banca da ANAC. Certificado verificado pela equipe Voe Certo.',
   'Award',
   'platinum',
   'anac_approval',

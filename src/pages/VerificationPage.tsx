@@ -50,7 +50,7 @@ export default function VerificationPage() {
 
       return {
         ...verifyData,
-        profile: profileData || { full_name: 'Piloto Voo Certo' }
+        profile: profileData || { full_name: 'Piloto Voe Certo' }
       };
     },
     enabled: !!approvalId,
@@ -114,7 +114,7 @@ export default function VerificationPage() {
                 Certificação de Preparação Técnica
               </h1>
               <p className="text-muted-foreground max-w-xl font-medium">
-                Esta página confirma que o profissional utilizou a plataforma Voo Certo como suporte estratégico de estudo, atingindo a proficiência necessária para aprovação nos exames oficiais da ANAC.
+                Esta página confirma que o profissional utilizou a plataforma Voe Certo como suporte estratégico de estudo, atingindo a proficiência necessária para aprovação nos exames oficiais da ANAC.
               </p>
             </div>
 
@@ -175,7 +175,7 @@ export default function VerificationPage() {
                       </div>
                       <div>
                         <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider mb-0.5">Emitido para</p>
-                        <p className="font-bold text-lg text-foreground">{profile?.full_name || 'Piloto Voo Certo'}</p>
+                        <p className="font-bold text-lg text-foreground">{profile?.full_name || 'Piloto Voe Certo'}</p>
                         <p className="text-xs text-muted-foreground italic">{profile?.email?.replace(/(.{3}).*(@.*)/, '$1...$2')}</p>
                       </div>
                     </div>
@@ -209,14 +209,14 @@ export default function VerificationPage() {
 
                   <div className="mt-10 pt-10 border-t border-border">
                     <p className="text-xs text-muted-foreground italic leading-relaxed">
-                      "Esta credencial certifica que o profissional demonstrou domínio técnico através da metodologia de simulados de alta performance do Voo Certo, garantindo o preparo exigido para as bancas examinadoras da ANAC."
+                      "Esta credencial certifica que o profissional demonstrou domínio técnico através da metodologia de simulados de alta performance do Voe Certo, garantindo o preparo exigido para as bancas examinadoras da ANAC."
                     </p>
                   </div>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Button asChild className="flex-1 bg-primary text-white hover:bg-primary/90 h-12 rounded-[5px] font-bold uppercase text-xs tracking-widest shadow-xl shadow-primary/20">
-                    <Link to="/">Conhecer o Voo Certo <ExternalLink className="w-3 h-3 ml-2" /></Link>
+                    <Link to="/">Conhecer o Voe Certo <ExternalLink className="w-3 h-3 ml-2" /></Link>
                   </Button>
                   <Button asChild variant="outline" className="flex-1 h-12 rounded-[5px] font-bold uppercase text-xs tracking-widest border-border/60">
                     <Link to="/simulados">Treinar Agora</Link>

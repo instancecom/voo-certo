@@ -73,7 +73,7 @@ export function Footer() {
               <a href="#" className="p-2.5 bg-primary-foreground/10 rounded-[5px] hover:bg-accent hover:text-accent-foreground transition-all">
                 <Youtube className="w-5 h-5" />
               </a>
-              <a href="mailto:contato@voocerto.com.br" className="p-2.5 bg-primary-foreground/10 rounded-[5px] hover:bg-accent hover:text-accent-foreground transition-all">
+              <a href="mailto:contato@voecerto.com.br" className="p-2.5 bg-primary-foreground/10 rounded-[5px] hover:bg-accent hover:text-accent-foreground transition-all">
                 <Mail className="w-5 h-5" />
               </a>
             </div>
@@ -87,7 +87,7 @@ export function Footer() {
         <div className="border-t border-primary-foreground/10 mt-12 pt-12">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <p className="text-[10px] md:text-xs text-primary-foreground/40 max-w-2xl text-center md:text-left leading-normal italic">
-              <strong>Aviso Legal:</strong> O Voo Certo é uma plataforma independente de estudos. Nossos simulados são baseados em padrões históricos e padrões de avaliação da Agência Nacional de Aviação Civil (ANAC), mas não possuímos qualquer vínculo oficial com o órgão regulador.
+              <strong>Aviso Legal:</strong> O Voe Certo é uma plataforma independente de estudos. Nossos simulados são baseados em padrões históricos e padrões de avaliação da Agência Nacional de Aviação Civil (ANAC), mas não possuímos qualquer vínculo oficial com o órgão regulador.
             </p>
             <div className="text-[10px] md:text-xs text-primary-foreground/40 whitespace-nowrap">
               &copy; {new Date().getFullYear()} {branding.site_name}. CNPJ: 00.000.000/0001-00

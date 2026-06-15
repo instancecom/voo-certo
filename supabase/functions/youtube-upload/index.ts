@@ -251,7 +251,7 @@ Deno.serve(async (req: Request) => {
   <body>
     <div class="container">
       <h2>✅ YouTube Conectado!</h2>
-      <p>Sua conta foi vinculada com sucesso ao Voo Certo.</p>
+      <p>Sua conta foi vinculada com sucesso ao Voe Certo.</p>
       <div class="status">Canal: ${channelTitle || "Conectado"}</div>
       <p>Esta janela fechará automaticamente...</p>
       <div class="loader"></div>
@@ -356,7 +356,7 @@ Deno.serve(async (req: Request) => {
 
       const formData = await req.formData();
       const videoFile = formData.get("video") as File | null;
-      const title = formData.get("title") as string || "Microcurso Voo Certo";
+      const title = formData.get("title") as string || "Microcurso Voe Certo";
       const description = formData.get("description") as string || "";
       const privacy = formData.get("privacy") as string || "unlisted";
 

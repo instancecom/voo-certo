@@ -154,7 +154,7 @@ export function MicrocourseLanding({ course, modules, getLessons }: MicrocourseL
                   <div className="space-y-3">
                     <div className="flex items-center gap-3 text-sm text-foreground/70">
                       <CheckCircle2 className="w-5 h-5 text-success" />
-                      Certificado de Conclusão Voo Certo
+                      Certificado de Conclusão Voe Certo
                     </div>
                     <div className="flex items-center gap-3 text-sm text-foreground/70">
                       <CheckCircle2 className="w-5 h-5 text-success" />

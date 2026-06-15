@@ -188,7 +188,7 @@ export function BrandingManager() {
     try {
       await updateSettings({
         logo_url: logoUrl || null,
-        site_name: siteName || 'Voo Certo',
+        site_name: siteName || 'Voe Certo',
       });
       toast.success('Branding atualizado com sucesso!');
     } catch (error: any) {
@@ -252,7 +252,7 @@ CREATE POLICY "Escrita para admins" ON public.site_settings
                 id="siteName" 
                 value={siteName} 
                 onChange={(e) => setSiteName(e.target.value)}
-                placeholder="Ex: Voo Certo"
+                placeholder="Ex: Voe Certo"
               />
             </div>
             <div className="space-y-4">
@@ -390,7 +390,7 @@ CREATE POLICY "Escrita para admins" ON public.site_settings
                   <div className="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center">
                     <AlertCircle className="w-6 h-6 text-accent" />
                   </div>
-                  <span className="text-2xl font-bold">{siteName || 'Voo Certo'}</span>
+                  <span className="text-2xl font-bold">{siteName || 'Voe Certo'}</span>
                 </>
               )}
             </div>

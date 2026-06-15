@@ -155,8 +155,8 @@ const FAQ = [
     a: 'Ao criar sua conta, você tem acesso completo à plataforma por 7 dias sem precisar cadastrar cartão de crédito. Ao final do período, você escolhe o plano ideal para continuar sua preparação.',
   },
   {
-    q: 'O Voo Certo é afiliado à ANAC?',
-    a: 'Não. O Voo Certo é uma plataforma independente de simulados e preparação para certificações aeronáuticas. Não possuímos afiliação oficial com a ANAC ou qualquer órgão regulador da aviação civil.',
+    q: 'O Voe Certo é afiliado à ANAC?',
+    a: 'Não. O Voe Certo é uma plataforma independente de simulados e preparação para certificações aeronáuticas. Não possuímos afiliação oficial com a ANAC ou qualquer órgão regulador da aviação civil.',
   },
   {
     q: 'Quantas questões a plataforma possui?',
@@ -211,7 +211,7 @@ export default function Index() {
           {JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'SoftwareApplication',
-            name: 'Voo Certo',
+            name: 'Voe Certo',
             description: 'Plataforma de simulados ANAC com inteligência artificial para preparação de candidatos a certificações aeronáuticas — Comissário, Piloto e Mecânico.',
             operatingSystem: 'Web, Android, iOS',
             applicationCategory: 'EducationalApplication',
@@ -327,7 +327,7 @@ export default function Index() {
                 </motion.div>
 
                 <p className="text-[10px] text-primary-foreground/45 mt-8 max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium text-center lg:text-left">
-                  * O Voo Certo é uma plataforma independente de simulados e preparação para certificações aeronáuticas. Não possuímos afiliação oficial com nenhum órgão regulador da aviação civil.
+                  * O Voe Certo é uma plataforma independente de simulados e preparação para certificações aeronáuticas. Não possuímos afiliação oficial com nenhum órgão regulador da aviação civil.
                 </p>
               </motion.div>
 
@@ -392,7 +392,7 @@ export default function Index() {
                 Estudar para a ANAC Não Precisa<br className="hidden md:block" /> Ser uma Turbulência.
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Se você se identifica com algum desses problemas, o Voo Certo foi feito exatamente para você.
+                Se você se identifica com algum desses problemas, o Voe Certo foi feito exatamente para você.
               </p>
             </motion.div>
 
@@ -428,7 +428,7 @@ export default function Index() {
               <div className="inline-flex items-center gap-3 px-6 py-3 bg-success/10 border border-success/20 rounded-[5px]">
                 <CheckCircle2 className="w-5 h-5 text-success shrink-0" />
                 <p className="text-sm font-bold text-foreground">
-                  O Voo Certo foi criado para resolver{' '}
+                  O Voe Certo foi criado para resolver{' '}
                   <span className="text-success">cada um desses problemas.</span>
                 </p>
               </div>
@@ -503,7 +503,7 @@ export default function Index() {
                 viewport={{ once: true }} className="text-center lg:text-left"
               >
                 <Badge className="mb-4 bg-success text-success-foreground border-0 rounded-[5px] font-bold uppercase text-[10px] tracking-widest px-4 py-1.5 h-auto mx-auto lg:mx-0">
-                  Exclusivo Voo Certo
+                  Exclusivo Voe Certo
                 </Badge>
                 <h2 className="text-2xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
                   Seu Professor Particular<br className="hidden md:block" /> de Aviação,{' '}
@@ -681,7 +681,7 @@ export default function Index() {
                 Muito Além dos Simulados.
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Do primeiro estudo até a contratação — o Voo Certo centraliza tudo que você precisa para decolar na aviação civil.
+                Do primeiro estudo até a contratação — o Voe Certo centraliza tudo que você precisa para decolar na aviação civil.
               </p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 max-w-6xl mx-auto">
@@ -767,7 +767,7 @@ export default function Index() {
                 <Star className="w-3 h-3 mr-2 fill-current" /> Prova Social
               </Badge>
               <h2 className="text-2xl md:text-5xl font-bold text-foreground mb-4">
-                Quem Voou Mais Alto com o Voo Certo.
+                Quem Voou Mais Alto com o Voe Certo.
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
                 Mais de 1.200 candidatos usam nossos simulados, a IA explicativa e os guias de trajetória para chegar preparados no dia da prova.

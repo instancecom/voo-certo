@@ -1256,7 +1256,7 @@ const questoes = [
 ];
 
 // Part 2 will be appended
-const outputPath = 'c:\\Users\\MarceloKamimura\\Documents\\voocerto\\voo-certo\\q_regulamentos.csv';
+const outputPath = 'c:\\Users\\MarceloKamimura\\Documents\\voecerto\\voo-certo\\q_regulamentos.csv';
 
 function escapeCsv(str) {
   const s = String(str || '');

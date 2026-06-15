@@ -201,7 +201,7 @@ export const INSIGNIAS_FALLBACK: Record<string, InsigniaFallbackData> = {
   },
   "Lenda Viva": {
     model_url: "/insignias/lenda-viva.svg",
-    verso_texto: "Você conquistou o topo absoluto. Seu nome já faz parte do hall da fama dos maiores aviadores do Voo Certo."
+    verso_texto: "Você conquistou o topo absoluto. Seu nome já faz parte do hall da fama dos maiores aviadores do Voe Certo."
   },
   "Comandante Lendário": {
     model_url: "/insignias/comandante-lendario.svg",

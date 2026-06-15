@@ -20,10 +20,10 @@ const EmailHeader = () => `
       padding:40px 40px 60px 40px;
       text-align:center;">
       
-      <!-- Logo da Voo Certo -->
+      <!-- Logo da Voe Certo -->
       <img
-        src="https://voocerto.com.br/logo.png" 
-        alt="Voo Certo"
+        src="https://voecerto.com.br/logo.png" 
+        alt="Voe Certo"
         width="180"
         style="max-width:180px; display:block; margin:0 auto 30px auto;"
       />
@@ -164,7 +164,7 @@ const EmailFooter = () => `
         color:#64748b;
         line-height:1.8;
       ">
-        <strong style="color:${COLORS.primary};">Equipe Voo Certo</strong>
+        <strong style="color:${COLORS.primary};">Equipe Voe Certo</strong>
       </p>
       <p style="
         margin:12px 0 0 0;
@@ -186,7 +186,7 @@ export const getTesterInviteHtml = (name: string, durationLabel: string, signUpU
     <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Convite de Tester Estratégico - Voo Certo</title>
+    <title>Convite de Tester Estratégico - Voe Certo</title>
     </head>
     <body style="margin:0; padding:0; background-color:${COLORS.background}; font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif;">
       <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="${COLORS.background}">
@@ -208,7 +208,7 @@ export const getTesterInviteHtml = (name: string, durationLabel: string, signUpU
                   <p style="font-size:17px; color:${COLORS.textMuted}; line-height:1.9;">
                     Você foi selecionado(a) como um
                     <strong style="color:${COLORS.primary};">Tester Estratégico exclusivo</strong>
-                    da plataforma <strong style="color:${COLORS.primary};">Voo Certo</strong>
+                    da plataforma <strong style="color:${COLORS.primary};">Voe Certo</strong>
                     antes do nosso lançamento oficial.
                   </p>
                   

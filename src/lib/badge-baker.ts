@@ -59,7 +59,7 @@ export async function bakeBadgeMetadata(pngBlob: Blob, metadata: BadgeMetadata):
     "badge": {
       "id": `${metadata.origin}/badges/${metadata.badgeId}`,
       "type": "BadgeClass",
-      "name": "Insígnia Voo Certo",
+      "name": "Insígnia Voe Certo",
       "description": "Certificação de competência técnica em aviação.",
       "image": `${metadata.origin}/badge-image.png`,
       "criteria": {
@@ -76,7 +76,7 @@ export async function bakeBadgeMetadata(pngBlob: Blob, metadata: BadgeMetadata):
       "type": "hosted",
       "url": metadata.verifyUrl
     },
-    "extensions:voocerto": {
+    "extensions:voecerto": {
       "approvalId": metadata.approvalId
     }
   };

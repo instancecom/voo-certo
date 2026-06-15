@@ -47,11 +47,11 @@ serve(async (req: any) => {
       },
       body: JSON.stringify({
         // IMPORTANTE: Esse email deve ter um domínio verificado no Resend.
-        // Se você ainda não verificou o domínio voocerto.com.br no Resend,
+        // Se você ainda não verificou o domínio voecerto.com.br no Resend,
         // mude o "from" temporariamente para: 'onboarding@resend.dev'
-        from: 'Voo Certo <onboarding@resend.dev>', 
+        from: 'Voe Certo <onboarding@resend.dev>', 
         to: [userEmail],
-        subject: 'Bem-vindo(a) à Voo Certo ✈️',
+        subject: 'Bem-vindo(a) à Voe Certo ✈️',
         html: htmlContent,
       })
     })

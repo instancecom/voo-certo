@@ -267,7 +267,7 @@ export function CurriculumPreview({ data }: CurriculumPreviewProps) {
 
         {/* Footer */}
         <footer className="px-10 py-8 border-t border-slate-50 text-center">
-          <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.5em]">Gerado via voocerto.com.br</p>
+          <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.5em]">Gerado via voecerto.com.br</p>
         </footer>
 
     </Card>

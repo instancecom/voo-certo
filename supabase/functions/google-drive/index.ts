@@ -88,7 +88,7 @@ async function getValidAccessToken(userId: string) {
   return { accessToken: refreshed.access_token, folderId: tokenData.folder_id };
 }
 
-async function getOrCreateFolder(accessToken: string, folderName = "Insignias VooCerto"): Promise<string> {
+async function getOrCreateFolder(accessToken: string, folderName = "Insignias VoeCerto"): Promise<string> {
   const searchRes = await fetch(
     `https://www.googleapis.com/drive/v3/files?q=name='${folderName}' and mimeType='application/vnd.google-apps.folder' and trashed=false&fields=files(id,name)`,
     { headers: { Authorization: `Bearer ${accessToken}` } }
@@ -268,7 +268,7 @@ Deno.serve(async (req: Request) => {
   <body>
     <div class="container">
       <h2>✅ Google Drive Conectado!</h2>
-      <p>Sua conta foi vinculada com sucesso ao Voo Certo.</p>
+      <p>Sua conta foi vinculada com sucesso ao Voe Certo.</p>
       <div class="status">Pasta configurada e pronta.</div>
       <p>Esta janela fechará automaticamente...</p>
       <div class="loader"></div>
