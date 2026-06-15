@@ -82,32 +82,72 @@ export default function GuiaCarreiraDetailPage() {
 
   const renderDescription = (text: string) => {
     if (!text) return null;
-    const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-    const parts = [];
-    let lastIndex = 0;
-    let match;
-    while ((match = linkRegex.exec(text)) !== null) {
-      if (match.index > lastIndex) {
-        parts.push(text.substring(lastIndex, match.index));
+    
+    const parseLinks = (line: string) => {
+      const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+      const parts = [];
+      let lastIndex = 0;
+      let match;
+      while ((match = linkRegex.exec(line)) !== null) {
+        if (match.index > lastIndex) {
+          parts.push(line.substring(lastIndex, match.index));
+        }
+        parts.push(
+          <a 
+            key={`link-${match.index}`} 
+            href={match[2]} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="text-primary hover:underline font-semibold transition-all duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {match[1]}
+          </a>
+        );
+        lastIndex = match.index + match[0].length;
       }
-      parts.push(
-        <a 
-          key={`link-${match.index}`} 
-          href={match[2]} 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          className="text-primary hover:underline font-medium not-italic"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {match[1]}
-        </a>
-      );
-      lastIndex = match.index + match[0].length;
-    }
-    if (lastIndex < text.length) {
-      parts.push(text.substring(lastIndex));
-    }
-    return parts.length > 0 ? parts : text;
+      if (lastIndex < line.length) {
+        parts.push(line.substring(lastIndex));
+      }
+      return parts.length > 0 ? parts : line;
+    };
+
+    const lines = text.split('\n');
+    return (
+      <div className="space-y-3 mt-4">
+        {lines.map((line, idx) => {
+          const trimmed = line.trim();
+          if (!trimmed) return <div key={idx} className="h-2" />;
+          
+          // Render markdown lists beautifully with icons
+          if (trimmed.startsWith('-') || trimmed.startsWith('*') || trimmed.startsWith('•')) {
+            const content = trimmed.substring(1).trim();
+            return (
+              <motion.div 
+                key={idx} 
+                initial={{ opacity: 0, x: -5 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3 }}
+                className="flex items-start gap-3 my-2 pl-1 group/item"
+              >
+                <span className="w-5 h-5 mt-0.5 rounded-full bg-accent/15 flex items-center justify-center text-accent group-hover/item:bg-accent group-hover/item:text-accent-foreground transition-all duration-300 shrink-0 shadow-sm shadow-accent/5">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                </span>
+                <span className="text-muted-foreground/90 text-sm md:text-[15px] font-medium leading-relaxed">
+                  {parseLinks(content)}
+                </span>
+              </motion.div>
+            );
+          }
+          
+          return (
+            <p key={idx} className="text-muted-foreground/80 text-sm md:text-[15px] leading-relaxed">
+              {parseLinks(line)}
+            </p>
+          );
+        })}
+      </div>
+    );
   };
 
   if (authLoading) {
@@ -208,10 +248,14 @@ export default function GuiaCarreiraDetailPage() {
       </section>
 
       <main className="py-12 bg-background relative">
-        {/* Subtle background icons for aviation theme */}
-        <div className="absolute top-40 right-[10%] opacity-[0.03] pointer-events-none">
-          <Plane className="w-64 h-64 -rotate-45" />
-        </div>
+        {/* Subtle background icons for aviation theme with float animation */}
+        <motion.div 
+          animate={{ y: [0, -15, 0], rotate: [-45, -42, -45] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-40 right-[10%] opacity-[0.03] pointer-events-none"
+        >
+          <Plane className="w-64 h-64" />
+        </motion.div>
 
         <div className="container mx-auto px-4 max-w-4xl">
           {isLoading ? (
@@ -231,10 +275,10 @@ export default function GuiaCarreiraDetailPage() {
                   return (
                     <motion.div
                       key={step.id}
-                      initial={{ opacity: 0, x: -10 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: index * 0.1 }}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: "-100px" }}
+                      transition={{ duration: 0.5, delay: index * 0.05 }}
                       className="group flex gap-4 md:gap-6"
                     >
                       {/* Timeline Icon */}
@@ -255,9 +299,9 @@ export default function GuiaCarreiraDetailPage() {
                       {/* Content Card */}
                       <div className="flex-1 min-w-0 py-1">
                         <Card className={`
-                          overflow-hidden transition-all duration-500 border-none shadow-md hover:shadow-lg
+                          overflow-hidden transition-all duration-500 border-none shadow-md hover:shadow-xl
                           ${isCompleted ? 'bg-card/40 opacity-75 hover:opacity-100 grayscale-[0.2]' : 
-                            isCurrent ? 'bg-gradient-to-br from-card to-accent/5 ring-1 ring-accent/30 scale-[1.02] shadow-xl shadow-accent/5' : 
+                            isCurrent ? 'bg-gradient-to-br from-card via-card to-accent/[0.02] ring-2 ring-accent/20 scale-[1.01] shadow-xl shadow-accent/5' : 
                             'bg-card ring-1 ring-border/50 hover:ring-accent/30 hover:-translate-y-1'}
                         `}>
                           <CardHeader className="p-5 md:p-7 pb-4">
@@ -266,14 +310,10 @@ export default function GuiaCarreiraDetailPage() {
                                 <h3 className={`text-xl md:text-2xl font-extrabold tracking-tight transition-colors ${isCompleted ? 'text-muted-foreground line-through decoration-2' : isCurrent ? 'text-accent' : 'text-foreground'}`}>
                                   {step.title}
                                 </h3>
-                                {step.description && (
-                                  <div className="mt-4 text-muted-foreground/90 text-[15px] md:text-base leading-relaxed whitespace-pre-wrap">
-                                    {renderDescription(step.description)}
-                                  </div>
-                                )}
+                                {step.description && renderDescription(step.description)}
                               </div>
                               {isCurrent && (
-                                <Badge className="bg-accent/10 text-accent border-accent/20 px-3 py-1.5 flex items-center gap-1.5 shrink-0 shadow-sm animate-pulse">
+                                <Badge className="bg-accent/15 text-accent border-accent/20 px-3 py-1.5 flex items-center gap-1.5 shrink-0 shadow-sm animate-pulse">
                                   <PlayCircle className="w-4 h-4" />
                                   <span className="font-bold">Em progresso</span>
                                 </Badge>
@@ -284,7 +324,7 @@ export default function GuiaCarreiraDetailPage() {
                           {(step.simulado_ids?.length > 0 || step.microcourse_ids?.length > 0) && (
                             <CardContent className="p-4 md:p-6 pt-0">
                               {!canAccessGuideContent ? (
-                                <div className="mt-4 flex flex-col md:flex-row md:items-center gap-3 p-4 rounded-[5px] bg-primary/5 border border-primary/10">
+                                <div className="mt-4 flex flex-col md:flex-row md:items-center gap-3 p-4 rounded-[8px] bg-primary/5 border border-primary/10">
                                   <div className="bg-primary/10 p-2 rounded-[5px] shrink-0">
                                     <Lock className="w-5 h-5 text-primary" />
                                   </div>
@@ -304,31 +344,31 @@ export default function GuiaCarreiraDetailPage() {
                                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     {step.simulado_ids?.map(id => (
                                       <Link key={id} to={getSimuladoLink(id)} className="block group/link">
-                                        <div className="flex items-center justify-between p-3 rounded-[5px] border border-border/50 bg-background/50 hover:bg-white hover:border-accent shadow-sm transition-all">
+                                        <div className="flex items-center justify-between p-3.5 rounded-[8px] border border-border/50 bg-background/50 hover:bg-white hover:border-accent shadow-sm hover:shadow-md transition-all duration-300">
                                           <div className="flex items-center gap-3 overflow-hidden">
-                                            <div className="bg-accent/10 p-2 rounded-[5px] group-hover/link:bg-accent group-hover/link:text-accent-foreground transition-colors shrink-0">
+                                            <div className="bg-accent/10 p-2 rounded-[5px] group-hover/link:bg-accent group-hover/link:text-accent-foreground group-hover/link:rotate-12 transition-all duration-300 shrink-0">
                                               <Plane className="w-4 h-4" />
                                             </div>
-                                            <span className="text-sm font-medium truncate group-hover/link:text-accent transition-colors">
+                                            <span className="text-sm font-semibold truncate group-hover/link:text-accent transition-colors">
                                               {getSimuladoLabel(id)}
                                             </span>
                                           </div>
-                                          <ArrowRight className="w-4 h-4 text-muted-foreground opacity-30 group-hover/link:opacity-100 group-hover/link:translate-x-1 transition-all shrink-0" />
+                                          <ArrowRight className="w-4 h-4 text-muted-foreground opacity-30 group-hover/link:opacity-100 group-hover/link:translate-x-1.5 transition-all duration-300 shrink-0" />
                                         </div>
                                       </Link>
                                     ))}
                                     {step.microcourse_ids?.map(id => (
                                       <Link key={id} to="/microcursos" className="block group/link">
-                                        <div className="flex items-center justify-between p-3 rounded-[5px] border border-border/50 bg-background/50 hover:bg-white hover:border-primary shadow-sm transition-all">
+                                        <div className="flex items-center justify-between p-3.5 rounded-[8px] border border-border/50 bg-background/50 hover:bg-white hover:border-primary shadow-sm hover:shadow-md transition-all duration-300">
                                           <div className="flex items-center gap-3 overflow-hidden">
-                                            <div className="bg-primary/10 p-2 rounded-[5px] group-hover/link:bg-primary group-hover/link:text-primary-foreground transition-colors shrink-0">
+                                            <div className="bg-primary/10 p-2 rounded-[5px] group-hover/link:bg-primary group-hover/link:text-primary-foreground group-hover/link:rotate-12 transition-all duration-300 shrink-0">
                                               <GraduationCap className="w-4 h-4" />
                                             </div>
-                                            <span className="text-sm font-medium truncate group-hover/link:text-primary transition-colors">
+                                            <span className="text-sm font-semibold truncate group-hover/link:text-primary transition-colors">
                                               {microcourseMap?.get(id) || 'Microcurso'}
                                             </span>
                                           </div>
-                                          <ArrowRight className="w-4 h-4 text-muted-foreground opacity-30 group-hover/link:opacity-100 group-hover/link:translate-x-1 transition-all shrink-0" />
+                                          <ArrowRight className="w-4 h-4 text-muted-foreground opacity-30 group-hover/link:opacity-100 group-hover/link:translate-x-1.5 transition-all duration-300 shrink-0" />
                                         </div>
                                       </Link>
                                     ))}
