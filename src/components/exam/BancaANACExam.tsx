@@ -366,7 +366,7 @@ function BancaExamInner({
             </Button>
 
             {/* Bubbles — desktop */}
-            <div className="hidden md:flex flex-1 justify-start lg:justify-center gap-1.5 overflow-x-auto scrollbar-none py-1 px-2">
+            <div className="hidden md:flex flex-1 min-w-0 justify-start lg:justify-center gap-1.5 overflow-x-auto scrollbar-none py-1 px-2">
               {blockQuestions.map((q: ShuffledQuestion, index: number) => {
                 const isAnswered = answers[q.id] !== undefined;
                 const isCurrent = index === currentQuestionIndex;
