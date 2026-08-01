@@ -1,10 +1,16 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+};
+
+// URLs reais da Cakto para cada plano do Voe Certo
+const DEFAULT_CAKTO_URLS: Record<string, string> = {
+  solo: "https://pay.cakto.com.br/659x89z_1012189",
+  tripulante: "https://pay.cakto.com.br/o2twp3f_1012195",
+  comandante: "https://pay.cakto.com.br/4wat335_1012197",
 };
 
 serve(async (req) => {
@@ -29,69 +35,61 @@ serve(async (req) => {
     }
 
     const body = await req.json().catch(() => ({}));
-    const { priceId, promotionCodeId } = body;
+    const { planId, priceId, couponCode } = body;
     
-    if (!priceId) {
-      console.error("Missing priceId in body:", body);
-      throw new Error("ID do preço é obrigatório (priceId)");
+    // Mapeamento preciso do plano (solo, tripulante, comandante)
+    let targetPlan = (planId || "").toLowerCase().trim();
+
+    if (!targetPlan || !DEFAULT_CAKTO_URLS[targetPlan]) {
+      const p = (priceId || "").toLowerCase();
+      if (p.includes("solo") || p.includes("1t2s0k")) {
+        targetPlan = "solo";
+      } else if (p.includes("comandante") || p.includes("1t2s1m")) {
+        targetPlan = "comandante";
+      } else {
+        targetPlan = "tripulante";
+      }
     }
 
-    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY") || "";
-    if (!stripeKey) {
-      console.error("STRIPE_SECRET_KEY is not set in environment");
-      throw new Error("Configuração do servidor incompleta (STRIPE_SECRET_KEY ausente)");
+    // 1. Busca URL customizada no ambiente ou usa a URL oficial mapeada
+    let baseUrl = Deno.env.get(`CAKTO_CHECKOUT_${targetPlan.toUpperCase()}`) || DEFAULT_CAKTO_URLS[targetPlan] || DEFAULT_CAKTO_URLS.tripulante;
+
+    if (body.customCheckoutUrl) {
+      baseUrl = body.customCheckoutUrl;
     }
 
-    const stripe = new Stripe(stripeKey, { apiVersion: "2024-06-20" });
-    
-    console.log(`Checking for existing Stripe customer for email: ${user.email}`);
-    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
-    let customerId;
-    if (customers.data.length > 0) {
-      customerId = customers.data[0].id;
-      console.log(`Found existing customer: ${customerId}`);
+    // 2. Anexa de forma segura os parâmetros do usuário (email, src=userId e cupom de desconto)
+    const urlObj = new URL(baseUrl);
+    urlObj.searchParams.set("email", user.email);
+    urlObj.searchParams.set("src", user.id);
+    if (user.user_metadata?.full_name) {
+      urlObj.searchParams.set("name", user.user_metadata.full_name);
     }
 
-    const origin = req.headers.get("origin") || "https://voecerto.app";
-    console.log(`Creating session for price ${priceId} with origin ${origin}`);
-
-    const sessionParams: any = {
-      customer: customerId,
-      customer_email: customerId ? undefined : user.email,
-      line_items: [{ price: priceId, quantity: 1 }],
-      mode: "subscription",
-      subscription_data: { trial_period_days: 7 },
-      success_url: `${origin}/?subscription=success`,
-      cancel_url: `${origin}/premium?canceled=true`,
-    };
-
-    if (promotionCodeId) {
-      sessionParams.discounts = [{ promotion_code: promotionCodeId }];
-    } else {
-      sessionParams.allow_promotion_codes = true;
+    // Se houver cupom de desconto aplicado, anexa na URL do checkout da Cakto
+    if (couponCode) {
+      const formattedCoupon = couponCode.toUpperCase().trim();
+      urlObj.searchParams.set("coupon", formattedCoupon);
+      urlObj.searchParams.set("cupom", formattedCoupon);
     }
 
-    const session = await stripe.checkout.sessions.create(sessionParams);
-    console.log("Checkout session created successfully:", session.id);
+    const checkoutUrl = urlObj.toString();
+    console.log(`Checkout Cakto gerado para plano [${targetPlan}] | Cupom: ${couponCode || 'Nenhum'} | Usuário ${user.id}: ${checkoutUrl}`);
 
-    return new Response(JSON.stringify({ url: session.url }), {
+    return new Response(JSON.stringify({ url: checkoutUrl }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error: any) {
     console.error("Critical Checkout error:", error);
     
-    // Distinguish between Stripe errors and others
-    const errorMessage = error?.message || "Erro desconhecido no servidor";
-    const stripeError = error?.raw?.message || error?.type || null;
+    const errorMessage = error?.message || "Erro desconhecido ao gerar checkout";
 
     return new Response(JSON.stringify({ 
       error: errorMessage,
-      details: stripeError,
-      hint: "Verifique se a STRIPE_SECRET_KEY e os IDs dos produtos estão corretos."
+      hint: "Verifique as configurações de checkout no servidor."
     }), {
       status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 });
-

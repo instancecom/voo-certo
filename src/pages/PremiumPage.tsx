@@ -155,12 +155,14 @@ export default function PremiumPage() {
     }
     setLoading(planId);
     try {
-      const body: any = { priceId };
-      if (appliedCoupon?.stripe_promotion_code_id) {
+      const body: any = { planId, priceId };
+      if (appliedCoupon?.code) {
+        body.couponCode = appliedCoupon.code;
+      } else if (appliedCoupon?.stripe_promotion_code_id) {
         body.promotionCodeId = appliedCoupon.stripe_promotion_code_id;
       }
       
-      console.log('Iniciando checkout para:', priceId);
+      console.log('Iniciando checkout para o plano:', planId, 'com cupom:', appliedCoupon?.code);
       const { data, error } = await supabase.functions.invoke('create-checkout', { body });
       
       if (error) {
@@ -250,46 +252,7 @@ export default function PremiumPage() {
             </motion.div>
           )}
 
-          {/* Coupon Input */}
-          {user && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-12 max-w-md mx-auto">
-              {appliedCoupon ? (
-                <div className="flex items-center gap-3 p-4 rounded-[5px] border border-success/30 bg-success/5">
-                  <Tag className="w-5 h-5 text-success shrink-0" />
-                  <div className="flex-1">
-                    <p className="text-sm font-bold text-foreground">
-                      Cupom <span className="font-mono text-success">{appliedCoupon.code}</span>
-                    </p>
-                    <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">
-                      {appliedCoupon.type === 'percent' ? `${appliedCoupon.value}% OFF` : `R$ ${appliedCoupon.value} OFF`}
-                    </p>
-                  </div>
-                  <Button variant="ghost" size="icon" onClick={removeCoupon} className="hover:bg-destructive/10 hover:text-destructive">
-                    <X className="w-4 h-4" />
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Código Promocional"
-                    value={couponCode}
-                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                    onKeyDown={(e) => e.key === 'Enter' && handleApplyCoupon()}
-                    className="flex-1 rounded-[5px] h-11 font-bold tracking-widest"
-                  />
-                  <Button
-                    variant="outline"
-                    onClick={handleApplyCoupon}
-                    disabled={couponLoading || !couponCode.trim()}
-                    className="gap-2 shrink-0 rounded-[5px] h-11 px-6 font-bold hover-yellow"
-                  >
-                    {couponLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Tag className="w-4 h-4" />}
-                    Aplicar
-                  </Button>
-                </div>
-              )}
-            </motion.div>
-          )}
+
 
           {/* Plans Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch">
@@ -373,9 +336,9 @@ export default function PremiumPage() {
             <h2 className="text-2xl font-black text-foreground mb-12 text-center uppercase tracking-tighter">Perguntas Frequentes</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
-                { q: 'Posso cancelar quando quiser?', a: 'Sim! A gestão é 100% autônoma através do portal Stripe no seu perfil. Sem multas.' },
+                { q: 'Posso cancelar quando quiser?', a: 'Sim! A gestão do plano é 100% autônoma através da plataforma da Cakto no seu perfil. Sem multas.' },
                 { q: 'O trial de 7 dias é realmente grátis?', a: 'Completamente. O primeiro pagamento ocorre apenas no 8º dia caso não cancele antes.' },
-                { q: 'Quais os métodos de pagamento?', a: 'Aceitamos cartões de crédito e PIX via Stripe, garantindo total segurança.' },
+                { q: 'Quais os métodos de pagamento?', a: 'Aceitamos cartões de crédito e PIX via Cakto, garantindo aprovação rápida e total segurança.' },
                 { q: 'As questões são atualizadas?', a: 'Nossa equipe revisa o banco de questões constantemente com base nos exames da ANAC.' },
               ].map((faq, i) => (
                 <Card key={i} className="rounded-[5px] bg-muted/20 border-border/50 shadow-none">
@@ -420,7 +383,7 @@ export default function PremiumPage() {
                 {loading === 'manage' ? 'Acessando Portal Seguro' : 'Processando sua Escolha'}
               </h3>
               <p className="text-muted-foreground font-bold text-[10px] uppercase tracking-[0.2em] px-8 leading-loose opacity-80">
-                Transferindo você para o ambiente de faturamento seguro da Stripe.
+                Transferindo você para o ambiente de faturamento seguro da Cakto.
               </p>
             </motion.div>
           </motion.div>

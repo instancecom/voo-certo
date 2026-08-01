@@ -2,8 +2,8 @@ import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  User, Briefcase, GraduationCap, Award, Plus, Trash2,
-  Download, Save, Loader2, Lock, FileText, Sparkles, Layout, Globe, Star, ArrowRight, Shield
+  User, Briefcase, GraduationCap, Award, Plus, Trash2, X,
+  Download, Save, Loader2, Lock, FileText, Sparkles, Layout, Globe, Star, ArrowRight, Shield, MessageSquare, Edit3, CheckCircle2, Lightbulb
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,7 +11,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
@@ -20,48 +19,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { usePlan } from '@/hooks/usePlan';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
-import { CurriculumPreview } from '@/components/curriculum/CurriculumPreview';
-
-interface Experience {
-  company: string;
-  role: string;
-  start: string;
-  end: string;
-  description: string;
-}
-
-interface Education {
-  institution: string;
-  degree: string;
-  year: string;
-}
-
-interface Certificate {
-  name: string;
-  issuer: string;
-  year: string;
-}
-
-interface Language {
-  name: string;
-  level: string;
-}
-
-interface CurriculumData {
-  full_name: string;
-  email: string;
-  phone: string;
-  city: string;
-  profession: string;
-  summary: string;
-  experience: Experience[];
-  education: Education[];
-  certificates: Certificate[];
-  languages: Language[];
-  skills: string[];
-  photo_url: string;
-  template: string;
-}
+import { CurriculumPreview, CurriculumData, Experience, Education, Certificate, Language } from '@/components/curriculum/CurriculumPreview';
+import { CurriculumChatAssistant } from '@/components/curriculum/CurriculumChatAssistant';
 
 const EMPTY_DATA: CurriculumData = {
   full_name: '',
@@ -75,610 +34,794 @@ const EMPTY_DATA: CurriculumData = {
   certificates: [],
   languages: [],
   skills: [],
-  photo_url: '',
-  template: 'classico',
+  template: 'ats',
+  recommended_template: 'ats',
+  recommendation_reason: '',
 };
 
 const TEMPLATES = [
-  { id: 'elite', name: 'Elite', icon: Shield, desc: 'Alta performance (Navy)' },
-  { id: 'executivo', name: 'Executivo', icon: Briefcase, desc: 'Minimalista e sério' },
-  { id: 'moderno', name: 'Skyline', icon: Sparkles, desc: 'Moderno e dinâmico' },
+  { 
+    id: 'ats', 
+    name: 'Digital / ATS', 
+    icon: FileText, 
+    badge: 'Compatível com Gupy/LinkedIn',
+    desc: 'Coluna única ultra-limpa, sem gráficos ou tabelas. Leitura 100% perfeita para robôs de triagem automática de RH.' 
+  },
+  { 
+    id: 'geral', 
+    name: 'Profissional Geral', 
+    icon: Briefcase, 
+    badge: 'Ideal para E-mail',
+    desc: 'Visual corporativo refinado com cabeçalho azul marinho. Excelente para enviar em PDF como anexo de e-mail.' 
+  },
+  { 
+    id: 'presencial', 
+    name: 'Presencial (Papel)', 
+    icon: Shield, 
+    badge: 'Alto Impacto Visual',
+    desc: 'Design de alto contraste com foco visual marcante, pensado especificamente para leitura presencial em folha impressa.' 
+  },
 ];
 
 export default function CurriculumPage() {
   const { user } = useAuth();
   const { canSaveCurriculum } = usePlan();
   const queryClient = useQueryClient();
+  
+  const [mode, setMode] = useState<'chat' | 'editor'>('chat');
   const [data, setData] = useState<CurriculumData>(EMPTY_DATA);
   const [newSkill, setNewSkill] = useState('');
   const [activeTab, setActiveTab] = useState('dados');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [mode, setMode] = useState<'edit' | 'preview'>('edit');
+  const [isEnhancingSection, setIsEnhancingSection] = useState<string | null>(null);
 
+  // Carrega currículo salvo anteriormente no Supabase
   const { isLoading: loadingSaved } = useQuery({
     queryKey: ['curriculum', user?.id],
     queryFn: async () => {
       if (!user) return null;
-      const { data: saved } = await supabase
-        .from('curriculum_data')
+      const { data: curriculum, error } = await supabase
+        .from('user_curriculums')
         .select('*')
         .eq('user_id', user.id)
         .maybeSingle();
-      if (saved) {
-        setData({
-          full_name: saved.full_name || '',
-          email: saved.email || '',
-          phone: saved.phone || '',
-          city: saved.city || '',
-          profession: saved.profession || '',
-          summary: saved.summary || '',
-          experience: (saved.experience as unknown as Experience[]) || [],
-          education: (saved.education as unknown as Education[]) || [],
-          certificates: (saved.certificates as unknown as Certificate[]) || [],
-          languages: (saved.languages as unknown as Language[]) || [],
-          skills: saved.skills || [],
-          photo_url: saved.photo_url || '',
-          template: saved.template || 'elite',
-        });
+
+      if (error) throw error;
+      if (curriculum?.content) {
+        const parsed = typeof curriculum.content === 'string' ? JSON.parse(curriculum.content) : curriculum.content;
+        setData({ ...EMPTY_DATA, ...parsed });
+        // Se já tiver dados salvos, exibe a tela de edição/preview
+        if (parsed.full_name) {
+          setMode('editor');
+        }
       }
-      return saved;
+      return curriculum;
     },
     enabled: !!user,
   });
 
+  // Salvar currículo no Supabase
   const saveMutation = useMutation({
     mutationFn: async () => {
-      if (!user) throw new Error('Not authenticated');
-      const payload = {
-        user_id: user.id,
-        full_name: data.full_name,
-        email: data.email,
-        phone: data.phone,
-        city: data.city,
-        profession: data.profession,
-        summary: data.summary,
-        experience: data.experience as unknown as Record<string, unknown>[],
-        education: data.education as unknown as Record<string, unknown>[],
-        certificates: data.certificates as unknown as Record<string, unknown>[],
-        languages: data.languages as unknown as Record<string, unknown>[],
-        skills: data.skills,
-        photo_url: data.photo_url,
-        template: data.template,
-      };
-      const { error } = await (supabase.from('curriculum_data') as any).upsert(payload, { onConflict: 'user_id' });
+      if (!user) throw new Error('Faça login para salvar');
+      const { error } = await supabase
+        .from('user_curriculums')
+        .upsert({
+          user_id: user.id,
+          content: data,
+          updated_at: new Date().toISOString(),
+        }, { onConflict: 'user_id' });
+
       if (error) throw error;
     },
     onSuccess: () => {
       toast.success('Currículo salvo com sucesso!');
-      queryClient.invalidateQueries({ queryKey: ['curriculum'] });
+      queryClient.invalidateQueries({ queryKey: ['curriculum', user?.id] });
     },
-    onError: () => toast.error('Erro ao salvar currículo.'),
+    onError: (err: any) => toast.error(`Erro ao salvar: ${err.message}`),
   });
 
-  // Handlers
-  const addExperience = () => setData(p => ({ ...p, experience: [...p.experience, { company: '', role: '', start: '', end: '', description: '' }] }));
-  const updateExperience = (i: number, field: keyof Experience, value: string) => setData(p => ({ ...p, experience: p.experience.map((e, idx) => idx === i ? { ...e, [field]: value } : e) }));
-  const removeExperience = (i: number) => setData(p => ({ ...p, experience: p.experience.filter((_, idx) => idx !== i) }));
-  
-  const addEducation = () => setData(p => ({ ...p, education: [...p.education, { institution: '', degree: '', year: '' }] }));
-  const updateEducation = (i: number, field: keyof Education, value: string) => setData(p => ({ ...p, education: p.education.map((e, idx) => idx === i ? { ...e, [field]: value } : e) }));
-  
-  const addCertificate = () => setData(p => ({ ...p, certificates: [...p.certificates, { name: '', issuer: '', year: '' }] }));
-  const addLanguage = () => setData(p => ({ ...p, languages: [...p.languages, { name: '', level: 'Básico' }] }));
-  
-  const addSkill = () => {
-    if (newSkill.trim() && !data.skills.includes(newSkill.trim())) {
-      setData(p => ({ ...p, skills: [...p.skills, newSkill.trim()] }));
-      setNewSkill('');
+  // Quando a IA gera o currículo pelo Chat Assistant
+  const handleCurriculumGenerated = (generatedData: any) => {
+    const updated: CurriculumData = {
+      ...EMPTY_DATA,
+      ...generatedData,
+      template: generatedData.recommended_template || 'ats',
+    };
+    setData(updated);
+    setMode('editor');
+    
+    // Tenta salvar automaticamente para o usuário
+    if (user) {
+      saveMutation.mutate();
     }
   };
 
-  const downloadPDF = async () => {
-    setIsGenerating(true);
+  // Melhorar um trecho específico com IA no editor manual
+  const handleEnhanceWithAI = async (sectionName: string, textToEnhance: string, onSuccess: (enhanced: string) => void) => {
+    if (!textToEnhance.trim()) {
+      toast.error('Digite algum texto antes de pedir a melhoria por IA.');
+      return;
+    }
+    setIsEnhancingSection(sectionName);
+    toast.info(`IA refinando texto da seção [${sectionName}]...`);
+
     try {
-      const { default: jsPDF } = await import('jspdf');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const w = pdf.internal.pageSize.getWidth();
-      const h = pdf.internal.pageSize.getHeight();
-      let y = 0;
+      const { data: resData, error } = await supabase.functions.invoke('curriculum-ai-assistant', {
+        body: {
+          action: 'enhance_section',
+          sectionName,
+          textToEnhance,
+        },
+      });
 
-      const template = data.template || 'elite';
-      const isElite = template === 'elite';
-      const isExecutivo = template === 'executivo';
-      const isModerno = template === 'moderno';
-
-      const colors = {
-        elite: { p: [26, 35, 58] as [number, number, number], light: [248, 250, 252] as [number, number, number] },
-        executivo: { p: [15, 23, 42] as [number, number, number], light: [255, 255, 255] as [number, number, number] },
-        moderno: { p: [37, 99, 235] as [number, number, number], light: [248, 250, 252] as [number, number, number] },
-      };
-      const c = colors[template as keyof typeof colors] || colors.elite;
-
-      // Header
-      if (isElite) {
-        pdf.setFillColor(...c.p);
-        pdf.rect(0, 0, w, 50, 'F');
-        pdf.setTextColor(255, 255, 255);
-      } else if (isExecutivo) {
-        pdf.setTextColor(...c.p);
-      } else {
-        pdf.setFillColor(248, 250, 252);
-        pdf.rect(0, 0, w, 50, 'F');
-        pdf.setDrawColor(226, 232, 240);
-        pdf.line(0, 50, w, 50);
-        pdf.setTextColor(...c.p);
+      if (error) throw error;
+      if (resData?.enhancedText) {
+        onSuccess(resData.enhancedText);
+        toast.success(`Seção [${sectionName}] aprimorada com sucesso!`);
       }
-
-      // Name & Profession
-      pdf.setFont('helvetica', 'bold');
-      
-      // Dynamic Font Size for Name
-      const name = data.full_name.toUpperCase();
-      let nameFontSize = 24;
-      if (name.length > 20) nameFontSize = 20;
-      if (name.length > 30) nameFontSize = 16;
-      if (name.length > 40) nameFontSize = 14;
-      
-      pdf.setFontSize(nameFontSize);
-      
-      if (isExecutivo) {
-        pdf.text(name, w / 2, 25, { align: 'center' });
-        pdf.setFontSize(10);
-        pdf.setTextColor(100);
-        pdf.text(data.profession.toUpperCase(), w / 2, 33, { align: 'center' });
-      } else {
-        pdf.text(name, 15, 25);
-        pdf.setFontSize(10);
-        pdf.setTextColor(isElite ? 150 : c.p[0], isElite ? 150 : c.p[1], isElite ? 150 : c.p[2]);
-        pdf.text(data.profession.toUpperCase(), 15, 33);
-      }
-
-      // Contact Info
-      pdf.setFontSize(8);
-      pdf.setTextColor(isElite ? 200 : 120);
-      const contactStr = [data.email, data.phone, data.city].filter(Boolean).join('  |  ');
-      if (isExecutivo) pdf.text(contactStr, w / 2, 42, { align: 'center' });
-      else pdf.text(contactStr, 15, 42);
-
-      // Reset text color for body
-      pdf.setTextColor(30, 41, 59);
-      y = 65;
-
-      // Layout structure
-      const hasSidebar = isElite || isModerno;
-      const contentW = hasSidebar ? w * 0.58 : w - 30;
-      const sidebarX = isElite ? 15 : w * 0.65;
-      const mainX = isElite ? w * 0.38 : 15;
-      const sidebarW = w * 0.28;
-
-      if (isElite) {
-         pdf.setFillColor(248, 250, 252);
-         pdf.rect(0, 50, w * 0.35, h - 50, 'F');
-         pdf.setDrawColor(241, 245, 249);
-         pdf.line(w * 0.35, 50, w * 0.35, h);
-      } else if (isModerno) {
-         pdf.setDrawColor(241, 245, 249);
-         pdf.line(w * 0.62, 50, w * 0.62, h);
-      }
-
-      const sectionTitle = (title: string, xPos: number, width: number) => {
-        pdf.setFontSize(10);
-        pdf.setFont('helvetica', 'bold');
-        pdf.setTextColor(...c.p);
-        pdf.text(title.toUpperCase(), xPos, y);
-        y += 2;
-        pdf.setDrawColor(241, 245, 249);
-        pdf.line(xPos, y, xPos + width, y);
-        y += 8;
-        pdf.setTextColor(40, 40, 40);
-      };
-
-      const checkPage = (added: number) => {
-        if (y + added > 280) { 
-           pdf.addPage(); 
-           y = 20; 
-           if (isElite) {
-             pdf.setFillColor(248, 250, 252);
-             pdf.rect(0, 0, w * 0.35, h, 'F');
-             pdf.setDrawColor(241, 245, 249);
-             pdf.line(w * 0.35, 0, w * 0.35, h);
-           }
-        }
-      };
-
-      // Helper for Sidebar content
-      const drawSidebar = () => {
-        const savedY = y;
-        y = 65;
-        const x = sidebarX;
-        const width = sidebarW;
-
-        if (data.skills.length > 0) {
-          sectionTitle('Competências', x, width);
-          pdf.setFont('helvetica', 'normal');
-          pdf.setFontSize(8);
-          data.skills.forEach(s => {
-            pdf.text(`• ${s}`, x, y);
-            y += 5;
-          });
-          y += 10;
-        }
-
-        if (data.languages.length > 0) {
-          sectionTitle('Idiomas', x, width);
-          data.languages.forEach(l => {
-            pdf.setFont('helvetica', 'bold');
-            pdf.setFontSize(8);
-            pdf.text(l.name.toUpperCase(), x, y);
-            pdf.setFont('helvetica', 'normal');
-            pdf.text(l.level, x + width, y, { align: 'right' });
-            y += 6;
-          });
-          y += 10;
-        }
-
-        if (data.certificates.length > 0) {
-          sectionTitle('Certificações', x, width);
-          data.certificates.forEach(cert => {
-            pdf.setFont('helvetica', 'bold');
-            pdf.setFontSize(8);
-            pdf.text(cert.name, x, y);
-            y += 4;
-            pdf.setFont('helvetica', 'normal');
-            pdf.setFontSize(7);
-            pdf.setTextColor(120);
-            pdf.text(`${cert.issuer} (${cert.year})`, x, y);
-            y += 8;
-            pdf.setTextColor(40, 40, 40);
-          });
-        }
-        
-        return y;
-      };
-
-      // Draw Sidebar if needed
-      let sidebarEndY = 0;
-      if (hasSidebar) sidebarEndY = drawSidebar();
-
-      // Main Content
-      y = 65;
-      const mainContentX = mainX;
-      const mainContentW = contentW;
-
-      if (data.summary) {
-        sectionTitle('Perfil Profissional', mainContentX, mainContentW);
-        pdf.setFontSize(9);
-        pdf.setFont('helvetica', 'normal');
-        const lines = pdf.splitTextToSize(data.summary, mainContentW);
-        pdf.text(lines, mainContentX, y);
-        y += (lines.length * 4.5) + 12;
-      }
-
-      if (data.experience.length > 0) {
-        sectionTitle('Trajetória Profissional', mainContentX, mainContentW);
-        data.experience.forEach(exp => {
-          checkPage(30);
-          pdf.setFont('helvetica', 'bold');
-          pdf.setFontSize(10);
-          pdf.text(exp.role.toUpperCase(), mainContentX, y);
-          pdf.setFontSize(8);
-          pdf.setTextColor(...c.p);
-          pdf.text(`${exp.company.toUpperCase()} | ${exp.start} - ${exp.end || 'Atual'}`, mainContentX, y + 5);
-          y += 10;
-          if (exp.description) {
-            pdf.setTextColor(80);
-            pdf.setFont('helvetica', 'normal');
-            const descLines = pdf.splitTextToSize(exp.description, mainContentW - 2);
-            pdf.text(descLines, mainContentX, y);
-            y += (descLines.length * 4.2) + 6;
-          }
-        });
-        y += 8;
-      }
-
-      if (data.education.length > 0) {
-        sectionTitle('Formação Acadêmica', mainContentX, mainContentW);
-        data.education.forEach(edu => {
-          checkPage(15);
-          pdf.setFont('helvetica', 'bold');
-          pdf.setFontSize(9);
-          pdf.text(edu.degree.toUpperCase(), mainContentX, y);
-          pdf.setFont('helvetica', 'normal');
-          pdf.setFontSize(8);
-          pdf.text(`${edu.institution.toUpperCase()} (${edu.year})`, mainContentX, y + 4);
-          y += 12;
-        });
-      }
-
-      // Executivo specific skills/langs at bottom
-      if (isExecutivo) {
-         y += 10;
-         pdf.setDrawColor(241, 245, 249);
-         pdf.line(15, y, w - 15, y);
-         y += 10;
-         
-         const half = (w - 40) / 2;
-         const startY = y;
-         
-         if (data.skills.length > 0) {
-            sectionTitle('Competências', 15, half);
-            pdf.setFontSize(8);
-            pdf.text(data.skills.join('  •  '), 15, y);
-         }
-         
-         y = startY;
-         if (data.languages.length > 0) {
-            sectionTitle('Idiomas', 25 + half, half);
-            pdf.setFontSize(8);
-            pdf.text(data.languages.map(l => `${l.name} (${l.level})`).join('  •  '), 25 + half, y);
-         }
-      }
-
-      pdf.save(`curriculo_${data.full_name.replace(/\s+/g, '_').toLowerCase()}.pdf`);
-    } catch (error) {
-      console.error(error);
-      toast.error('Erro ao gerar PDF.');
+    } catch (err: any) {
+      toast.error(`Falha ao melhorar com IA: ${err.message || 'Erro inesperado'}`);
     } finally {
-      setIsGenerating(false);
+      setIsEnhancingSection(null);
     }
   };
 
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <main className="pt-24 pb-12 flex items-center justify-center">
-          <Card className="max-w-md p-10 text-center border-2 rounded-[5px] shadow-xl">
-            <div className="w-20 h-20 rounded-[5px] bg-muted flex items-center justify-center mx-auto mb-6">
-              <Lock className="w-10 h-10 text-muted-foreground opacity-30" />
-            </div>
-            <h2 className="text-2xl font-black mb-2">Acesso Restrito</h2>
-            <p className="text-muted-foreground mb-8">Faça login para criar seu currículo profissional na aviação.</p>
-            <Button asChild className="h-12 px-8 rounded-[5px] font-bold"><Link to="/auth">Fazer Login</Link></Button>
-          </Card>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
+  // Imprimir / Baixar em PDF
+  const handleDownloadPDF = () => {
+    window.print();
+  };
+
+  // Helpers para edição manual
+  const updateField = (field: keyof CurriculumData, value: any) => {
+    setData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const addExperience = () => {
+    setData(prev => ({
+      ...prev,
+      experience: [...prev.experience, { company: '', role: '', start: '', end: '', description: '' }],
+    }));
+  };
+
+  const updateExperience = (index: number, field: keyof Experience, value: string) => {
+    setData(prev => {
+      const updated = [...prev.experience];
+      updated[index] = { ...updated[index], [field]: value };
+      return { ...prev, experience: updated };
+    });
+  };
+
+  const removeExperience = (index: number) => {
+    setData(prev => ({
+      ...prev,
+      experience: prev.experience.filter((_, i) => i !== index),
+    }));
+  };
+
+  const addEducation = () => {
+    setData(prev => ({
+      ...prev,
+      education: [...prev.education, { institution: '', degree: '', year: '' }],
+    }));
+  };
+
+  const updateEducation = (index: number, field: keyof Education, value: string) => {
+    setData(prev => {
+      const updated = [...prev.education];
+      updated[index] = { ...updated[index], [field]: value };
+      return { ...prev, education: updated };
+    });
+  };
+
+  const removeEducation = (index: number) => {
+    setData(prev => ({
+      ...prev,
+      education: prev.education.filter((_, i) => i !== index),
+    }));
+  };
+
+  const addCertificate = () => {
+    setData(prev => ({
+      ...prev,
+      certificates: [...prev.certificates, { name: '', issuer: '', year: '' }],
+    }));
+  };
+
+  const updateCertificate = (index: number, field: keyof Certificate, value: string) => {
+    setData(prev => {
+      const updated = [...prev.certificates];
+      updated[index] = { ...updated[index], [field]: value };
+      return { ...prev, certificates: updated };
+    });
+  };
+
+  const removeCertificate = (index: number) => {
+    setData(prev => ({
+      ...prev,
+      certificates: prev.certificates.filter((_, i) => i !== index),
+    }));
+  };
+
+  const addLanguage = () => {
+    setData(prev => ({
+      ...prev,
+      languages: [...prev.languages, { name: '', level: 'Intermediário' }],
+    }));
+  };
+
+  const updateLanguage = (index: number, field: keyof Language, value: string) => {
+    setData(prev => {
+      const updated = [...prev.languages];
+      updated[index] = { ...updated[index], [field]: value };
+      return { ...prev, languages: updated };
+    });
+  };
+
+  const removeLanguage = (index: number) => {
+    setData(prev => ({
+      ...prev,
+      languages: prev.languages.filter((_, i) => i !== index),
+    }));
+  };
+
+  const addSkill = () => {
+    if (!newSkill.trim()) return;
+    setData(prev => ({ ...prev, skills: [...prev.skills, newSkill.trim()] }));
+    setNewSkill('');
+  };
+
+  const removeSkill = (index: number) => {
+    setData(prev => ({ ...prev, skills: prev.skills.filter((_, i) => i !== index) }));
+  };
 
   return (
-    <div className="min-h-screen bg-background bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/5 via-background to-background">
-      <Header />
-      <main className="pt-24 pb-20">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <header className="mb-12 text-center lg:text-left flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 justify-center lg:justify-start">
-                <Badge className="bg-primary/10 text-primary border-none font-black px-3 py-1 rounded-[5px] text-[10px]">CAREER BUILDER</Badge>
-              </div>
-              <h1 className="text-4xl lg:text-5xl font-black text-foreground tracking-tighter">
-                Construtor de Currículo
+    <div className="min-h-screen bg-background flex flex-col print:bg-white print:p-0">
+      <div className="print:hidden">
+        <Header />
+      </div>
+
+      <main className="flex-1 container mx-auto px-4 py-8 print:p-0 print:m-0">
+        {/* Banner de Título Superior (Oculto na impressão) */}
+        <div className="print:hidden mb-8">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-6">
+            <div>
+              <h1 className="text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
+                <FileText className="w-8 h-8 text-primary" />
+                Criador de Currículos com IA
               </h1>
-              <p className="text-muted-foreground font-medium max-w-xl">
-                Crie um perfil profissional vencedor e baixe em PDF.
+              <p className="text-muted-foreground mt-1 text-sm font-medium">
+                Crie um currículo profissional em minutos através de conversa guiada por inteligência artificial.
               </p>
             </div>
-            
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending} variant="outline" className="h-12 px-6 rounded-[5px] border-2 font-bold bg-white/50 backdrop-blur-sm hover:bg-white transition-all">
-                {saveMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-                Salvar Progresso
+
+            {/* Alternador de Modo: Chat IA vs Editor Manual */}
+            <div className="flex items-center gap-2 bg-muted/60 p-1.5 rounded-xl border border-border shrink-0">
+              <Button
+                variant={mode === 'chat' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setMode('chat')}
+                className="gap-2 font-bold text-xs rounded-lg"
+              >
+                <MessageSquare className="w-4 h-4" />
+                Assistente IA (Chat)
               </Button>
-              <Button onClick={downloadPDF} disabled={isGenerating} variant="accent" className="h-12 px-8 rounded-[5px] font-black shadow-xl shadow-accent/20 group hover:scale-105 transition-all">
-                {isGenerating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2 group-hover:bounce" />}
-                Baixar PDF agora
+              <Button
+                variant={mode === 'editor' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setMode('editor')}
+                className="gap-2 font-bold text-xs rounded-lg"
+              >
+                <Edit3 className="w-4 h-4" />
+                Editor & Visualização
               </Button>
             </div>
-          </header>
+          </div>
+        </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* Editor Sidebar */}
-            <div className={`lg:col-span-5 space-y-6 ${mode === 'preview' ? 'hidden lg:block' : ''}`}>
-               <Card className="rounded-[5px] border-2 shadow-sm overflow-hidden bg-white/80 backdrop-blur-xl border-slate-200">
-                  <Tabs value={activeTab} onValueChange={setActiveTab}>
-                    <div className="px-6 pt-6">
-                      <TabsList className="grid grid-cols-5 bg-slate-100/50 p-1.5 h-12 rounded-xl border border-slate-200/50 backdrop-blur-sm">
-                        <TabsTrigger value="modelo" title="Modelo" className="rounded-lg data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all duration-300">
-                          <Layout className="w-4 h-4" />
-                        </TabsTrigger>
-                        <TabsTrigger value="dados" title="Dados" className="rounded-lg data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all duration-300">
-                          <User className="w-4 h-4" />
-                        </TabsTrigger>
-                        <TabsTrigger value="experiencia" title="Experiências" className="rounded-lg data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all duration-300">
-                          <Briefcase className="w-4 h-4" />
-                        </TabsTrigger>
-                        <TabsTrigger value="formacao" title="Formação" className="rounded-lg data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all duration-300">
-                          <GraduationCap className="w-4 h-4" />
-                        </TabsTrigger>
-                        <TabsTrigger value="extras" title="Extras" className="rounded-lg data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all duration-300">
-                          <Award className="w-4 h-4" />
-                        </TabsTrigger>
-                      </TabsList>
-                    </div>
+        {/* ------------------------------------------------------------- */}
+        {/* MODO 1: CONVERSA COM IA (CHAT ASSISTANT)                      */}
+        {/* ------------------------------------------------------------- */}
+        {mode === 'chat' && (
+          <div className="print:hidden py-4">
+            <CurriculumChatAssistant
+              onCurriculumGenerated={handleCurriculumGenerated}
+              userEmail={user?.email}
+              userName={user?.user_metadata?.full_name}
+            />
+          </div>
+        )}
 
-                    <div className="p-6">
-                      <TabsContent value="modelo" className="mt-0 space-y-4">
-                        <div className="space-y-1 mb-6">
-                          <h3 className="font-black text-sm uppercase tracking-widest text-primary">1. Escolha o Estilo</h3>
-                          <p className="text-xs text-muted-foreground">O layout ideal para seu momento de carreira.</p>
+        {/* ------------------------------------------------------------- */}
+        {/* MODO 2: EDITOR & VISUALIZAÇÃO                                 */}
+        {/* ------------------------------------------------------------- */}
+        {mode === 'editor' && (
+          <div className="space-y-6">
+            {/* Template Selector Bar (Oculto na impressão) */}
+            <Card className="print:hidden border-border bg-card shadow-sm">
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                  <div>
+                    <h3 className="font-bold text-base text-foreground flex items-center gap-2">
+                      <Layout className="w-5 h-5 text-primary" />
+                      Escolha o Modelo de Currículo
+                    </h3>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Alterne entre os modelos otimizados conforme o tipo de vaga ou envio desejado.
+                    </p>
+                  </div>
+
+                  {/* Ações Rápidas de Salvar & Baixar */}
+                  <div className="flex items-center gap-2">
+                    {user && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => saveMutation.mutate()}
+                        disabled={saveMutation.isPending}
+                        className="gap-2 font-bold text-xs"
+                      >
+                        {saveMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                        Salvar
+                      </Button>
+                    )}
+
+                    <Button
+                      size="sm"
+                      onClick={handleDownloadPDF}
+                      className="gap-2 font-bold text-xs bg-primary text-primary-foreground hover:bg-primary/90"
+                    >
+                      <Download className="w-4 h-4" />
+                      Baixar PDF
+                    </Button>
+
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setMode('chat')}
+                      className="gap-2 font-bold text-xs text-muted-foreground hover:text-foreground"
+                    >
+                      <MessageSquare className="w-4 h-4" />
+                      Refazer Chat
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Grid dos 3 Modelos */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {TEMPLATES.map((tmpl) => {
+                    const isSelected = (data.template || 'ats').toLowerCase() === tmpl.id;
+                    const isRecommended = data.recommended_template === tmpl.id;
+                    const Icon = tmpl.icon;
+
+                    return (
+                      <div
+                        key={tmpl.id}
+                        onClick={() => updateField('template', tmpl.id)}
+                        className={`
+                          cursor-pointer p-4 rounded-xl border-2 transition-all relative flex flex-col justify-between
+                          ${isSelected ? 'border-primary bg-primary/5 shadow-md' : 'border-border hover:border-primary/40 bg-muted/20'}
+                        `}
+                      >
+                        <div>
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-bold text-sm text-foreground flex items-center gap-2">
+                              <Icon className={`w-4 h-4 ${isSelected ? 'text-primary' : 'text-muted-foreground'}`} />
+                              {tmpl.name}
+                            </span>
+                            <Badge variant={isSelected ? 'default' : 'secondary'} className="text-[10px] font-bold">
+                              {tmpl.badge}
+                            </Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground leading-relaxed mb-3">
+                            {tmpl.desc}
+                          </p>
                         </div>
-                        <div className="grid grid-cols-1 gap-3">
-                          {TEMPLATES.map(t => (
-                            <button
-                              key={t.id}
-                              onClick={() => setData(p => ({ ...p, template: t.id }))}
-                              className={`p-4 rounded-[5px] border-2 transition-all flex items-center gap-4 text-left ${data.template === t.id ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'border-slate-100 hover:border-primary/20 bg-slate-50/50'}`}
+
+                        {isRecommended && (
+                          <div className="flex items-center gap-1.5 text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-md border border-amber-500/20 mt-2">
+                            <Sparkles className="w-3 h-3 shrink-0" /> Recomendado pela IA para sua situação
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Justificativa da Recomendação da IA (se houver) */}
+                {data.recommendation_reason && (
+                  <div className="mt-4 p-3 rounded-lg bg-primary/5 border border-primary/20 text-xs text-primary flex items-start gap-2">
+                    <Lightbulb className="w-4 h-4 shrink-0 mt-0.5" />
+                    <span><strong>Por que a IA escolheu este modelo:</strong> {data.recommendation_reason}</span>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Split Screen: Form Editor (Esquerda) vs Curriculum Preview (Direita) */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              {/* Formulário de Edição Manual (Oculto na impressão) */}
+              <div className="print:hidden lg:col-span-5 space-y-6">
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                  <TabsList className="grid grid-cols-4 w-full bg-muted/60">
+                    <TabsTrigger value="dados" className="text-xs font-bold">Dados</TabsTrigger>
+                    <TabsTrigger value="experiencia" className="text-xs font-bold">Experiência</TabsTrigger>
+                    <TabsTrigger value="formacao" className="text-xs font-bold">Formação</TabsTrigger>
+                    <TabsTrigger value="extras" className="text-xs font-bold">Extras</TabsTrigger>
+                  </TabsList>
+
+                  {/* TAB 1: Dados Pessoais & Resumo */}
+                  <TabsContent value="dados" className="space-y-4 mt-4">
+                    <Card>
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-sm font-bold flex items-center gap-2">
+                          <User className="w-4 h-4 text-primary" /> Dados Pessoais & Objetivo
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div>
+                          <Label className="text-xs font-bold">Nome Completo</Label>
+                          <Input
+                            value={data.full_name}
+                            onChange={(e) => updateField('full_name', e.target.value)}
+                            placeholder="Ex: Ana Maria Silva"
+                            className="mt-1 text-xs"
+                          />
+                        </div>
+
+                        <div>
+                          <Label className="text-xs font-bold">Cargo Desejado / Área</Label>
+                          <Input
+                            value={data.profession}
+                            onChange={(e) => updateField('profession', e.target.value)}
+                            placeholder="Ex: Comissária de Bordo / ANAC CCT"
+                            className="mt-1 text-xs"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <Label className="text-xs font-bold">E-mail</Label>
+                            <Input
+                              value={data.email}
+                              onChange={(e) => updateField('email', e.target.value)}
+                              placeholder="seu.email@exemplo.com"
+                              className="mt-1 text-xs"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-xs font-bold">Telefone</Label>
+                            <Input
+                              value={data.phone}
+                              onChange={(e) => updateField('phone', e.target.value)}
+                              placeholder="(11) 98888-7777"
+                              className="mt-1 text-xs"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <Label className="text-xs font-bold">Cidade e Estado</Label>
+                          <Input
+                            value={data.city}
+                            onChange={(e) => updateField('city', e.target.value)}
+                            placeholder="Ex: São Paulo - SP"
+                            className="mt-1 text-xs"
+                          />
+                        </div>
+
+                        <div>
+                          <div className="flex items-center justify-between mb-1">
+                            <Label className="text-xs font-bold">Resumo / Perfil Profissional</Label>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              disabled={isEnhancingSection === 'summary'}
+                              onClick={() => handleEnhanceWithAI('Resumo Profissional', data.summary, (enhanced) => updateField('summary', enhanced))}
+                              className="h-6 px-2 text-[10px] text-primary hover:bg-primary/10 gap-1 font-bold"
                             >
-                              <div className={`w-10 h-10 rounded-[5px] flex items-center justify-center ${data.template === t.id ? 'bg-primary text-white' : 'bg-white text-slate-400 border'}`}>
-                                <t.icon className="w-5 h-5" />
+                              {isEnhancingSection === 'summary' ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3 text-amber-500" />}
+                              Melhorar com IA
+                            </Button>
+                          </div>
+                          <Textarea
+                            rows={4}
+                            value={data.summary}
+                            onChange={(e) => updateField('summary', e.target.value)}
+                            placeholder="Breve resumo com suas qualificações..."
+                            className="text-xs leading-relaxed"
+                          />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+
+                  {/* TAB 2: Experiência Profissional */}
+                  <TabsContent value="experiencia" className="space-y-4 mt-4">
+                    <Card>
+                      <CardHeader className="pb-3 flex flex-row items-center justify-between">
+                        <CardTitle className="text-sm font-bold flex items-center gap-2">
+                          <Briefcase className="w-4 h-4 text-primary" /> Histórico Profissional
+                        </CardTitle>
+                        <Button size="sm" variant="outline" onClick={addExperience} className="h-7 text-xs font-bold gap-1">
+                          <Plus className="w-3.5 h-3.5" /> Adicionar
+                        </Button>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        {data.experience.length === 0 ? (
+                          <p className="text-xs text-muted-foreground text-center py-4">Nenhuma experiência adicionada. Clique em Adicionar se tiver histórico prévio.</p>
+                        ) : (
+                          data.experience.map((exp, idx) => (
+                            <div key={idx} className="p-3 border border-border rounded-lg bg-muted/20 space-y-3 relative">
+                              <div className="flex justify-between items-center">
+                                <span className="text-xs font-bold text-primary">Experiência #{idx + 1}</span>
+                                <Button variant="ghost" size="icon" onClick={() => removeExperience(idx)} className="h-6 w-6 text-destructive">
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </Button>
                               </div>
-                              <div className="flex-1">
-                                <span className={`text-xs font-black uppercase block ${data.template === t.id ? 'text-primary' : 'text-slate-600'}`}>{t.name}</span>
-                                <span className="text-[10px] text-muted-foreground font-medium">{t.desc}</span>
+
+                              <div className="grid grid-cols-2 gap-2">
+                                <div>
+                                  <Label className="text-[10px] font-bold">Empresa</Label>
+                                  <Input
+                                    value={exp.company}
+                                    onChange={(e) => updateExperience(idx, 'company', e.target.value)}
+                                    placeholder="Ex: Latam / Hotel XYZ"
+                                    className="text-xs h-8"
+                                  />
+                                </div>
+                                <div>
+                                  <Label className="text-[10px] font-bold">Cargo</Label>
+                                  <Input
+                                    value={exp.role}
+                                    onChange={(e) => updateExperience(idx, 'role', e.target.value)}
+                                    placeholder="Ex: Atendente de Solo"
+                                    className="text-xs h-8"
+                                  />
+                                </div>
                               </div>
-                              {data.template === t.id && <Star className="w-4 h-4 text-primary fill-primary" />}
-                            </button>
+
+                              <div className="grid grid-cols-2 gap-2">
+                                <div>
+                                  <Label className="text-[10px] font-bold">Início</Label>
+                                  <Input
+                                    value={exp.start}
+                                    onChange={(e) => updateExperience(idx, 'start', e.target.value)}
+                                    placeholder="Ex: 2021"
+                                    className="text-xs h-8"
+                                  />
+                                </div>
+                                <div>
+                                  <Label className="text-[10px] font-bold">Fim</Label>
+                                  <Input
+                                    value={exp.end}
+                                    onChange={(e) => updateExperience(idx, 'end', e.target.value)}
+                                    placeholder="Ex: 2023 ou Atual"
+                                    className="text-xs h-8"
+                                  />
+                                </div>
+                              </div>
+
+                              <div>
+                                <div className="flex items-center justify-between mb-1">
+                                  <Label className="text-[10px] font-bold">Atividades e Conquistas</Label>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    disabled={isEnhancingSection === `exp_${idx}`}
+                                    onClick={() => handleEnhanceWithAI('Descrição da Experiência', exp.description, (enhanced) => updateExperience(idx, 'description', enhanced))}
+                                    className="h-5 px-1.5 text-[9px] text-primary hover:bg-primary/10 gap-1 font-bold"
+                                  >
+                                    {isEnhancingSection === `exp_${idx}` ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3 text-amber-500" />}
+                                    Refinar com IA
+                                  </Button>
+                                </div>
+                                <Textarea
+                                  rows={2}
+                                  value={exp.description}
+                                  onChange={(e) => updateExperience(idx, 'description', e.target.value)}
+                                  placeholder="Descrição das responsabilidades..."
+                                  className="text-xs"
+                                />
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+
+                  {/* TAB 3: Formação Acadêmica */}
+                  <TabsContent value="formacao" className="space-y-4 mt-4">
+                    <Card>
+                      <CardHeader className="pb-3 flex flex-row items-center justify-between">
+                        <CardTitle className="text-sm font-bold flex items-center gap-2">
+                          <GraduationCap className="w-4 h-4 text-primary" /> Formação Acadêmica
+                        </CardTitle>
+                        <Button size="sm" variant="outline" onClick={addEducation} className="h-7 text-xs font-bold gap-1">
+                          <Plus className="w-3.5 h-3.5" /> Adicionar
+                        </Button>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        {data.education.map((edu, idx) => (
+                          <div key={idx} className="p-3 border border-border rounded-lg bg-muted/20 space-y-2 relative">
+                            <div className="flex justify-between items-center">
+                              <span className="text-xs font-bold text-primary">Formação #{idx + 1}</span>
+                              <Button variant="ghost" size="icon" onClick={() => removeEducation(idx)} className="h-6 w-6 text-destructive">
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </Button>
+                            </div>
+                            <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                <Label className="text-[10px] font-bold">Curso / Grau</Label>
+                                <Input
+                                  value={edu.degree}
+                                  onChange={(e) => updateEducation(idx, 'degree', e.target.value)}
+                                  placeholder="Ex: Aviação Civil"
+                                  className="text-xs h-8"
+                                />
+                              </div>
+                              <div>
+                                <Label className="text-[10px] font-bold">Instituição</Label>
+                                <Input
+                                  value={edu.institution}
+                                  onChange={(e) => updateEducation(idx, 'institution', e.target.value)}
+                                  placeholder="Ex: Anhembi Morumbi"
+                                  className="text-xs h-8"
+                                />
+                              </div>
+                            </div>
+                            <div>
+                              <Label className="text-[10px] font-bold">Ano de Conclusão</Label>
+                              <Input
+                                value={edu.year}
+                                onChange={(e) => updateEducation(idx, 'year', e.target.value)}
+                                placeholder="Ex: 2023"
+                                className="text-xs h-8"
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+
+                  {/* TAB 4: Certificados, Idiomas & Habilidades */}
+                  <TabsContent value="extras" className="space-y-4 mt-4">
+                    {/* Cursos & Certificações */}
+                    <Card>
+                      <CardHeader className="pb-3 flex flex-row items-center justify-between">
+                        <CardTitle className="text-sm font-bold flex items-center gap-2">
+                          <Award className="w-4 h-4 text-primary" /> Cursos & Certificações ANAC
+                        </CardTitle>
+                        <Button size="sm" variant="outline" onClick={addCertificate} className="h-7 text-xs font-bold gap-1">
+                          <Plus className="w-3.5 h-3.5" /> Adicionar
+                        </Button>
+                      </CardHeader>
+                      <CardContent className="space-y-2">
+                        {data.certificates.map((cert, idx) => (
+                          <div key={idx} className="p-2 border border-border rounded bg-muted/20 grid grid-cols-12 gap-2 items-center">
+                            <div className="col-span-5">
+                              <Input
+                                value={cert.name}
+                                onChange={(e) => updateCertificate(idx, 'name', e.target.value)}
+                                placeholder="Ex: CCT ANAC Comissário"
+                                className="text-xs h-7"
+                              />
+                            </div>
+                            <div className="col-span-4">
+                              <Input
+                                value={cert.issuer}
+                                onChange={(e) => updateCertificate(idx, 'issuer', e.target.value)}
+                                placeholder="Órgão/Escola"
+                                className="text-xs h-7"
+                              />
+                            </div>
+                            <div className="col-span-2">
+                              <Input
+                                value={cert.year}
+                                onChange={(e) => updateCertificate(idx, 'year', e.target.value)}
+                                placeholder="Ano"
+                                className="text-xs h-7"
+                              />
+                            </div>
+                            <div className="col-span-1 text-right">
+                              <Button variant="ghost" size="icon" onClick={() => removeCertificate(idx)} className="h-6 w-6 text-destructive">
+                                <Trash2 className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+
+                    {/* Idiomas */}
+                    <Card>
+                      <CardHeader className="pb-3 flex flex-row items-center justify-between">
+                        <CardTitle className="text-sm font-bold flex items-center gap-2">
+                          <Globe className="w-4 h-4 text-primary" /> Idiomas
+                        </CardTitle>
+                        <Button size="sm" variant="outline" onClick={addLanguage} className="h-7 text-xs font-bold gap-1">
+                          <Plus className="w-3.5 h-3.5" /> Adicionar
+                        </Button>
+                      </CardHeader>
+                      <CardContent className="space-y-2">
+                        {data.languages.map((lang, idx) => (
+                          <div key={idx} className="flex gap-2 items-center">
+                            <Input
+                              value={lang.name}
+                              onChange={(e) => updateLanguage(idx, 'name', e.target.value)}
+                              placeholder="Idioma (ex: Inglês)"
+                              className="text-xs h-8 flex-1"
+                            />
+                            <Input
+                              value={lang.level}
+                              onChange={(e) => updateLanguage(idx, 'level', e.target.value)}
+                              placeholder="Nível (ex: Avançado)"
+                              className="text-xs h-8 flex-1"
+                            />
+                            <Button variant="ghost" size="icon" onClick={() => removeLanguage(idx)} className="h-8 w-8 text-destructive">
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </Button>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+
+                    {/* Habilidades */}
+                    <Card>
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-sm font-bold flex items-center gap-2">
+                          <Star className="w-4 h-4 text-primary" /> Competências & Habilidades
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        <div className="flex gap-2">
+                          <Input
+                            value={newSkill}
+                            onChange={(e) => setNewSkill(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && addSkill()}
+                            placeholder="Ex: Gestão de Crises, CRM, Atendimento VIP..."
+                            className="text-xs h-8 flex-1"
+                          />
+                          <Button size="sm" onClick={addSkill} className="h-8 text-xs font-bold">Adicionar</Button>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                          {data.skills.map((skill, idx) => (
+                            <Badge key={idx} variant="secondary" className="gap-1 text-xs">
+                              {skill}
+                              <X className="w-3 h-3 cursor-pointer hover:text-destructive" onClick={() => removeSkill(idx)} />
+                            </Badge>
                           ))}
                         </div>
-                        <Button className="w-full mt-6 rounded-[5px] font-bold h-11" onClick={() => setActiveTab('dados')}>Próximo Passo: Dados Pessoais <ArrowRight className="w-4 h-4 ml-2" /></Button>
-                      </TabsContent>
-
-                  <TabsContent value="dados" className="mt-0 space-y-4">
-                    <div className="grid grid-cols-1 gap-4">
-                      <div className="space-y-2">
-                        <Label className="font-black text-[10px] uppercase ml-1 opacity-70">Nome Completo</Label>
-                        <Input placeholder="Seu nome" value={data.full_name} onChange={e => setData(p => ({ ...p, full_name: e.target.value }))} className="h-11 rounded-[5px]" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="font-black text-[10px] uppercase ml-1 opacity-70">Cargo / Profissão</Label>
-                        <Input placeholder="Ex: Comissário de Voo" value={data.profession} onChange={e => setData(p => ({ ...p, profession: e.target.value }))} className="h-11 rounded-[5px]" />
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label className="font-black text-[10px] uppercase ml-1 opacity-70">E-mail</Label>
-                          <Input placeholder="email@exemplo.com" value={data.email} onChange={e => setData(p => ({ ...p, email: e.target.value }))} className="h-11 rounded-[5px]" />
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="font-black text-[10px] uppercase ml-1 opacity-70">Telefone</Label>
-                          <Input placeholder="(00) 00000-0000" value={data.phone} onChange={e => setData(p => ({ ...p, phone: e.target.value }))} className="h-11 rounded-[5px]" />
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="font-black text-[10px] uppercase ml-1 opacity-70">Cidade/UF</Label>
-                        <Input placeholder="Ex: São Paulo, SP" value={data.city} onChange={e => setData(p => ({ ...p, city: e.target.value }))} className="h-11 rounded-[5px]" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="font-black text-[10px] uppercase ml-1 opacity-70">Resumo Profissional</Label>
-                        <Textarea placeholder="Breve resumo sobre você..." value={data.summary} onChange={e => setData(p => ({ ...p, summary: e.target.value }))} className="rounded-[5px] min-h-[120px]" />
-                      </div>
-                    </div>
+                      </CardContent>
+                    </Card>
                   </TabsContent>
+                </Tabs>
+              </div>
 
-                  <TabsContent value="experiencia" className="mt-0 space-y-4">
-                    <div className="flex items-center justify-between mb-4">
-                       <h3 className="font-black text-xs uppercase tracking-widest text-primary">Experiências</h3>
-                       <Button variant="outline" size="sm" onClick={addExperience} className="rounded-[5px] h-8 px-3 border-2"><Plus className="w-3 h-3 mr-1" /> Novo</Button>
-                    </div>
-                    <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
-                      {data.experience.map((exp, i) => (
-                        <div key={i} className="p-4 rounded-[5px] border-2 bg-white/50 relative group space-y-3">
-                          <Button variant="ghost" size="sm" onClick={() => removeExperience(i)} className="absolute top-2 right-2 h-7 w-7 p-0 rounded-[5px] text-red-500 hover:bg-red-50"><Trash2 className="w-3.5 h-3.5" /></Button>
-                          <Input placeholder="Empresa" value={exp.company} onChange={e => updateExperience(i, 'company', e.target.value)} className="h-10 rounded-[5px]" />
-                          <Input placeholder="Cargo" value={exp.role} onChange={e => updateExperience(i, 'role', e.target.value)} className="h-10 rounded-[5px]" />
-                          <div className="grid grid-cols-2 gap-3">
-                            <Input placeholder="Início" value={exp.start} onChange={e => updateExperience(i, 'start', e.target.value)} className="h-10 rounded-[5px]" />
-                            <Input placeholder="Fim (ou Atual)" value={exp.end} onChange={e => updateExperience(i, 'end', e.target.value)} className="h-10 rounded-[5px]" />
-                          </div>
-                          <Textarea placeholder="Atividades principais..." value={exp.description} onChange={e => updateExperience(i, 'description', e.target.value)} className="rounded-[5px] min-h-[80px] text-xs" />
-                        </div>
-                      ))}
-                    </div>
-                  </TabsContent>
+              {/* Pré-visualização do Currículo (Visualização Direta na Direita) */}
+              <div className="lg:col-span-7 print:col-span-12">
+                <div className="sticky top-20">
+                  <div className="print:hidden mb-3 flex items-center justify-between">
+                    <span className="text-xs font-bold text-muted-foreground flex items-center gap-1.5">
+                      <CheckCircle2 className="w-4 h-4 text-success" />
+                      Visualização em Tempo Real ({TEMPLATES.find(t => t.id === (data.template || 'ats').toLowerCase())?.name})
+                    </span>
+                    <span className="text-[10px] text-muted-foreground font-mono">
+                      Formato A4 (210mm x 297mm)
+                    </span>
+                  </div>
 
-                  <TabsContent value="formacao" className="mt-0 space-y-4">
-                    <div className="flex items-center justify-between mb-4">
-                       <h3 className="font-black text-xs uppercase tracking-widest text-primary">Educação</h3>
-                       <Button variant="outline" size="sm" onClick={addEducation} className="rounded-[5px] h-8 px-3 border-2"><Plus className="w-3 h-3 mr-1" /> Novo</Button>
-                    </div>
-                    <div className="space-y-4">
-                      {data.education.map((edu, i) => (
-                        <div key={i} className="p-4 rounded-[5px] border-2 bg-white/50 space-y-3">
-                          <Input placeholder="Instituição" value={edu.institution} onChange={e => updateEducation(i, 'institution', e.target.value)} className="h-10 rounded-[5px]" />
-                          <Input placeholder="Grau / Curso" value={edu.degree} onChange={e => updateEducation(i, 'degree', e.target.value)} className="h-10 rounded-[5px]" />
-                          <Input placeholder="Ano de Conclusão" value={edu.year} onChange={e => updateEducation(i, 'year', e.target.value)} className="h-10 rounded-[5px]" />
-                        </div>
-                      ))}
-                    </div>
-                  </TabsContent>
-
-                  <TabsContent value="extras" className="mt-0 space-y-8">
-                    <div className="space-y-4">
-                      <Label className="font-black text-[10px] uppercase ml-1 opacity-70">Competências</Label>
-                      <div className="flex gap-2">
-                        <Input placeholder="Ex: Liderança" value={newSkill} onChange={e => setNewSkill(e.target.value)} onKeyDown={e => e.key === 'Enter' && addSkill()} className="h-11 rounded-[5px]" />
-                        <Button variant="outline" onClick={addSkill} className="h-11 rounded-[5px] bg-white"><Plus className="w-4 h-4" /></Button>
-                      </div>
-                      <div className="flex flex-wrap gap-2 pt-2">
-                        {data.skills.map((s, i) => (
-                          <Badge key={i} variant="secondary" className="px-3 py-1.5 rounded-[5px] font-bold text-[10px] cursor-pointer hover:bg-red-50 hover:text-red-500 border-2" onClick={() => setData(p => ({ ...p, skills: p.skills.filter((_, idx) => idx !== i) }))}>{s} ✕</Badge>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="space-y-4 pt-4 border-t">
-                      <div className="flex items-center justify-between">
-                         <Label className="font-black text-[10px] uppercase ml-1 opacity-70">Idiomas</Label>
-                         <Button variant="ghost" size="sm" onClick={addLanguage} className="h-7 text-xs font-black text-primary"><Plus className="w-3 h-3 mr-1" /> ADICIONAR</Button>
-                      </div>
-                      <div className="space-y-3">
-                        {data.languages.map((l, i) => (
-                          <div key={i} className="flex gap-2">
-                            <Input placeholder="Idioma" value={l.name} onChange={e => setData(p => ({ ...p, languages: p.languages.map((item, idx) => idx === i ? { ...item, name: e.target.value } : item) }))} className="h-10 rounded-[5px] flex-1" />
-                            <Select value={l.level} onValueChange={v => setData(p => ({ ...p, languages: p.languages.map((item, idx) => idx === i ? { ...item, level: v } : item) }))}>
-                              <SelectTrigger className="w-[120px] h-10 rounded-[5px]">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="Básico">Básico</SelectItem>
-                                <SelectItem value="Intermediário">Intermediário</SelectItem>
-                                <SelectItem value="Avançado">Avançado</SelectItem>
-                                <SelectItem value="Fluente">Fluente</SelectItem>
-                                <SelectItem value="Nativo">Nativo</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="space-y-4 pt-4 border-t">
-                      <div className="flex items-center justify-between">
-                         <Label className="font-black text-[10px] uppercase ml-1 opacity-70">Certificações</Label>
-                         <Button variant="ghost" size="sm" onClick={addCertificate} className="h-7 text-xs font-black text-primary"><Plus className="w-3 h-3 mr-1" /> ADICIONAR</Button>
-                      </div>
-                      <div className="space-y-3">
-                        {data.certificates.map((c, i) => (
-                          <div key={i} className="p-3 border-2 rounded-[5px] bg-white/30 space-y-2">
-                             <Input placeholder="Nome do Certificado" value={c.name} onChange={e => setData(p => ({ ...p, certificates: p.certificates.map((item, idx) => idx === i ? { ...item, name: e.target.value } : item) }))} className="h-9 rounded-[5px]" />
-                             <div className="grid grid-cols-2 gap-2">
-                               <Input placeholder="Emissor" value={c.issuer} onChange={e => setData(p => ({ ...p, certificates: p.certificates.map((item, idx) => idx === i ? { ...item, issuer: e.target.value } : item) }))} className="h-9 rounded-[5px]" />
-                               <Input placeholder="Ano" value={c.year} onChange={e => setData(p => ({ ...p, certificates: p.certificates.map((item, idx) => idx === i ? { ...item, year: e.target.value } : item) }))} className="h-9 rounded-[5px]" />
-                             </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </TabsContent>
-                    </div>
-                  </Tabs>
-              </Card>
-            </div>
-
-            {/* Preview Column */}
-            <div className={`lg:col-span-7 ${mode === 'edit' ? 'hidden lg:block' : ''}`}>
-              <div className="sticky top-24">
-                <div className="bg-white rounded-[5px] shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden transition-all duration-700 transform hover:scale-[1.01]">
-                   <CurriculumPreview data={data} />
-                </div>
-                <div className="mt-4 flex items-center justify-center gap-2">
-                   <div className="flex items-center gap-1.5 px-3 py-1 bg-slate-100 rounded-full border border-slate-200">
-                      <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                      <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Preview em tempo real</span>
-                   </div>
+                  <CurriculumPreview data={data} />
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </main>
-      <Footer />
 
-      {/* Mobile Mode Toggle */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 lg:hidden z-50">
-        <Button onClick={() => setMode(p => p === 'edit' ? 'preview' : 'edit')} className="rounded-[5px] h-12 px-6 shadow-2xl font-black uppercase tracking-widest text-[10px] gap-2">
-          {mode === 'edit' ? <><Sparkles className="w-4 h-4" /> Visualizar</> : <><Plus className="w-4 h-4" /> Editar Dados</>}
-        </Button>
+      <div className="print:hidden">
+        <Footer />
       </div>
     </div>
   );

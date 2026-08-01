@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
@@ -17,10 +16,7 @@ serve(async (req) => {
   );
 
   try {
-    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    if (!stripeKey) throw new Error("STRIPE_SECRET_KEY not set");
-
-    // Verify admin
+    // Autenticação do Administrador
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) throw new Error("No authorization header");
     const token = authHeader.replace("Bearer ", "");
@@ -32,52 +28,22 @@ serve(async (req) => {
     const { data: isAdminData } = await supabaseClient.rpc("is_admin", { _user_id: user.id });
     if (!isAdminData) throw new Error("Admin access required");
 
-    const stripe = new Stripe(stripeKey, { apiVersion: "2024-06-20" });
     const body = await req.json();
     const { action } = body;
 
+    // Ação 1: Criar Cupom de Desconto no Banco de Dados do Voe Certo
     if (action === "create") {
       const { code, type, value, plan_id, starts_at, ends_at, max_uses, max_uses_per_user, min_amount, duration, duration_in_months } = body;
 
-      // Create Stripe coupon with duration
-      const couponParams: any = {
-        name: code,
-        duration: duration || 'once',
-      };
-
-      if (duration === 'repeating' && duration_in_months) {
-        couponParams.duration_in_months = duration_in_months;
+      if (!code || !value) {
+        throw new Error("Código do cupom e valor são obrigatórios.");
       }
 
-      if (type === "percent") {
-        couponParams.percent_off = value;
-      } else {
-        couponParams.amount_off = Math.round(value * 100); // cents
-        couponParams.currency = "brl";
-      }
-      if (max_uses) couponParams.max_redemptions = max_uses;
-      if (ends_at) couponParams.redeem_by = Math.floor(new Date(ends_at).getTime() / 1000);
-
-      if (plan_id) {
-        couponParams.metadata = { aplicavel_a: plan_id };
-      } else {
-        couponParams.metadata = { aplicavel_a: 'todos' };
-      }
-
-      const stripeCoupon = await stripe.coupons.create(couponParams);
-
-      // Create promotion code in Stripe
-      const promoCode = await stripe.promotionCodes.create({
-        coupon: stripeCoupon.id,
-        code: code.toUpperCase(),
-        active: true,
-      });
-
-      // Save to Supabase
+      // Salva o cupom no Supabase
       const { data: couponData, error: couponError } = await supabaseClient
         .from("coupons")
         .insert({
-          code: code.toUpperCase(),
+          code: code.toUpperCase().trim(),
           type,
           value,
           plan_id: plan_id || null,
@@ -86,9 +52,8 @@ serve(async (req) => {
           max_uses: max_uses || null,
           max_uses_per_user: max_uses_per_user || 1,
           min_amount: min_amount || null,
-          stripe_coupon_id: stripeCoupon.id,
-          stripe_promotion_code_id: promoCode.id,
           created_by: user.id,
+          is_active: true,
           duration: duration || 'once',
           duration_in_months: duration === 'repeating' ? duration_in_months : null,
         })
@@ -102,6 +67,7 @@ serve(async (req) => {
       });
     }
 
+    // Ação 2: Listar Cupons
     if (action === "list") {
       const { data, error } = await supabaseClient
         .from("coupons")
@@ -115,18 +81,9 @@ serve(async (req) => {
       });
     }
 
+    // Ação 3: Ativar / Desativar Cupom
     if (action === "toggle") {
       const { coupon_id, is_active } = body;
-
-      const { data: coupon } = await supabaseClient
-        .from("coupons")
-        .select("stripe_promotion_code_id")
-        .eq("id", coupon_id)
-        .single();
-
-      if (coupon?.stripe_promotion_code_id) {
-        await stripe.promotionCodes.update(coupon.stripe_promotion_code_id, { active: is_active });
-      }
 
       const { error } = await supabaseClient
         .from("coupons")
@@ -140,18 +97,9 @@ serve(async (req) => {
       });
     }
 
+    // Ação 4: Excluir Cupom
     if (action === "delete") {
       const { coupon_id } = body;
-
-      const { data: coupon } = await supabaseClient
-        .from("coupons")
-        .select("stripe_coupon_id")
-        .eq("id", coupon_id)
-        .single();
-
-      if (coupon?.stripe_coupon_id) {
-        try { await stripe.coupons.del(coupon.stripe_coupon_id); } catch { /* ignore */ }
-      }
 
       const { error } = await supabaseClient
         .from("coupons")
@@ -165,10 +113,10 @@ serve(async (req) => {
       });
     }
 
-    throw new Error("Invalid action");
-  } catch (error) {
+    throw new Error("Ação inválida");
+  } catch (error: any) {
     console.error("manage-coupons error:", error);
-    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }), {
+    return new Response(JSON.stringify({ error: error?.message || "Unknown error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

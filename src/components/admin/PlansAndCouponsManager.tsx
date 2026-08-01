@@ -154,7 +154,7 @@ export function PlansAndCouponsManager() {
             ))}
           </div>
           <p className="text-xs text-muted-foreground mt-3">
-            Para alterar preços, crie novos preços no Stripe Dashboard e atualize os Price IDs no código.
+            Para gerenciar os planos e ofertas de checkout, acesse o painel da Cakto e configure a URL dos links de checkout.
           </p>
         </CardContent>
       </Card>
@@ -284,7 +284,7 @@ export function PlansAndCouponsManager() {
                   disabled={createMutation.isPending || !isFormValid}
                 >
                   {createMutation.isPending && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
-                  Criar Cupom no Stripe
+                  Criar Cupom de Desconto
                 </Button>
               </div>
             </DialogContent>

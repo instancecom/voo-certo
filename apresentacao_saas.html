@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Voe Certo - Apresentação SaaS</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+    
+    @page {
+      size: A4 landscape;
+      margin: 0;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #cbd5e1;
+      background-color: #0b0f19;
+      line-height: 1.5;
+      font-size: 11pt;
+      -webkit-print-color-adjust: exact;
+    }
+    
+    /* Slide Layout */
+    .slide {
+      width: 297mm;
+      height: 210mm;
+      padding: 20mm;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: radial-gradient(circle at 80% 20%, #1e1b4b 0%, #09090b 100%);
+      page-break-after: always;
+    }
+    
+    .slide::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: radial-gradient(circle at 10% 80%, rgba(56, 189, 248, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 90% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    
+    /* Top Header of Slide */
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+      z-index: 10;
+    }
+    
+    .slide-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .slide-logo svg {
+      width: 24px;
+      height: 24px;
+      fill: #38bdf8;
+    }
+    
+    .slide-logo span {
+      font-size: 14pt;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+    }
+    
+    .slide-category {
+      font-size: 8pt;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.1);
+      padding: 4px 10px;
+      border-radius: 100px;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+    
+    /* Main Content Area */
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      z-index: 10;
+    }
+    
+    .slide-title {
+      font-size: 26pt;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 20px;
+      letter-spacing: -1px;
+      background: linear-gradient(to right, #ffffff, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    /* Slide Footer */
+    .slide-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 12px;
+      font-size: 8pt;
+      color: #64748b;
+      z-index: 10;
+    }
+    
+    .slide-number {
+      font-weight: 600;
+      color: #475569;
+    }
+    
+    /* Cover Slide Styling */
+    .cover-slide {
+      justify-content: space-between;
+      background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #030712 100%);
+    }
+    
+    .cover-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    
+    .cover-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 100px;
+      font-size: 9pt;
+      font-weight: 700;
+      color: #818cf8;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+    }
+    
+    .cover-title-large {
+      font-size: 54pt;
+      line-height: 1.1;
+      font-weight: 800;
+      letter-spacing: -2px;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #ffffff 0%, #38bdf8 50%, #6366f1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .cover-subtitle {
+      font-size: 16pt;
+      color: #94a3b8;
+      max-width: 700px;
+      margin-bottom: 40px;
+      font-weight: 300;
+    }
+    
+    .cover-svg {
+      width: 120px;
+      height: 120px;
+      fill: #38bdf8;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.4));
+    }
+    
+    /* Layouts: Cards Grid */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+    }
+    
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+    }
+    
+    /* Glassmorphic Card */
+    .glass-card {
+      background: rgba(30, 41, 59, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+    }
+    
+    .card-accent {
+      border-left: 4px solid #38bdf8;
+    }
+    
+    .card-accent-purple {
+      border-left: 4px solid #818cf8;
+    }
+    
+    .card-accent-emerald {
+      border-left: 4px solid #34d399;
+    }
+    
+    .card-title {
+      font-size: 14pt;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .card-title svg {
+      width: 20px;
+      height: 20px;
+      fill: #38bdf8;
+    }
+    
+    .card-text {
+      font-size: 10pt;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+    
+    .bullet-list {
+      list-style: none;
+      margin-top: 10px;
+    }
+    
+    .bullet-list li {
+      position: relative;
+      padding-left: 20px;
+      margin-bottom: 8px;
+      font-size: 9.5pt;
+      color: #cbd5e1;
+    }
+    
+    .bullet-list li::before {
+      content: "✦";
+      position: absolute;
+      left: 0;
+      color: #38bdf8;
+    }
+    
+    /* Highlight block */
+    .highlight-block {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(99, 102, 241, 0.15) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+    }
+    
+    .highlight-title {
+      font-size: 18pt;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+    
+    .big-stat {
+      font-size: 36pt;
+      font-weight: 800;
+      color: #38bdf8;
+      line-height: 1;
+      margin: 10px 0;
+    }
+    
+    .tagline {
+      font-size: 11pt;
+      color: #34d399;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SLIDE 1: CAPA -->
+  <div class="slide cover-slide">
+    <div></div>
+    <div class="cover-content">
+      <svg class="cover-svg" viewBox="0 0 24 24">
+        <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L14 19v-5.5l8 2.5z"/>
+      </svg>
+      <span class="cover-badge">Apresentação de Negócios</span>
+      <h1 class="cover-title-large">Voe Certo</h1>
+      <p class="cover-subtitle">Acelerando a aprovação e a empregabilidade de comissários de voo com simulados realistas e inteligência artificial.</p>
+    </div>
+    <div class="slide-footer" style="border-top: none;">
+      <span>by Instance</span>
+      <span>Julho 2026</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: O PROBLEMA -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-logo">
+        <svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L14 19v-5.5l8 2.5z"/></svg>
+        <span>Voe Certo</span>
+      </div>
+      <span class="slide-category">O Cenário</span>
+    </div>
+    <div class="slide-body">
+      <h2 class="slide-title">O Desafio dos Candidatos ANAC</h2>
+      <div class="grid-2">
+        <div class="glass-card card-accent" style="border-left-color: #ef4444;">
+          <div>
+            <h3 class="card-title" style="color: #f87171;">
+              <svg viewBox="0 0 24 24" style="fill: #f87171;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+              Complexidade & Pressão
+            </h3>
+            <p class="card-text">A banca oficial da ANAC para comissários é rigorosa, cronometrada e abrange quatro disciplinas densas e distintas. A falta de preparação sob condições de tempo idênticas às reais gera ansiedade e altos índices de reprovação.</p>
+          </div>
+          <ul class="bullet-list">
+            <li>Meteorologia, regulamentos, teoria de voo e motores.</li>
+            <li>Pressão de tempo elevada (apenas 2h para a prova).</li>
+            <li>Interface de teste oficial intimidadora.</li>
+          </ul>
+        </div>
+        <div class="glass-card card-accent" style="border-left-color: #f59e0b;">
+          <div>
+            <h3 class="card-title" style="color: #fbbf24;">
+              <svg viewBox="0 0 24 24" style="fill: #fbbf24;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+              Estudo Desestruturado
+            </h3>
+            <p class="card-text">Os candidatos dependem de apostilas estáticas em PDF, listas de exercícios desatualizadas no WhatsApp e não conseguem medir sua evolução por disciplina para atacar seus pontos fracos de forma direcionada.</p>
+          </div>
+          <ul class="bullet-list">
+            <li>Ausência de gabaritos explicados de forma pedagógica.</li>
+            <li>Falta de simulação de fit cultural para seleção aérea.</li>
+            <li>Dificuldade em expor qualificações para os recrutadores.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Voe Certo SaaS</span>
+      <span class="slide-number">02 / 09</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: A SOLUÇÃO -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-logo">
+        <svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L14 19v-5.5l8 2.5z"/></svg>
+        <span>Voe Certo</span>
+      </div>
+      <span class="slide-category">A Plataforma</span>
+    </div>
+    <div class="slide-body">
+      <h2 class="slide-title">A Solução: Voe Certo</h2>
+      <div class="grid-3">
+        <div class="glass-card card-accent-emerald">
+          <div>
+            <h3 class="card-title" style="color: #34d399;">Simulado Fiel</h3>
+            <p class="card-text">Um ambiente digital de testes que replica com precisão as regras, o tempo de execução e a interface da prova real da ANAC.</p>
+          </div>
+          <ul class="bullet-list">
+            <li>Cronômetro regressivo.</li>
+            <li>Grade de questões idêntica.</li>
+            <li>Salvamento preventivo.</li>
+          </ul>
+        </div>
+        <div class="glass-card card-accent">
+          <div>
+            <h3 class="card-title" style="color: #38bdf8;">Pedagogia com IA</h3>
+            <p class="card-text">Tutoria inteligente integrada que analisa cada erro e explica instantaneamente as regras físicas ou regulamentações aeronáuticas.</p>
+          </div>
+          <ul class="bullet-list">
+            <li>Correção justificada.</li>
+            <li>Explicação de distratores.</li>
+            <li>Dicas e mnemônicos.</li>
+          </ul>
+        </div>
+        <div class="glass-card card-accent-purple">
+          <div>
+            <h3 class="card-title" style="color: #c084fc;">Foco na Carreira</h3>
+            <p class="card-text">Muito além da teoria: a plataforma ajuda na recolocação com guias de seleção, treinos de inglês/espanhol e gerador de currículos.</p>
+          </div>
+          <ul class="bullet-list">
+            <li>Treinamento de audição de cabine.</li>
+            <li>Currículos padrão de aviação.</li>
+            <li>Processos seletivos mapeados.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Voe Certo SaaS</span>
+      <span class="slide-number">03 / 09</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: DIFERENCIAIS -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-logo">
+        <svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L14 19v-5.5l8 2.5z"/></svg>
+        <span>Voe Certo</span>
+      </div>
+      <span class="slide-category">Diferenciais</span>
+    </div>
+    <div class="slide-body">
+      <h2 class="slide-title">Recursos Exclusivos que Elevam o Nível</h2>
+      <div class="grid-2">
+        <div class="glass-card card-accent">
+          <div>
+            <h3 class="card-title">Biblioteca de Áudios & Idiomas</h3>
+            <p class="card-text">Treinamento prático de idiomas (inglês e espanhol) voltado especificamente para a audição e fala em situações reais de voo e anúncios de cabine.</p>
+          </div>
+          <ul class="bullet-list" style="margin-top: 15px;">
+            <li>Reprodução de áudios de bordo profissionais.</li>
+            <li>Simulados de proficiência técnica de fala e compreensão.</li>
+            <li>Foco nas entrevistas de contratação aérea.</li>
+          </ul>
+        </div>
+        <div class="glass-card card-accent-purple">
+          <div>
+            <h3 class="card-title">Gamificação Ativa e Ranks</h3>
+            <p class="card-text">Um sistema completo de incentivo com conquistas, insígnias desbloqueáveis e acompanhamento contínuo de dias seguidos de estudo (streaks).</p>
+          </div>
+          <ul class="bullet-list" style="margin-top: 15px;">
+            <li>Incentivo psicológico para consistência.</li>
+            <li>Visualização gráfica do esforço acumulado.</li>
+            <li>Conquistas personalizadas por desempenho em simulados difíceis.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Voe Certo SaaS</span>
+      <span class="slide-number">04 / 09</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: SELO DIGITAL DE APROVAÇÃO -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-logo">
+        <svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L14 19v-5.5l8 2.5z"/></svg>
+        <span>Voe Certo</span>
+      </div>
+      <span class="slide-category">Empregabilidade</span>
+    </div>
+    <div class="slide-body">
+      <h2 class="slide-title">O Selo Digital de Aprovação</h2>
+      <div class="grid-2">
+        <div class="glass-card card-accent-emerald">
+          <div>
+            <h3 class="card-title" style="color: #34d399;">Selo Verificável do Candidato</h3>
+            <p class="card-text">Ao atingir aproveitamento superior a 80% nos simulados ANAC da plataforma, o estudante conquista o **Selo Digital Voe Certo**, atestando sua alta preparação.</p>
+          </div>
+          <ul class="bullet-list" style="margin-top: 15px;">
+            <li><strong>Compartilhamento LinkedIn:</strong> Publicação direta e estruturada com certificado digital.</li>
+            <li><strong>Página Pública de Validação:</strong> URL única (`/verificar/:id`) que permite a recrutadores confirmar a pontuação do candidato e a veracidade do selo.</li>
+            <li><strong>Vantagem competitiva:</strong> Destaque imediato do candidato em bancos de currículos.</li>
+          </ul>
+        </div>
+        <div class="highlight-block" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+          <h3 class="highlight-title">Aumento de Empregabilidade</h3>
+          <p style="color: #94a3b8; font-size: 10pt; max-width: 250px;">Aprovação na ANAC garantida com embasamento estatístico prévio</p>
+          <div class="big-stat">+80%</div>
+          <p class="tagline">de taxa de acerto prévia monitorada</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Voe Certo SaaS</span>
+      <span class="slide-number">05 / 09</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: PAINEL ADMINISTRATIVO -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-logo">
+        <svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L14 19v-5.5l8 2.5z"/></svg>
+        <span>Voe Certo</span>
+      </div>
+      <span class="slide-category">Gestão SaaS</span>
+    </div>
+    <div class="slide-body">
+      <h2 class="slide-title">Controle Absoluto: Painel Whitelabel</h2>
+      <div class="grid-3">
+        <div class="glass-card card-accent-purple">
+          <div>
+            <h3 class="card-title" style="color: #c084fc;">Gestor de Conteúdo</h3>
+            <p class="card-text">Controle dinâmico sobre a árvore de disciplinas. Permite cadastrar profissões, matérias e gerenciar o banco de questões por completo.</p>
+          </div>
+          <ul class="bullet-list">
+            <li>CRUD de profissões.</li>
+            <li>Importação de questões via CSV.</li>
+            <li>Configurações de IA específicas.</li>
+          </ul>
+        </div>
+        <div class="glass-card card-accent-purple">
+          <div>
+            <h3 class="card-title" style="color: #c084fc;">Branding Customizado</h3>
+            <p class="card-text">Adaptação visual completa da plataforma com alteração rápida de paletas de cores, logotipos e insígnias direto pela interface admin.</p>
+          </div>
+          <ul class="bullet-list">
+            <li>Mudança de logo em tempo real.</li>
+            <li>Paleta HSL customizável.</li>
+            <li>Upload de SVGs e assets.</li>
+          </ul>
+        </div>
+        <div class="glass-card card-accent-purple">
+          <div>
+            <h3 class="card-title" style="color: #c084fc;">Faturamento & Flags</h3>
+            <p class="card-text">Painel integrado para controle de planos de assinatura, geração de cupons promocionais e gerenciamento de feature flags.</p>
+          </div>
+          <ul class="bullet-list">
+            <li>Criação de cupons.</li>
+            <li>Ativação/desativação de abas.</li>
+            <li>Gestão de testers VIP.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Voe Certo SaaS</span>
+      <span class="slide-number">06 / 09</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: MODELO DE NEGÓCIOS -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-logo">
+        <svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L14 19v-5.5l8 2.5z"/></svg>
+        <span>Voe Certo</span>
+      </div>
+      <span class="slide-category">Monetização</span>
+    </div>
+    <div class="slide-body">
+      <h2 class="slide-title">Modelo de Negócios (Freemium)</h2>
+      <div class="grid-3">
+        <div class="glass-card card-accent">
+          <div>
+            <h3 class="card-title">Plano Grátis</h3>
+            <p class="card-text">Atração de tráfego orgânico oferecendo acesso a simulados básicos e introdução prática.</p>
+          </div>
+          <ul class="bullet-list">
+            <li>Simulados de categorias limitados.</li>
+            <li>Interface básica de resolução.</li>
+            <li>Métricas simples de acertos.</li>
+          </ul>
+        </div>
+        <div class="glass-card card-accent-emerald" style="border: 2px solid rgba(52, 211, 153, 0.4);">
+          <div>
+            <h3 class="card-title" style="color: #34d399;">Plano Premium (SaaS)</h3>
+            <p class="card-text">O carro-chefe da monetização, destravando todos os recursos avançados da plataforma.</p>
+          </div>
+          <ul class="bullet-list">
+            <li>Simulados ANAC e categorias ilimitados.</li>
+            <li>Suporte a explicação com IA ativa.</li>
+            <li>Microcursos e áudios de bordo.</li>
+            <li>Gerador de Currículo profissional.</li>
+          </ul>
+        </div>
+        <div class="glass-card card-accent-purple">
+          <div>
+            <h3 class="card-title" style="color: #c084fc;">Plano Escolas & B2B</h3>
+            <p class="card-text">Venda de licenças corporativas para escolas de aviação civil homologadas pela ANAC.</p>
+          </div>
+          <ul class="bullet-list">
+            <li>Dashboard especial do instrutor.</li>
+            <li>Acompanhamento de turmas.</li>
+            <li>Licenciamento corporativo em lote.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Voe Certo SaaS</span>
+      <span class="slide-number">07 / 09</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: OPORTUNIDADE DE MERCADO -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-logo">
+        <svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L14 19v-5.5l8 2.5z"/></svg>
+        <span>Voe Certo</span>
+      </div>
+      <span class="slide-category">Mercado</span>
+    </div>
+    <div class="slide-body">
+      <h2 class="slide-title">Mercado em Expansão & Escalabilidade</h2>
+      <div class="grid-2">
+        <div class="glass-card card-accent">
+          <div>
+            <h3 class="card-title">Escalabilidade Multiprofissões</h3>
+            <p class="card-text">A arquitetura de dados (Banco Relacional / Supabase) foi estruturada de forma modular, permitindo expandir a plataforma para outras certificações aeronáuticas com esforço mínimo de desenvolvimento.</p>
+          </div>
+          <ul class="bullet-list" style="margin-top: 15px;">
+            <li>Piloto Privado e Comercial (PP/PC).</li>
+            <li>Mecânicos de Voo.</li>
+            <li>Despachantes Operacionais de Voo (DOV).</li>
+          </ul>
+        </div>
+        <div class="glass-card card-accent-purple">
+          <div>
+            <h3 class="card-title">Retomada da Aviação Civil</h3>
+            <p class="card-text">Com o aumento da demanda global de viagens e abertura de novas frotas aéreas, o recrutamento de tripulantes está em recorde histórico. Escolas de aviação necessitam de parceiros tecnológicos para validar a aptidão de seus alunos.</p>
+          </div>
+          <ul class="bullet-list" style="margin-top: 15px;">
+            <li>Demanda constante por novas contratações anuais.</li>
+            <li>Foco no público jovem e altamente conectado.</li>
+            <li>Pouca concorrência de plataformas modernas com IA.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Voe Certo SaaS</span>
+      <span class="slide-number">08 / 09</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: CONCLUSÃO -->
+  <div class="slide cover-slide">
+    <div></div>
+    <div class="cover-content">
+      <h2 class="cover-title-large" style="font-size: 40pt; margin-bottom: 10px;">Pronto para Decolar?</h2>
+      <p class="cover-subtitle" style="font-size: 13pt; max-width: 550px; margin-bottom: 30px;">O Voe Certo é a ponte tecnológica definitiva entre a sala de estudos de aviação e o cockpit comercial.</p>
+      <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 20px 40px; border-radius: 12px; display: inline-block;">
+        <p style="color: #38bdf8; font-weight: 700; font-size: 14pt; margin-bottom: 5px;">Acesse a Plataforma</p>
+        <p style="color: #ffffff; font-size: 12pt; font-weight: 500; font-family: monospace;">www.voecerto.com.br</p>
+      </div>
+    </div>
+    <div class="slide-footer" style="border-top: none;">
+      <span>Voe Certo Pitch Deck</span>
+      <span>09 / 09</span>
+    </div>
+  </div>
+
+</body>
+</html>
