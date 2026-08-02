@@ -23,6 +23,8 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { CurriculumPreview, CurriculumData, Experience, Education, Certificate, Language } from '@/components/curriculum/CurriculumPreview';
 import { CurriculumChatAssistant } from '@/components/curriculum/CurriculumChatAssistant';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 const EMPTY_DATA: CurriculumData = {
   full_name: '',
@@ -243,9 +245,55 @@ export default function CurriculumPage() {
     }
   };
 
-  // Imprimir / Baixar em PDF
-  const handleDownloadPDF = () => {
-    window.print();
+  const [isDownloadingPDF, setIsDownloadingPDF] = useState(false);
+
+  // Baixar arquivo PDF real diretamente (sem tela de impressora do navegador)
+  const handleDownloadPDF = async (targetCurriculum?: CurriculumData) => {
+    const currentData = targetCurriculum || previewModalCurriculum || data;
+    const elementId = previewModalCurriculum ? 'curriculum-preview-modal-element' : 'curriculum-content';
+    const element = document.getElementById(elementId) || document.getElementById('curriculum-content');
+
+    if (!element) {
+      toast.error('Elemento do currículo não localizado para exportação.');
+      return;
+    }
+
+    setIsDownloadingPDF(true);
+    toast.info('Gerando seu arquivo PDF...');
+
+    try {
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+      });
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.98);
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+      });
+
+      const imgWidth = 210;
+      const pageHeight = 297;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, Math.min(imgHeight, pageHeight));
+
+      const namePart = (currentData.full_name || 'Curriculo').replace(/[^a-zA-Z0-9_-]/g, '_');
+      const professionPart = (currentData.profession || 'Voe_Certo').replace(/[^a-zA-Z0-9_-]/g, '_');
+      const filename = `Curriculo_${namePart}_${professionPart}.pdf`;
+
+      pdf.save(filename);
+      toast.success('Download do arquivo PDF concluído com sucesso!');
+    } catch (err: any) {
+      console.error('Erro ao gerar PDF:', err);
+      window.print();
+    } finally {
+      setIsDownloadingPDF(false);
+    }
   };
 
   // Helpers para edição manual
@@ -1038,16 +1086,18 @@ export default function CurriculumPage() {
                 <div className="flex items-center gap-2">
                   <Button
                     size="sm"
-                    onClick={handleDownloadPDF}
+                    disabled={isDownloadingPDF}
+                    onClick={() => handleDownloadPDF(previewModalCurriculum)}
                     className="gap-2 font-bold text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded-[5px]"
                   >
-                    <Download className="w-4 h-4" /> Baixar PDF
+                    {isDownloadingPDF ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                    Baixar PDF
                   </Button>
                 </div>
               </div>
             </DialogHeader>
 
-            <div className="py-4">
+            <div id="curriculum-preview-modal-element" className="py-4 bg-white">
               <CurriculumPreview data={previewModalCurriculum} />
             </div>
           </DialogContent>
