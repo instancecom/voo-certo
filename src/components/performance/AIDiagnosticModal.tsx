@@ -8,18 +8,16 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { differenceInDays, differenceInHours, differenceInMinutes, subDays } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 
 interface AIDiagnosticModalProps {
   isOpen: boolean;
   onClose: () => void;
-  examResults: any[];
-  subcategories: any[];
-  exams: any[];
+  examResults?: any[];
+  subcategories?: any[];
+  exams?: any[];
   userCreatedAt?: string;
   userEmail?: string;
 }
@@ -62,31 +60,47 @@ export function AIDiagnosticModal({
   const [diagnostic, setDiagnostic] = useState<DiagnosticResult | null>(null);
   const [lastGeneratedAt, setLastGeneratedAt] = useState<number | null>(null);
 
-  // Check 48h cooldown and saved cache from localStorage
+  // Carrega diagnóstico recente salvo no cache local
   useEffect(() => {
-    const savedData = localStorage.getItem('voecerto_ai_diagnostic_data');
-    const savedTime = localStorage.getItem('voecerto_ai_diagnostic_timestamp');
+    try {
+      const savedData = localStorage.getItem('voecerto_ai_diagnostic_data');
+      const savedTime = localStorage.getItem('voecerto_ai_diagnostic_timestamp');
 
-    if (savedData && savedTime) {
-      try {
+      if (savedData && savedTime) {
         setDiagnostic(JSON.parse(savedData));
         setLastGeneratedAt(Number(savedTime));
-      } catch {
-        // ignore parse error
       }
+    } catch (e) {
+      console.warn("Erro ao carregar cache do diagnóstico:", e);
     }
   }, []);
 
-  // Validation 1: At least 3 exam results
-  const totalCompletedExams = examResults?.length || 0;
+  // Safe Account Age Calculation
+  let accountAgeDays = 30;
+  if (userCreatedAt) {
+    try {
+      const d = new Date(userCreatedAt);
+      if (!isNaN(d.getTime())) {
+        accountAgeDays = Math.max(0, Math.floor((Date.now() - d.getTime()) / (1000 * 60 * 60 * 24)));
+      }
+    } catch {
+      accountAgeDays = 30;
+    }
+  }
+
+  // Safe arrays
+  const safeExamResults = Array.isArray(examResults) ? examResults : [];
+  const safeExams = Array.isArray(exams) ? exams : [];
+  const safeSubcategories = Array.isArray(subcategories) ? subcategories : [];
+
+  // Requisitos 1 e 2
+  const totalCompletedExams = safeExamResults.length;
   const hasMinExams = totalCompletedExams >= 3;
 
-  // Validation 2: Account created at least 7 days ago
-  const accountAgeDays = userCreatedAt ? differenceInDays(new Date(), new Date(userCreatedAt)) : 30;
   const isAdminUser = userEmail?.includes('admin') || userEmail?.includes('instancecom') || userEmail?.includes('kamimura');
   const hasMinAccountAge = accountAgeDays >= 7 || isAdminUser;
 
-  // Validation 3: 48 hours cooldown check
+  // Requisito 3: Cooldown 48 Horas
   const now = Date.now();
   const hoursSinceLastDiagnostic = lastGeneratedAt ? (now - lastGeneratedAt) / (1000 * 60 * 60) : 999;
   const isCooldownActive = hoursSinceLastDiagnostic < 48;
@@ -94,19 +108,22 @@ export function AIDiagnosticModal({
   const remainingHours = Math.max(0, Math.floor(48 - hoursSinceLastDiagnostic));
   const remainingMinutes = Math.max(0, Math.floor((48 - hoursSinceLastDiagnostic - remainingHours) * 60));
 
-  // Filter exam results by selected period
+  // Filtrar resultados pelo período selecionado de forma ultrassegura
   const getFilteredResults = () => {
-    if (!examResults || examResults.length === 0) return [];
-    
-    if (selectedPeriod === 'all') return examResults;
+    if (safeExamResults.length === 0) return [];
+    if (selectedPeriod === 'all') return safeExamResults;
 
     const daysToSubtract = selectedPeriod === '7d' ? 7 : 30;
-    const cutoffDate = subDays(new Date(), daysToSubtract);
+    const cutoffTime = Date.now() - (daysToSubtract * 24 * 60 * 60 * 1000);
 
-    return examResults.filter(r => {
-      if (!r.completed_at) return false;
-      const completedDate = new Date(r.completed_at);
-      return completedDate >= cutoffDate;
+    return safeExamResults.filter(r => {
+      if (!r || !r.completed_at) return false;
+      try {
+        const completedTime = new Date(r.completed_at).getTime();
+        return !isNaN(completedTime) && completedTime >= cutoffTime;
+      } catch {
+        return false;
+      }
     });
   };
 
@@ -124,24 +141,23 @@ export function AIDiagnosticModal({
     }
 
     if (filteredResults.length === 0) {
-      toast.error(`Nenhum simulado encontrado no período selecionado (${selectedPeriod === '7d' ? 'Últimos 7 dias' : 'Últimos 30 dias'}). Escolha o 'Histórico completo'.`);
+      toast.error(`Nenhum simulado no período selecionado (${selectedPeriod === '7d' ? 'Últimos 7 dias' : 'Últimos 30 dias'}). Selecione 'Histórico completo'.`);
       return;
     }
 
     setIsGenerating(true);
-    toast.info('IA Llama 3.3 70B processando seu desempenho...');
+    toast.info('IA Llama 3.3 70B processando seu histórico...');
 
     try {
-      // Map simplified results for AI prompt payload
       const simplifiedResults = filteredResults.map(r => {
-        const exam = exams.find(e => e.id === r.exam_id);
-        const sub = subcategories.find(s => s.id === exam?.subcategory_id);
+        const exam = safeExams.find(e => e?.id === r?.exam_id);
+        const sub = safeSubcategories.find(s => s?.id === exam?.subcategory_id);
         return {
-          score: r.score,
-          correct: r.correct_answers,
-          total: r.total_questions,
-          date: r.completed_at,
-          exam_title: exam?.title || 'Simulado',
+          score: Number(r?.score) || 0,
+          correct: Number(r?.correct_answers) || 0,
+          total: Number(r?.total_questions) || 0,
+          date: r?.completed_at || new Date().toISOString(),
+          exam_title: exam?.title || 'Simulado ANAC',
           category: sub?.name || 'Geral',
         };
       });
@@ -154,7 +170,7 @@ export function AIDiagnosticModal({
       });
 
       if (error) throw error;
-      if (!data?.diagnostic) throw new Error('Não foi possível gerar a resposta do diagnóstico.');
+      if (!data?.diagnostic) throw new Error('Servidor não retornou a análise do diagnóstico.');
 
       const newDiagnostic = data.diagnostic;
       setDiagnostic(newDiagnostic);
@@ -162,14 +178,13 @@ export function AIDiagnosticModal({
       const timestamp = Date.now();
       setLastGeneratedAt(timestamp);
 
-      // Save to localStorage cache
       localStorage.setItem('voecerto_ai_diagnostic_data', JSON.stringify(newDiagnostic));
       localStorage.setItem('voecerto_ai_diagnostic_timestamp', timestamp.toString());
 
-      toast.success('Diagnóstico de Desempenho com IA gerado com sucesso!');
+      toast.success('Diagnóstico Completo de IA gerado com sucesso!');
     } catch (err: any) {
       console.error('Erro ao gerar diagnóstico:', err);
-      toast.error(`Falha na análise da IA: ${err.message || 'Tente novamente.'}`);
+      toast.error(`Falha na IA: ${err?.message || 'Tente novamente.'}`);
     } finally {
       setIsGenerating(false);
     }
@@ -178,7 +193,7 @@ export function AIDiagnosticModal({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-0 rounded-2xl border-border bg-card">
-        {/* Top Gradient Banner */}
+        {/* Top Banner */}
         <div className="bg-gradient-to-r from-slate-900 via-primary/95 to-slate-950 p-6 text-white relative">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl bg-primary/20 border border-primary/40 flex items-center justify-center shrink-0">
@@ -192,16 +207,15 @@ export function AIDiagnosticModal({
                 </Badge>
               </DialogTitle>
               <DialogDescription className="text-xs text-slate-300 font-medium mt-1">
-                Análise profunda e plano de ação personalizado para aprovação na ANAC.
+                Análise de evolução e estratégia personalizada para aprovação na ANAC.
               </DialogDescription>
             </div>
           </div>
         </div>
 
         <div className="p-6 space-y-6">
-          {/* Status de Requisitos & Regras de Uso */}
+          {/* Status dos Requisitos */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {/* Requisito 1: 3 Simulados */}
             <div className={`p-3.5 rounded-xl border flex items-center gap-3 text-xs font-semibold ${
               hasMinExams ? 'bg-success/10 border-success/30 text-success' : 'bg-destructive/10 border-destructive/30 text-destructive'
             }`}>
@@ -212,7 +226,6 @@ export function AIDiagnosticModal({
               </div>
             </div>
 
-            {/* Requisito 2: 7 Dias de Cadastro */}
             <div className={`p-3.5 rounded-xl border flex items-center gap-3 text-xs font-semibold ${
               hasMinAccountAge ? 'bg-success/10 border-success/30 text-success' : 'bg-warning/10 border-warning/30 text-warning'
             }`}>
@@ -224,7 +237,7 @@ export function AIDiagnosticModal({
             </div>
           </div>
 
-          {/* Seleção do Período */}
+          {/* Escolha do Período */}
           <div>
             <label className="text-xs font-bold text-foreground mb-2 block">
               Escolha o período para a análise da IA:
@@ -252,25 +265,25 @@ export function AIDiagnosticModal({
                 onClick={() => setSelectedPeriod('all')}
                 className="font-bold text-xs gap-1.5 h-10"
               >
-                <History className="w-4 h-4" /> Histórico completo
+                <Clock className="w-4 h-4" /> Histórico completo
               </Button>
             </div>
           </div>
 
-          {/* Aviso de Cooldown 48h (se ativo) */}
+          {/* Cooldown de 48h */}
           {isCooldownActive && diagnostic && (
             <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs flex items-start gap-3">
               <Clock className="w-5 h-5 shrink-0 text-amber-500 mt-0.5" />
               <div>
                 <p className="font-bold text-sm">Próxima análise disponível em: {remainingHours}h {remainingMinutes}min</p>
                 <p className="mt-1 leading-relaxed">
-                  O intervalo de 48 horas garante que você tenha tempo para estudar o conteúdo sugerido e realizar novos simulados antes de recalcular seu progresso.
+                  O intervalo de 48 horas garante tempo para você estudar os conteúdos recomendados antes da próxima atualização da IA.
                 </p>
               </div>
             </div>
           )}
 
-          {/* Botão de Ação: Gerar Diagnóstico */}
+          {/* Botão de Gerar */}
           {(!isCooldownActive || !diagnostic) && (
             <Button
               onClick={handleGenerateDiagnostic}
@@ -291,7 +304,7 @@ export function AIDiagnosticModal({
             </Button>
           )}
 
-          {/* Exibição dos 4 Blocos de Resultado do Diagnóstico */}
+          {/* Exibição das 4 Partes */}
           {diagnostic && (
             <div className="space-y-4 pt-2 border-t border-border">
               <h3 className="font-black text-base text-foreground flex items-center gap-2">
@@ -367,7 +380,7 @@ export function AIDiagnosticModal({
                   </CardContent>
                 </Card>
 
-                {/* 🟡 Parte 4: Recomendação de Estudos + Botão de Ação Direta */}
+                {/* 🟡 Parte 4: Recomendação + Botão Direto */}
                 <Card className="border-l-4 border-l-amber-500 border-border bg-amber-500/5 md:col-span-2">
                   <CardContent className="p-4 space-y-3">
                     <div className="flex items-center gap-2">
