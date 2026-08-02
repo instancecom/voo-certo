@@ -236,3 +236,33 @@
     background-color: #0f0f0f;
   }
 }
+
+/* Regras de Impressão & Exportação PDF limpa (Sem cabeçalho/rodapé do navegador ou URLs) */
+@media print {
+  @page {
+    margin: 0 !important;
+    size: A4 portrait;
+  }
+
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  header, footer, nav, aside, .print\:hidden {
+    display: none !important;
+  }
+
+  #curriculum-content {
+    margin: 0 auto !important;
+    box-shadow: none !important;
+    border: none !important;
+    width: 210mm !important;
+    background: #ffffff !important;
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
+  }
+}
