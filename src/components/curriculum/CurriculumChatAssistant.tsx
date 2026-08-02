@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, User, Send, Sparkles, Loader2, CheckCircle2, ArrowRight, Shield, Lightbulb, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -93,6 +93,17 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
     },
   ]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+
+  // Auto scroll to bottom when new message arrives or loading state changes
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+  }, [messages, isGenerating]);
 
   const activeQuestion = QUESTIONS[currentStep];
   const progressPercent = Math.round(((currentStep + 1) / QUESTIONS.length) * 100);
@@ -160,21 +171,21 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
   };
 
   return (
-    <Card className="border-border bg-card shadow-lg rounded-2xl overflow-hidden max-w-3xl mx-auto">
+    <Card className="border-border bg-card shadow-lg rounded-2xl overflow-hidden max-w-3xl mx-auto flex flex-col my-2">
       {/* Top Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-primary/90 to-slate-950 p-5 text-white flex items-center justify-between">
+      <div className="bg-gradient-to-r from-slate-900 via-primary/90 to-slate-950 p-4 sm:p-5 text-white flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-primary/20 border border-primary/40 flex items-center justify-center shrink-0">
             <Sparkles className="w-5 h-5 text-sky-400 animate-pulse" />
           </div>
           <div>
-            <h3 className="font-bold text-base flex items-center gap-2">
+            <h3 className="font-bold text-sm sm:text-base flex items-center gap-2">
               Assistente de Currículo Voe Certo
               <Badge variant="outline" className="text-[10px] border-sky-400/40 text-sky-300">
                 IA Ativa
               </Badge>
             </h3>
-            <p className="text-xs text-slate-300 font-medium">Conversa guiada para montagem automática</p>
+            <p className="text-[11px] sm:text-xs text-slate-300 font-medium">Conversa guiada para montagem automática</p>
           </div>
         </div>
 
@@ -185,32 +196,35 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
       </div>
 
       {/* Motivational Reassurance Card */}
-      <div className="bg-sky-500/10 border-b border-sky-500/20 px-5 py-3 flex items-start gap-3 text-xs text-sky-700 dark:text-sky-300">
+      <div className="bg-sky-500/10 border-b border-sky-500/20 px-4 py-2.5 flex items-start gap-2.5 text-xs text-sky-700 dark:text-sky-300 shrink-0">
         <Lightbulb className="w-4 h-4 shrink-0 text-sky-500 mt-0.5" />
         <span>
           <strong>Sem estresse de escrita:</strong> Pode responder com suas palavras simples. A nossa IA refinará a gramática, ajustará os verbos de ação e escolherá o melhor layout para você.
         </span>
       </div>
 
-      {/* Chat Conversation Body */}
-      <CardContent className="p-6 space-y-4 max-h-[480px] overflow-y-auto scrollbar-thin">
+      {/* Chat Conversation Body (With auto-scroll ref and responsive height) */}
+      <CardContent 
+        ref={chatContainerRef} 
+        className="p-4 sm:p-6 space-y-4 max-h-[380px] sm:max-h-[440px] min-h-[250px] overflow-y-auto scroll-smooth scrollbar-thin flex-1"
+      >
         <AnimatePresence initial={false}>
           {messages.map((msg, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className={`flex gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+              transition={{ duration: 0.25 }}
+              className={`flex gap-2.5 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {msg.sender === 'ai' && (
-                <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0 mt-1">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0 mt-1">
                   <Bot className="w-4 h-4" />
                 </div>
               )}
 
               <div
-                className={`max-w-[85%] sm:max-w-[75%] p-4 rounded-2xl text-xs sm:text-sm leading-relaxed whitespace-pre-line ${
+                className={`max-w-[88%] sm:max-w-[78%] p-3.5 sm:p-4 rounded-2xl text-xs sm:text-sm leading-relaxed whitespace-pre-line ${
                   msg.sender === 'user'
                     ? 'bg-primary text-primary-foreground font-medium rounded-tr-none'
                     : 'bg-muted/70 text-foreground border border-border/60 rounded-tl-none'
@@ -220,7 +234,7 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
               </div>
 
               {msg.sender === 'user' && (
-                <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground shrink-0 mt-1">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground shrink-0 mt-1">
                   <User className="w-4 h-4" />
                 </div>
               )}
@@ -234,17 +248,17 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
             animate={{ opacity: 1 }}
             className="flex items-center gap-3 p-4 rounded-xl bg-primary/5 border border-primary/20 text-primary text-xs font-bold"
           >
-            <Loader2 className="w-5 h-5 animate-spin" />
+            <Loader2 className="w-5 h-5 animate-spin shrink-0" />
             <span>Formatando histórico, aplicando verbos de ação e selecionando o modelo de currículo ideal...</span>
           </motion.div>
         )}
       </CardContent>
 
       {/* Quick Input Options & Form Controls */}
-      <div className="p-5 border-t border-border bg-muted/20 space-y-3">
+      <div className="p-4 sm:p-5 border-t border-border bg-muted/20 space-y-3 shrink-0">
         {/* Quick Suggestion Chips */}
         {!isGenerating && activeQuestion?.quickOptions && activeQuestion.quickOptions.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-2">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-1">
             <span className="text-[11px] font-semibold text-muted-foreground w-full flex items-center gap-1">
               <Sparkles className="w-3 h-3 text-amber-500" /> Respostas rápidas sugeridas:
             </span>
@@ -252,7 +266,7 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
               <Badge
                 key={idx}
                 variant="outline"
-                className="cursor-pointer bg-background hover:bg-primary/10 hover:text-primary hover:border-primary/40 transition-colors py-1.5 px-3 text-xs"
+                className="cursor-pointer bg-background hover:bg-primary/10 hover:text-primary hover:border-primary/40 transition-colors py-1.5 px-2.5 text-[11px] sm:text-xs"
                 onClick={() => handleSendAnswer(opt)}
               >
                 {opt}
@@ -282,7 +296,7 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
               <Button
                 onClick={() => handleSendAnswer()}
                 disabled={isGenerating || (!inputText.trim() && currentStep === 0)}
-                className="h-12 px-5 gap-2 font-bold"
+                className="h-12 px-4 sm:px-5 gap-2 font-bold text-xs sm:text-sm"
               >
                 {currentStep === QUESTIONS.length - 1 ? (
                   <>Gerar <Sparkles className="w-4 h-4" /></>
