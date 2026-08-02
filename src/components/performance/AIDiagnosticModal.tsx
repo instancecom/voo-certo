@@ -192,17 +192,17 @@ export function AIDiagnosticModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-0 rounded-2xl border-border bg-card">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-0 rounded-[5px] border-border bg-card">
         {/* Top Banner */}
         <div className="bg-primary text-primary-foreground p-6 relative border-b border-primary/20">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-[5px] bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
               <Brain className="w-6 h-6 text-amber-400 animate-pulse" />
             </div>
             <div>
               <DialogTitle className="text-xl font-black text-primary-foreground flex items-center gap-2">
                 Diagnóstico de Desempenho com IA
-                <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-300 bg-amber-400/10">
+                <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-300 bg-amber-400/10 rounded-[5px]">
                   Llama 3.3 70B
                 </Badge>
               </DialogTitle>
@@ -216,7 +216,7 @@ export function AIDiagnosticModal({
         <div className="p-6 space-y-6">
           {/* Status dos Requisitos */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div className={`p-3.5 rounded-xl border flex items-center gap-3 text-xs font-semibold ${
+            <div className={`p-3.5 rounded-[5px] border flex items-center gap-3 text-xs font-semibold ${
               hasMinExams ? 'bg-success/10 border-success/30 text-success' : 'bg-destructive/10 border-destructive/30 text-destructive'
             }`}>
               {hasMinExams ? <CheckCircle2 className="w-5 h-5 shrink-0 text-success" /> : <AlertCircle className="w-5 h-5 shrink-0 text-destructive" />}
@@ -226,7 +226,7 @@ export function AIDiagnosticModal({
               </div>
             </div>
 
-            <div className={`p-3.5 rounded-xl border flex items-center gap-3 text-xs font-semibold ${
+            <div className={`p-3.5 rounded-[5px] border flex items-center gap-3 text-xs font-semibold ${
               hasMinAccountAge ? 'bg-success/10 border-success/30 text-success' : 'bg-warning/10 border-warning/30 text-warning'
             }`}>
               {hasMinAccountAge ? <CheckCircle2 className="w-5 h-5 shrink-0 text-success" /> : <Clock className="w-5 h-5 shrink-0 text-warning" />}
@@ -247,7 +247,7 @@ export function AIDiagnosticModal({
                 variant={selectedPeriod === '7d' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedPeriod('7d')}
-                className="font-bold text-xs gap-1.5 h-10"
+                className="font-bold text-xs gap-1.5 h-10 rounded-[5px]"
               >
                 <Calendar className="w-4 h-4" /> Últimos 7 dias
               </Button>
@@ -255,7 +255,7 @@ export function AIDiagnosticModal({
                 variant={selectedPeriod === '30d' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedPeriod('30d')}
-                className="font-bold text-xs gap-1.5 h-10"
+                className="font-bold text-xs gap-1.5 h-10 rounded-[5px]"
               >
                 <Calendar className="w-4 h-4" /> Últimos 30 dias
               </Button>
@@ -263,7 +263,7 @@ export function AIDiagnosticModal({
                 variant={selectedPeriod === 'all' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedPeriod('all')}
-                className="font-bold text-xs gap-1.5 h-10"
+                className="font-bold text-xs gap-1.5 h-10 rounded-[5px]"
               >
                 <Clock className="w-4 h-4" /> Histórico completo
               </Button>
@@ -272,7 +272,7 @@ export function AIDiagnosticModal({
 
           {/* Cooldown de 48h */}
           {isCooldownActive && diagnostic && (
-            <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs flex items-start gap-3">
+            <div className="p-4 rounded-[5px] bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs flex items-start gap-3">
               <Clock className="w-5 h-5 shrink-0 text-amber-500 mt-0.5" />
               <div>
                 <p className="font-bold text-sm">Próxima análise disponível em: {remainingHours}h {remainingMinutes}min</p>
@@ -288,7 +288,7 @@ export function AIDiagnosticModal({
             <Button
               onClick={handleGenerateDiagnostic}
               disabled={isGenerating || !hasMinExams || !hasMinAccountAge}
-              className="w-full h-12 text-sm font-bold gap-2 bg-gradient-to-r from-primary to-sky-600 hover:from-primary/90 hover:to-sky-700 shadow-md"
+              className="w-full h-12 text-sm font-bold gap-2 bg-gradient-to-r from-primary to-sky-600 hover:from-primary/90 hover:to-sky-700 shadow-md rounded-[5px]"
             >
               {isGenerating ? (
                 <>
@@ -314,7 +314,7 @@ export function AIDiagnosticModal({
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* 🔴 Parte 1: Ponto Crítico */}
-                <Card className="border-l-4 border-l-destructive border-border bg-destructive/5">
+                <Card className="border-l-4 border-l-destructive border-border bg-destructive/5 rounded-[5px]">
                   <CardContent className="p-4 space-y-2">
                     <div className="flex items-center gap-2">
                       <span className="text-lg">🔴</span>
@@ -326,7 +326,7 @@ export function AIDiagnosticModal({
                     {diagnostic.critical_point?.topics && diagnostic.critical_point.topics.length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-2">
                         {diagnostic.critical_point.topics.map((t, idx) => (
-                          <Badge key={idx} variant="destructive" className="text-[10px] font-semibold">
+                          <Badge key={idx} variant="destructive" className="text-[10px] font-semibold rounded-[5px]">
                             {t}
                           </Badge>
                         ))}
@@ -336,7 +336,7 @@ export function AIDiagnosticModal({
                 </Card>
 
                 {/* 🟢 Parte 2: Ponto Positivo */}
-                <Card className="border-l-4 border-l-success border-border bg-success/5">
+                <Card className="border-l-4 border-l-success border-border bg-success/5 rounded-[5px]">
                   <CardContent className="p-4 space-y-2">
                     <div className="flex items-center gap-2">
                       <span className="text-lg">🟢</span>
@@ -348,7 +348,7 @@ export function AIDiagnosticModal({
                     {diagnostic.positive_point?.topics && diagnostic.positive_point.topics.length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-2">
                         {diagnostic.positive_point.topics.map((t, idx) => (
-                          <Badge key={idx} variant="default" className="bg-success text-success-foreground text-[10px] font-semibold">
+                          <Badge key={idx} variant="default" className="bg-success text-success-foreground text-[10px] font-semibold rounded-[5px]">
                             {t}
                           </Badge>
                         ))}
@@ -358,18 +358,18 @@ export function AIDiagnosticModal({
                 </Card>
 
                 {/* 🔵 Parte 3: Tendência */}
-                <Card className="border-l-4 border-l-primary border-border bg-primary/5">
+                <Card className="border-l-4 border-l-primary border-border bg-primary/5 rounded-[5px]">
                   <CardContent className="p-4 space-y-2">
                     <div className="flex items-center gap-2">
                       <span className="text-lg">🔵</span>
                       <h4 className="font-bold text-sm text-foreground">{diagnostic.trend?.title || 'Tendência'}</h4>
                       {diagnostic.trend?.status === 'improving' && (
-                        <Badge className="bg-success text-success-foreground text-[10px] gap-1">
+                        <Badge className="bg-success text-success-foreground text-[10px] gap-1 rounded-[5px]">
                           <TrendingUp className="w-3 h-3" /> Em evolução
                         </Badge>
                       )}
                       {diagnostic.trend?.status === 'declining' && (
-                        <Badge variant="destructive" className="text-[10px] gap-1">
+                        <Badge variant="destructive" className="text-[10px] gap-1 rounded-[5px]">
                           <TrendingDown className="w-3 h-3" /> Precisa atenção
                         </Badge>
                       )}
@@ -381,7 +381,7 @@ export function AIDiagnosticModal({
                 </Card>
 
                 {/* 🟡 Parte 4: Recomendação + Botão Direto */}
-                <Card className="border-l-4 border-l-accent border-border bg-accent/10 md:col-span-2">
+                <Card className="border-l-4 border-l-accent border-border bg-accent/10 md:col-span-2 rounded-[5px]">
                   <CardContent className="p-4 space-y-3">
                     <div className="flex items-center gap-2">
                       <span className="text-lg">🟡</span>
@@ -397,7 +397,7 @@ export function AIDiagnosticModal({
                           onClose();
                           navigate('/simulados');
                         }}
-                        className="gap-2 font-bold text-xs bg-primary text-primary-foreground hover:bg-primary/90"
+                        className="gap-2 font-bold text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded-[5px]"
                       >
                         Ir para o Simulado Recomendado
                         <ArrowRight className="w-4 h-4" />

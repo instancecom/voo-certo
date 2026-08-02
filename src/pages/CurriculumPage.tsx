@@ -320,12 +320,12 @@ export default function CurriculumPage() {
             </div>
 
             {/* Alternador de Modo: Chat IA vs Editor Manual */}
-            <div className="flex items-center gap-2 bg-muted/60 p-1.5 rounded-xl border border-border shrink-0">
+            <div className="flex items-center gap-2 bg-muted/60 p-1.5 rounded-[5px] border border-border shrink-0">
               <Button
                 variant={mode === 'chat' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setMode('chat')}
-                className="gap-2 font-bold text-xs rounded-lg"
+                className="gap-2 font-bold text-xs rounded-[5px]"
               >
                 <MessageSquare className="w-4 h-4" />
                 Assistente IA (Chat)
@@ -334,7 +334,7 @@ export default function CurriculumPage() {
                 variant={mode === 'editor' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setMode('editor')}
-                className="gap-2 font-bold text-xs rounded-lg"
+                className="gap-2 font-bold text-xs rounded-[5px]"
               >
                 <Edit3 className="w-4 h-4" />
                 Editor & Visualização
@@ -362,7 +362,7 @@ export default function CurriculumPage() {
         {mode === 'editor' && (
           <div className="space-y-6">
             {/* Template Selector Bar (Oculto na impressão) */}
-            <Card className="print:hidden border-border bg-card shadow-sm">
+            <Card className="print:hidden border-border bg-card shadow-sm rounded-[5px]">
               <CardContent className="p-4 sm:p-6">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                   <div>
@@ -383,7 +383,7 @@ export default function CurriculumPage() {
                         size="sm"
                         onClick={() => saveMutation.mutate()}
                         disabled={saveMutation.isPending}
-                        className="gap-2 font-bold text-xs"
+                        className="gap-2 font-bold text-xs rounded-[5px]"
                       >
                         {saveMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                         Salvar
@@ -393,7 +393,7 @@ export default function CurriculumPage() {
                     <Button
                       size="sm"
                       onClick={handleDownloadPDF}
-                      className="gap-2 font-bold text-xs bg-primary text-primary-foreground hover:bg-primary/90"
+                      className="gap-2 font-bold text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded-[5px]"
                     >
                       <Download className="w-4 h-4" />
                       Baixar PDF
@@ -403,7 +403,7 @@ export default function CurriculumPage() {
                       variant="ghost"
                       size="sm"
                       onClick={() => setMode('chat')}
-                      className="gap-2 font-bold text-xs text-muted-foreground hover:text-foreground"
+                      className="gap-2 font-bold text-xs text-muted-foreground hover:text-foreground rounded-[5px]"
                     >
                       <MessageSquare className="w-4 h-4" />
                       Refazer Chat
@@ -423,7 +423,7 @@ export default function CurriculumPage() {
                         key={tmpl.id}
                         onClick={() => updateField('template', tmpl.id)}
                         className={`
-                          cursor-pointer p-4 rounded-xl border-2 transition-all relative flex flex-col justify-between
+                          cursor-pointer p-4 rounded-[5px] border-2 transition-all relative flex flex-col justify-between
                           ${isSelected ? 'border-primary bg-primary/5 shadow-md' : 'border-border hover:border-primary/40 bg-muted/20'}
                         `}
                       >
@@ -433,7 +433,7 @@ export default function CurriculumPage() {
                               <Icon className={`w-4 h-4 ${isSelected ? 'text-primary' : 'text-muted-foreground'}`} />
                               {tmpl.name}
                             </span>
-                            <Badge variant={isSelected ? 'default' : 'secondary'} className="text-[10px] font-bold">
+                            <Badge variant={isSelected ? 'default' : 'secondary'} className="text-[10px] font-bold rounded-[5px]">
                               {tmpl.badge}
                             </Badge>
                           </div>
@@ -443,7 +443,7 @@ export default function CurriculumPage() {
                         </div>
 
                         {isRecommended && (
-                          <div className="flex items-center gap-1.5 text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-md border border-amber-500/20 mt-2">
+                          <div className="flex items-center gap-1.5 text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-[5px] border border-amber-500/20 mt-2">
                             <Sparkles className="w-3 h-3 shrink-0" /> Recomendado pela IA para sua situação
                           </div>
                         )}

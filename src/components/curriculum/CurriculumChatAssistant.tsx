@@ -171,17 +171,17 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
   };
 
   return (
-    <Card className="border-border bg-card shadow-lg rounded-2xl overflow-hidden max-w-3xl mx-auto flex flex-col my-2">
+    <Card className="border-border bg-card shadow-lg rounded-[5px] overflow-hidden max-w-3xl mx-auto flex flex-col my-2">
       {/* Top Header Banner */}
       <div className="bg-primary text-primary-foreground p-4 sm:p-5 flex items-center justify-between shrink-0 border-b border-primary/20">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-[5px] bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
             <Sparkles className="w-5 h-5 text-amber-400 animate-pulse" />
           </div>
           <div>
             <h3 className="font-bold text-sm sm:text-base flex items-center gap-2">
               Assistente de Currículo Voe Certo
-              <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-300 bg-amber-400/10">
+              <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-300 bg-amber-400/10 rounded-[5px]">
                 IA Ativa
               </Badge>
             </h3>
@@ -191,7 +191,7 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
 
         <div className="text-right hidden sm:block">
           <span className="text-xs font-bold text-amber-300 font-mono">Passo {currentStep + 1} de {QUESTIONS.length}</span>
-          <Progress value={progressPercent} className="w-24 h-2 mt-1 bg-primary-foreground/20" />
+          <Progress value={progressPercent} className="w-24 h-2 mt-1 bg-primary-foreground/20 rounded-[5px]" />
         </div>
       </div>
 
@@ -218,23 +218,23 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
               className={`flex gap-2.5 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {msg.sender === 'ai' && (
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0 mt-1">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-[5px] bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0 mt-1">
                   <Bot className="w-4 h-4" />
                 </div>
               )}
 
               <div
-                className={`max-w-[88%] sm:max-w-[78%] p-3.5 sm:p-4 rounded-2xl text-xs sm:text-sm leading-relaxed whitespace-pre-line ${
+                className={`max-w-[88%] sm:max-w-[78%] p-3.5 sm:p-4 rounded-[5px] text-xs sm:text-sm leading-relaxed whitespace-pre-line ${
                   msg.sender === 'user'
-                    ? 'bg-primary text-primary-foreground font-medium rounded-tr-none'
-                    : 'bg-muted/70 text-foreground border border-border/60 rounded-tl-none'
+                    ? 'bg-primary text-primary-foreground font-medium'
+                    : 'bg-muted/70 text-foreground border border-border/60'
                 }`}
               >
                 {msg.text}
               </div>
 
               {msg.sender === 'user' && (
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground shrink-0 mt-1">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-[5px] bg-muted flex items-center justify-center text-muted-foreground shrink-0 mt-1">
                   <User className="w-4 h-4" />
                 </div>
               )}
@@ -246,7 +246,7 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex items-center gap-3 p-4 rounded-xl bg-primary/5 border border-primary/20 text-primary text-xs font-bold"
+            className="flex items-center gap-3 p-4 rounded-[5px] bg-primary/5 border border-primary/20 text-primary text-xs font-bold"
           >
             <Loader2 className="w-5 h-5 animate-spin shrink-0" />
             <span>Formatando histórico, aplicando verbos de ação e selecionando o modelo de currículo ideal...</span>
