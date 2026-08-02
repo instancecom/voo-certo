@@ -83,7 +83,7 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
   const [messages, setMessages] = useState<Message[]>([
     {
       sender: 'ai',
-      text: `Olá! Sou o assistente inteligente de carreiras do Voe Certo. 👋\n\nEu vou te guiar passo a passo para criar um currículo profissional de altíssimo impacto.\n\n💡 **Dica importante:** Pode responder do seu jeito, sem se preocupar com gramática ou estrutura — a nossa IA melhora o texto automaticamente, deixando tudo profissional sem alterar os seus fatos!`,
+      text: `Olá! Sou o assistente inteligente de carreiras do Voe Certo. 👋\n\nVamos criar o seu currículo profissional com IA?\n\n💡 **Dica importante:** Pode responder do seu jeito, sem se preocupar com gramática ou estrutura — a nossa IA melhora o texto automaticamente, deixando tudo profissional sem alterar os seus fatos!`,
       step: -1,
     },
     {
