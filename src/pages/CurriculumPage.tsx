@@ -12,13 +12,15 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePlan } from '@/hooks/usePlan';
 import { toast } from 'sonner';
-import { Link } from 'react-router-dom';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { CurriculumPreview, CurriculumData, Experience, Education, Certificate, Language } from '@/components/curriculum/CurriculumPreview';
 import { CurriculumChatAssistant } from '@/components/curriculum/CurriculumChatAssistant';
 
@@ -68,45 +70,45 @@ export default function CurriculumPage() {
   const { canSaveCurriculum } = usePlan();
   const queryClient = useQueryClient();
   
-  // Modes: 'dashboard' (Galeria) | 'chat' (Criador IA) | 'editor' (Edição Manual)
+  // Modes: 'dashboard' (Galeria em Lista) | 'chat' (Criador IA) | 'editor' (Edição Manual)
   const [mode, setMode] = useState<'dashboard' | 'chat' | 'editor'>('dashboard');
   const [data, setData] = useState<CurriculumData>(EMPTY_DATA);
   const [newSkill, setNewSkill] = useState('');
   const [activeTab, setActiveTab] = useState('dados');
   const [isEnhancingSection, setIsEnhancingSection] = useState<string | null>(null);
+  
+  // Modal de Pré-visualização na Galeria
+  const [previewModalCurriculum, setPreviewModalCurriculum] = useState<CurriculumData | null>(null);
 
-  // Carrega currículo salvo anteriormente no Supabase
-  const { data: savedCurriculum, isLoading: loadingSaved } = useQuery({
-    queryKey: ['curriculum', user?.id],
+  // Carrega TODOS os currículos do usuário no Supabase
+  const { data: savedCurriculums = [], isLoading: loadingSaved } = useQuery({
+    queryKey: ['curriculums', user?.id],
     queryFn: async () => {
-      if (!user) return null;
-      const { data: curriculum, error } = await supabase
+      if (!user) return [];
+      const { data: list, error } = await supabase
         .from('curriculum_data')
         .select('*')
         .eq('user_id', user.id)
-        .maybeSingle();
+        .order('updated_at', { ascending: false });
 
       if (error) throw error;
-      if (curriculum) {
-        const parsedData = {
-          full_name: curriculum.full_name || '',
-          email: curriculum.email || '',
-          phone: curriculum.phone || '',
-          city: curriculum.city || '',
-          profession: curriculum.profession || '',
-          summary: curriculum.summary || '',
-          experience: (curriculum.experience as any) || [],
-          education: (curriculum.education as any) || [],
-          certificates: (curriculum.certificates as any) || [],
-          languages: (curriculum.languages as any) || [],
-          skills: curriculum.skills || [],
-          template: curriculum.template || 'ats',
-          updated_at: curriculum.updated_at,
-        };
-        setData(prev => ({ ...prev, ...parsedData }));
-        return curriculum;
-      }
-      return null;
+      
+      return (list || []).map(curr => ({
+        id: curr.id,
+        full_name: curr.full_name || '',
+        email: curr.email || '',
+        phone: curr.phone || '',
+        city: curr.city || '',
+        profession: curr.profession || '',
+        summary: curr.summary || '',
+        experience: (curr.experience as any) || [],
+        education: (curr.education as any) || [],
+        certificates: (curr.certificates as any) || [],
+        languages: (curr.languages as any) || [],
+        skills: curr.skills || [],
+        template: curr.template || 'ats',
+        updated_at: curr.updated_at,
+      })) as CurriculumData[];
     },
     enabled: !!user,
   });
@@ -114,18 +116,19 @@ export default function CurriculumPage() {
   // Ajusta o modo inicial de forma fluida sem pulos de tela
   useEffect(() => {
     if (!loadingSaved) {
-      if (savedCurriculum && savedCurriculum.full_name) {
+      if (savedCurriculums.length > 0) {
         setMode('dashboard');
       } else {
         setMode('chat');
       }
     }
-  }, [loadingSaved, savedCurriculum]);
+  }, [loadingSaved, savedCurriculums.length]);
 
-  // Salvar currículo no Supabase
+  // Salvar / Atualizar currículo no Supabase
   const saveMutation = useMutation({
     mutationFn: async () => {
       if (!user) throw new Error('Faça login para salvar');
+      
       const payload: any = {
         user_id: user.id,
         full_name: data.full_name,
@@ -143,38 +146,57 @@ export default function CurriculumPage() {
         updated_at: new Date().toISOString(),
       };
 
-      const { error } = await supabase
+      if (data.id) {
+        payload.id = data.id;
+      }
+
+      const { data: savedRow, error } = await supabase
         .from('curriculum_data')
-        .upsert(payload, { onConflict: 'user_id' });
+        .upsert(payload)
+        .select()
+        .single();
 
       if (error) throw error;
+
+      if (savedRow?.id) {
+        setData(prev => ({ ...prev, id: savedRow.id }));
+      }
     },
     onSuccess: () => {
-      toast.success('Currículo salvo com sucesso!');
-      queryClient.invalidateQueries({ queryKey: ['curriculum', user?.id] });
+      toast.success('Currículo salvo na sua galeria!');
+      queryClient.invalidateQueries({ queryKey: ['curriculums', user?.id] });
     },
     onError: (err: any) => toast.error(`Erro ao salvar: ${err.message}`),
   });
 
-  // Excluir currículo no Supabase
+  // Excluir currículo específico no Supabase
   const deleteMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (curriculumId: string) => {
       if (!user) throw new Error('Usuário não autenticado');
       const { error } = await supabase
         .from('curriculum_data')
         .delete()
+        .eq('id', curriculumId)
         .eq('user_id', user.id);
 
       if (error) throw error;
     },
     onSuccess: () => {
       toast.success('Currículo excluído com sucesso!');
-      setData(EMPTY_DATA);
-      setMode('chat');
-      queryClient.invalidateQueries({ queryKey: ['curriculum', user?.id] });
+      if (savedCurriculums.length <= 1) {
+        setData(EMPTY_DATA);
+        setMode('chat');
+      }
+      queryClient.invalidateQueries({ queryKey: ['curriculums', user?.id] });
     },
     onError: (err: any) => toast.error(`Erro ao excluir: ${err.message}`),
   });
+
+  // Iniciar criação de um NOVO currículo do zero com IA
+  const handleStartNewCurriculum = () => {
+    setData(EMPTY_DATA);
+    setMode('chat');
+  };
 
   // Quando a IA gera o currículo pelo Chat Assistant
   const handleCurriculumGenerated = (generatedData: any) => {
@@ -340,7 +362,7 @@ export default function CurriculumPage() {
         {loadingSaved ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3 text-muted-foreground">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            <p className="text-xs font-semibold">Carregando seu currículo profissional...</p>
+            <p className="text-xs font-semibold">Carregando sua galeria de currículos...</p>
           </div>
         ) : (
           <>
@@ -350,16 +372,16 @@ export default function CurriculumPage() {
                 <div>
                   <h1 className="text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
                     <FileText className="w-8 h-8 text-primary" />
-                    Criador de Currículos com IA
+                    Galeria de Currículos com IA
                   </h1>
                   <p className="text-muted-foreground mt-1 text-sm font-medium">
-                    Crie e gerencie currículos de alto impacto otimizados para aviação civil e grandes empresas.
+                    Crie e gerencie currículos profissionais otimizados para a aviação civil e mercado corporativo.
                   </p>
                 </div>
 
                 {/* Alternador de Modo de Navegação */}
                 <div className="flex items-center gap-2 bg-muted/60 p-1.5 rounded-[5px] border border-border shrink-0">
-                  {savedCurriculum?.full_name && (
+                  {savedCurriculums.length > 0 && (
                     <Button
                       variant={mode === 'dashboard' ? 'default' : 'ghost'}
                       size="sm"
@@ -367,18 +389,18 @@ export default function CurriculumPage() {
                       className="gap-2 font-bold text-xs rounded-[5px]"
                     >
                       <Layout className="w-4 h-4" />
-                      Galeria
+                      Galeria ({savedCurriculums.length})
                     </Button>
                   )}
 
                   <Button
                     variant={mode === 'chat' ? 'default' : 'ghost'}
                     size="sm"
-                    onClick={() => setMode('chat')}
+                    onClick={handleStartNewCurriculum}
                     className="gap-2 font-bold text-xs rounded-[5px]"
                   >
                     <Sparkles className="w-4 h-4 text-amber-400" />
-                    Criar com IA
+                    + Criar Novo com IA
                   </Button>
 
                   {data.full_name && (
@@ -389,7 +411,7 @@ export default function CurriculumPage() {
                       className="gap-2 font-bold text-xs rounded-[5px]"
                     >
                       <Edit3 className="w-4 h-4" />
-                      Editar
+                      Editar Currículo
                     </Button>
                   )}
                 </div>
@@ -397,91 +419,103 @@ export default function CurriculumPage() {
             </div>
 
             {/* ------------------------------------------------------------- */}
-            {/* MODO 1: DASHBOARD / GALERIA DE CURRÍCULOS                     */}
+            {/* MODO 1: DASHBOARD / GALERIA DE CURRÍCULOS (LISTA DE CARDS)   */}
             {/* ------------------------------------------------------------- */}
-            {mode === 'dashboard' && savedCurriculum?.full_name && (
-              <div className="space-y-8 print:hidden">
-                <Card className="border-border bg-card shadow-md rounded-[5px]">
-                  <CardHeader className="pb-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div>
-                        <CardTitle className="text-lg font-bold flex items-center gap-2">
-                          <CheckCircle2 className="w-5 h-5 text-success" />
-                          Seu Currículo Cadastrado
-                        </CardTitle>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Você já possui um currículo ativo na plataforma. Escolha uma ação abaixo:
-                        </p>
-                      </div>
+            {mode === 'dashboard' && savedCurriculums.length > 0 && (
+              <div className="space-y-6 print:hidden">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-xl font-black text-foreground flex items-center gap-2">
+                      <Layout className="w-5 h-5 text-primary" />
+                      Seus Currículos Cadastrados
+                    </h2>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Você possui {savedCurriculums.length} currículo(s) salvo(s). Clique em Visualizar para ver o PDF ou em Editar para alterar dados.
+                    </p>
+                  </div>
 
-                      <div className="flex items-center gap-2">
-                        <Button
-                          onClick={() => setMode('chat')}
-                          className="gap-2 font-bold text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded-[5px]"
-                        >
-                          <Sparkles className="w-4 h-4 text-amber-400" />
-                          Criar Novo com IA
-                        </Button>
-                      </div>
-                    </div>
-                  </CardHeader>
+                  <Button
+                    onClick={handleStartNewCurriculum}
+                    className="gap-2 font-bold text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded-[5px]"
+                  >
+                    <Sparkles className="w-4 h-4 text-amber-400" />
+                    + Criar Novo com IA
+                  </Button>
+                </div>
 
-                  <CardContent className="space-y-6">
-                    {/* Card Resumo do Currículo */}
-                    <div className="p-5 rounded-[5px] border border-border bg-muted/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="text-base font-black text-foreground">{data.full_name}</h3>
-                          <Badge variant="outline" className="text-[10px] font-bold border-primary/30 text-primary rounded-[5px]">
-                            Modelo {TEMPLATES.find(t => t.id === (data.template || 'ats').toLowerCase())?.name || 'Digital / ATS'}
-                          </Badge>
-                        </div>
-                        <p className="text-xs font-semibold text-primary">{data.profession || 'Cargo Desejado'}</p>
-                        <p className="text-xs text-muted-foreground">{data.city} • {data.phone} • {data.email}</p>
-                      </div>
+                {/* Lista em Grid dos Currículos Salvos */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {savedCurriculums.map((curr) => {
+                    const templateObj = TEMPLATES.find(t => t.id === (curr.template || 'ats').toLowerCase());
 
-                      <div className="flex items-center gap-2 w-full md:w-auto flex-wrap">
-                        <Button
-                          size="sm"
-                          onClick={() => setMode('editor')}
-                          className="gap-2 font-bold text-xs rounded-[5px] flex-1 md:flex-none"
-                        >
-                          <Edit3 className="w-4 h-4" /> Editar
-                        </Button>
+                    return (
+                      <Card key={curr.id} className="border-border bg-card shadow-sm hover:shadow-md transition-shadow rounded-[5px] flex flex-col justify-between">
+                        <CardHeader className="pb-3">
+                          <div className="flex items-start justify-between gap-2">
+                            <Badge variant="outline" className="text-[10px] font-bold border-primary/30 text-primary rounded-[5px]">
+                              {templateObj?.name || 'Digital / ATS'}
+                            </Badge>
+                            {curr.updated_at && (
+                              <span className="text-[10px] text-muted-foreground flex items-center gap-1 font-mono">
+                                <Clock className="w-3 h-3" />
+                                {format(new Date(curr.updated_at), 'dd/MM/yyyy', { locale: ptBR })}
+                              </span>
+                            )}
+                          </div>
+                          <CardTitle className="text-base font-black text-foreground mt-2 line-clamp-1">
+                            {curr.profession || 'Currículo sem cargo'}
+                          </CardTitle>
+                          <p className="text-xs text-muted-foreground font-medium">{curr.full_name}</p>
+                        </CardHeader>
 
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={handleDownloadPDF}
-                          className="gap-2 font-bold text-xs rounded-[5px] flex-1 md:flex-none"
-                        >
-                          <Download className="w-4 h-4" /> Baixar PDF
-                        </Button>
+                        <CardContent className="pt-0 space-y-4">
+                          <div className="text-[11px] text-muted-foreground space-y-1 bg-muted/30 p-2.5 rounded-[5px] border border-border">
+                            {curr.city && <p className="truncate">📍 {curr.city}</p>}
+                            {curr.phone && <p className="truncate">📞 {curr.phone}</p>}
+                            {curr.email && <p className="truncate">✉️ {curr.email}</p>}
+                          </div>
 
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => {
-                            if (window.confirm('Tem certeza de que deseja excluir este currículo salvo?')) {
-                              deleteMutation.mutate();
-                            }
-                          }}
-                          className="gap-2 font-bold text-xs text-destructive hover:bg-destructive/10 rounded-[5px]"
-                        >
-                          <Trash2 className="w-4 h-4" /> Excluir
-                        </Button>
-                      </div>
-                    </div>
+                          {/* Botões de Ação do Card */}
+                          <div className="flex items-center gap-2 pt-2 border-t border-border">
+                            <Button
+                              size="sm"
+                              variant="default"
+                              onClick={() => setPreviewModalCurriculum(curr)}
+                              className="gap-1.5 font-bold text-xs flex-1 rounded-[5px]"
+                            >
+                              <Eye className="w-3.5 h-3.5" /> Visualizar
+                            </Button>
 
-                    {/* Preview Rápido */}
-                    <div className="pt-4 border-t border-border">
-                      <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-4">
-                        Pré-visualização do seu modelo ({TEMPLATES.find(t => t.id === (data.template || 'ats').toLowerCase())?.name})
-                      </h4>
-                      <CurriculumPreview data={data} />
-                    </div>
-                  </CardContent>
-                </Card>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                setData(curr);
+                                setMode('editor');
+                              }}
+                              className="gap-1.5 font-bold text-xs rounded-[5px]"
+                            >
+                              <Edit3 className="w-3.5 h-3.5" /> Editar
+                            </Button>
+
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => {
+                                if (curr.id && window.confirm(`Deseja excluir o currículo "${curr.profession}"?`)) {
+                                  deleteMutation.mutate(curr.id);
+                                }
+                              }}
+                              className="h-9 w-9 p-0 text-destructive hover:bg-destructive/10 rounded-[5px]"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
               </div>
             )}
 
@@ -544,11 +578,11 @@ export default function CurriculumPage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => setMode('chat')}
+                          onClick={() => setMode('dashboard')}
                           className="gap-2 font-bold text-xs text-muted-foreground hover:text-foreground rounded-[5px]"
                         >
-                          <MessageSquare className="w-4 h-4" />
-                          Refazer Chat
+                          <Layout className="w-4 h-4" />
+                          Voltar à Galeria
                         </Button>
                       </div>
                     </div>
@@ -985,6 +1019,40 @@ export default function CurriculumPage() {
           </>
         )}
       </main>
+
+      {/* Modal de Pré-visualização na Galeria */}
+      {previewModalCurriculum && (
+        <Dialog open={!!previewModalCurriculum} onOpenChange={(open) => !open && setPreviewModalCurriculum(null)}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-6 rounded-[5px]">
+            <DialogHeader className="pb-3 border-b border-border">
+              <div className="flex items-center justify-between">
+                <div>
+                  <DialogTitle className="text-lg font-black text-foreground">
+                    {previewModalCurriculum.profession || 'Pré-visualização do Currículo'}
+                  </DialogTitle>
+                  <DialogDescription className="text-xs text-muted-foreground">
+                    {previewModalCurriculum.full_name} • Modelo {TEMPLATES.find(t => t.id === (previewModalCurriculum.template || 'ats').toLowerCase())?.name}
+                  </DialogDescription>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Button
+                    size="sm"
+                    onClick={handleDownloadPDF}
+                    className="gap-2 font-bold text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded-[5px]"
+                  >
+                    <Download className="w-4 h-4" /> Baixar PDF
+                  </Button>
+                </div>
+              </div>
+            </DialogHeader>
+
+            <div className="py-4">
+              <CurriculumPreview data={previewModalCurriculum} />
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
 
       <div className="print:hidden">
         <Footer />

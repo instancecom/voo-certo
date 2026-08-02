@@ -29,6 +29,7 @@ export interface Language {
 }
 
 export interface CurriculumData {
+  id?: string;
   full_name: string;
   email: string;
   phone: string;
@@ -43,6 +44,7 @@ export interface CurriculumData {
   template: string; // 'ats' | 'geral' | 'presencial' (or legacy fallback)
   recommended_template?: string;
   recommendation_reason?: string;
+  updated_at?: string;
 }
 
 interface CurriculumPreviewProps {
