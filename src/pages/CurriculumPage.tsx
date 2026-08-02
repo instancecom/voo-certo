@@ -154,9 +154,9 @@ export default function CurriculumPage() {
 
       const { data: savedRow, error } = await supabase
         .from('curriculum_data')
-        .upsert(payload)
+        .upsert(payload, { onConflict: 'user_id' })
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 
