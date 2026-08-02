@@ -80,17 +80,29 @@ export default function CurriculumPage() {
     queryFn: async () => {
       if (!user) return null;
       const { data: curriculum, error } = await supabase
-        .from('user_curriculums')
+        .from('curriculum_data')
         .select('*')
         .eq('user_id', user.id)
         .maybeSingle();
 
       if (error) throw error;
-      if (curriculum?.content) {
-        const parsed = typeof curriculum.content === 'string' ? JSON.parse(curriculum.content) : curriculum.content;
-        setData({ ...EMPTY_DATA, ...parsed });
-        // Se já tiver dados salvos, exibe a tela de edição/preview
-        if (parsed.full_name) {
+      if (curriculum) {
+        setData(prev => ({
+          ...prev,
+          full_name: curriculum.full_name || '',
+          email: curriculum.email || '',
+          phone: curriculum.phone || '',
+          city: curriculum.city || '',
+          profession: curriculum.profession || '',
+          summary: curriculum.summary || '',
+          experience: (curriculum.experience as any) || [],
+          education: (curriculum.education as any) || [],
+          certificates: (curriculum.certificates as any) || [],
+          languages: (curriculum.languages as any) || [],
+          skills: curriculum.skills || [],
+          template: curriculum.template || 'ats',
+        }));
+        if (curriculum.full_name) {
           setMode('editor');
         }
       }
@@ -103,13 +115,26 @@ export default function CurriculumPage() {
   const saveMutation = useMutation({
     mutationFn: async () => {
       if (!user) throw new Error('Faça login para salvar');
+      const payload: any = {
+        user_id: user.id,
+        full_name: data.full_name,
+        email: data.email,
+        phone: data.phone,
+        city: data.city,
+        profession: data.profession,
+        summary: data.summary,
+        experience: data.experience,
+        education: data.education,
+        certificates: data.certificates,
+        languages: data.languages,
+        skills: data.skills,
+        template: data.template,
+        updated_at: new Date().toISOString(),
+      };
+
       const { error } = await supabase
-        .from('user_curriculums')
-        .upsert({
-          user_id: user.id,
-          content: data,
-          updated_at: new Date().toISOString(),
-        }, { onConflict: 'user_id' });
+        .from('curriculum_data')
+        .upsert(payload, { onConflict: 'user_id' });
 
       if (error) throw error;
     },
