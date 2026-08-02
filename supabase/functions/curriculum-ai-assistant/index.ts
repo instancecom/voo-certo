@@ -5,6 +5,50 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// Helper resiliente para chamada de IA na Groq com ordenação de modelos
+async function callGroqAPI(apiKey: string, systemPrompt: string, userPrompt: string, temperature = 0.4, maxTokens = 1200) {
+  const modelsToTry = [
+    "openai/gpt-oss-20b",
+    "llama-3.1-8b-instant",
+    "llama-3.3-70b-versatile"
+  ];
+
+  let lastErrorText = "";
+
+  for (const model of modelsToTry) {
+    try {
+      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt },
+          ],
+          temperature,
+          max_tokens: maxTokens,
+        }),
+      });
+
+      if (response.ok) {
+        const groqData = await response.json();
+        return groqData;
+      }
+
+      lastErrorText = await response.text();
+      console.warn(`Tentativa no Groq com modelo [${model}] retornou status ${response.status}: ${lastErrorText}. Tentando próximo modelo...`);
+    } catch (err: any) {
+      console.warn(`Erro de rede no Groq para modelo [${model}]:`, err?.message);
+    }
+  }
+
+  throw new Error(`Erro ao conectar com a IA da Groq: ${lastErrorText}`);
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -22,30 +66,9 @@ Sua função é reescrever o texto fornecido pelo candidato para torná-lo profi
 Mantenha os fatos reais informados pelo usuário, mas use verbos de ação e vocabulário corporativo/aeronáutico forte.
 Responda APENAS com o texto final melhorado, sem saudações ou explicações.`;
 
-      const groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${GROQ_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "llama-3.3-70b-versatile",
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: `Seção: ${sectionName || 'Resumo'}\nTexto original: ${textToEnhance}` },
-          ],
-          temperature: 0.6,
-          max_tokens: 400,
-        }),
-      });
+      const userPrompt = `Seção: ${sectionName || 'Resumo'}\nTexto original: ${textToEnhance}`;
 
-      if (!groqResponse.ok) {
-        const errorText = await groqResponse.text();
-        console.error("Groq API error (enhance_section):", groqResponse.status, errorText);
-        throw new Error(`Groq API error ${groqResponse.status}: ${errorText}`);
-      }
-
-      const groqData = await groqResponse.json();
+      const groqData = await callGroqAPI(GROQ_API_KEY, systemPrompt, userPrompt, 0.6, 400);
       const enhancedText = groqData.choices?.[0]?.message?.content?.trim() || textToEnhance;
 
       return new Response(JSON.stringify({ enhancedText }), {
@@ -105,30 +128,7 @@ Retorne EXCLUSIVAMENTE um objeto JSON válido com a seguinte estrutura (sem text
 
 Por favor, converta esses dados em um currículo profissional em JSON válido conforme especificado.`;
 
-      const groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${GROQ_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "llama-3.3-70b-versatile",
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: groqUserPrompt },
-          ],
-          temperature: 0.3,
-          max_tokens: 1500,
-        }),
-      });
-
-      if (!groqResponse.ok) {
-        const errorText = await groqResponse.text();
-        console.error("Groq API error (generate_curriculum):", groqResponse.status, errorText);
-        throw new Error(`Groq API error ${groqResponse.status}: ${errorText}`);
-      }
-
-      const groqData = await groqResponse.json();
+      const groqData = await callGroqAPI(GROQ_API_KEY, systemPrompt, groqUserPrompt, 0.4, 1500);
       const content = groqData.choices?.[0]?.message?.content || "";
 
       // Limpar marcadores de markdown se o modelo incluir ```json ... ```
