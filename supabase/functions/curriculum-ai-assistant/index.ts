@@ -29,18 +29,20 @@ Responda APENAS com o texto final melhorado, sem saudações ou explicações.`;
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "openai/gpt-oss-20b",
+          model: "llama-3.3-70b-versatile",
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: `Seção: ${sectionName || 'Resumo'}\nTexto original: ${textToEnhance}` },
           ],
           temperature: 0.6,
-          max_tokens: 300,
+          max_tokens: 400,
         }),
       });
 
       if (!groqResponse.ok) {
-        throw new Error(`Groq API error: ${groqResponse.status}`);
+        const errorText = await groqResponse.text();
+        console.error("Groq API error (enhance_section):", groqResponse.status, errorText);
+        throw new Error(`Groq API error ${groqResponse.status}: ${errorText}`);
       }
 
       const groqData = await groqResponse.json();
@@ -66,7 +68,7 @@ REGRAS DE CONVERSÃO E FORMATO:
   - 'presencial': Se ele mencionou entrega em mãos/impresso ou entrevista presencial.
 - Forneça a justificativa da recomendação em 2 frases amigáveis na propriedade 'recommendation_reason'.
 
-Retorne EXCLUSIVAMENTE um objeto JSON válido com a seguinte estrutura (sem marcadores markdown adicionais além de json limpo):
+Retorne EXCLUSIVAMENTE um objeto JSON válido com a seguinte estrutura (sem texto explicativo antes ou depois):
 {
   "full_name": "Nome Completo do Candidato",
   "email": "email@exemplo.com",
@@ -110,18 +112,20 @@ Por favor, converta esses dados em um currículo profissional em JSON válido co
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "openai/gpt-oss-20b",
+          model: "llama-3.3-70b-versatile",
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: groqUserPrompt },
           ],
-          temperature: 0.4,
-          max_tokens: 1200,
+          temperature: 0.3,
+          max_tokens: 1500,
         }),
       });
 
       if (!groqResponse.ok) {
-        throw new Error(`Groq API error: ${groqResponse.status}`);
+        const errorText = await groqResponse.text();
+        console.error("Groq API error (generate_curriculum):", groqResponse.status, errorText);
+        throw new Error(`Groq API error ${groqResponse.status}: ${errorText}`);
       }
 
       const groqData = await groqResponse.json();
@@ -129,10 +133,9 @@ Por favor, converta esses dados em um currículo profissional em JSON válido co
 
       // Limpar marcadores de markdown se o modelo incluir ```json ... ```
       let jsonString = content.trim();
-      if (jsonString.startsWith("```json")) {
-        jsonString = jsonString.replace(/^```json/, "").replace(/```$/, "").trim();
-      } else if (jsonString.startsWith("```")) {
-        jsonString = jsonString.replace(/^```/, "").replace(/```$/, "").trim();
+      const jsonMatch = jsonString.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        jsonString = jsonMatch[0];
       }
 
       const parsedCurriculum = JSON.parse(jsonString);
