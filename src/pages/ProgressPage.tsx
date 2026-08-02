@@ -26,6 +26,8 @@ import {
 import { useUserResults, useExams, useSubcategories } from '@/hooks/useExams';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePlan } from '@/hooks/usePlan';
+import { AIDiagnosticModal } from '@/components/performance/AIDiagnosticModal';
+import { Sparkles } from 'lucide-react';
 import { PlanGate } from '@/components/PlanGate';
 import { format, subDays, isSameDay, differenceInDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -40,6 +42,7 @@ export default function ProgressPage() {
   const [showAllHistory, setShowAllHistory] = useState(false);
   const [historyFilter, setHistoryFilter] = useState<'all' | 'bloco' | 'livre' | 'banca'>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isDiagnosticOpen, setIsDiagnosticOpen] = useState(false);
 
   // Process data with enhanced safety
   const stats = useMemo(() => {
@@ -203,12 +206,35 @@ export default function ProgressPage() {
       
       <main className="pt-32 pb-20">
         <div className="container mx-auto px-4 max-w-6xl">
-          <div className="mb-10">
-            <h1 className="text-2xl font-bold text-foreground mb-1">Central de Performance</h1>
-            <p className="text-muted-foreground text-sm">
-              Sua evolução baseada em padrões reais da ANAC.
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10 border-b border-border pb-6">
+            <div>
+              <h1 className="text-2xl font-bold text-foreground mb-1 flex items-center gap-2">
+                <BarChart3 className="w-7 h-7 text-primary" />
+                Central de Performance
+              </h1>
+              <p className="text-muted-foreground text-sm">
+                Sua evolução baseada em padrões reais da ANAC.
+              </p>
+            </div>
+
+            <Button
+              onClick={() => setIsDiagnosticOpen(true)}
+              className="gap-2 font-bold text-xs sm:text-sm h-11 px-5 bg-gradient-to-r from-primary via-sky-600 to-slate-900 text-white hover:opacity-90 shadow-md rounded-xl shrink-0"
+            >
+              <Sparkles className="w-4.5 h-4.5 text-amber-400 animate-pulse" />
+              Diagnóstico Completo IA
+            </Button>
           </div>
+
+          <AIDiagnosticModal
+            isOpen={isDiagnosticOpen}
+            onClose={() => setIsDiagnosticOpen(false)}
+            examResults={examResults || []}
+            subcategories={subcategories || []}
+            exams={exams || []}
+            userCreatedAt={user?.created_at}
+            userEmail={user?.email}
+          />
 
           {!stats || stats.totalExams === 0 ? (
             <Card className="p-12 text-center border-dashed">
