@@ -194,19 +194,19 @@ export function AIDiagnosticModal({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-0 rounded-2xl border-border bg-card">
         {/* Top Banner */}
-        <div className="bg-gradient-to-r from-slate-900 via-primary/95 to-slate-950 p-6 text-white relative">
+        <div className="bg-primary text-primary-foreground p-6 relative border-b border-primary/20">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-primary/20 border border-primary/40 flex items-center justify-center shrink-0">
-              <Brain className="w-6 h-6 text-sky-400 animate-pulse" />
+            <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+              <Brain className="w-6 h-6 text-amber-400 animate-pulse" />
             </div>
             <div>
-              <DialogTitle className="text-xl font-black text-white flex items-center gap-2">
+              <DialogTitle className="text-xl font-black text-primary-foreground flex items-center gap-2">
                 Diagnóstico de Desempenho com IA
-                <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-300">
+                <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-300 bg-amber-400/10">
                   Llama 3.3 70B
                 </Badge>
               </DialogTitle>
-              <DialogDescription className="text-xs text-slate-300 font-medium mt-1">
+              <DialogDescription className="text-xs text-primary-foreground/80 font-medium mt-1">
                 Análise de evolução e estratégia personalizada para aprovação na ANAC.
               </DialogDescription>
             </div>
@@ -358,13 +358,13 @@ export function AIDiagnosticModal({
                 </Card>
 
                 {/* 🔵 Parte 3: Tendência */}
-                <Card className="border-l-4 border-l-sky-500 border-border bg-sky-500/5">
+                <Card className="border-l-4 border-l-primary border-border bg-primary/5">
                   <CardContent className="p-4 space-y-2">
                     <div className="flex items-center gap-2">
                       <span className="text-lg">🔵</span>
                       <h4 className="font-bold text-sm text-foreground">{diagnostic.trend?.title || 'Tendência'}</h4>
                       {diagnostic.trend?.status === 'improving' && (
-                        <Badge className="bg-success text-white text-[10px] gap-1">
+                        <Badge className="bg-success text-success-foreground text-[10px] gap-1">
                           <TrendingUp className="w-3 h-3" /> Em evolução
                         </Badge>
                       )}
@@ -381,7 +381,7 @@ export function AIDiagnosticModal({
                 </Card>
 
                 {/* 🟡 Parte 4: Recomendação + Botão Direto */}
-                <Card className="border-l-4 border-l-amber-500 border-border bg-amber-500/5 md:col-span-2">
+                <Card className="border-l-4 border-l-accent border-border bg-accent/10 md:col-span-2">
                   <CardContent className="p-4 space-y-3">
                     <div className="flex items-center gap-2">
                       <span className="text-lg">🟡</span>
@@ -397,7 +397,7 @@ export function AIDiagnosticModal({
                           onClose();
                           navigate('/simulados');
                         }}
-                        className="gap-2 font-bold text-xs bg-amber-500 text-slate-950 hover:bg-amber-400"
+                        className="gap-2 font-bold text-xs bg-primary text-primary-foreground hover:bg-primary/90"
                       >
                         Ir para o Simulado Recomendado
                         <ArrowRight className="w-4 h-4" />

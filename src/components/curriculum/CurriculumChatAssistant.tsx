@@ -173,31 +173,31 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
   return (
     <Card className="border-border bg-card shadow-lg rounded-2xl overflow-hidden max-w-3xl mx-auto flex flex-col my-2">
       {/* Top Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-primary/90 to-slate-950 p-4 sm:p-5 text-white flex items-center justify-between shrink-0">
+      <div className="bg-primary text-primary-foreground p-4 sm:p-5 flex items-center justify-between shrink-0 border-b border-primary/20">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary/20 border border-primary/40 flex items-center justify-center shrink-0">
-            <Sparkles className="w-5 h-5 text-sky-400 animate-pulse" />
+          <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+            <Sparkles className="w-5 h-5 text-amber-400 animate-pulse" />
           </div>
           <div>
             <h3 className="font-bold text-sm sm:text-base flex items-center gap-2">
               Assistente de Currículo Voe Certo
-              <Badge variant="outline" className="text-[10px] border-sky-400/40 text-sky-300">
+              <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-300 bg-amber-400/10">
                 IA Ativa
               </Badge>
             </h3>
-            <p className="text-[11px] sm:text-xs text-slate-300 font-medium">Conversa guiada para montagem automática</p>
+            <p className="text-[11px] sm:text-xs text-primary-foreground/80 font-medium">Conversa guiada para montagem automática</p>
           </div>
         </div>
 
         <div className="text-right hidden sm:block">
-          <span className="text-xs font-bold text-sky-300 font-mono">Passo {currentStep + 1} de {QUESTIONS.length}</span>
-          <Progress value={progressPercent} className="w-24 h-2 mt-1 bg-slate-800" />
+          <span className="text-xs font-bold text-amber-300 font-mono">Passo {currentStep + 1} de {QUESTIONS.length}</span>
+          <Progress value={progressPercent} className="w-24 h-2 mt-1 bg-primary-foreground/20" />
         </div>
       </div>
 
       {/* Motivational Reassurance Card */}
-      <div className="bg-sky-500/10 border-b border-sky-500/20 px-4 py-2.5 flex items-start gap-2.5 text-xs text-sky-700 dark:text-sky-300 shrink-0">
-        <Lightbulb className="w-4 h-4 shrink-0 text-sky-500 mt-0.5" />
+      <div className="bg-secondary/60 border-b border-border px-4 py-2.5 flex items-start gap-2.5 text-xs text-foreground shrink-0">
+        <Lightbulb className="w-4 h-4 shrink-0 text-amber-500 mt-0.5" />
         <span>
           <strong>Sem estresse de escrita:</strong> Pode responder com suas palavras simples. A nossa IA refinará a gramática, ajustará os verbos de ação e escolherá o melhor layout para você.
         </span>
