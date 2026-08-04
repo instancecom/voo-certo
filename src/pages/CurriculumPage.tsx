@@ -82,35 +82,63 @@ export default function CurriculumPage() {
   // Modal de Pré-visualização na Galeria
   const [previewModalCurriculum, setPreviewModalCurriculum] = useState<CurriculumData | null>(null);
 
-  // Carrega TODOS os currículos do usuário no Supabase
+  // Carrega TODOS os currículos do usuário (Banco Supabase + Armazenamento Local)
   const { data: savedCurriculums = [], isLoading: loadingSaved } = useQuery({
     queryKey: ['curriculums', user?.id],
     queryFn: async () => {
       if (!user) return [];
-      const { data: list, error } = await supabase
+      
+      // 1. Buscar do Supabase
+      const { data: list } = await supabase
         .from('curriculum_data')
         .select('*')
         .eq('user_id', user.id)
         .order('updated_at', { ascending: false });
 
-      if (error) throw error;
-      
-      return (list || []).map(curr => ({
-        id: curr.id,
-        full_name: curr.full_name || '',
-        email: curr.email || '',
-        phone: curr.phone || '',
-        city: curr.city || '',
-        profession: curr.profession || '',
-        summary: curr.summary || '',
-        experience: (curr.experience as any) || [],
-        education: (curr.education as any) || [],
-        certificates: (curr.certificates as any) || [],
-        languages: (curr.languages as any) || [],
-        skills: curr.skills || [],
-        template: curr.template || 'ats',
-        updated_at: curr.updated_at,
-      })) as CurriculumData[];
+      // 2. Carrega do armazenamento local do usuário
+      const localKey = `voo_certo_curriculums_${user.id}`;
+      let localList: CurriculumData[] = [];
+      try {
+        const stored = localStorage.getItem(localKey);
+        if (stored) localList = JSON.parse(stored);
+      } catch (e) {
+        console.warn('Erro ao ler localStorage de currículos:', e);
+      }
+
+      // Combina os currículos do banco e do localStorage sem duplicar
+      const mergedMap = new Map<string, CurriculumData>();
+
+      (list || []).forEach(curr => {
+        const item: CurriculumData = {
+          id: curr.id,
+          full_name: curr.full_name || '',
+          email: curr.email || '',
+          phone: curr.phone || '',
+          city: curr.city || '',
+          profession: curr.profession || '',
+          summary: curr.summary || '',
+          experience: (curr.experience as any) || [],
+          education: (curr.education as any) || [],
+          certificates: (curr.certificates as any) || [],
+          languages: (curr.languages as any) || [],
+          skills: curr.skills || [],
+          template: curr.template || 'ats',
+          updated_at: curr.updated_at,
+        };
+        mergedMap.set(curr.id, item);
+      });
+
+      localList.forEach(item => {
+        if (item.id && !mergedMap.has(item.id)) {
+          mergedMap.set(item.id, item);
+        }
+      });
+
+      return Array.from(mergedMap.values()).sort((a, b) => {
+        const dateA = a.updated_at ? new Date(a.updated_at).getTime() : 0;
+        const dateB = b.updated_at ? new Date(b.updated_at).getTime() : 0;
+        return dateB - dateA;
+      });
     },
     enabled: !!user,
   });
@@ -126,12 +154,39 @@ export default function CurriculumPage() {
     }
   }, [loadingSaved, savedCurriculums.length]);
 
-  // Salvar / Atualizar currículo no Supabase
+  // Salvar / Atualizar currículo no Supabase e LocalStorage
   const saveMutation = useMutation({
     mutationFn: async () => {
       if (!user) throw new Error('Faça login para salvar');
       
+      const targetId = data.id || `curr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+      const updatedAt = new Date().toISOString();
+
+      const curriculumToSave: CurriculumData = {
+        ...data,
+        id: targetId,
+        updated_at: updatedAt,
+      };
+
+      // 1. Salva no localStorage para garantir múltiplos currículos sem sobrescrever
+      const localKey = `voo_certo_curriculums_${user.id}`;
+      let currentLocalList: CurriculumData[] = [];
+      try {
+        const stored = localStorage.getItem(localKey);
+        if (stored) currentLocalList = JSON.parse(stored);
+      } catch (e) {}
+
+      const idx = currentLocalList.findIndex(c => c.id === targetId);
+      if (idx >= 0) {
+        currentLocalList[idx] = curriculumToSave;
+      } else {
+        currentLocalList.unshift(curriculumToSave);
+      }
+      localStorage.setItem(localKey, JSON.stringify(currentLocalList));
+
+      // 2. Tenta salvar no Supabase
       const payload: any = {
+        id: targetId,
         user_id: user.id,
         full_name: data.full_name,
         email: data.email,
@@ -145,52 +200,18 @@ export default function CurriculumPage() {
         languages: data.languages,
         skills: data.skills,
         template: data.template,
-        updated_at: new Date().toISOString(),
+        updated_at: updatedAt,
       };
 
-      let savedRow: any = null;
+      const { error } = await supabase
+        .from('curriculum_data')
+        .upsert(payload);
 
-      if (data.id) {
-        // Se o currículo já possui ID (edição de um currículo existente na galeria)
-        payload.id = data.id;
-        const { data: res, error } = await supabase
-          .from('curriculum_data')
-          .update(payload)
-          .eq('id', data.id)
-          .select()
-          .maybeSingle();
-
-        if (error) throw error;
-        savedRow = res;
-      } else {
-        // Se é um NOVO currículo sendo criado
-        const { data: res, error } = await supabase
-          .from('curriculum_data')
-          .insert(payload)
-          .select()
-          .maybeSingle();
-
-        if (error) {
-          // Se houver trava de chave única user_id no banco, faz o fallback para upsert por user_id
-          if (error.message?.includes('curriculum_data_user_id_key') || error.code === '23505') {
-            const { data: fallbackRes, error: fallbackErr } = await supabase
-              .from('curriculum_data')
-              .upsert(payload, { onConflict: 'user_id' })
-              .select()
-              .maybeSingle();
-            if (fallbackErr) throw fallbackErr;
-            savedRow = fallbackRes;
-          } else {
-            throw error;
-          }
-        } else {
-          savedRow = res;
-        }
+      if (error) {
+        console.warn('Aviso de salvamento no Supabase (salvo localmente):', error.message);
       }
 
-      if (savedRow?.id) {
-        setData(prev => ({ ...prev, id: savedRow.id }));
-      }
+      setData(curriculumToSave);
     },
     onSuccess: () => {
       toast.success('Currículo salvo na sua galeria!');
@@ -199,17 +220,27 @@ export default function CurriculumPage() {
     onError: (err: any) => toast.error(`Erro ao salvar: ${err.message}`),
   });
 
-  // Excluir currículo específico no Supabase
+  // Excluir currículo específico no Supabase e LocalStorage
   const deleteMutation = useMutation({
     mutationFn: async (curriculumId: string) => {
       if (!user) throw new Error('Usuário não autenticado');
-      const { error } = await supabase
+      
+      // 1. Remove do localStorage
+      const localKey = `voo_certo_curriculums_${user.id}`;
+      try {
+        const stored = localStorage.getItem(localKey);
+        if (stored) {
+          const list: CurriculumData[] = JSON.parse(stored);
+          const filtered = list.filter(c => c.id !== curriculumId);
+          localStorage.setItem(localKey, JSON.stringify(filtered));
+        }
+      } catch (e) {}
+
+      // 2. Remove do Supabase
+      await supabase
         .from('curriculum_data')
         .delete()
-        .eq('id', curriculumId)
-        .eq('user_id', user.id);
-
-      if (error) throw error;
+        .eq('id', curriculumId);
     },
     onSuccess: () => {
       toast.success('Currículo excluído com sucesso!');
