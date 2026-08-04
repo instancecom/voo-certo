@@ -156,14 +156,15 @@ export default function CurriculumPage() {
 
   // Salvar / Atualizar currículo no Supabase e LocalStorage
   const saveMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (customData?: CurriculumData) => {
       if (!user) throw new Error('Faça login para salvar');
       
-      const targetId = data.id || `curr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+      const dataToSave = customData || data;
+      const targetId = dataToSave.id || (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `curr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`);
       const updatedAt = new Date().toISOString();
 
       const curriculumToSave: CurriculumData = {
-        ...data,
+        ...dataToSave,
         id: targetId,
         updated_at: updatedAt,
       };
@@ -184,22 +185,22 @@ export default function CurriculumPage() {
       }
       localStorage.setItem(localKey, JSON.stringify(currentLocalList));
 
-      // 2. Tenta salvar no Supabase
+      // 2. Salva no Supabase
       const payload: any = {
         id: targetId,
         user_id: user.id,
-        full_name: data.full_name,
-        email: data.email,
-        phone: data.phone,
-        city: data.city,
-        profession: data.profession,
-        summary: data.summary,
-        experience: data.experience,
-        education: data.education,
-        certificates: data.certificates,
-        languages: data.languages,
-        skills: data.skills,
-        template: data.template,
+        full_name: curriculumToSave.full_name,
+        email: curriculumToSave.email,
+        phone: curriculumToSave.phone,
+        city: curriculumToSave.city,
+        profession: curriculumToSave.profession,
+        summary: curriculumToSave.summary,
+        experience: curriculumToSave.experience,
+        education: curriculumToSave.education,
+        certificates: curriculumToSave.certificates,
+        languages: curriculumToSave.languages,
+        skills: curriculumToSave.skills,
+        template: curriculumToSave.template,
         updated_at: updatedAt,
       };
 
@@ -212,6 +213,7 @@ export default function CurriculumPage() {
       }
 
       setData(curriculumToSave);
+      return curriculumToSave;
     },
     onSuccess: () => {
       toast.success('Currículo salvo na sua galeria!');
@@ -255,23 +257,31 @@ export default function CurriculumPage() {
 
   // Iniciar criação de um NOVO currículo do zero com IA
   const handleStartNewCurriculum = () => {
-    setData(EMPTY_DATA);
+    setData({
+      ...EMPTY_DATA,
+      id: undefined,
+    });
     setMode('chat');
   };
 
   // Quando a IA gera o currículo pelo Chat Assistant
   const handleCurriculumGenerated = (generatedData: any) => {
+    const newId = typeof crypto !== 'undefined' && crypto.randomUUID 
+      ? crypto.randomUUID() 
+      : `curr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+
     const updated: CurriculumData = {
       ...EMPTY_DATA,
-      id: undefined, // Garante que será inserido um NOVO currículo na galeria
       ...generatedData,
+      id: newId, // Atribui um ID único EXCLUSIVO para este novo currículo
       template: generatedData.recommended_template || 'ats',
     };
+    
     setData(updated);
     setMode('editor');
     
     if (user) {
-      saveMutation.mutate();
+      saveMutation.mutate(updated); // Passa o objeto COMPLETO atualizado diretamente!
     }
   };
 
