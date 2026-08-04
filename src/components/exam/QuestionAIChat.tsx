@@ -206,13 +206,14 @@ export function QuestionAIChat({
             <div className="bg-[#F5F7F9] border border-border/40 rounded-[5px] shadow-2xl flex flex-col h-[85vh] md:h-[500px] md:w-[420px] overflow-hidden">
               <div className="flex items-center justify-between p-5 bg-white border-b border-border/10 shrink-0 shadow-sm relative z-10">
                 <div className="flex items-center gap-3">
-                  <div className="relative">
-                    <img 
-                      src="/images/avatars/prof_hugo.jpg" 
-                      alt="Prof. Hugo" 
-                      className="w-11 h-11 rounded-full object-cover border-2 border-primary shadow-sm shrink-0" 
-                      style={{ width: '44px', height: '44px' }}
-                    />
+                  <div className="relative shrink-0">
+                    <div className="w-11 h-11 rounded-full overflow-hidden shrink-0 border-2 border-primary shadow-sm" style={{ width: '44px', height: '44px', minWidth: '44px', maxWidth: '44px', minHeight: '44px', maxHeight: '44px' }}>
+                      <img 
+                        src="/images/avatars/prof_hugo.jpg" 
+                        alt="Prof. Hugo" 
+                        className="w-full h-full object-cover block" 
+                      />
+                    </div>
                     <div className="absolute bottom-0.5 right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
                   </div>
                   <div className="flex-1 min-w-0">
@@ -254,12 +255,13 @@ export function QuestionAIChat({
                 {messages.length === 0 && !limitReached && (
                   <div className="flex flex-col items-center text-center py-6 px-4">
                     <div className="w-16 h-16 rounded-full bg-white shadow-md border-2 border-primary/20 flex items-center justify-center mb-4 relative shrink-0">
-                      <img 
-                        src="/images/avatars/prof_hugo.jpg" 
-                        alt="Prof. Hugo" 
-                        className="w-full h-full rounded-full object-cover shrink-0" 
-                        style={{ width: '64px', height: '64px' }}
-                      />
+                      <div className="w-16 h-16 rounded-full overflow-hidden shrink-0">
+                        <img 
+                          src="/images/avatars/prof_hugo.jpg" 
+                          alt="Prof. Hugo" 
+                          className="w-full h-full object-cover block" 
+                        />
+                      </div>
                       <div className="absolute -bottom-1 -right-1 bg-amber-500 rounded-full p-1 border-2 border-white">
                         <Sparkles className="w-3 h-3 text-white" />
                       </div>
@@ -286,12 +288,13 @@ export function QuestionAIChat({
                   <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                     {msg.role === 'assistant' ? (
                       <div className="flex gap-2 max-w-[88%]">
-                        <img 
-                          src="/images/avatars/prof_hugo.jpg"
-                          alt="Prof. Hugo"
-                          className="w-8 h-8 rounded-full object-cover border border-primary/50 shrink-0 mt-1 shadow-sm"
-                          style={{ width: '32px', height: '32px' }}
-                        />
+                        <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-primary/50 mt-1 shadow-sm" style={{ width: '32px', height: '32px', minWidth: '32px', maxWidth: '32px', minHeight: '32px', maxHeight: '32px' }}>
+                          <img 
+                            src="/images/avatars/prof_hugo.jpg"
+                            alt="Prof. Hugo"
+                            className="w-full h-full object-cover block"
+                          />
+                        </div>
                         <div className="bg-white border border-primary/20 px-4 py-3 rounded-[5px] rounded-tl-sm text-[15px] text-foreground shadow-sm">
                           <div className="flex items-center gap-1.5 mb-1.5">
                             <span className="text-xs text-primary font-bold">Prof. Hugo</span>
@@ -315,12 +318,13 @@ export function QuestionAIChat({
                 {isLoading && (
                   <div className="flex justify-start">
                     <div className="flex gap-2 max-w-[85%]">
-                      <img 
-                        src="/images/avatars/prof_hugo.jpg"
-                        alt="Prof. Hugo"
-                        className="w-8 h-8 rounded-full object-cover border border-primary/50 shrink-0 mt-1 shadow-sm animate-pulse"
-                        style={{ width: '32px', height: '32px' }}
-                      />
+                      <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-primary/50 mt-1 shadow-sm animate-pulse" style={{ width: '32px', height: '32px', minWidth: '32px', maxWidth: '32px', minHeight: '32px', maxHeight: '32px' }}>
+                        <img 
+                          src="/images/avatars/prof_hugo.jpg"
+                          alt="Prof. Hugo"
+                          className="w-full h-full object-cover block"
+                        />
+                      </div>
                       <div className="bg-white border border-border/50 rounded-[5px] rounded-tl-sm px-4 py-3 flex items-center gap-2.5 shadow-sm text-xs font-semibold text-primary">
                         <Loader2 className="w-4 h-4 animate-spin text-primary shrink-0" />
                         <span>Prof. Hugo analisando sua dúvida...</span>

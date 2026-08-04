@@ -200,12 +200,13 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
       <div className="bg-primary text-primary-foreground p-4 sm:p-5 flex items-center justify-between shrink-0 border-b border-primary/20">
         <div className="flex items-center gap-3.5">
           <div className="relative shrink-0">
-            <img
-              src="/images/avatars/lucas.jpg"
-              alt="Lucas - Analista de Carreiras"
-              className="w-12 h-12 rounded-full object-cover border-2 border-amber-400 shadow-sm shrink-0"
-              style={{ width: '48px', height: '48px' }}
-            />
+            <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border-2 border-amber-400 shadow-sm" style={{ width: '48px', height: '48px', minWidth: '48px', maxWidth: '48px', minHeight: '48px', maxHeight: '48px' }}>
+              <img
+                src="/images/avatars/lucas.jpg"
+                alt="Lucas - Analista de Carreiras"
+                className="w-full h-full object-cover block"
+              />
+            </div>
             <div className="absolute -bottom-0.5 -right-0.5 bg-amber-500 rounded-full p-1 border-2 border-primary">
               <Sparkles className="w-2.5 h-2.5 text-white" />
             </div>
@@ -250,12 +251,13 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
               className={`flex gap-2.5 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {msg.sender === 'ai' && (
-                <img
-                  src="/images/avatars/lucas.jpg"
-                  alt="Lucas"
-                  className="w-8 h-8 rounded-full border border-primary/30 object-cover shrink-0 mt-1 shadow-sm"
-                  style={{ width: '32px', height: '32px' }}
-                />
+                <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-primary/30 mt-1 shadow-sm" style={{ width: '32px', height: '32px', minWidth: '32px', maxWidth: '32px', minHeight: '32px', maxHeight: '32px' }}>
+                  <img
+                    src="/images/avatars/lucas.jpg"
+                    alt="Lucas"
+                    className="w-full h-full object-cover block"
+                  />
+                </div>
               )}
 
               <div

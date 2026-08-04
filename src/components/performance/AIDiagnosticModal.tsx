@@ -197,12 +197,13 @@ export function AIDiagnosticModal({
         <div className="bg-primary text-primary-foreground p-6 relative border-b border-primary/20">
           <div className="flex items-center gap-3.5">
             <div className="relative shrink-0">
-              <img
-                src="/images/avatars/sofia.jpg"
-                alt="Sofia - Mentora de Desempenho"
-                className="w-12 h-12 rounded-full object-cover border-2 border-amber-400 shadow-md shrink-0"
-                style={{ width: '48px', height: '48px' }}
-              />
+              <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border-2 border-amber-400 shadow-md" style={{ width: '48px', height: '48px', minWidth: '48px', maxWidth: '48px', minHeight: '48px', maxHeight: '48px' }}>
+                <img
+                  src="/images/avatars/sofia.jpg"
+                  alt="Sofia - Mentora de Desempenho"
+                  className="w-full h-full object-cover block"
+                />
+              </div>
               <div className="absolute -bottom-1 -right-1 bg-amber-500 rounded-full p-1 border-2 border-primary">
                 <Sparkles className="w-3 h-3 text-white" />
               </div>

@@ -517,7 +517,9 @@ export default function CurriculumPage() {
                     onClick={handleStartNewCurriculum}
                     className="gap-2 font-bold text-xs rounded-[5px]"
                   >
-                    <img src="/images/avatars/lucas.jpg" alt="Lucas" className="w-5 h-5 rounded-full object-cover border border-amber-400 shrink-0" style={{ width: '20px', height: '20px' }} />
+                    <span className="w-5 h-5 rounded-full overflow-hidden shrink-0 border border-amber-400 inline-block align-middle" style={{ width: '20px', height: '20px', minWidth: '20px', maxWidth: '20px', minHeight: '20px', maxHeight: '20px' }}>
+                      <img src="/images/avatars/lucas.jpg" alt="Lucas" className="w-full h-full object-cover block" />
+                    </span>
                     + Criar com Lucas
                   </Button>
 
@@ -556,7 +558,9 @@ export default function CurriculumPage() {
                     onClick={handleStartNewCurriculum}
                     className="gap-2 font-bold text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded-[5px]"
                   >
-                    <img src="/images/avatars/lucas.jpg" alt="Lucas" className="w-5 h-5 rounded-full object-cover border border-amber-400 shrink-0" style={{ width: '20px', height: '20px' }} />
+                    <span className="w-5 h-5 rounded-full overflow-hidden shrink-0 border border-amber-400 inline-block align-middle" style={{ width: '20px', height: '20px', minWidth: '20px', maxWidth: '20px', minHeight: '20px', maxHeight: '20px' }}>
+                      <img src="/images/avatars/lucas.jpg" alt="Lucas" className="w-full h-full object-cover block" />
+                    </span>
                     + Criar Novo com Lucas
                   </Button>
                 </div>
