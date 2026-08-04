@@ -493,8 +493,8 @@ export default function GuiaCarreiraDetailPage() {
       </main>
 
       {/* =================================================================== */}
-      /* MODAL DETALHADO AO CLICAR NO PIN DO MAPA                           */
-      /* =================================================================== */}
+      {/* MODAL DETALHADO AO CLICAR NO PIN DO MAPA                           */}
+      {/* =================================================================== */}
       <Dialog open={!!selectedStepModal} onOpenChange={(open) => !open && setSelectedStepModal(null)}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 rounded-[5px] border-border bg-card">
           {selectedStepModal && (
