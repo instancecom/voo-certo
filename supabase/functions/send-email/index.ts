@@ -2,9 +2,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { 
   getWelcomeEmailHtml, 
-  getPlanActivatedEmailHtml, 
-  getDiagnosticEmailHtml, 
-  getPasswordResetEmailHtml 
+  getInactiveEmailHtml, 
+  getPasswordResetEmailHtml, 
+  getStudyReminderEmailHtml 
 } from "./emailTemplates.ts"
 
 const corsHeaders = {
@@ -21,8 +21,8 @@ serve(async (req: any) => {
   try {
     const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
     
-    // Email remetente oficial (Quando registrar o domínio no Resend, basta configurar este segredo)
-    // Exemplo: 'Voe Certo <atendimento@voecerto.com.br>' ou 'Voe Certo <contato@voecerto.com.br>'
+    // Remetente oficial (Configurável via Supabase Secrets: RESEND_FROM_EMAIL)
+    // Exemplo em produção: 'Voe Certo <atendimento@voecerto.com.br>'
     const configuredFrom = Deno.env.get('RESEND_FROM_EMAIL')
     const fromEmail = configuredFrom || 'Voe Certo <onboarding@resend.dev>'
 
@@ -30,15 +30,15 @@ serve(async (req: any) => {
       console.warn("RESEND_API_KEY não configurada nos secrets do Supabase.")
       return new Response(
         JSON.stringify({ 
-          warning: "Chave do Resend pendente. Assim que configurar a RESEND_API_KEY nos secrets do Supabase, o envio será automático.",
+          warning: "Chave do Resend pendente. Assim que você configurar a RESEND_API_KEY no Supabase Secrets, o disparo será automático.",
           status: "simulated" 
         }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       )
     }
 
-    const payload = await req.json()
-    const { action, email, name, planName, criticalTitle, positiveTitle, resetUrl } = payload
+    const payload = await req.json().catch(() => ({}))
+    const { action, email, name, daysInactive, resetUrl, streakDays } = payload
 
     if (!email) {
       return new Response(
@@ -51,21 +51,17 @@ serve(async (req: any) => {
     let subject = 'Mensagem da Voe Certo ✈️'
     let htmlContent = ''
 
-    // Seleciona o template apropriado
+    // Seleciona o modelo de e-mail solicitado
     switch (action) {
       case 'welcome':
         subject = 'Bem-vindo(a) à Voe Certo ✈️ Sua jornada na aviação começa agora'
         htmlContent = getWelcomeEmailHtml(userName)
         break
 
-      case 'plan_activated':
-        subject = `Decolagem Autorizada! 🚀 Seu plano ${planName || 'Solo'} foi ativado`
-        htmlContent = getPlanActivatedEmailHtml(userName, planName || 'Solo')
-        break
-
-      case 'diagnostic_report':
-        subject = '📊 Seu Diagnóstico Completo de Desempenho com Sofia está pronto!'
-        htmlContent = getDiagnosticEmailHtml(userName, criticalTitle || 'Ponto crítico identificado', positiveTitle || 'Ótimo desempenho em simulados')
+      case 'inactive_reminder':
+      case 'inactive':
+        subject = `Sentimos sua falta na torre de controle! 📡 Retome seus treinos, ${userName}`
+        htmlContent = getInactiveEmailHtml(userName, Number(daysInactive) || 3)
         break
 
       case 'password_reset':
@@ -73,13 +69,19 @@ serve(async (req: any) => {
         htmlContent = getPasswordResetEmailHtml(userName, resetUrl || 'https://voe-certo.vercel.app/reset-password')
         break
 
+      case 'study_reminder':
+      case 'study':
+        subject = 'Hora do seu treino diário de voo! 🛫 Faça 1 simulado hoje'
+        htmlContent = getStudyReminderEmailHtml(userName, Number(streakDays) || 1)
+        break
+
       default:
-        subject = 'Notificação Importante — Voe Certo ✈️'
+        subject = 'Notificação — Voe Certo ✈️'
         htmlContent = getWelcomeEmailHtml(userName)
         break
     }
 
-    // Requisição HTTP direta para a API do Resend
+    // Disparo direto para a API do Resend
     const resendResponse = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -99,7 +101,7 @@ serve(async (req: any) => {
     if (!resendResponse.ok) {
       console.error("Erro na API do Resend:", resendResult)
       
-      // Se deu erro de domínio não verificado em produção, tenta fallback para onboarding@resend.dev se estiver em testes
+      // Fallback automático para sandbox de testes caso o domínio ainda esteja pendente de verificação
       if (resendResult?.message?.includes('domain') && fromEmail !== 'Voe Certo <onboarding@resend.dev>') {
         console.info("Tentando envio via fallback onboarding@resend.dev...")
         const fallbackRes = await fetch('https://api.resend.com/emails', {
@@ -134,9 +136,9 @@ serve(async (req: any) => {
     )
 
   } catch (err: any) {
-    console.error("Erro inesperado no envio de e-mail:", err)
+    console.error("Erro no envio de e-mail:", err)
     return new Response(
-      JSON.stringify({ error: err?.message || 'Erro interno no servidor' }),
+      JSON.stringify({ error: err?.message || 'Erro interno no servidor de e-mail' }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     )
   }
