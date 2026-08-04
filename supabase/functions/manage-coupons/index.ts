@@ -31,6 +31,39 @@ serve(async (req) => {
     const body = await req.json();
     const { action } = body;
 
+    // Ação 0: Buscar preços ao vivo dos planos no checkout da Cakto
+    if (action === "get_plans") {
+      const planLinks = [
+        { id: "solo", name: "Solo", url: "https://pay.cakto.com.br/659x89z_1012189", defaultPrice: "R$ 19,90/mês" },
+        { id: "tripulante", name: "Tripulante", url: "https://pay.cakto.com.br/o2twp3f_1012195", defaultPrice: "R$ 39,90/mês" },
+        { id: "comandante", name: "Comandante", url: "https://pay.cakto.com.br/4wat335_1012197", defaultPrice: "R$ 79,90/mês" }
+      ];
+
+      const livePlans = await Promise.all(planLinks.map(async (plan) => {
+        try {
+          const res = await fetch(plan.url, {
+            headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" }
+          });
+          if (res.ok) {
+            const html = await res.text();
+            // Procurar padrões de preço no HTML do checkout da Cakto (ex: "R$ 19,90" ou "19.90")
+            const priceMatch = html.match(/R\$\s?[\d.,]+/i) || html.match(/"price"\s*:\s*"?([\d.,]+)"?/i);
+            if (priceMatch) {
+              const matchedPrice = priceMatch[0].includes('R$') ? priceMatch[0] : `R$ ${priceMatch[1]}`;
+              return { ...plan, price: `${matchedPrice}/mês`, checkoutUrl: plan.url };
+            }
+          }
+        } catch (e) {
+          console.warn(`Erro ao buscar preço Cakto para ${plan.name}:`, e);
+        }
+        return { ...plan, price: plan.defaultPrice, checkoutUrl: plan.url };
+      }));
+
+      return new Response(JSON.stringify({ plans: livePlans }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     // Ação 1: Criar Cupom de Desconto no Banco de Dados do Voe Certo
     if (action === "create") {
       const { code, type, value, plan_id, starts_at, ends_at, max_uses, max_uses_per_user, min_amount, duration, duration_in_months } = body;
