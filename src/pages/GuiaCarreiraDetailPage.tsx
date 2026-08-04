@@ -303,10 +303,10 @@ export default function GuiaCarreiraDetailPage() {
               </div>
 
               {/* Flight Path Container with Zig-zag Pins */}
-              <div className="relative max-w-3xl mx-auto py-6">
+              <div className="relative max-w-3xl mx-auto py-4">
 
-                {/* Vertical Winding Flight Route Line */}
-                <div className="absolute left-1/2 top-10 bottom-10 w-1 -translate-x-1/2 bg-dashed border-r-2 border-dashed border-primary/30 z-0" />
+                {/* Vertical Winding Flight Route Line (Conecta do centro do primeiro Pin ao centro do último Pin) */}
+                <div className="absolute left-1/2 top-[32px] bottom-[32px] w-1 -translate-x-1/2 border-r-2 border-dashed border-primary/30 z-0" />
 
                 <div className="space-y-16 sm:space-y-20 relative z-10">
                   {guide?.steps?.map((step, index) => {
@@ -341,7 +341,7 @@ export default function GuiaCarreiraDetailPage() {
                                 </Badge>
                               )}
                               {isCurrent && (
-                                <Badge variant="secondary" className="text-[9px] bg-amber-500/20 text-amber-600 font-bold animate-pulse">
+                                <Badge variant="secondary" className="text-[9px] bg-amber-500/20 text-amber-600 font-bold">
                                   Atual
                                 </Badge>
                               )}
@@ -357,7 +357,7 @@ export default function GuiaCarreiraDetailPage() {
                         {/* PIN NUMERADO DA ROTA (ESTILO MARCADOR ANAC/AVIATION MAP PIN) */}
                         <div className="relative shrink-0 mx-auto sm:mx-0">
                           <motion.button
-                            whileHover={{ scale: 1.15 }}
+                            whileHover={{ scale: 1.12 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={() => setSelectedStepModal({ step, index })}
                             className="relative flex flex-col items-center group cursor-pointer focus:outline-none"
@@ -370,7 +370,7 @@ export default function GuiaCarreiraDetailPage() {
                                   isCompleted
                                     ? 'bg-success border-white text-white shadow-success/40'
                                     : isCurrent
-                                      ? 'bg-amber-500 border-white text-white shadow-amber-500/50 ring-4 ring-amber-400/30 animate-pulse'
+                                      ? 'bg-amber-500 border-white text-white shadow-amber-500/40 ring-4 ring-amber-400/20'
                                       : 'bg-primary border-white text-white shadow-primary/30 hover:bg-sky-600'
                                 }
                               `}
