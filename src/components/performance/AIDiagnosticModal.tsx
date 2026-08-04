@@ -100,13 +100,13 @@ export function AIDiagnosticModal({
   const isAdminUser = userEmail?.includes('admin') || userEmail?.includes('instancecom') || userEmail?.includes('kamimura');
   const hasMinAccountAge = accountAgeDays >= 7 || isAdminUser;
 
-  // Requisito 3: Cooldown 48 Horas
+  // Requisito 3: Cooldown 24 Horas
   const now = Date.now();
   const hoursSinceLastDiagnostic = lastGeneratedAt ? (now - lastGeneratedAt) / (1000 * 60 * 60) : 999;
-  const isCooldownActive = hoursSinceLastDiagnostic < 48;
+  const isCooldownActive = hoursSinceLastDiagnostic < 24;
 
-  const remainingHours = Math.max(0, Math.floor(48 - hoursSinceLastDiagnostic));
-  const remainingMinutes = Math.max(0, Math.floor((48 - hoursSinceLastDiagnostic - remainingHours) * 60));
+  const remainingHours = Math.max(0, Math.floor(24 - hoursSinceLastDiagnostic));
+  const remainingMinutes = Math.max(0, Math.floor((24 - hoursSinceLastDiagnostic - remainingHours) * 60));
 
   // Filtrar resultados pelo período selecionado de forma ultrassegura
   const getFilteredResults = () => {
@@ -270,39 +270,46 @@ export function AIDiagnosticModal({
             </div>
           </div>
 
-          {/* Cooldown de 48h */}
+          {/* Cooldown de 24h */}
           {isCooldownActive && diagnostic && (
             <div className="p-4 rounded-[5px] bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs flex items-start gap-3">
               <Clock className="w-5 h-5 shrink-0 text-amber-500 mt-0.5" />
               <div>
                 <p className="font-bold text-sm">Próxima análise disponível em: {remainingHours}h {remainingMinutes}min</p>
                 <p className="mt-1 leading-relaxed">
-                  O intervalo de 48 horas garante tempo para você estudar os conteúdos recomendados antes da próxima atualização da IA.
+                  O intervalo de 24 horas garante tempo para você estudar os conteúdos recomendados antes de solicitar um novo diagnóstico à IA. Você pode visualizar seu relatório completo abaixo a qualquer momento!
                 </p>
               </div>
             </div>
           )}
 
-          {/* Botão de Gerar */}
-          {(!isCooldownActive || !diagnostic) && (
-            <Button
-              onClick={handleGenerateDiagnostic}
-              disabled={isGenerating || !hasMinExams || !hasMinAccountAge}
-              className="w-full h-12 text-sm font-bold gap-2 bg-gradient-to-r from-primary to-sky-600 hover:from-primary/90 hover:to-sky-700 shadow-md rounded-[5px]"
-            >
-              {isGenerating ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Processando com Llama 3.3 70B...
-                </>
-              ) : (
-                <>
-                  <Sparkles className="w-5 h-5 text-amber-400" />
-                  Gerar Diagnóstico Completo IA
-                </>
-              )}
-            </Button>
-          )}
+          {/* Botão de Gerar (Desabilitado durante o Cooldown) */}
+          <Button
+            onClick={handleGenerateDiagnostic}
+            disabled={isGenerating || isCooldownActive || !hasMinExams || !hasMinAccountAge}
+            className={`w-full h-12 text-sm font-bold gap-2 rounded-[5px] shadow-md ${
+              isCooldownActive
+                ? 'bg-muted text-muted-foreground border border-border cursor-not-allowed opacity-80'
+                : 'bg-gradient-to-r from-primary to-sky-600 hover:from-primary/90 hover:to-sky-700 text-primary-foreground'
+            }`}
+          >
+            {isGenerating ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Processando com Llama 3.3 70B...
+              </>
+            ) : isCooldownActive ? (
+              <>
+                <Clock className="w-5 h-5 text-amber-500" />
+                Novo Diagnóstico Disponível em {remainingHours}h {remainingMinutes}min
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-5 h-5 text-amber-400" />
+                Gerar Diagnóstico Completo IA
+              </>
+            )}
+          </Button>
 
           {/* Exibição das 4 Partes */}
           {diagnostic && (
