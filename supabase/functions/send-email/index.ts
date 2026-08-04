@@ -1,7 +1,8 @@
 // @ts-ignore
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { 
-  getWelcomeEmailHtml, 
+  getWelcomeEmailHtml,
+  getPlanConfirmationEmailHtml, 
   getInactiveEmailHtml, 
   getPasswordResetEmailHtml, 
   getStudyReminderEmailHtml 
@@ -38,7 +39,7 @@ serve(async (req: any) => {
     }
 
     const payload = await req.json().catch(() => ({}))
-    const { action, email, name, daysInactive, resetUrl, streakDays } = payload
+    const { action, email, name, planName, daysInactive, resetUrl, streakDays } = payload
 
     if (!email) {
       return new Response(
@@ -56,6 +57,12 @@ serve(async (req: any) => {
       case 'welcome':
         subject = 'Bem-vindo(a) à Voe Certo ✈️ Sua jornada na aviação começa agora'
         htmlContent = getWelcomeEmailHtml(userName)
+        break
+
+      case 'plan_activated':
+      case 'plan_confirmation':
+        subject = `Decolagem Autorizada! 🚀 Seu plano ${planName || 'Tripulante'} foi ativado com sucesso`
+        htmlContent = getPlanConfirmationEmailHtml(userName, planName || 'Tripulante')
         break
 
       case 'inactive_reminder':
