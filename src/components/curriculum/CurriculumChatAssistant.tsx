@@ -83,7 +83,7 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
   const [messages, setMessages] = useState<Message[]>([
     {
       sender: 'ai',
-      text: `Olá! Sou o assistente inteligente de carreiras do Voe Certo. 👋\n\nVamos criar o seu currículo profissional com IA?\n\n💡 **Dica importante:** Pode responder do seu jeito, sem se preocupar com gramática ou estrutura — a nossa IA melhora o texto automaticamente, deixando tudo profissional sem alterar os seus fatos!`,
+      text: `Olá! Sou o Lucas, analista de carreiras do Voe Certo. 👋\n\nVamos criar o seu currículo profissional de alto impacto?\n\n💡 **Dica importante:** Pode responder do seu jeito, sem se preocupar com gramática ou estrutura — eu vou cuidar da formatação, ajustar os verbos de ação e escolher o modelo ideal para o seu objetivo!`,
       step: -1,
     },
     {
@@ -95,13 +95,10 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
   const [isGenerating, setIsGenerating] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // Auto scroll to bottom when new message arrives or loading state changes
+  // Auto-scroll to bottom of conversation
   useEffect(() => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTo({
-        top: chatContainerRef.current.scrollHeight,
-        behavior: 'smooth',
-      });
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   }, [messages, isGenerating]);
 
@@ -139,7 +136,7 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
       });
       setMessages(newMessages);
     } else {
-      // Step 6 reached -> Generate curriculum with AI!
+      // Step 6 reached -> Generate curriculum with IA!
       setMessages(newMessages);
       await generateFinalCurriculum(updatedAnswers);
     }
@@ -147,7 +144,7 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
 
   const generateFinalCurriculum = async (finalAnswers: Record<string, string>) => {
     setIsGenerating(true);
-    toast.info('IA analisando e formatando seu currículo profissional...');
+    toast.info('Lucas analisando e formatando seu currículo profissional...');
 
     try {
       const { data, error } = await supabase.functions.invoke('curriculum-ai-assistant', {
@@ -160,11 +157,11 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
       if (error) throw error;
       if (!data?.curriculum) throw new Error('Não foi possível gerar a estrutura do currículo.');
 
-      toast.success('Currículo profissional criado com sucesso pela IA!');
+      toast.success('Currículo profissional criado com sucesso por Lucas!');
       onCurriculumGenerated(data.curriculum);
     } catch (err: any) {
       console.error('Erro ao gerar currículo com IA:', err);
-      toast.warning('Formatando currículo com base nas respostas enviadas...');
+      toast.warning('Lucas formatando currículo com base nas respostas enviadas...');
 
       // Fallback inteligente com base direta nas respostas fornecidas pelo usuário
       const fallbackCurriculum = {
@@ -201,18 +198,25 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
     <Card className="border-border bg-card shadow-lg rounded-[5px] overflow-hidden max-w-3xl mx-auto flex flex-col my-2">
       {/* Top Header Banner */}
       <div className="bg-primary text-primary-foreground p-4 sm:p-5 flex items-center justify-between shrink-0 border-b border-primary/20">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-[5px] bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
-            <Sparkles className="w-5 h-5 text-amber-400 animate-pulse" />
+        <div className="flex items-center gap-3.5">
+          <div className="relative shrink-0">
+            <img
+              src="/images/avatars/lucas.jpg"
+              alt="Lucas - Analista de Carreiras"
+              className="w-12 h-12 rounded-full object-cover border-2 border-amber-400 shadow-sm"
+            />
+            <div className="absolute -bottom-0.5 -right-0.5 bg-amber-500 rounded-full p-1 border-2 border-primary">
+              <Sparkles className="w-2.5 h-2.5 text-white" />
+            </div>
           </div>
           <div>
             <h3 className="font-bold text-sm sm:text-base flex items-center gap-2">
-              Assistente de Currículo Voe Certo
+              Lucas — Analista de Carreiras
               <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-300 bg-amber-400/10 rounded-[5px]">
-                IA Ativa
+                Especialista RH
               </Badge>
             </h3>
-            <p className="text-[11px] sm:text-xs text-primary-foreground/80 font-medium">Conversa guiada para montagem automática</p>
+            <p className="text-[11px] sm:text-xs text-primary-foreground/80 font-medium">Conversa guiada para montagem e otimização do seu currículo</p>
           </div>
         </div>
 
@@ -226,7 +230,7 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
       <div className="bg-secondary/60 border-b border-border px-4 py-2.5 flex items-start gap-2.5 text-xs text-foreground shrink-0">
         <Lightbulb className="w-4 h-4 shrink-0 text-amber-500 mt-0.5" />
         <span>
-          <strong>Sem estresse de escrita:</strong> Pode responder com suas palavras simples. A nossa IA refinará a gramática, ajustará os verbos de ação e escolherá o melhor layout para você.
+          <strong>Sem estresse de escrita:</strong> Pode responder com suas palavras simples. O Lucas refinará a gramática, ajustará os verbos de ação e escolherá o melhor layout para você.
         </span>
       </div>
 
@@ -245,9 +249,11 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
               className={`flex gap-2.5 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {msg.sender === 'ai' && (
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-[5px] bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0 mt-1">
-                  <Bot className="w-4 h-4" />
-                </div>
+                <img
+                  src="/images/avatars/lucas.jpg"
+                  alt="Lucas"
+                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-primary/30 object-cover shrink-0 mt-1 shadow-sm"
+                />
               )}
 
               <div
@@ -276,7 +282,7 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
             className="flex items-center gap-3 p-4 rounded-[5px] bg-primary/5 border border-primary/20 text-primary text-xs font-bold"
           >
             <Loader2 className="w-5 h-5 animate-spin shrink-0" />
-            <span>Formatando histórico, aplicando verbos de ação e selecionando o modelo de currículo ideal...</span>
+            <span>Lucas formatando seu histórico, aplicando verbos de ação e selecionando o modelo ideal...</span>
           </motion.div>
         )}
       </CardContent>

@@ -288,11 +288,11 @@ export default function CurriculumPage() {
   // Melhorar um trecho específico com IA no editor manual
   const handleEnhanceWithAI = async (sectionName: string, textToEnhance: string, onSuccess: (enhanced: string) => void) => {
     if (!textToEnhance.trim()) {
-      toast.error('Digite algum texto antes de pedir a melhoria por IA.');
+      toast.error('Digite algum texto antes de pedir a melhoria ao Lucas.');
       return;
     }
     setIsEnhancingSection(sectionName);
-    toast.info(`IA refinando texto da seção [${sectionName}]...`);
+    toast.info(`Lucas refinando texto da seção [${sectionName}]...`);
 
     try {
       const { data: resData, error } = await supabase.functions.invoke('curriculum-ai-assistant', {
@@ -306,10 +306,10 @@ export default function CurriculumPage() {
       if (error) throw error;
       if (resData?.enhancedText) {
         onSuccess(resData.enhancedText);
-        toast.success(`Seção [${sectionName}] aprimorada com sucesso!`);
+        toast.success(`Seção [${sectionName}] aprimorada com sucesso por Lucas!`);
       }
     } catch (err: any) {
-      toast.error(`Falha ao melhorar com IA: ${err.message || 'Erro inesperado'}`);
+      toast.error(`Falha ao melhorar com Lucas: ${err.message || 'Erro inesperado'}`);
     } finally {
       setIsEnhancingSection(null);
     }
@@ -517,8 +517,8 @@ export default function CurriculumPage() {
                     onClick={handleStartNewCurriculum}
                     className="gap-2 font-bold text-xs rounded-[5px]"
                   >
-                    <Sparkles className="w-4 h-4 text-amber-400" />
-                    + Criar Novo com IA
+                    <img src="/images/avatars/lucas.jpg" alt="Lucas" className="w-4.5 h-4.5 rounded-full object-cover border border-amber-400 shrink-0" />
+                    + Criar com Lucas
                   </Button>
 
                   {data.full_name && (
@@ -556,8 +556,8 @@ export default function CurriculumPage() {
                     onClick={handleStartNewCurriculum}
                     className="gap-2 font-bold text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded-[5px]"
                   >
-                    <Sparkles className="w-4 h-4 text-amber-400" />
-                    + Criar Novo com IA
+                    <img src="/images/avatars/lucas.jpg" alt="Lucas" className="w-4.5 h-4.5 rounded-full object-cover border border-amber-400 shrink-0" />
+                    + Criar Novo com Lucas
                   </Button>
                 </div>
 

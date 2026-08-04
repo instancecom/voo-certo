@@ -219,10 +219,10 @@ export default function ProgressPage() {
 
             <Button
               onClick={() => setIsDiagnosticOpen(true)}
-              className="gap-2 font-bold text-xs sm:text-sm h-11 px-5 bg-gradient-to-r from-primary via-sky-600 to-slate-900 text-white hover:opacity-90 shadow-md rounded-[5px] shrink-0"
+              className="gap-2.5 font-bold text-xs sm:text-sm h-11 px-5 bg-gradient-to-r from-primary via-sky-600 to-slate-900 text-white hover:opacity-90 shadow-md rounded-[5px] shrink-0"
             >
-              <Sparkles className="w-4.5 h-4.5 text-amber-400 animate-pulse" />
-              Diagnóstico Completo IA
+              <img src="/images/avatars/sofia.jpg" alt="Sofia" className="w-6 h-6 rounded-full border border-amber-400 object-cover shrink-0" />
+              Diagnóstico com Sofia
             </Button>
           </div>
 

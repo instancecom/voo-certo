@@ -208,19 +208,19 @@ export function QuestionAIChat({
                 <div className="flex items-center gap-3">
                   <div className="relative">
                     <img 
-                      src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=150&h=150" 
-                      alt="Instrutor" 
-                      className="w-11 h-11 rounded-full object-cover border-2 border-accent" 
+                      src="/images/avatars/prof_hugo.jpg" 
+                      alt="Prof. Hugo" 
+                      className="w-11 h-11 rounded-full object-cover border-2 border-primary shadow-sm" 
                     />
                     <div className="absolute bottom-0.5 right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-base font-bold text-primary leading-tight">Assistente IA</h3>
+                      <h3 className="text-base font-black text-primary leading-tight">Prof. Hugo</h3>
                     </div>
                     <div className="flex items-center gap-3 mt-1">
-                      <p className="text-[10px] text-muted-foreground flex items-center gap-1 font-semibold tracking-wide uppercase">
-                        <Sparkles className="w-3.5 h-3.5 text-accent" /> Sempre Online
+                      <p className="text-[10px] text-muted-foreground flex items-center gap-1 font-bold tracking-wide uppercase">
+                        <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Tira-Dúvidas ANAC
                       </p>
                       <div className="h-3 w-[1px] bg-border/40" />
                       <div className="flex items-center gap-2">
@@ -252,19 +252,19 @@ export function QuestionAIChat({
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages.length === 0 && !limitReached && (
                   <div className="flex flex-col items-center text-center py-6 px-4">
-                    <div className="w-16 h-16 rounded-full bg-white shadow-sm border border-border/50 flex items-center justify-center mb-4 relative">
+                    <div className="w-16 h-16 rounded-full bg-white shadow-md border-2 border-primary/20 flex items-center justify-center mb-4 relative">
                       <img 
-                        src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=150&h=150" 
-                        alt="Instrutor" 
+                        src="/images/avatars/prof_hugo.jpg" 
+                        alt="Prof. Hugo" 
                         className="w-full h-full rounded-full object-cover" 
                       />
-                      <div className="absolute -bottom-1 -right-1 bg-accent rounded-full p-1 border-2 border-white">
+                      <div className="absolute -bottom-1 -right-1 bg-amber-500 rounded-full p-1 border-2 border-white">
                         <Sparkles className="w-3 h-3 text-white" />
                       </div>
                     </div>
-                    <h4 className="text-base font-bold text-foreground mb-1">Como posso te ajudar hoje?</h4>
-                    <p className="text-sm text-muted-foreground mb-6 text-balance">
-                      Tire suas dúvidas específicas sobre esta questão.
+                    <h4 className="text-base font-black text-foreground mb-1">Dúvida sobre esta questão?</h4>
+                    <p className="text-sm text-muted-foreground mb-6 text-balance font-medium">
+                      Pergunte ao Prof. Hugo! Ele te explica de forma clara e simples.
                     </p>
                     <div className="w-full space-y-2">
                       {['Por que essa é a resposta correta?', 'Como o erro impacta o voo?', 'Explique a regulamentação.'].map((q, i) => (
@@ -285,13 +285,13 @@ export function QuestionAIChat({
                     {msg.role === 'assistant' ? (
                       <div className="flex gap-2 max-w-[88%]">
                         <img 
-                          src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=150&h=150"
-                          alt="IA"
-                          className="w-8 h-8 rounded-full object-cover border border-accent/50 shrink-0 mt-1 shadow-sm"
+                          src="/images/avatars/prof_hugo.jpg"
+                          alt="Prof. Hugo"
+                          className="w-8 h-8 rounded-full object-cover border border-primary/50 shrink-0 mt-1 shadow-sm"
                         />
-                        <div className="bg-white border border-accent/20 px-4 py-3 rounded-[5px] rounded-tl-sm text-[15px] text-foreground shadow-sm">
+                        <div className="bg-white border border-primary/20 px-4 py-3 rounded-[5px] rounded-tl-sm text-[15px] text-foreground shadow-sm">
                           <div className="flex items-center gap-1.5 mb-1.5">
-                            <span className="text-xs text-primary font-bold">Assistente</span>
+                            <span className="text-xs text-primary font-bold">Prof. Hugo</span>
                             {msg.cached && (
                               <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 bg-muted text-muted-foreground font-normal gap-0.5 border-none">
                                 <Clock className="w-2.5 h-2.5" /> Em cache
@@ -313,12 +313,13 @@ export function QuestionAIChat({
                   <div className="flex justify-start">
                     <div className="flex gap-2 max-w-[85%]">
                       <img 
-                        src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=150&h=150"
-                        alt="IA"
-                        className="w-8 h-8 rounded-full object-cover border border-accent/50 shrink-0 mt-1 shadow-sm opacity-70"
+                        src="/images/avatars/prof_hugo.jpg"
+                        alt="Prof. Hugo"
+                        className="w-8 h-8 rounded-full object-cover border border-primary/50 shrink-0 mt-1 shadow-sm animate-pulse"
                       />
-                      <div className="bg-white border border-border/50 rounded-[5px] rounded-tl-sm px-4 py-3 flex items-center justify-center shadow-sm">
-                        <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                      <div className="bg-white border border-border/50 rounded-[5px] rounded-tl-sm px-4 py-3 flex items-center gap-2.5 shadow-sm text-xs font-semibold text-primary">
+                        <Loader2 className="w-4 h-4 animate-spin text-primary shrink-0" />
+                        <span>Prof. Hugo analisando sua dúvida...</span>
                       </div>
                     </div>
                   </div>

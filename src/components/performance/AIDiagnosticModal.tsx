@@ -195,19 +195,26 @@ export function AIDiagnosticModal({
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-0 rounded-[5px] border-border bg-card">
         {/* Top Banner */}
         <div className="bg-primary text-primary-foreground p-6 relative border-b border-primary/20">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-[5px] bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
-              <Brain className="w-6 h-6 text-amber-400 animate-pulse" />
+          <div className="flex items-center gap-3.5">
+            <div className="relative shrink-0">
+              <img
+                src="/images/avatars/sofia.jpg"
+                alt="Sofia - Mentora de Desempenho"
+                className="w-13 h-13 rounded-full object-cover border-2 border-amber-400 shadow-md"
+              />
+              <div className="absolute -bottom-1 -right-1 bg-amber-500 rounded-full p-1 border-2 border-primary">
+                <Sparkles className="w-3 h-3 text-white" />
+              </div>
             </div>
             <div>
               <DialogTitle className="text-xl font-black text-primary-foreground flex items-center gap-2">
-                Diagnóstico de Desempenho com IA
+                Diagnóstico de Desempenho com Sofia
                 <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-300 bg-amber-400/10 rounded-[5px]">
-                  Llama 3.3 70B
+                  Mentora IA
                 </Badge>
               </DialogTitle>
               <DialogDescription className="text-xs text-primary-foreground/80 font-medium mt-1">
-                Análise de evolução e estratégia personalizada para aprovação na ANAC.
+                Sofia analisa o seu histórico de simulados e indica exatamente onde focar seus estudos para evoluir.
               </DialogDescription>
             </div>
           </div>
@@ -240,7 +247,7 @@ export function AIDiagnosticModal({
           {/* Escolha do Período */}
           <div>
             <label className="text-xs font-bold text-foreground mb-2 block">
-              Escolha o período para a análise da IA:
+              Escolha o período para a análise de Sofia:
             </label>
             <div className="grid grid-cols-3 gap-2">
               <Button
@@ -275,9 +282,9 @@ export function AIDiagnosticModal({
             <div className="p-4 rounded-[5px] bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs flex items-start gap-3">
               <Clock className="w-5 h-5 shrink-0 text-amber-500 mt-0.5" />
               <div>
-                <p className="font-bold text-sm">Próxima análise disponível em: {remainingHours}h {remainingMinutes}min</p>
+                <p className="font-bold text-sm">Próxima análise com Sofia em: {remainingHours}h {remainingMinutes}min</p>
                 <p className="mt-1 leading-relaxed">
-                  O intervalo de 24 horas garante tempo para você estudar os conteúdos recomendados antes de solicitar um novo diagnóstico à IA. Você pode visualizar seu relatório completo abaixo a qualquer momento!
+                  O intervalo de 24 horas garante tempo para você estudar os conteúdos recomendados antes de solicitar um novo diagnóstico à Sofia. Seu relatório atual está salvo abaixo para consulta!
                 </p>
               </div>
             </div>
@@ -296,17 +303,17 @@ export function AIDiagnosticModal({
             {isGenerating ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin" />
-                Processando com Llama 3.3 70B...
+                Sofia analisando seu histórico...
               </>
             ) : isCooldownActive ? (
               <>
                 <Clock className="w-5 h-5 text-amber-500" />
-                Novo Diagnóstico Disponível em {remainingHours}h {remainingMinutes}min
+                Nova Análise de Sofia em {remainingHours}h {remainingMinutes}min
               </>
             ) : (
               <>
                 <Sparkles className="w-5 h-5 text-amber-400" />
-                Gerar Diagnóstico Completo IA
+                Solicitar Análise de Sofia
               </>
             )}
           </Button>
