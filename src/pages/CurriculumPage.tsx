@@ -148,17 +148,45 @@ export default function CurriculumPage() {
         updated_at: new Date().toISOString(),
       };
 
+      let savedRow: any = null;
+
       if (data.id) {
+        // Se o currículo já possui ID (edição de um currículo existente na galeria)
         payload.id = data.id;
+        const { data: res, error } = await supabase
+          .from('curriculum_data')
+          .update(payload)
+          .eq('id', data.id)
+          .select()
+          .maybeSingle();
+
+        if (error) throw error;
+        savedRow = res;
+      } else {
+        // Se é um NOVO currículo sendo criado
+        const { data: res, error } = await supabase
+          .from('curriculum_data')
+          .insert(payload)
+          .select()
+          .maybeSingle();
+
+        if (error) {
+          // Se houver trava de chave única user_id no banco, faz o fallback para upsert por user_id
+          if (error.message?.includes('curriculum_data_user_id_key') || error.code === '23505') {
+            const { data: fallbackRes, error: fallbackErr } = await supabase
+              .from('curriculum_data')
+              .upsert(payload, { onConflict: 'user_id' })
+              .select()
+              .maybeSingle();
+            if (fallbackErr) throw fallbackErr;
+            savedRow = fallbackRes;
+          } else {
+            throw error;
+          }
+        } else {
+          savedRow = res;
+        }
       }
-
-      const { data: savedRow, error } = await supabase
-        .from('curriculum_data')
-        .upsert(payload, { onConflict: 'user_id' })
-        .select()
-        .maybeSingle();
-
-      if (error) throw error;
 
       if (savedRow?.id) {
         setData(prev => ({ ...prev, id: savedRow.id }));
@@ -204,6 +232,7 @@ export default function CurriculumPage() {
   const handleCurriculumGenerated = (generatedData: any) => {
     const updated: CurriculumData = {
       ...EMPTY_DATA,
+      id: undefined, // Garante que será inserido um NOVO currículo na galeria
       ...generatedData,
       template: generatedData.recommended_template || 'ats',
     };
