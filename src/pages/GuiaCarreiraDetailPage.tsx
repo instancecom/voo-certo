@@ -166,7 +166,7 @@ export default function GuiaCarreiraDetailPage() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative pt-24 pb-12 overflow-hidden bg-primary text-primary-foreground min-h-[280px] flex items-end">
+      <section className="relative pt-32 pb-10 overflow-hidden bg-primary text-primary-foreground min-h-[300px] flex items-end">
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-20">
           <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[60%] rounded-full bg-accent blur-[120px]" />
           <div className="absolute bottom-[10%] right-[-5%] w-[30%] h-[50%] rounded-full bg-sky-400 blur-[100px]" />
@@ -211,36 +211,38 @@ export default function GuiaCarreiraDetailPage() {
             <motion.div 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-white/10 backdrop-blur-md border border-white/20 rounded-[5px] p-5 flex flex-col items-center justify-center text-center min-w-[210px] shrink-0"
+              className="bg-white/10 backdrop-blur-md border border-white/20 rounded-[5px] p-6 flex flex-col items-center justify-center text-center min-w-[220px] shrink-0"
             >
-              <div className="relative w-18 h-18 mb-2 flex items-center justify-center">
-                <svg className="w-full h-full transform -rotate-90">
+              <div className="relative w-20 h-20 mb-3 flex items-center justify-center shrink-0" style={{ width: '80px', height: '80px' }}>
+                <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 80 80" style={{ width: '80px', height: '80px' }}>
                   <circle
-                    cx="36"
-                    cy="36"
-                    r="32"
+                    cx="40"
+                    cy="40"
+                    r="34"
                     stroke="currentColor"
-                    strokeWidth="4"
+                    strokeWidth="5"
                     fill="transparent"
-                    className="text-white/10"
+                    className="text-white/15"
                   />
                   <circle
-                    cx="36"
-                    cy="36"
-                    r="32"
+                    cx="40"
+                    cy="40"
+                    r="34"
                     stroke="currentColor"
-                    strokeWidth="4"
+                    strokeWidth="5"
                     fill="transparent"
-                    strokeDasharray={201}
-                    strokeDashoffset={201 - (201 * progressPercent) / 100}
+                    strokeDasharray={213.6}
+                    strokeDashoffset={213.6 - (213.6 * progressPercent) / 100}
                     className="text-amber-400 transition-all duration-1000 ease-out"
                     strokeLinecap="round"
                   />
                 </svg>
-                <span className="absolute text-lg font-black">{progressPercent}<span className="text-[10px]">%</span></span>
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <span className="text-xl font-black text-white leading-none">{progressPercent}<span className="text-[11px]">%</span></span>
+                </div>
               </div>
-              <p className="text-xs font-bold text-primary-foreground uppercase tracking-wider">Progresso de Voo</p>
-              <p className="text-[11px] text-primary-foreground/70">{completedCount} de {totalSteps} etapas concluídas</p>
+              <p className="text-xs font-extrabold text-primary-foreground uppercase tracking-wider">Progresso de Voo</p>
+              <p className="text-[11px] text-primary-foreground/75 mt-0.5">{completedCount} de {totalSteps} etapas concluídas</p>
             </motion.div>
           </div>
         </div>
