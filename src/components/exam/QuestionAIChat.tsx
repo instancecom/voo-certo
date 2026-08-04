@@ -180,7 +180,7 @@ export function QuestionAIChat({
           <div className="bg-white p-1.5 rounded-full shadow-sm group-hover:shadow group-hover:rotate-12 transition-all">
             <Sparkles className="w-4 h-4 text-accent animate-pulse" />
           </div>
-          <span className="text-sm font-bold tracking-tight">Pergunte à IA</span>
+          <span className="text-sm font-bold tracking-tight">Pergunte ao Prof. Hugo</span>
         </div>
 
         {!isAdmin && (
@@ -222,7 +222,7 @@ export function QuestionAIChat({
                     </div>
                     <div className="flex items-center gap-3 mt-1">
                       <p className="text-[10px] text-muted-foreground flex items-center gap-1 font-bold tracking-wide uppercase">
-                        <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Tira-Dúvidas ANAC
+                        <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Professor de Aviação Civil
                       </p>
                       <div className="h-3 w-[1px] bg-border/40" />
                       <div className="flex items-center gap-2">

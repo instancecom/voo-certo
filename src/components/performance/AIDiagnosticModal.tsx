@@ -215,7 +215,7 @@ export function AIDiagnosticModal({
               <DialogTitle className="text-xl font-black text-primary-foreground flex items-center gap-2">
                 Diagnóstico de Desempenho com Sofia
                 <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-300 bg-amber-400/10 rounded-[5px]">
-                  Mentora IA
+                  Mentora de Desempenho
                 </Badge>
               </DialogTitle>
               <DialogDescription className="text-xs text-primary-foreground/80 font-medium mt-1">
