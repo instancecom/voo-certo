@@ -210,7 +210,8 @@ export function QuestionAIChat({
                     <img 
                       src="/images/avatars/prof_hugo.jpg" 
                       alt="Prof. Hugo" 
-                      className="w-11 h-11 rounded-full object-cover border-2 border-primary shadow-sm" 
+                      className="w-11 h-11 rounded-full object-cover border-2 border-primary shadow-sm shrink-0" 
+                      style={{ width: '44px', height: '44px' }}
                     />
                     <div className="absolute bottom-0.5 right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
                   </div>
@@ -252,11 +253,12 @@ export function QuestionAIChat({
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages.length === 0 && !limitReached && (
                   <div className="flex flex-col items-center text-center py-6 px-4">
-                    <div className="w-16 h-16 rounded-full bg-white shadow-md border-2 border-primary/20 flex items-center justify-center mb-4 relative">
+                    <div className="w-16 h-16 rounded-full bg-white shadow-md border-2 border-primary/20 flex items-center justify-center mb-4 relative shrink-0">
                       <img 
                         src="/images/avatars/prof_hugo.jpg" 
                         alt="Prof. Hugo" 
-                        className="w-full h-full rounded-full object-cover" 
+                        className="w-full h-full rounded-full object-cover shrink-0" 
+                        style={{ width: '64px', height: '64px' }}
                       />
                       <div className="absolute -bottom-1 -right-1 bg-amber-500 rounded-full p-1 border-2 border-white">
                         <Sparkles className="w-3 h-3 text-white" />
@@ -288,6 +290,7 @@ export function QuestionAIChat({
                           src="/images/avatars/prof_hugo.jpg"
                           alt="Prof. Hugo"
                           className="w-8 h-8 rounded-full object-cover border border-primary/50 shrink-0 mt-1 shadow-sm"
+                          style={{ width: '32px', height: '32px' }}
                         />
                         <div className="bg-white border border-primary/20 px-4 py-3 rounded-[5px] rounded-tl-sm text-[15px] text-foreground shadow-sm">
                           <div className="flex items-center gap-1.5 mb-1.5">
@@ -316,6 +319,7 @@ export function QuestionAIChat({
                         src="/images/avatars/prof_hugo.jpg"
                         alt="Prof. Hugo"
                         className="w-8 h-8 rounded-full object-cover border border-primary/50 shrink-0 mt-1 shadow-sm animate-pulse"
+                        style={{ width: '32px', height: '32px' }}
                       />
                       <div className="bg-white border border-border/50 rounded-[5px] rounded-tl-sm px-4 py-3 flex items-center gap-2.5 shadow-sm text-xs font-semibold text-primary">
                         <Loader2 className="w-4 h-4 animate-spin text-primary shrink-0" />

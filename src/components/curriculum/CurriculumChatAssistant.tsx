@@ -203,7 +203,8 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
             <img
               src="/images/avatars/lucas.jpg"
               alt="Lucas - Analista de Carreiras"
-              className="w-12 h-12 rounded-full object-cover border-2 border-amber-400 shadow-sm"
+              className="w-12 h-12 rounded-full object-cover border-2 border-amber-400 shadow-sm shrink-0"
+              style={{ width: '48px', height: '48px' }}
             />
             <div className="absolute -bottom-0.5 -right-0.5 bg-amber-500 rounded-full p-1 border-2 border-primary">
               <Sparkles className="w-2.5 h-2.5 text-white" />
@@ -252,7 +253,8 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
                 <img
                   src="/images/avatars/lucas.jpg"
                   alt="Lucas"
-                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-primary/30 object-cover shrink-0 mt-1 shadow-sm"
+                  className="w-8 h-8 rounded-full border border-primary/30 object-cover shrink-0 mt-1 shadow-sm"
+                  style={{ width: '32px', height: '32px' }}
                 />
               )}
 

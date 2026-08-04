@@ -221,7 +221,7 @@ export default function ProgressPage() {
               onClick={() => setIsDiagnosticOpen(true)}
               className="gap-2.5 font-bold text-xs sm:text-sm h-11 px-5 bg-gradient-to-r from-primary via-sky-600 to-slate-900 text-white hover:opacity-90 shadow-md rounded-[5px] shrink-0"
             >
-              <img src="/images/avatars/sofia.jpg" alt="Sofia" className="w-6 h-6 rounded-full border border-amber-400 object-cover shrink-0" />
+              <img src="/images/avatars/sofia.jpg" alt="Sofia" className="w-6 h-6 rounded-full border border-amber-400 object-cover shrink-0" style={{ width: '24px', height: '24px' }} />
               Diagnóstico com Sofia
             </Button>
           </div>

@@ -517,7 +517,7 @@ export default function CurriculumPage() {
                     onClick={handleStartNewCurriculum}
                     className="gap-2 font-bold text-xs rounded-[5px]"
                   >
-                    <img src="/images/avatars/lucas.jpg" alt="Lucas" className="w-4.5 h-4.5 rounded-full object-cover border border-amber-400 shrink-0" />
+                    <img src="/images/avatars/lucas.jpg" alt="Lucas" className="w-5 h-5 rounded-full object-cover border border-amber-400 shrink-0" style={{ width: '20px', height: '20px' }} />
                     + Criar com Lucas
                   </Button>
 
@@ -556,7 +556,7 @@ export default function CurriculumPage() {
                     onClick={handleStartNewCurriculum}
                     className="gap-2 font-bold text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded-[5px]"
                   >
-                    <img src="/images/avatars/lucas.jpg" alt="Lucas" className="w-4.5 h-4.5 rounded-full object-cover border border-amber-400 shrink-0" />
+                    <img src="/images/avatars/lucas.jpg" alt="Lucas" className="w-5 h-5 rounded-full object-cover border border-amber-400 shrink-0" style={{ width: '20px', height: '20px' }} />
                     + Criar Novo com Lucas
                   </Button>
                 </div>

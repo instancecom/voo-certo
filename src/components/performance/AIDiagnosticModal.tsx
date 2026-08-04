@@ -200,7 +200,8 @@ export function AIDiagnosticModal({
               <img
                 src="/images/avatars/sofia.jpg"
                 alt="Sofia - Mentora de Desempenho"
-                className="w-13 h-13 rounded-full object-cover border-2 border-amber-400 shadow-md"
+                className="w-12 h-12 rounded-full object-cover border-2 border-amber-400 shadow-md shrink-0"
+                style={{ width: '48px', height: '48px' }}
               />
               <div className="absolute -bottom-1 -right-1 bg-amber-500 rounded-full p-1 border-2 border-primary">
                 <Sparkles className="w-3 h-3 text-white" />
