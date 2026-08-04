@@ -112,10 +112,6 @@ function CareerGuideRow({ title, icon, guides, navigate }: CareerGuideRowProps) 
 
       {/* Slider Container */}
       <div className="relative group">
-        {/* Fade esquerda */}
-        <div className="pointer-events-none absolute left-0 top-0 bottom-4 w-8 bg-gradient-to-r from-background to-transparent z-10 hidden md:block" />
-        {/* Fade direita */}
-        <div className="pointer-events-none absolute right-0 top-0 bottom-4 w-16 bg-gradient-to-l from-background to-transparent z-10 hidden md:block" />
 
         {/* Left Arrow */}
         {showLeftArrow && (
