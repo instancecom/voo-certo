@@ -131,6 +131,22 @@ serve(async (req) => {
         console.error("Erro ao atualizar plano no perfil:", updateError);
         throw updateError;
       }
+
+      // Envia o e-mail transacional de confirmação de plano ativado via Resend
+      if (customerEmail) {
+        try {
+          await supabase.functions.invoke('send-email', {
+            body: {
+              action: 'plan_activated',
+              email: customerEmail,
+              planName: targetPlan.toUpperCase()
+            }
+          });
+          console.log(`E-mail de confirmação do plano [${targetPlan}] enviado para ${customerEmail}`);
+        } catch (emailErr) {
+          console.warn("Aviso: Falha não-bloqueante ao disparar e-mail via Resend:", emailErr);
+        }
+      }
     } else if (isFutureCancellationEvent) {
       // O aluno cancelou a renovação automática, mas MANTÉM o acesso restante do ciclo que ele já pagou!
       console.log(`Cancelamento de renovação registrado para ${targetUserId}. Acesso mantido até a expiração do ciclo.`);
