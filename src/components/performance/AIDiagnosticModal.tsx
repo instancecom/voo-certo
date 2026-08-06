@@ -254,30 +254,30 @@ export function AIDiagnosticModal({
             <label className="text-xs font-bold text-foreground mb-2 block">
               Escolha o período para a análise de Sofia:
             </label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button
                 variant={selectedPeriod === '7d' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedPeriod('7d')}
-                className="font-bold text-xs gap-1.5 h-10 rounded-[5px]"
+                className="font-bold text-xs gap-1.5 h-10 rounded-[5px] flex-1 min-w-[100px]"
               >
-                <Calendar className="w-4 h-4" /> Últimos 7 dias
+                <Calendar className="w-4 h-4 shrink-0" /> Últimos 7 dias
               </Button>
               <Button
                 variant={selectedPeriod === '30d' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedPeriod('30d')}
-                className="font-bold text-xs gap-1.5 h-10 rounded-[5px]"
+                className="font-bold text-xs gap-1.5 h-10 rounded-[5px] flex-1 min-w-[110px]"
               >
-                <Calendar className="w-4 h-4" /> Últimos 30 dias
+                <Calendar className="w-4 h-4 shrink-0" /> Últimos 30 dias
               </Button>
               <Button
                 variant={selectedPeriod === 'all' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedPeriod('all')}
-                className="font-bold text-xs gap-1.5 h-10 rounded-[5px]"
+                className="font-bold text-xs gap-1.5 h-10 rounded-[5px] flex-1 min-w-[130px]"
               >
-                <Clock className="w-4 h-4" /> Histórico completo
+                <Clock className="w-4 h-4 shrink-0" /> Histórico completo
               </Button>
             </div>
           </div>

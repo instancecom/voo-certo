@@ -211,14 +211,18 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
               <Sparkles className="w-2.5 h-2.5 text-white" />
             </div>
           </div>
-          <div>
-            <h3 className="font-bold text-sm sm:text-base flex items-center gap-2">
-              Lucas — Analista de Carreiras
-              <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-300 bg-amber-400/10 rounded-[5px]">
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <h3 className="font-bold text-sm sm:text-base leading-tight">
+                Lucas
+              </h3>
+              <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-300 bg-amber-400/10 rounded-[5px] shrink-0">
                 Analista de Carreiras
               </Badge>
-            </h3>
-            <p className="text-[11px] sm:text-xs text-primary-foreground/80 font-medium">Conversa guiada para montagem e otimização do seu currículo</p>
+            </div>
+            <p className="text-[11px] sm:text-xs text-primary-foreground/80 font-medium mt-0.5 leading-snug">
+              Conversa guiada para montagem e otimização do seu currículo
+            </p>
           </div>
         </div>
 
