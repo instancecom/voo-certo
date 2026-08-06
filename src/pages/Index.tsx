@@ -31,13 +31,17 @@ const PLANS = [
     description: 'Ideal para quem está iniciando os estudos',
     features: [
       'Modo Livre e Bloco ilimitados',
-      'Modo Banca limitado',
-      'Chat IA (2 msgs por questão)',
-      'Insígnias e Conquistas',
-      'Histórico de Desempenho Básico',
+      'Modo Banca ilimitado',
+      'Chat IA com Prof. Hugo (2 msgs/questão)',
+      'Guia de Carreiras completo',
+      'Progresso e histórico completos',
+      'Conquistas: Bronze e Prata',
+      '🎖️ Selo "Aprovado ANAC" (LinkedIn)',
+      'Currículo com IA (1 currículo salvo)',
     ],
     highlight: false,
     popular: false,
+    checkoutLink: '/premium?plan=solo',
   },
   {
     id: 'tripulante',
@@ -48,13 +52,15 @@ const PLANS = [
     description: 'O melhor custo-benefício para sua aprovação',
     features: [
       'Tudo do plano Solo',
-      'Modo Banca ilimitado (Estilo prova real)',
-      'Chat IA (5 msgs por questão)',
-      'Histórico de Desempenho Avançado',
-      'Relatórios por matéria',
+      'Chat IA com Prof. Hugo (5 msgs/questão)',
+      'Diagnóstico com Sofia (IA de desempenho)',
+      'Conquistas: Bronze, Prata e Ouro',
+      '🎖️ Selo "Aprovado ANAC" (LinkedIn)',
+      'Currículo com IA (até 3 currículos)',
     ],
     highlight: true,
     popular: true,
+    checkoutLink: '/premium?plan=tripulante',
   },
   {
     id: 'comandante',
@@ -65,15 +71,18 @@ const PLANS = [
     description: 'A preparação definitiva para garantir sua vaga',
     features: [
       'Tudo do plano Tripulante',
-      'Chat IA Turbo (15 msgs por questão)',
-      'Limite diário de IA estendido',
-      'Relatórios avançados de evolução',
-      'Plano de estudo personalizado',
+      'Chat IA Turbo com Prof. Hugo (15 msgs/questão)',
+      'Diagnóstico com Sofia ilimitado',
+      'Todas as Conquistas: Bronze, Prata, Ouro e Platina',
+      '🎖️ Selo "Aprovado ANAC" (LinkedIn)',
+      'Currículo com IA (galeria ilimitada)',
     ],
     highlight: false,
     popular: false,
+    checkoutLink: '/premium?plan=comandante',
   },
 ];
+
 
 const PAIN_POINTS = [
   {
@@ -859,7 +868,7 @@ export default function Index() {
                           ))}
                         </ul>
                         <Button variant={plan.highlight ? 'hero' : 'outline'} className="w-full h-11 rounded-[5px] font-bold hover-yellow" asChild>
-                          <Link to="/premium">Começar Teste Grátis</Link>
+                          <Link to={plan.checkoutLink}>Começar Teste Grátis</Link>
                         </Button>
                       </CardContent>
                     </Card>

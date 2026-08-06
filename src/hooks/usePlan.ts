@@ -35,35 +35,74 @@ export function usePlan() {
     return planLevel >= PLAN_HIERARCHY[requiredPlan];
   };
 
-  const canAccessSimulados = true; // Everyone sees the list
-  const canAccessModoLivre = true; // Basic access for all
-  const canAccessModoBloco = hasAccess('solo');
-  const canAccessModoBanca = hasAccess('solo');
-  const isBancaLimited = currentPlan === 'solo'; // Solo has limitations in Banca mode
-  
-  const canAccessMicrocursos = hasAccess('tripulante');
-  const canAccessAIChat = hasAccess('solo');
-  const canAccessProgress = hasAccess('tripulante');
-  const canSaveCurriculum = true; // Now free for all
-  const canAccessGuideContent = true; // Now free for all
-  const canAccessConquistas = true; // Now free for all
-  const canAccessUnlimitedAI = hasAccess('comandante');
+  // ── Simulados ────────────────────────────────────────────────────────────────
+  const canAccessSimulados = true;                        // Todos veem a lista
+  const canAccessModoLivre = true;                        // Free: Modo Livre SEM IA / Pagos: COM IA
+  const canAccessModoBloco = hasAccess('solo');           // Solo+
+  const canAccessModoBanca = true;                        // Todos, mas free tem limite diário
+  const isBancaLimited = currentPlan === 'free';         // Free: 1 banca/dia; pagos: ilimitado
+
+  // Limite diário de simulados no Modo Banca para o plano free
+  const bancaDailyLimit = currentPlan === 'free' ? 1 : Infinity;
+
+  // ── Chat IA (Prof. Hugo) ─────────────────────────────────────────────────────
+  // Free NÃO tem acesso ao chat IA — apenas Modo Livre sem IA
+  const canAccessAIChat = hasAccess('solo');             // Solo+
+  const canAccessModoLivreAI = hasAccess('solo');        // IA no Modo Livre apenas para Solo+
 
   // AI chat limit PER QUESTION
   const aiChatLimitPerQuestion = (() => {
     if (currentPlan === 'comandante') return 15;
     if (currentPlan === 'tripulante') return 5;
     if (currentPlan === 'solo') return 2;
-    return 0;
+    return 0; // free = sem acesso ao chat IA
   })();
 
-  // Security cap (total per day) to prevent scraping
+  // Security cap (total per day)
   const aiChatDailySafetyLimit = (() => {
     if (currentPlan === 'comandante') return 100;
-    if (currentPlan === 'tripulante') return 30;
-    if (currentPlan === 'solo') return 8;
-    return 0;
+    if (currentPlan === 'tripulante') return 60;
+    if (currentPlan === 'solo') return 30;
+    return 0; // free = sem acesso
   })();
+
+  const canAccessUnlimitedAI = hasAccess('comandante'); // IA Turbo apenas Comandante
+
+  // ── Progresso & Diagnóstico ──────────────────────────────────────────────────
+  // Free: acesso parcial (média geral + total questões apenas)
+  // Solo+: progresso completo (curva, assertividade, pontos de atenção, melhores matérias, histórico)
+  const canAccessProgress = true;                         // Todos veem, mas conteúdo varia
+  const canAccessFullProgress = hasAccess('solo');       // Solo+: progresso completo
+  const canAccessDiagnostic = hasAccess('tripulante');   // Diagnóstico com Sofia: Tripulante+
+
+  // ── Conquistas ───────────────────────────────────────────────────────────────
+  const canAccessConquistas = true;                       // Todos têm conquistas
+  // Bronze: todos | Prata: Solo+ | Ouro: Tripulante+ | Platina: Comandante+
+  const maxAchievementTier = (() => {
+    if (currentPlan === 'comandante') return 'platina';
+    if (currentPlan === 'tripulante') return 'ouro';
+    if (currentPlan === 'solo') return 'prata';
+    return 'bronze'; // free: apenas bronze
+  })();
+  // Selo "Aprovado ANAC" (conquista especial): liberado nos 3 planos pagos
+  const canAccessSealAnac = hasAccess('solo');
+
+  // ── Guia de Carreiras ────────────────────────────────────────────────────────
+  const canAccessGuideContent = true;                     // Todos veem o guia (checklist)
+
+  // ── Currículo com IA ─────────────────────────────────────────────────────────
+  const canAccessCurriculum = hasAccess('solo');          // Currículo com IA: Solo+
+  const canSaveCurriculum = hasAccess('solo');            // Salvar na galeria: Solo+
+  // Limite de currículos salvos na galeria
+  const curriculumSaveLimit = (() => {
+    if (currentPlan === 'comandante') return Infinity;
+    if (currentPlan === 'tripulante') return 3;
+    if (currentPlan === 'solo') return 1;
+    return 0; // free: sem acesso
+  })();
+
+  // ── Microcursos (futuro) ─────────────────────────────────────────────────────
+  const canAccessMicrocursos = false; // Desativado — reservado para futuro da plataforma
 
   return {
     currentPlan,
@@ -72,20 +111,35 @@ export function usePlan() {
     isLoggedIn: !!user,
     isLoading,
     hasAccess,
+    // Simulados
     canAccessSimulados,
     canAccessModoLivre,
     canAccessModoBloco,
     canAccessModoBanca,
     isBancaLimited,
-    canAccessMicrocursos,
+    bancaDailyLimit,
+    // IA
     canAccessAIChat,
-    canAccessProgress,
-    canSaveCurriculum,
-    canAccessGuideContent,
-    canAccessConquistas,
-    canAccessUnlimitedAI,
+    canAccessModoLivreAI,
     aiChatLimitPerQuestion,
     aiChatDailySafetyLimit,
+    canAccessUnlimitedAI,
+    // Progresso
+    canAccessProgress,
+    canAccessFullProgress,
+    canAccessDiagnostic,
+    // Conquistas
+    canAccessConquistas,
+    maxAchievementTier,
+    canAccessSealAnac,
+    // Guia
+    canAccessGuideContent,
+    // Currículo
+    canAccessCurriculum,
+    canSaveCurriculum,
+    curriculumSaveLimit,
+    // Microcursos
+    canAccessMicrocursos,
   };
 }
 

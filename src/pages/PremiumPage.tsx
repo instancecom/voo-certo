@@ -24,10 +24,13 @@ const PLANS = [
     description: 'Ideal para quem está iniciando os estudos',
     features: [
       'Modo Livre e Bloco ilimitados',
-      'Modo Banca limitado',
-      'Chat IA (2 msgs por questão)',
-      'Insígnias e Conquistas',
-      'Histórico de Desempenho Básico',
+      'Modo Banca ilimitado',
+      'Chat IA com Prof. Hugo (2 msgs/questão)',
+      'Guia de Carreiras completo',
+      'Progresso e histórico completos',
+      'Conquistas: Bronze e Prata',
+      '🎖️ Selo "Aprovado ANAC" (LinkedIn)',
+      'Currículo com IA (1 currículo salvo)',
     ],
     color: 'bg-card border-border',
     buttonVariant: 'outline' as const,
@@ -43,10 +46,11 @@ const PLANS = [
     popular: true,
     features: [
       'Tudo do plano Solo',
-      'Modo Banca ilimitado (ANAC)',
-      'Chat IA (5 msgs por questão)',
-      'Histórico de Desempenho Avançado',
-      'Relatórios por matéria',
+      'Chat IA com Prof. Hugo (5 msgs/questão)',
+      'Diagnóstico com Sofia (IA de desempenho)',
+      'Conquistas: Bronze, Prata e Ouro',
+      '🎖️ Selo "Aprovado ANAC" (LinkedIn)',
+      'Currículo com IA (até 3 currículos)',
     ],
     color: 'bg-primary/5 border-primary/20',
     buttonVariant: 'default' as const,
@@ -61,10 +65,11 @@ const PLANS = [
     description: 'A preparação definitiva para garantir sua vaga',
     features: [
       'Tudo do plano Tripulante',
-      'Chat IA Turbo (15 msgs por questão)',
-      'Limite diário de IA estendido',
-      'Relatórios avançados de evolução',
-      'Plano de estudo personalizado',
+      'Chat IA Turbo com Prof. Hugo (15 msgs/questão)',
+      'Diagnóstico com Sofia ilimitado',
+      'Todas as Conquistas: Bronze, Prata, Ouro e Platina',
+      '🎖️ Selo "Aprovado ANAC" (LinkedIn)',
+      'Currículo com IA (galeria ilimitada)',
     ],
     color: 'bg-accent/5 border-accent/20',
     buttonVariant: 'hero' as const,
@@ -84,6 +89,7 @@ export default function PremiumPage() {
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState<string | null>(null);
   const [currentPlan, setCurrentPlan] = useState<string>('free');
+  const [highlightedPlan, setHighlightedPlan] = useState<string | null>(null);
   const [couponCode, setCouponCode] = useState('');
   const [couponLoading, setCouponLoading] = useState(false);
   const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
@@ -91,6 +97,16 @@ export default function PremiumPage() {
   useEffect(() => {
     if (searchParams.get('canceled') === 'true') {
       toast.info('Checkout cancelado. Você pode tentar novamente quando quiser.');
+    }
+    // Pré-seleciona o plano vindo da landing page via ?plan=
+    const planParam = searchParams.get('plan');
+    if (planParam && ['solo', 'tripulante', 'comandante'].includes(planParam)) {
+      setHighlightedPlan(planParam);
+      // Scroll suave até o card do plano após renderização
+      setTimeout(() => {
+        const el = document.getElementById(`plan-card-${planParam}`);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300);
     }
   }, [searchParams]);
 
@@ -263,13 +279,16 @@ export default function PremiumPage() {
               return (
                 <motion.div
                   key={plan.id}
+                  id={`plan-card-${plan.id}`}
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
                   <Card className={`h-full flex flex-col relative overflow-hidden rounded-[5px] border-2 shadow-none transition-all duration-300 ${plan.color} ${
                     plan.popular ? 'border-primary' : 'border-border'
-                  } ${isCurrent ? 'opacity-70 grayscale-[0.5]' : 'hover:border-primary/40'}`}>
+                  } ${isCurrent ? 'opacity-70 grayscale-[0.5]' : 'hover:border-primary/40'} ${
+                    highlightedPlan === plan.id ? 'ring-4 ring-accent ring-offset-2' : ''
+                  }`}>
                     {plan.popular && (
                       <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-[10px] font-bold px-4 py-1.5 uppercase tracking-widest rounded-bl-[5px]">
                         Mais Escolhido
