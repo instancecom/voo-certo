@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
-import { Check, Crown, Plane, Zap, Star, Loader2, ExternalLink, Tag, X, ShieldCheck } from 'lucide-react';
+import { Check, Crown, Plane, Zap, Star, Loader2, ExternalLink, Tag, X, ShieldCheck, CreditCard, QrCode } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,16 @@ import { Footer } from '@/components/Footer';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+
+// Links de checkout PIX via Cakto (50% off no 1º mês)
+// TODO: substituir pelos links reais após criar as ofertas no painel Cakto
+const PIX_CHECKOUT_LINKS: Record<string, string> = {
+  solo: 'https://cakto.com.br/TODO_SOLO_PIX',
+  tripulante: 'https://cakto.com.br/TODO_TRIPULANTE_PIX',
+  comandante: 'https://cakto.com.br/TODO_COMANDANTE_PIX',
+};
+
+const PIX_DISCOUNT = 0.5; // 50% off no primeiro mês via PIX
 
 const PLANS = [
   {
@@ -183,11 +193,7 @@ export default function PremiumPage() {
       
       if (error) {
         console.error('Erro na Edge Function:', error);
-        // Tenta extrair mensagem detalhada se disponível no erro
         let detailedMessage = error.message;
-        
-        // Em algumas versões do SDK, o corpo do erro 400 pode estar acessível
-        // Se não, ao menos mostramos que foi um erro de função
         toast.error(`Erro ao iniciar checkout: ${detailedMessage}`);
         setLoading(null);
         return;
@@ -204,6 +210,19 @@ export default function PremiumPage() {
       toast.error(`Erro ao iniciar checkout: ${err.message || 'Erro inesperado'}`);
       setLoading(null);
     }
+  };
+
+  const handlePixCheckout = (planId: string) => {
+    if (!user) {
+      toast.error('Faça login para assinar um plano.');
+      return;
+    }
+    const link = PIX_CHECKOUT_LINKS[planId];
+    if (!link || link.includes('TODO')) {
+      toast.info('Link de pagamento PIX em breve! Use cartão por enquanto.');
+      return;
+    }
+    window.open(link, '_blank');
   };
 
   const handleManageSubscription = async () => {
@@ -334,15 +353,40 @@ export default function PremiumPage() {
                           <ShieldCheck className="w-5 h-5" /> Plano Ativo
                         </div>
                       ) : (
-                        <Button
-                          variant={plan.buttonVariant as any}
-                          className="w-full h-12 rounded-[5px] font-bold text-sm hover-yellow transition-all"
-                          onClick={() => handleCheckout(plan.priceId, plan.id)}
-                          disabled={!!loading}
-                        >
-                          {loading === plan.id ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
-                          {user ? 'Iniciar Período Grátis' : 'Login para Assinar'}
-                        </Button>
+                        <div className="flex flex-col gap-3">
+                          {/* Botão Cartão — 7 dias grátis */}
+                          <Button
+                            variant={plan.buttonVariant as any}
+                            className="w-full h-12 rounded-[5px] font-bold text-sm hover-yellow transition-all flex items-center justify-center gap-2"
+                            onClick={() => handleCheckout(plan.priceId, plan.id)}
+                            disabled={!!loading}
+                          >
+                            {loading === plan.id
+                              ? <Loader2 className="w-4 h-4 animate-spin" />
+                              : <CreditCard className="w-4 h-4" />}
+                            {user ? '7 dias grátis — Cartão' : 'Login para Assinar'}
+                          </Button>
+
+                          {/* Divisor */}
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 h-px bg-border/60" />
+                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">ou</span>
+                            <div className="flex-1 h-px bg-border/60" />
+                          </div>
+
+                          {/* Botão PIX — 50% off 1º mês */}
+                          <button
+                            onClick={() => handlePixCheckout(plan.id)}
+                            disabled={!!loading}
+                            className="w-full h-12 rounded-[5px] font-bold text-sm border-2 border-[#32BCAD] text-[#32BCAD] bg-[#32BCAD]/5 hover:bg-[#32BCAD]/15 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                          >
+                            <QrCode className="w-4 h-4" />
+                            PIX — 1º mês por R$ {(plan.price * (1 - PIX_DISCOUNT)).toFixed(2).replace('.', ',')}
+                          </button>
+                          <p className="text-[10px] text-center text-muted-foreground font-medium">
+                            PIX: 50% off no 1º mês. A partir do 2º mês: {plan.priceLabel}
+                          </p>
+                        </div>
                       )}
                     </CardContent>
                   </Card>
@@ -355,10 +399,10 @@ export default function PremiumPage() {
             <h2 className="text-2xl font-black text-foreground mb-12 text-center uppercase tracking-tighter">Perguntas Frequentes</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
-                { q: 'Posso cancelar quando quiser?', a: 'Sim! A gestão do plano é 100% autônoma através da plataforma da Cakto no seu perfil. Sem multas.' },
-                { q: 'O trial de 7 dias é realmente grátis?', a: 'Completamente. O primeiro pagamento ocorre apenas no 8º dia caso não cancele antes.' },
-                { q: 'Quais os métodos de pagamento?', a: 'Aceitamos cartões de crédito e PIX via Cakto, garantindo aprovação rápida e total segurança.' },
-                { q: 'As questões são atualizadas?', a: 'Nossa equipe revisa o banco de questões constantemente com base nos exames da ANAC.' },
+                { q: 'Posso cancelar quando quiser?', a: 'Sim! A gestão do plano é 100% autônoma através da plataforma da Cakto no seu perfil. Sem multas e sem burocracia.' },
+                { q: 'O trial de 7 dias no cartão é realmente grátis?', a: 'Completamente. Você cadastra o cartão mas não é cobrado nada. O primeiro pagamento ocorre apenas no 8º dia — e só se você não cancelar antes.' },
+                { q: 'E se eu quiser pagar com PIX?', a: 'No PIX não há período trial, mas oferecemos 50% de desconto no primeiro mês. A partir do 2º mês, o valor volta ao normal. É aprovação instantânea, sem espera.' },
+                { q: 'As questões são atualizadas?', a: 'Nossa equipe revisa o banco de questões constantemente com base nos exames reais da ANAC.' },
               ].map((faq, i) => (
                 <Card key={i} className="rounded-[5px] bg-muted/20 border-border/50 shadow-none">
                   <CardContent className="py-5">

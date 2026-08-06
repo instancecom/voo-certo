@@ -828,7 +828,7 @@ export default function Index() {
                 Escolha o Plano Ideal para Sua Aprovação.
               </h2>
               <p className="text-primary-foreground/60 max-w-xl mx-auto font-medium">
-                Todos os planos incluem 7 dias gratuitos. Cancele quando quiser.
+                💳 Cartão: 7 dias grátis, cancele quando quiser. &nbsp;|&nbsp; 🔵 PIX: 50% off no 1º mês.
               </p>
             </motion.div>
 
@@ -867,9 +867,19 @@ export default function Index() {
                             </li>
                           ))}
                         </ul>
-                        <Button variant={plan.highlight ? 'hero' : 'outline'} className="w-full h-11 rounded-[5px] font-bold hover-yellow" asChild>
-                          <Link to={plan.checkoutLink}>Começar Teste Grátis</Link>
-                        </Button>
+                        <div className="flex flex-col gap-2">
+                          <Button variant={plan.highlight ? 'hero' : 'outline'} className="w-full h-10 rounded-[5px] font-bold hover-yellow flex items-center justify-center gap-2" asChild>
+                            <Link to={plan.checkoutLink}>
+                              <span>💳</span> 7 dias grátis — Cartão
+                            </Link>
+                          </Button>
+                          <Link
+                            to={plan.checkoutLink + '&method=pix'}
+                            className="w-full h-10 rounded-[5px] font-bold text-sm border-2 border-[#32BCAD] text-[#32BCAD] bg-[#32BCAD]/5 hover:bg-[#32BCAD]/15 transition-all flex items-center justify-center gap-2"
+                          >
+                            <span>🔵</span> PIX — 50% off no 1º mês
+                          </Link>
+                        </div>
                       </CardContent>
                     </Card>
                   </motion.div>
