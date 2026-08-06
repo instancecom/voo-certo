@@ -822,13 +822,13 @@ export default function Index() {
               viewport={{ once: true }} className="text-center mb-16"
             >
               <Badge className="mb-4 bg-accent text-accent-foreground border-0 rounded-[5px] font-bold uppercase text-[10px] tracking-widest px-4 py-1.5 h-auto">
-                Período de Experiência Grátis por 7 Dias
+                Cartão ou PIX — Acesso Imediato
               </Badge>
               <h2 className="text-2xl md:text-5xl font-bold text-primary-foreground mb-4">
                 Escolha o Plano Ideal para Sua Aprovação.
               </h2>
               <p className="text-primary-foreground/60 max-w-xl mx-auto font-medium">
-                💳 Cartão: 7 dias grátis, cancele quando quiser. &nbsp;|&nbsp; 🔵 PIX: 50% off no 1º mês.
+                Aceitamos Cartão de Crédito e PIX. Cancele quando quiser, sem burocracia.
               </p>
             </motion.div>
 
@@ -867,19 +867,9 @@ export default function Index() {
                             </li>
                           ))}
                         </ul>
-                        <div className="flex flex-col gap-2">
-                          <Button variant={plan.highlight ? 'hero' : 'outline'} className="w-full h-10 rounded-[5px] font-bold hover-yellow flex items-center justify-center gap-2" asChild>
-                            <Link to={plan.checkoutLink}>
-                              <span>💳</span> 7 dias grátis — Cartão
-                            </Link>
-                          </Button>
-                          <Link
-                            to={plan.checkoutLink + '&method=pix'}
-                            className="w-full h-10 rounded-[5px] font-bold text-sm border-2 border-[#32BCAD] text-[#32BCAD] bg-[#32BCAD]/5 hover:bg-[#32BCAD]/15 transition-all flex items-center justify-center gap-2"
-                          >
-                            <span>🔵</span> PIX — 50% off no 1º mês
-                          </Link>
-                        </div>
+                        <Button variant={plan.highlight ? 'hero' : 'outline'} className="w-full h-11 rounded-[5px] font-bold hover-yellow" asChild>
+                          <Link to={plan.checkoutLink}>Assinar Agora</Link>
+                        </Button>
                       </CardContent>
                     </Card>
                   </motion.div>
@@ -891,7 +881,7 @@ export default function Index() {
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
                 {[
                   { icon: Shield, text: 'Cancelamento sem burocracia' },
-                  { icon: Sparkles, text: '7 dias grátis em todos os planos' },
+                  { icon: Sparkles, text: 'Cartão ou PIX — acesso imediato' },
                   { icon: Globe, text: 'PC, Tablet e Celular' },
                   { icon: Zap, text: 'Dúvidas resolvidas na hora por IA' },
                 ].map((item, i) => (
@@ -950,7 +940,7 @@ export default function Index() {
               viewport={{ once: true }} className="max-w-3xl mx-auto"
             >
               <Badge className="mb-6 bg-accent text-accent-foreground border-0 rounded-[5px] font-bold uppercase text-[10px] tracking-widest px-4 py-1.5 h-auto">
-                7 Dias Grátis — Sem Cartão de Crédito
+                Cartão ou PIX — Acesso Imediato
               </Badge>
               <h2 className="text-3xl md:text-5xl font-bold text-primary-foreground mb-6 leading-tight">
                 Pronto para decolar<br className="hidden md:block" />{' '}
@@ -962,7 +952,7 @@ export default function Index() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button variant="hero" size="xl" asChild className="rounded-[5px] w-full sm:w-fit whitespace-normal h-auto py-4 sm:h-14 sm:py-0 hover-yellow">
                   <Link to={user ? '/simulados' : '/auth?mode=signup'} className="flex items-center justify-center gap-2">
-                    COMEÇAR MEU TESTE GRÁTIS DE 7 DIAS <ArrowRight className="w-5 h-5" />
+                    COMEÇAR AGORA <ArrowRight className="w-5 h-5" />
                   </Link>
                 </Button>
                 <Button variant="outline" size="xl" asChild className="bg-white/5 text-white border-white/20 hover-yellow rounded-[5px] w-full sm:w-fit">

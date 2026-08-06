@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
-import { Check, Crown, Plane, Zap, Star, Loader2, ExternalLink, Tag, X, ShieldCheck, CreditCard, QrCode } from 'lucide-react';
+import { Check, Crown, Plane, Zap, Star, Loader2, ExternalLink, Tag, X, ShieldCheck, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,16 +12,6 @@ import { Footer } from '@/components/Footer';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-
-// Links de checkout PIX via Cakto (50% off no 1º mês)
-// TODO: substituir pelos links reais após criar as ofertas no painel Cakto
-const PIX_CHECKOUT_LINKS: Record<string, string> = {
-  solo: 'https://cakto.com.br/TODO_SOLO_PIX',
-  tripulante: 'https://cakto.com.br/TODO_TRIPULANTE_PIX',
-  comandante: 'https://cakto.com.br/TODO_COMANDANTE_PIX',
-};
-
-const PIX_DISCOUNT = 0.5; // 50% off no primeiro mês via PIX
 
 const PLANS = [
   {
@@ -212,19 +202,6 @@ export default function PremiumPage() {
     }
   };
 
-  const handlePixCheckout = (planId: string) => {
-    if (!user) {
-      toast.error('Faça login para assinar um plano.');
-      return;
-    }
-    const link = PIX_CHECKOUT_LINKS[planId];
-    if (!link || link.includes('TODO')) {
-      toast.info('Link de pagamento PIX em breve! Use cartão por enquanto.');
-      return;
-    }
-    window.open(link, '_blank');
-  };
-
   const handleManageSubscription = async () => {
     setLoading('manage');
     try {
@@ -252,12 +229,12 @@ export default function PremiumPage() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 rounded-[5px] text-accent mb-6">
               <Star className="w-4 h-4 fill-accent/20" />
-              <span className="text-sm font-bold uppercase tracking-wider">Investimento Profissional</span>
+              <span className="text-sm font-bold uppercase tracking-wider">Cartão ou PIX — Acesso Imediato</span>
             </div>
             <h1 className="text-4xl md:text-6xl font-black text-foreground mb-6 tracking-tight">Decole sua Aprovação</h1>
             <p className="text-muted-foreground max-w-2xl mx-auto text-lg font-medium leading-relaxed">
               Planos desenvolvidos com base nos padrões reais da banca ANAC.
-              7 dias gratuitos para você testar a elite da preparação.
+              Aceitamos Cartão de Crédito e PIX. Cancele quando quiser.
             </p>
           </motion.div>
 
@@ -353,40 +330,17 @@ export default function PremiumPage() {
                           <ShieldCheck className="w-5 h-5" /> Plano Ativo
                         </div>
                       ) : (
-                        <div className="flex flex-col gap-3">
-                          {/* Botão Cartão — 7 dias grátis */}
-                          <Button
-                            variant={plan.buttonVariant as any}
-                            className="w-full h-12 rounded-[5px] font-bold text-sm hover-yellow transition-all flex items-center justify-center gap-2"
-                            onClick={() => handleCheckout(plan.priceId, plan.id)}
-                            disabled={!!loading}
-                          >
-                            {loading === plan.id
-                              ? <Loader2 className="w-4 h-4 animate-spin" />
-                              : <CreditCard className="w-4 h-4" />}
-                            {user ? '7 dias grátis — Cartão' : 'Login para Assinar'}
-                          </Button>
-
-                          {/* Divisor */}
-                          <div className="flex items-center gap-2">
-                            <div className="flex-1 h-px bg-border/60" />
-                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">ou</span>
-                            <div className="flex-1 h-px bg-border/60" />
-                          </div>
-
-                          {/* Botão PIX — 50% off 1º mês */}
-                          <button
-                            onClick={() => handlePixCheckout(plan.id)}
-                            disabled={!!loading}
-                            className="w-full h-12 rounded-[5px] font-bold text-sm border-2 border-[#32BCAD] text-[#32BCAD] bg-[#32BCAD]/5 hover:bg-[#32BCAD]/15 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-                          >
-                            <QrCode className="w-4 h-4" />
-                            PIX — 1º mês por R$ {(plan.price * (1 - PIX_DISCOUNT)).toFixed(2).replace('.', ',')}
-                          </button>
-                          <p className="text-[10px] text-center text-muted-foreground font-medium">
-                            PIX: 50% off no 1º mês. A partir do 2º mês: {plan.priceLabel}
-                          </p>
-                        </div>
+                        <Button
+                          variant={plan.buttonVariant as any}
+                          className="w-full h-12 rounded-[5px] font-bold text-sm hover-yellow transition-all flex items-center justify-center gap-2"
+                          onClick={() => handleCheckout(plan.priceId, plan.id)}
+                          disabled={!!loading}
+                        >
+                          {loading === plan.id
+                            ? <Loader2 className="w-4 h-4 animate-spin" />
+                            : <CreditCard className="w-4 h-4" />}
+                          {user ? 'Assinar Agora' : 'Login para Assinar'}
+                        </Button>
                       )}
                     </CardContent>
                   </Card>
@@ -400,8 +354,8 @@ export default function PremiumPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
                 { q: 'Posso cancelar quando quiser?', a: 'Sim! A gestão do plano é 100% autônoma através da plataforma da Cakto no seu perfil. Sem multas e sem burocracia.' },
-                { q: 'O trial de 7 dias no cartão é realmente grátis?', a: 'Completamente. Você cadastra o cartão mas não é cobrado nada. O primeiro pagamento ocorre apenas no 8º dia — e só se você não cancelar antes.' },
-                { q: 'E se eu quiser pagar com PIX?', a: 'No PIX não há período trial, mas oferecemos 50% de desconto no primeiro mês. A partir do 2º mês, o valor volta ao normal. É aprovação instantânea, sem espera.' },
+                { q: 'Quais formas de pagamento são aceitas?', a: 'Aceitamos Cartão de Crédito e PIX via Cakto. Ambos com aprovação rápida e acesso imediato à plataforma.' },
+                { q: 'Meu acesso é imediato após o pagamento?', a: 'Sim! Assim que o pagamento é confirmado, seu acesso é liberado automaticamente. PIX é instantâneo.' },
                 { q: 'As questões são atualizadas?', a: 'Nossa equipe revisa o banco de questões constantemente com base nos exames reais da ANAC.' },
               ].map((faq, i) => (
                 <Card key={i} className="rounded-[5px] bg-muted/20 border-border/50 shadow-none">
