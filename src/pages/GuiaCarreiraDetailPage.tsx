@@ -396,9 +396,9 @@ export default function GuiaCarreiraDetailPage() {
                             </div>
 
                             {/* Label Mobile abaixo do Pin */}
-                            <div className="sm:hidden mt-3 text-center max-w-[160px]">
-                              <span className="text-[10px] font-black text-primary uppercase">Etapa {index + 1}</span>
-                              <p className="text-xs font-bold text-foreground line-clamp-2">{step.title}</p>
+                            <div className="sm:hidden mt-3 text-center max-w-[220px] bg-card border border-border/80 shadow-md rounded-[8px] px-3.5 py-2 relative z-20">
+                              <span className="text-[10px] font-black text-primary uppercase tracking-wider block">Etapa {index + 1}</span>
+                              <p className="text-xs font-bold text-foreground line-clamp-2 leading-snug mt-0.5">{step.title}</p>
                             </div>
                           </motion.button>
                         </div>
