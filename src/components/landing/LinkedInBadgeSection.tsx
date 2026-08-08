@@ -58,9 +58,9 @@ export const LinkedInBadgeSection = () => {
 
                 <div className="w-full flex-1 flex items-center justify-center py-4">
                   <motion.img
-                    src="/images/aprovado-anac-shield.svg"
+                    src="/images/aprovado-anac-official-transparent.png"
                     alt="Selo Oficial Aprovado ANAC - Voe Certo"
-                    className="w-40 h-44 sm:w-44 sm:h-48 object-contain drop-shadow-[0_15px_30px_rgba(2,132,199,0.35)] group-hover:scale-105 transition-transform duration-300"
+                    className="w-44 h-48 sm:w-48 sm:h-52 object-contain drop-shadow-[0_15px_30px_rgba(2,132,199,0.4)] group-hover:scale-105 transition-transform duration-300"
                     animate={{ y: [0, -6, 0] }}
                     transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
                   />
