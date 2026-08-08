@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Award, CheckCircle2, Linkedin, Sparkles, ShieldCheck, Share2 } from 'lucide-react';
+import { CheckCircle2, Linkedin, ShieldCheck, Sparkles, Award } from 'lucide-react';
 
 export const LinkedInBadgeSection = () => {
   return (
@@ -16,22 +16,22 @@ export const LinkedInBadgeSection = () => {
             transition={{ duration: 0.6 }}
           >
             <Badge variant="outline" className="mb-4 text-accent border-accent/30 rounded-[5px] bg-accent/10 font-bold uppercase text-[11px] tracking-wider px-3.5 py-1">
-              <Linkedin className="w-3.5 h-3.5 mr-1.5" /> Reconhecimento Profissional
+              <Sparkles className="w-3.5 h-3.5 mr-1.5" /> Honra ao Mérito & Reconhecimento
             </Badge>
 
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-foreground tracking-tight mb-6 leading-tight">
-              Destaque seu preparo diretamente no <span className="text-accent">LinkedIn</span>.
+              Comprove sua aprovação na ANAC diretamente no <span className="text-accent">LinkedIn</span>.
             </h2>
 
             <p className="text-base sm:text-lg text-muted-foreground font-normal leading-relaxed mb-8">
-              Ao atingir o índice de prontidão nos simulados da plataforma, você conquista o Selo Oficial de Preparação Voe Certo. Publique no seu perfil e mostre aos recrutadores das principais companhias aéreas a sua dedicação e nível técnico.
+              Ao conquistar a aprovação na banca oficial ou atingir a prontidão máxima nos simulados, você recebe o Selo de <strong>Honra ao Mérito Voe Certo</strong>. Publique a credencial oficial verificável no seu perfil do LinkedIn e destaque sua autoridade profissional perante as companhias aéreas.
             </p>
 
             <div className="space-y-4 mb-8">
               {[
-                'Selo digital verificável com link direto para sua pontuação',
-                'Destaque no radar de recrutadores de aviação civil',
-                'Válido para Pilotos, Comissários e Mecânicos',
+                'Selo de Honra ao Mérito com certificação digital verificável',
+                'Destaque no radar de recrutadores das principais companhias aéreas',
+                'Válido para Pilotos Privados/Comerciais, Comissários de Voo e Mecânicos',
               ].map((item, idx) => (
                 <div key={idx} className="flex items-center gap-3">
                   <div className="w-5 h-5 rounded-[5px] bg-accent/10 text-accent flex items-center justify-center shrink-0">
@@ -43,7 +43,7 @@ export const LinkedInBadgeSection = () => {
             </div>
           </motion.div>
 
-          {/* Right Column: Visual Mockup of LinkedIn Badge */}
+          {/* Right Column: Visual Mockup of LinkedIn Badge with Honra ao Mérito Seal */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -52,9 +52,10 @@ export const LinkedInBadgeSection = () => {
             className="flex justify-center"
           >
             <Card className="bg-card border-border rounded-[5px] shadow-2xl p-8 max-w-md w-full relative overflow-hidden group hover:border-accent/40 transition-all duration-300">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-3xl" />
+              <div className="absolute top-0 right-0 w-36 h-36 bg-accent/10 rounded-full blur-3xl" />
               
-              <div className="flex items-center justify-between pb-6 border-b border-border mb-6">
+              {/* Header */}
+              <div className="flex items-center justify-between pb-5 border-b border-border mb-6">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-[5px] bg-[#0A66C2]/10 flex items-center justify-center text-[#0A66C2]">
                     <Linkedin className="w-5 h-5" />
@@ -66,26 +67,45 @@ export const LinkedInBadgeSection = () => {
                 </Badge>
               </div>
 
-              <div className="text-center py-4">
-                <div className="w-20 h-20 mx-auto rounded-[5px] bg-accent/10 border-2 border-accent flex items-center justify-center text-accent mb-4 shadow-lg group-hover:scale-105 transition-transform duration-300">
-                  <Award className="w-10 h-10" />
+              {/* Center: Official Seal / Medallion */}
+              <div className="text-center py-2">
+                <div className="relative w-36 h-36 mx-auto mb-4 flex items-center justify-center">
+                  {/* Subtle pulsing gold aura */}
+                  <div className="absolute inset-0 bg-accent/20 rounded-full blur-xl animate-pulse" />
+                  
+                  {/* Seal Image from Insignias */}
+                  <img
+                    src="/insignias/aprovado-na-banca.svg"
+                    alt="Selo Honra ao Mérito - Aprovado na Banca ANAC"
+                    className="w-32 h-32 relative z-10 drop-shadow-2xl group-hover:scale-105 transition-transform duration-300 object-contain"
+                    onError={(e) => {
+                      // Fallback if SVG fails to load
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
                 </div>
-                <h3 className="text-lg font-bold text-foreground mb-1">
-                  Aprovado em Prontidão ANAC
+
+                <Badge variant="outline" className="mb-2 text-accent border-accent/40 rounded-[5px] bg-accent/10 font-bold uppercase text-[10px] tracking-widest px-3 py-0.5">
+                  HONRA AO MÉRITO
+                </Badge>
+
+                <h3 className="text-xl font-black text-foreground mb-1">
+                  Aprovado na Banca ANAC
                 </h3>
-                <p className="text-xs font-semibold text-accent uppercase tracking-wider mb-4">
-                  Voe Certo · Plataforma Oficial de Preparação
+                <p className="text-[11px] font-bold text-accent uppercase tracking-wider mb-4">
+                  VOE CERTO · CERTIFICAÇÃO DE EXCELÊNCIA AERONÁUTICA
                 </p>
-                <p className="text-xs text-muted-foreground leading-relaxed px-4 mb-6">
-                  Certifica que o candidato concluiu com êxito a bateria de simulados oficiais e atingiu média superior ao padrão regulatório.
+                <p className="text-xs text-muted-foreground leading-relaxed px-2 mb-6 font-normal">
+                  Certifica formalmente que o aluno obteve êxito e alta proficiência na preparação para os exames teóricos regulamentados pela ANAC.
                 </p>
               </div>
 
+              {/* Footer */}
               <div className="pt-4 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
-                <span className="flex items-center gap-1">
+                <span className="flex items-center gap-1.5 font-medium">
                   <ShieldCheck className="w-4 h-4 text-accent" /> Autenticidade Garantida
                 </span>
-                <span className="font-mono text-[11px] text-foreground/70">ID: VC-2026-BR</span>
+                <span className="font-mono text-[11px] text-foreground/70 font-semibold">ID: VC-ANAC-2026</span>
               </div>
             </Card>
           </motion.div>
