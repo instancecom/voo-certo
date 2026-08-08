@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronLeft, ChevronRight, Flag, CheckCircle2, XCircle,
-  BookOpen, Loader2, LogOut, AlertTriangle,
+  BookOpen, Loader2, LogOut,
 } from 'lucide-react';
 import { QuestionAIChat } from './QuestionAIChat';
 import { Button } from '@/components/ui/button';
@@ -43,8 +43,6 @@ export function LivreExam({ questions, selectedBlock, questionLimit, onFinish, o
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [showAnswer, setShowAnswer] = useState(false);
   const [showFinishDialog, setShowFinishDialog] = useState(false);
-  const [showExitDialog, setShowExitDialog] = useState(false);
-  const [direction, setDirection] = useState<1 | -1>(1);
 
   const activeBubbleRef = useRef<HTMLButtonElement | null>(null);
 
@@ -84,7 +82,6 @@ export function LivreExam({ questions, selectedBlock, questionLimit, onFinish, o
   };
 
   const goToQuestion = (index: number) => {
-    setDirection(index > currentQuestionIndex ? 1 : -1);
     setCurrentQuestionIndex(index);
     setShowAnswer(answers[shuffledQuestions[index].id] !== undefined);
   };
@@ -92,7 +89,6 @@ export function LivreExam({ questions, selectedBlock, questionLimit, onFinish, o
   const nextQuestion = () => {
     if (currentQuestionIndex < shuffledQuestions.length - 1) {
       const nextIndex = currentQuestionIndex + 1;
-      setDirection(1);
       setCurrentQuestionIndex(nextIndex);
       setShowAnswer(answers[shuffledQuestions[nextIndex].id] !== undefined);
     }
@@ -101,7 +97,6 @@ export function LivreExam({ questions, selectedBlock, questionLimit, onFinish, o
   const prevQuestion = () => {
     if (currentQuestionIndex > 0) {
       const prevIndex = currentQuestionIndex - 1;
-      setDirection(-1);
       setCurrentQuestionIndex(prevIndex);
       setShowAnswer(answers[shuffledQuestions[prevIndex].id] !== undefined);
     }
@@ -167,12 +162,11 @@ export function LivreExam({ questions, selectedBlock, questionLimit, onFinish, o
               </div>
             </div>
 
-            {/* Info respondidas — mobile + desktop */}
-            <div className="flex items-center gap-1 md:gap-1.5 px-2 md:px-3 py-1 md:py-1.5 rounded-[5px] bg-muted border border-border shrink-0">
-              <CheckCircle2 className="w-3 h-3 md:w-3.5 md:h-3.5 text-success" />
-              <span className="text-[9px] md:text-xs font-bold text-muted-foreground">
-                <span className="md:hidden">{answeredCount}/{shuffledQuestions.length}</span>
-                <span className="hidden md:inline">{answeredCount}/{shuffledQuestions.length} respondidas</span>
+            {/* Info respondidas — desktop */}
+            <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-[5px] bg-muted border border-border shrink-0">
+              <CheckCircle2 className="w-3.5 h-3.5 text-success" />
+              <span className="text-xs font-bold text-muted-foreground">
+                {answeredCount}/{shuffledQuestions.length} respondidas
               </span>
             </div>
 
@@ -189,7 +183,7 @@ export function LivreExam({ questions, selectedBlock, questionLimit, onFinish, o
 
             {/* Sair */}
             <button
-              onClick={() => setShowExitDialog(true)}
+              onClick={onExit}
               title="Sair"
               className="w-8 h-8 md:w-9 md:h-9 rounded-[5px] bg-muted border border-border flex items-center justify-center text-muted-foreground hover:bg-destructive/10 hover:border-destructive/30 hover:text-destructive transition-all shrink-0"
             >
@@ -202,7 +196,6 @@ export function LivreExam({ questions, selectedBlock, questionLimit, onFinish, o
             <div className="flex justify-between items-center mb-1.5">
               <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">
                 Questão {currentQuestionIndex + 1} de {shuffledQuestions.length}
-                <span className="opacity-50"> · {answeredCount} respondidas</span>
               </span>
               <span className="text-[9px] font-black text-accent uppercase tracking-widest">
                 {Math.round(progress)}%
@@ -236,10 +229,10 @@ export function LivreExam({ questions, selectedBlock, questionLimit, onFinish, o
           <AnimatePresence mode="wait">
             <motion.div
               key={currentQuestion.id}
-              initial={{ opacity: 0, x: direction * 24 }}
+              initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: direction * -24 }}
-              transition={{ duration: 0.22, ease: 'easeOut' }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
               className="space-y-3 md:space-y-4"
             >
               {/* Card da questão */}
@@ -297,7 +290,7 @@ export function LivreExam({ questions, selectedBlock, questionLimit, onFinish, o
                       disabled={showAnswer}
                       className={`w-full text-left rounded-[5px] border-2 transition-all duration-200 group ${containerClass} ${showAnswer ? 'cursor-default' : ''}`}
                       whileHover={!showAnswer ? { scale: 1.005 } : {}}
-                      whileTap={!showAnswer ? { scale: 0.97 } : {}}
+                      whileTap={!showAnswer ? { scale: 0.995 } : {}}
                     >
                       <div className="flex items-center gap-3 md:gap-4 p-3 md:p-4">
                         <span className={`flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-[5px] flex items-center justify-center font-black text-sm md:text-base transition-all duration-200 ${letterClass}`}>
@@ -465,29 +458,6 @@ export function LivreExam({ questions, selectedBlock, questionLimit, onFinish, o
           </div>
         </div>
       </footer>
-
-      {/* ── DIALOG SAIR ─────────────────────────────────────────────── */}
-      <Dialog open={showExitDialog} onOpenChange={setShowExitDialog}>
-        <DialogContent className="rounded-[5px] border-none shadow-2xl max-w-sm p-6 md:p-8">
-          <DialogHeader>
-            <div className="w-14 h-14 rounded-[5px] bg-destructive/10 border border-destructive/20 flex items-center justify-center mb-4 mx-auto">
-              <AlertTriangle className="w-7 h-7 text-destructive" />
-            </div>
-            <DialogTitle className="text-xl font-black text-center text-foreground">Sair do Simulado?</DialogTitle>
-            <DialogDescription className="text-center text-sm pt-1">
-              Todo o seu progresso será perdido e você terá que recomeçar do início.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex flex-col gap-2 mt-6">
-            <Button className="w-full h-11 rounded-[5px] font-bold" onClick={() => setShowExitDialog(false)}>
-              Continuar Simulado
-            </Button>
-            <Button variant="outline" className="w-full h-11 rounded-[5px] font-bold text-destructive border-destructive/30 hover:bg-destructive/10" onClick={onExit}>
-              Sair mesmo assim
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
 
       {/* ── DIALOG FINALIZAR ────────────────────────────────────────── */}
       <Dialog open={showFinishDialog} onOpenChange={setShowFinishDialog}>

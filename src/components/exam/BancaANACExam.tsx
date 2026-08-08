@@ -89,7 +89,6 @@ function BancaExamInner({
   totalTimeSpent, setTotalTimeSpent,
   onFinish, onExit,
 }: any) {
-  const [direction, setDirection] = useState<1 | -1>(1);
   const activeBubbleRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
@@ -161,15 +160,11 @@ function BancaExamInner({
   };
 
   const nextQuestion = () => {
-    setDirection(1);
     if (currentQuestionIndex < blockQuestions.length - 1)
       setCurrentQuestionIndex((prev: number) => prev + 1);
   };
 
-  const goToQuestion = (index: number) => {
-    setDirection(index > currentQuestionIndex ? 1 : -1);
-    setCurrentQuestionIndex(index);
-  };
+  const goToQuestion = (index: number) => setCurrentQuestionIndex(index);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -219,12 +214,6 @@ function BancaExamInner({
               </div>
             </div>
 
-            {/* Mobile: respondidas */}
-            <div className="md:hidden flex items-center gap-1 px-2 py-1 rounded-[5px] bg-muted border border-border shrink-0">
-              <CheckCircle2 className="w-3 h-3 text-success" />
-              <span className="text-[9px] font-black text-muted-foreground">{answeredCount}/{blockQuestions.length}</span>
-            </div>
-
             {/* Indicadores de bloco — desktop */}
             <div className="hidden md:flex items-center gap-1.5 shrink-0">
               {[1, 2, 3, 4].map(b => (
@@ -264,8 +253,7 @@ function BancaExamInner({
           <div className="pb-2.5">
             <div className="flex justify-between items-center mb-1.5">
               <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">
-                Bloco {currentBlock}/4 · Questão {currentQuestionIndex + 1} de {blockQuestions.length}
-                <span className="opacity-50"> · {answeredCount} respondidas</span>
+                Bloco {currentBlock}/4 · {answeredCount}/{blockQuestions.length} respondidas
               </span>
               <span className="text-[9px] font-black text-accent uppercase tracking-widest">
                 {Math.round(progress)}%
@@ -298,10 +286,10 @@ function BancaExamInner({
           <AnimatePresence mode="wait">
             <motion.div
               key={`${currentBlock}-${currentQuestion.id}`}
-              initial={{ opacity: 0, x: direction * 24 }}
+              initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: direction * -24 }}
-              transition={{ duration: 0.22, ease: 'easeOut' }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
             >
               {/* Card da questão */}
               <div className="bg-card rounded-[5px] border border-border shadow-sm p-4 md:p-8 mb-3 md:mb-4">
@@ -334,7 +322,7 @@ function BancaExamInner({
                           : 'border-border bg-card hover:border-primary/40 hover:bg-primary/5'
                       }`}
                       whileHover={{ scale: 1.005 }}
-                      whileTap={{ scale: 0.97 }}
+                      whileTap={{ scale: 0.995 }}
                     >
                       <div className="flex items-center gap-3 md:gap-4 p-3 md:p-4">
                         {/* Letra */}
@@ -369,7 +357,7 @@ function BancaExamInner({
             {/* Anterior */}
             <Button
               variant="outline"
-              onClick={() => { setDirection(-1); setCurrentQuestionIndex((prev: number) => Math.max(0, prev - 1)); }}
+              onClick={() => setCurrentQuestionIndex((prev: number) => Math.max(0, prev - 1))}
               disabled={currentQuestionIndex === 0}
               className="h-10 md:h-12 px-3 md:px-6 rounded-[5px] font-bold text-xs uppercase tracking-wider shrink-0 disabled:opacity-30"
             >
