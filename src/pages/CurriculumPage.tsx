@@ -475,7 +475,7 @@ export default function CurriculumPage() {
         <Header />
       </div>
 
-      <main className="flex-1 container mx-auto px-4 py-8 print:p-0 print:m-0">
+      <main className="flex-1 container mx-auto px-4 pt-24 sm:pt-28 pb-12 print:p-0 print:m-0">
         {/* State 0: Carregando dados do servidor */}
         {loadingSaved ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3 text-muted-foreground">
@@ -488,54 +488,52 @@ export default function CurriculumPage() {
             <div className="print:hidden mb-8">
               <div className="flex flex-col gap-4 border-b border-border pb-6">
                 <div>
-                  <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
+                  <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight flex items-center gap-2.5">
                     <FileText className="w-7 h-7 sm:w-8 sm:h-8 text-primary shrink-0" />
-                    Currículo com IA
+                    Galeria de Currículos com IA
                   </h1>
-                  <p className="text-muted-foreground mt-1 text-sm font-medium">
+                  <p className="text-muted-foreground mt-1 text-xs sm:text-sm font-medium">
                     Crie e gerencie currículos profissionais otimizados para a aviação civil e mercado corporativo.
                   </p>
                 </div>
 
                 {/* Alternador de Modo de Navegação */}
-                <div className="overflow-x-auto pb-1">
-                  <div className="flex items-center gap-2 bg-muted/60 p-1.5 rounded-[5px] border border-border w-fit min-w-full sm:min-w-0">
-                    {savedCurriculums.length > 0 && (
-                      <Button
-                        variant={mode === 'dashboard' ? 'default' : 'ghost'}
-                        size="sm"
-                        onClick={() => setMode('dashboard')}
-                        className="gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap"
-                      >
-                        <Layout className="w-4 h-4" />
-                        Galeria ({savedCurriculums.length})
-                      </Button>
-                    )}
-
+                <div className="flex items-center gap-2 bg-muted/60 p-1.5 rounded-[5px] border border-border w-full sm:w-fit overflow-x-auto">
+                  {savedCurriculums.length > 0 && (
                     <Button
-                      variant={mode === 'chat' ? 'default' : 'ghost'}
+                      variant={mode === 'dashboard' ? 'default' : 'ghost'}
                       size="sm"
-                      onClick={handleStartNewCurriculum}
-                      className="gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap"
+                      onClick={() => setMode('dashboard')}
+                      className="gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap flex-1 sm:flex-initial"
                     >
-                      <span className="w-5 h-5 rounded-full overflow-hidden shrink-0 border border-amber-400 inline-block align-middle" style={{ width: '20px', height: '20px', minWidth: '20px', maxWidth: '20px', minHeight: '20px', maxHeight: '20px' }}>
-                        <img src="/images/avatars/lucas.jpg" alt="Lucas" width={20} height={20} className="w-5 h-5 rounded-full object-cover block" style={{ width: '20px', height: '20px', minWidth: '20px', maxWidth: '20px', minHeight: '20px', maxHeight: '20px', objectFit: 'cover' }} />
-                      </span>
-                      + Criar com Lucas
+                      <Layout className="w-4 h-4" />
+                      Galeria ({savedCurriculums.length})
                     </Button>
+                  )}
 
-                    {data.full_name && (
-                      <Button
-                        variant={mode === 'editor' ? 'default' : 'ghost'}
-                        size="sm"
-                        onClick={() => setMode('editor')}
-                        className="gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap"
-                      >
-                        <Edit3 className="w-4 h-4" />
-                        Editar Currículo
-                      </Button>
-                    )}
-                  </div>
+                  <Button
+                    variant={mode === 'chat' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={handleStartNewCurriculum}
+                    className="gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap flex-1 sm:flex-initial"
+                  >
+                    <span className="w-5 h-5 rounded-full overflow-hidden shrink-0 border border-amber-400 inline-block align-middle" style={{ width: '20px', height: '20px', minWidth: '20px', maxWidth: '20px', minHeight: '20px', maxHeight: '20px' }}>
+                      <img src="/images/avatars/lucas.jpg" alt="Lucas" width={20} height={20} className="w-5 h-5 rounded-full object-cover block" style={{ width: '20px', height: '20px', minWidth: '20px', maxWidth: '20px', minHeight: '20px', maxHeight: '20px', objectFit: 'cover' }} />
+                    </span>
+                    + Criar com Lucas
+                  </Button>
+
+                  {data.full_name && (
+                    <Button
+                      variant={mode === 'editor' ? 'default' : 'ghost'}
+                      size="sm"
+                      onClick={() => setMode('editor')}
+                      className="gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap flex-1 sm:flex-initial"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                      Editar Currículo
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
@@ -558,7 +556,7 @@ export default function CurriculumPage() {
 
                   <Button
                     onClick={handleStartNewCurriculum}
-                    className="gap-2 font-bold text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded-[5px] w-full sm:w-auto shrink-0"
+                    className="gap-2 font-bold text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded-[5px] hidden sm:flex shrink-0"
                   >
                     <span className="w-5 h-5 rounded-full overflow-hidden shrink-0 border border-amber-400 inline-block align-middle" style={{ width: '20px', height: '20px', minWidth: '20px', maxWidth: '20px', minHeight: '20px', maxHeight: '20px' }}>
                       <img src="/images/avatars/lucas.jpg" alt="Lucas" width={20} height={20} className="w-5 h-5 rounded-full object-cover block" style={{ width: '20px', height: '20px', minWidth: '20px', maxWidth: '20px', minHeight: '20px', maxHeight: '20px', objectFit: 'cover' }} />
@@ -593,11 +591,13 @@ export default function CurriculumPage() {
                         </CardHeader>
 
                         <CardContent className="pt-0 space-y-4">
-                          <div className="text-[11px] text-muted-foreground space-y-1 bg-muted/30 p-2.5 rounded-[5px] border border-border">
-                            {curr.city && <p className="truncate">📍 {curr.city}</p>}
-                            {curr.phone && <p className="truncate">📞 {curr.phone}</p>}
-                            {curr.email && <p className="truncate">✉️ {curr.email}</p>}
-                          </div>
+                          {(curr.city || curr.phone || curr.email) && (
+                            <div className="text-[11px] text-muted-foreground space-y-1 bg-muted/30 p-2.5 rounded-[5px] border border-border">
+                              {curr.city && <p className="truncate">📍 {curr.city}</p>}
+                              {curr.phone && <p className="truncate">📞 {curr.phone}</p>}
+                              {curr.email && <p className="truncate">✉️ {curr.email}</p>}
+                            </div>
+                          )}
 
                           {/* Botões de Ação do Card */}
                           <div className="flex items-center gap-2 pt-2 border-t border-border">
