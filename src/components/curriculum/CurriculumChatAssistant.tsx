@@ -198,9 +198,9 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
     <Card className="border-border bg-card shadow-lg rounded-[5px] overflow-hidden max-w-3xl mx-auto flex flex-col my-2">
       {/* Top Header Banner */}
       <div className="bg-primary text-primary-foreground p-4 sm:p-5 flex items-center justify-between shrink-0 border-b border-primary/20">
-        <div className="flex items-center gap-3.5">
+        <div className="flex items-center gap-3 sm:gap-3.5 min-w-0 flex-1">
           <div className="relative shrink-0">
-            <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border-2 border-amber-400 shadow-sm" style={{ width: '48px', height: '48px', minWidth: '48px', maxWidth: '48px', minHeight: '48px', maxHeight: '48px' }}>
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full overflow-hidden shrink-0 border-2 border-amber-400 shadow-sm" style={{ width: '44px', height: '44px', minWidth: '44px', maxWidth: '44px', minHeight: '44px', maxHeight: '44px' }}>
               <img
                 src="/images/avatars/lucas.jpg"
                 alt="Lucas - Analista de Carreiras"
@@ -216,7 +216,7 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
               <h3 className="font-bold text-sm sm:text-base leading-tight">
                 Lucas
               </h3>
-              <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-300 bg-amber-400/10 rounded-[5px] shrink-0">
+              <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-300 bg-amber-400/10 rounded-[5px] shrink-0 whitespace-nowrap">
                 Analista de Carreiras
               </Badge>
             </div>
@@ -226,9 +226,9 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
           </div>
         </div>
 
-        <div className="text-right hidden sm:block">
-          <span className="text-xs font-bold text-amber-300 font-mono">Passo {currentStep + 1} de {QUESTIONS.length}</span>
-          <Progress value={progressPercent} className="w-24 h-2 mt-1 bg-primary-foreground/20 rounded-[5px]" />
+        <div className="text-right shrink-0 ml-2">
+          <span className="text-[10px] sm:text-xs font-bold text-amber-300 font-mono whitespace-nowrap">Passo {currentStep + 1} de {QUESTIONS.length}</span>
+          <Progress value={progressPercent} className="w-16 sm:w-24 h-1.5 sm:h-2 mt-1 bg-primary-foreground/20 rounded-[5px]" />
         </div>
       </div>
 
