@@ -39,7 +39,7 @@ export const PricingCards = ({ plans }: PricingCardsProps) => {
             Escolha o plano ideal para a sua <span className="text-accent">transformação</span>.
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground font-normal leading-relaxed">
-            Comece hoje com 7 dias grátis. Cancele a qualquer momento com um único clique.
+            Acesso imediato a todas as ferramentas de preparação. Cancele a qualquer momento.
           </p>
         </motion.div>
 

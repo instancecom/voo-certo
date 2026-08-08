@@ -29,7 +29,7 @@ export const CTASection = () => {
           className="max-w-3xl mx-auto"
         >
           <Badge className="mb-6 bg-accent text-accent-foreground border-0 rounded-[5px] font-black uppercase text-[11px] tracking-widest px-4 py-1.5 h-auto inline-flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5" /> Comece Gratuitamente
+            <Sparkles className="w-3.5 h-3.5" /> Comece Agora
           </Badge>
 
           <h2 className="text-3xl sm:text-4xl md:text-6xl font-black text-primary-foreground mb-6 leading-tight">
@@ -48,7 +48,7 @@ export const CTASection = () => {
               className="rounded-[5px] w-full sm:w-fit whitespace-normal h-auto py-4 sm:h-14 sm:py-0 hover-yellow shadow-2xl font-bold"
             >
               <Link to={user ? '/simulados' : '/auth?mode=signup'} className="flex items-center justify-center gap-2">
-                COMEÇAR TESTE GRÁTIS DE 7 DIAS <ArrowRight className="w-5 h-5" />
+                COMEÇAR AGORA <ArrowRight className="w-5 h-5" />
               </Link>
             </Button>
             <Button
@@ -64,7 +64,7 @@ export const CTASection = () => {
           </div>
 
           <p className="text-xs text-primary-foreground/60 mt-6 flex items-center justify-center gap-1.5 font-medium">
-            <ShieldCheck className="w-4 h-4 text-accent" /> 7 dias gratuitos · Sem fidelidade · Cancele quando quiser
+            <ShieldCheck className="w-4 h-4 text-accent" /> Acesso imediato · Sem fidelidade · Cancele quando quiser
           </p>
         </motion.div>
       </div>

@@ -5,8 +5,8 @@ import { MessageCircle, ChevronRight } from 'lucide-react';
 export const FAQSection = () => {
   const faqs = [
     {
-      q: 'Como funcionam os 7 dias gratuitos?',
-      a: 'Ao criar sua conta, você tem acesso completo a todas as ferramentas da plataforma por 7 dias corridos, sem necessidade de inserir cartão de crédito antecipadamente. Ao final do período, você escolhe o plano que deseja para continuar acelerando seus estudos.',
+      q: 'Como funciona o acesso à plataforma?',
+      a: 'Ao assinar qualquer um dos planos, seu acesso a todas as ferramentas e conteúdos contratados é liberado imediatamente. Você pode estudar no seu próprio ritmo pelo computador, tablet ou celular.',
     },
     {
       q: 'O Voe Certo é afiliado ou oficial da ANAC?',
@@ -18,7 +18,7 @@ export const FAQSection = () => {
     },
     {
       q: 'O que é o Selo de Aprovação do LinkedIn?',
-      a: 'É uma certificação digital de prontidão que você desbloqueia na plataforma ao atingir índices consistentes de acerto nos simulados oficiais. Ele pode ser adicionado à sua seção de licenças e certificados do LinkedIn.',
+      a: 'É uma certificação digital de Honra ao Mérito que você desbloqueia na plataforma ao conquistar a aprovação oficial no exame da ANAC. Ele pode ser adicionado à sua seção de licenças e certificados do LinkedIn com link de validação.',
     },
     {
       q: 'Posso acessar a plataforma pelo celular ou tablet?',
