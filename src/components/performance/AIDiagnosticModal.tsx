@@ -194,31 +194,33 @@ export function AIDiagnosticModal({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-0 rounded-[5px] border-border bg-card">
         {/* Top Banner */}
-        <div className="bg-primary text-primary-foreground p-6 relative border-b border-primary/20">
-          <div className="flex items-center gap-3.5">
-            <div className="relative shrink-0 w-12 h-12" style={{ width: '48px', height: '48px', minWidth: '48px', maxWidth: '48px', minHeight: '48px', maxHeight: '48px' }}>
-              <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border-2 border-amber-400 shadow-md" style={{ width: '48px', height: '48px', minWidth: '48px', maxWidth: '48px', minHeight: '48px', maxHeight: '48px' }}>
+        <div className="bg-primary text-primary-foreground p-4 sm:p-6 relative border-b border-primary/20">
+          <div className="flex items-center gap-3 sm:gap-3.5">
+            <div className="relative shrink-0 w-11 h-11 sm:w-12 sm:h-12" style={{ width: '48px', height: '48px', minWidth: '48px', maxWidth: '48px', minHeight: '48px', maxHeight: '48px' }}>
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full overflow-hidden shrink-0 border-2 border-amber-400 shadow-md" style={{ width: '48px', height: '48px', minWidth: '48px', maxWidth: '48px', minHeight: '48px', maxHeight: '48px' }}>
                 <img
                   src="/images/avatars/sofia.jpg"
                   alt="Sofia - Mentora de Desempenho"
                   width={48}
                   height={48}
-                  className="w-12 h-12 rounded-full object-cover block"
+                  className="w-full h-full rounded-full object-cover block"
                   style={{ width: '48px', height: '48px', minWidth: '48px', maxWidth: '48px', minHeight: '48px', maxHeight: '48px', objectFit: 'cover' }}
                 />
               </div>
               <div className="absolute -bottom-1 -right-1 bg-amber-500 rounded-full p-1 border-2 border-primary">
-                <Sparkles className="w-3 h-3 text-white" />
+                <Sparkles className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" />
               </div>
             </div>
-            <div>
-              <DialogTitle className="text-xl font-black text-primary-foreground flex items-center gap-2">
-                Diagnóstico de Desempenho com Sofia
-                <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-300 bg-amber-400/10 rounded-[5px]">
+            <div className="min-w-0 flex-1 pr-6 sm:pr-0">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <DialogTitle className="text-base sm:text-xl font-black text-primary-foreground leading-tight">
+                  Diagnóstico de Desempenho com Sofia
+                </DialogTitle>
+                <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-300 bg-amber-400/10 rounded-[5px] shrink-0 whitespace-nowrap">
                   Mentora de Desempenho
                 </Badge>
-              </DialogTitle>
-              <DialogDescription className="text-xs text-primary-foreground/80 font-medium mt-1">
+              </div>
+              <DialogDescription className="text-xs text-primary-foreground/80 font-medium mt-1 leading-snug">
                 Sofia analisa o seu histórico de simulados e indica exatamente onde focar seus estudos para evoluir.
               </DialogDescription>
             </div>
