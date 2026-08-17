@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+﻿import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
@@ -223,7 +223,7 @@ export default function ProgressPage() {
             >
               <span className="w-6 h-6 rounded-[5px] overflow-hidden shrink-0 border border-amber-400 inline-block align-middle" style={{ width: '24px', height: '24px', minWidth: '24px', maxWidth: '24px', minHeight: '24px', maxHeight: '24px' }}>
                 <img
-                  src="/images/avatars/mike.png"
+                  src="/images/avatars/Mike_character.png"
                   alt="Mike"
                   width={24}
                   height={24}
@@ -530,3 +530,4 @@ export default function ProgressPage() {
     </div>
   );
 }
+

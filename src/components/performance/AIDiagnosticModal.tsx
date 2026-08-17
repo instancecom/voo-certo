@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sparkles, Brain, AlertTriangle, CheckCircle2, TrendingUp, TrendingDown, Minus,
@@ -199,7 +199,7 @@ export function AIDiagnosticModal({
             <div className="relative shrink-0 w-11 h-11 sm:w-12 sm:h-12" style={{ width: '48px', height: '48px', minWidth: '48px', maxWidth: '48px', minHeight: '48px', maxHeight: '48px' }}>
               <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-[5px] overflow-hidden shrink-0 border-2 border-amber-400 shadow-md" style={{ width: '48px', height: '48px', minWidth: '48px', maxWidth: '48px', minHeight: '48px', maxHeight: '48px' }}>
                 <img
-                  src="/images/avatars/mike.png"
+                  src="/images/avatars/Mike_character.png"
                   alt="Mike - Assistente Voe Certo"
                   width={48}
                   height={48}
@@ -434,3 +434,4 @@ export function AIDiagnosticModal({
     </Dialog>
   );
 }
+

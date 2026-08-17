@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+﻿import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -151,7 +151,7 @@ export const PlatformPreview = () => {
                   <div className="bg-card border border-accent/20 rounded-[5px] p-4 text-xs">
                     <div className="flex items-center gap-2 mb-2">
                       <img
-                        src="/images/avatars/mike.png"
+                        src="/images/avatars/Mike_character.png"
                         alt="Mike"
                         className="w-6 h-6 rounded-[5px] object-cover border border-accent"
                         onError={(e) => { e.currentTarget.src = '/placeholder.svg'; }}
@@ -172,3 +172,4 @@ export const PlatformPreview = () => {
     </section>
   );
 };
+

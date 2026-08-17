@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+﻿import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, Send, X, Loader2, Sparkles, MessageCircle, Clock, ArrowUpRight, Lock, Plus, ArrowUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -209,7 +209,7 @@ export function QuestionAIChat({
                   <div className="relative shrink-0">
                     <div className="w-11 h-11 rounded-[5px] overflow-hidden shrink-0 border-2 border-primary shadow-sm" style={{ width: '44px', height: '44px', minWidth: '44px', maxWidth: '44px', minHeight: '44px', maxHeight: '44px' }}>
                       <img 
-                        src="/images/avatars/mike.png" 
+                        src="/images/avatars/Mike_character.png" 
                         alt="Mike" 
                         className="w-full h-full object-cover block" 
                       />
@@ -257,7 +257,7 @@ export function QuestionAIChat({
                     <div className="w-16 h-16 rounded-[5px] bg-white shadow-md border-2 border-primary/20 flex items-center justify-center mb-4 relative shrink-0">
                       <div className="w-16 h-16 rounded-[5px] overflow-hidden shrink-0">
                         <img 
-                          src="/images/avatars/mike.png" 
+                          src="/images/avatars/Mike_character.png" 
                           alt="Mike" 
                           className="w-full h-full object-cover block" 
                         />
@@ -290,7 +290,7 @@ export function QuestionAIChat({
                       <div className="flex gap-2 max-w-[88%]">
                         <div className="w-8 h-8 rounded-[5px] overflow-hidden shrink-0 border border-primary/50 mt-1 shadow-sm" style={{ width: '32px', height: '32px', minWidth: '32px', maxWidth: '32px', minHeight: '32px', maxHeight: '32px' }}>
                           <img 
-                            src="/images/avatars/mike.png"
+                            src="/images/avatars/Mike_character.png"
                             alt="Mike"
                             className="w-full h-full object-cover block"
                           />
@@ -320,7 +320,7 @@ export function QuestionAIChat({
                     <div className="flex gap-2 max-w-[85%]">
                       <div className="w-8 h-8 rounded-[5px] overflow-hidden shrink-0 border border-primary/50 mt-1 shadow-sm animate-pulse" style={{ width: '32px', height: '32px', minWidth: '32px', maxWidth: '32px', minHeight: '32px', maxHeight: '32px' }}>
                         <img 
-                          src="/images/avatars/mike.png"
+                          src="/images/avatars/Mike_character.png"
                           alt="Mike"
                           className="w-full h-full object-cover block"
                         />
@@ -410,3 +410,4 @@ export function QuestionAIChat({
     </div>
   );
 }
+

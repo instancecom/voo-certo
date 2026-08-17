@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+﻿import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Brain, BarChart3, FileText, Sparkles, MessageSquare, Bot, Zap } from 'lucide-react';
@@ -76,7 +76,7 @@ export const MentorCards = () => {
           <Card className="bg-card border-accent/30 rounded-[5px] p-8 max-w-sm w-full shadow-2xl flex flex-col items-center text-center">
             <div className="relative mb-5">
               <img
-                src="/images/avatars/mike.png"
+                src="/images/avatars/Mike_character.png"
                 alt="Mike - Assistente Voe Certo"
                 className="w-28 h-28 rounded-[5px] object-cover border-2 border-accent/40 shadow-lg"
                 onError={(e) => { e.currentTarget.src = '/placeholder.svg'; }}
@@ -147,3 +147,4 @@ export const MentorCards = () => {
     </section>
   );
 };
+
