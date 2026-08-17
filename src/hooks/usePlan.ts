@@ -45,7 +45,7 @@ export function usePlan() {
   // Limite diário de simulados no Modo Banca para o plano free
   const bancaDailyLimit = currentPlan === 'free' ? 1 : Infinity;
 
-  // ── Chat IA (Prof. Hugo) ─────────────────────────────────────────────────────
+  // ── Chat IA (Mike) ────────────────────────────────────────────────────────────
   // Free NÃO tem acesso ao chat IA — apenas Modo Livre sem IA
   const canAccessAIChat = hasAccess('solo');             // Solo+
   const canAccessModoLivreAI = hasAccess('solo');        // IA no Modo Livre apenas para Solo+
@@ -73,7 +73,7 @@ export function usePlan() {
   // Solo+: progresso completo (curva, assertividade, pontos de atenção, melhores matérias, histórico)
   const canAccessProgress = true;                         // Todos veem, mas conteúdo varia
   const canAccessFullProgress = hasAccess('solo');       // Solo+: progresso completo
-  const canAccessDiagnostic = hasAccess('tripulante');   // Diagnóstico com Sofia: Tripulante+
+  const canAccessDiagnostic = hasAccess('tripulante');   // Diagnóstico com Mike: Tripulante+
 
   // ── Conquistas ───────────────────────────────────────────────────────────────
   const canAccessConquistas = true;                       // Todos têm conquistas

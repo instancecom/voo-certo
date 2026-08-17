@@ -83,7 +83,7 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
   const [messages, setMessages] = useState<Message[]>([
     {
       sender: 'ai',
-      text: `Olá! Sou o Lucas, analista de carreiras do Voe Certo. 👋\n\nVamos criar o seu currículo profissional de alto impacto?\n\n💡 **Dica importante:** Pode responder do seu jeito, sem se preocupar com gramática ou estrutura — eu vou cuidar da formatação, ajustar os verbos de ação e escolher o modelo ideal para o seu objetivo!`,
+      text: `Olá! Sou o Mike, assistente completo do Voe Certo. ✈️\n\nVamos criar o seu currículo profissional de alto impacto?\n\n💡 **Dica importante:** Pode responder do seu jeito, sem se preocupar com gramática ou estrutura — eu cuido da formatação, ajusto os verbos de ação e escolho o modelo ideal pra você. Bora!`,
       step: -1,
     },
     {
@@ -144,7 +144,7 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
 
   const generateFinalCurriculum = async (finalAnswers: Record<string, string>) => {
     setIsGenerating(true);
-    toast.info('Lucas analisando e formatando seu currículo profissional...');
+    toast.info('Mike analisando e formatando seu currículo profissional...');
 
     try {
       const { data, error } = await supabase.functions.invoke('curriculum-ai-assistant', {
@@ -157,11 +157,11 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
       if (error) throw error;
       if (!data?.curriculum) throw new Error('Não foi possível gerar a estrutura do currículo.');
 
-      toast.success('Currículo profissional criado com sucesso por Lucas!');
+      toast.success('Currículo profissional criado com sucesso por Mike!');
       onCurriculumGenerated(data.curriculum);
     } catch (err: any) {
       console.error('Erro ao gerar currículo com IA:', err);
-      toast.warning('Lucas formatando currículo com base nas respostas enviadas...');
+      toast.warning('Mike formatando currículo com base nas respostas enviadas...');
 
       // Fallback inteligente com base direta nas respostas fornecidas pelo usuário
       const fallbackCurriculum = {
@@ -200,10 +200,10 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
       <div className="bg-primary text-primary-foreground p-4 sm:p-5 flex items-center justify-between shrink-0 border-b border-primary/20">
         <div className="flex items-center gap-3 sm:gap-3.5 min-w-0 flex-1">
           <div className="relative shrink-0">
-            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full overflow-hidden shrink-0 border-2 border-amber-400 shadow-sm" style={{ width: '44px', height: '44px', minWidth: '44px', maxWidth: '44px', minHeight: '44px', maxHeight: '44px' }}>
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-[5px] overflow-hidden shrink-0 border-2 border-amber-400 shadow-sm" style={{ width: '44px', height: '44px', minWidth: '44px', maxWidth: '44px', minHeight: '44px', maxHeight: '44px' }}>
               <img
-                src="/images/avatars/lucas.jpg"
-                alt="Lucas - Analista de Carreiras"
+                src="/images/avatars/mike.png"
+                alt="Mike - Assistente Completo"
                 className="w-full h-full object-cover block"
               />
             </div>
@@ -214,10 +214,10 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-1.5">
               <h3 className="font-bold text-sm sm:text-base leading-tight">
-                Lucas
+                Mike
               </h3>
               <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-300 bg-amber-400/10 rounded-[5px] shrink-0 whitespace-nowrap">
-                Analista de Carreiras
+                Assistente Completo
               </Badge>
             </div>
             <p className="text-[11px] sm:text-xs text-primary-foreground/80 font-medium mt-0.5 leading-snug">
@@ -236,7 +236,7 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
       <div className="bg-secondary/60 border-b border-border px-4 py-2.5 flex items-start gap-2.5 text-xs text-foreground shrink-0">
         <Lightbulb className="w-4 h-4 shrink-0 text-amber-500 mt-0.5" />
         <span>
-          <strong>Sem estresse de escrita:</strong> Pode responder com suas palavras simples. O Lucas refinará a gramática, ajustará os verbos de ação e escolherá o melhor layout para você.
+          <strong>Sem estresse de escrita:</strong> Pode responder com suas palavras simples. O Mike refina a gramática, ajusta os verbos de ação e escolhe o melhor layout pra você.
         </span>
       </div>
 
@@ -255,10 +255,10 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
               className={`flex gap-2.5 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {msg.sender === 'ai' && (
-                <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-primary/30 mt-1 shadow-sm" style={{ width: '32px', height: '32px', minWidth: '32px', maxWidth: '32px', minHeight: '32px', maxHeight: '32px' }}>
+                <div className="w-8 h-8 rounded-[5px] overflow-hidden shrink-0 border border-primary/30 mt-1 shadow-sm" style={{ width: '32px', height: '32px', minWidth: '32px', maxWidth: '32px', minHeight: '32px', maxHeight: '32px' }}>
                   <img
-                    src="/images/avatars/lucas.jpg"
-                    alt="Lucas"
+                    src="/images/avatars/mike.png"
+                    alt="Mike"
                     className="w-full h-full object-cover block"
                   />
                 </div>
@@ -290,7 +290,7 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
             className="flex items-center gap-3 p-4 rounded-[5px] bg-primary/5 border border-primary/20 text-primary text-xs font-bold"
           >
             <Loader2 className="w-5 h-5 animate-spin shrink-0" />
-            <span>Lucas formatando seu histórico, aplicando verbos de ação e selecionando o modelo ideal...</span>
+            <span>Mike formatando seu histórico, aplicando verbos de ação e selecionando o modelo ideal...</span>
           </motion.div>
         )}
       </CardContent>

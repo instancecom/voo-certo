@@ -180,7 +180,7 @@ export function QuestionAIChat({
           <div className="bg-white p-1.5 rounded-full shadow-sm group-hover:shadow group-hover:rotate-12 transition-all">
             <Sparkles className="w-4 h-4 text-accent animate-pulse" />
           </div>
-          <span className="text-sm font-bold tracking-tight">Pergunte ao Prof. Hugo</span>
+          <span className="text-sm font-bold tracking-tight">Pergunte ao Mike</span>
         </div>
 
         {!isAdmin && (
@@ -207,10 +207,10 @@ export function QuestionAIChat({
               <div className="flex items-center justify-between p-5 bg-white border-b border-border/10 shrink-0 shadow-sm relative z-10">
                 <div className="flex items-center gap-3">
                   <div className="relative shrink-0">
-                    <div className="w-11 h-11 rounded-full overflow-hidden shrink-0 border-2 border-primary shadow-sm" style={{ width: '44px', height: '44px', minWidth: '44px', maxWidth: '44px', minHeight: '44px', maxHeight: '44px' }}>
+                    <div className="w-11 h-11 rounded-[5px] overflow-hidden shrink-0 border-2 border-primary shadow-sm" style={{ width: '44px', height: '44px', minWidth: '44px', maxWidth: '44px', minHeight: '44px', maxHeight: '44px' }}>
                       <img 
-                        src="/images/avatars/prof_hugo.jpg" 
-                        alt="Prof. Hugo" 
+                        src="/images/avatars/mike.png" 
+                        alt="Mike" 
                         className="w-full h-full object-cover block" 
                       />
                     </div>
@@ -218,11 +218,11 @@ export function QuestionAIChat({
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-base font-black text-primary leading-tight">Prof. Hugo</h3>
+                      <h3 className="text-base font-black text-primary leading-tight">Mike</h3>
                     </div>
                     <div className="flex items-center gap-3 mt-1">
                       <p className="text-[10px] text-muted-foreground flex items-center gap-1 font-bold tracking-wide uppercase">
-                        <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Professor de Aviação Civil
+                        <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Assistente Completo
                       </p>
                       <div className="h-3 w-[1px] bg-border/40" />
                       <div className="flex items-center gap-2">
@@ -254,11 +254,11 @@ export function QuestionAIChat({
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages.length === 0 && !limitReached && (
                   <div className="flex flex-col items-center text-center py-6 px-4">
-                    <div className="w-16 h-16 rounded-full bg-white shadow-md border-2 border-primary/20 flex items-center justify-center mb-4 relative shrink-0">
-                      <div className="w-16 h-16 rounded-full overflow-hidden shrink-0">
+                    <div className="w-16 h-16 rounded-[5px] bg-white shadow-md border-2 border-primary/20 flex items-center justify-center mb-4 relative shrink-0">
+                      <div className="w-16 h-16 rounded-[5px] overflow-hidden shrink-0">
                         <img 
-                          src="/images/avatars/prof_hugo.jpg" 
-                          alt="Prof. Hugo" 
+                          src="/images/avatars/mike.png" 
+                          alt="Mike" 
                           className="w-full h-full object-cover block" 
                         />
                       </div>
@@ -268,7 +268,7 @@ export function QuestionAIChat({
                     </div>
                     <h4 className="text-base font-black text-foreground mb-1">Dúvida sobre esta questão?</h4>
                     <p className="text-sm text-muted-foreground mb-6 text-balance font-medium">
-                      Pergunte ao Prof. Hugo! Ele te explica de forma clara e simples.
+                      Pergunte ao Mike! Ele te explica de forma clara e com bom humor. 😄
                     </p>
                     <div className="w-full space-y-2">
                       {['Por que essa é a resposta correta?', 'Como o erro impacta o voo?', 'Explique a regulamentação.'].map((q, i) => (
@@ -288,16 +288,16 @@ export function QuestionAIChat({
                   <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                     {msg.role === 'assistant' ? (
                       <div className="flex gap-2 max-w-[88%]">
-                        <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-primary/50 mt-1 shadow-sm" style={{ width: '32px', height: '32px', minWidth: '32px', maxWidth: '32px', minHeight: '32px', maxHeight: '32px' }}>
+                        <div className="w-8 h-8 rounded-[5px] overflow-hidden shrink-0 border border-primary/50 mt-1 shadow-sm" style={{ width: '32px', height: '32px', minWidth: '32px', maxWidth: '32px', minHeight: '32px', maxHeight: '32px' }}>
                           <img 
-                            src="/images/avatars/prof_hugo.jpg"
-                            alt="Prof. Hugo"
+                            src="/images/avatars/mike.png"
+                            alt="Mike"
                             className="w-full h-full object-cover block"
                           />
                         </div>
                         <div className="bg-white border border-primary/20 px-4 py-3 rounded-[5px] rounded-tl-sm text-[15px] text-foreground shadow-sm">
                           <div className="flex items-center gap-1.5 mb-1.5">
-                            <span className="text-xs text-primary font-bold">Prof. Hugo</span>
+                            <span className="text-xs text-primary font-bold">Mike</span>
                             {msg.cached && (
                               <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 bg-muted text-muted-foreground font-normal gap-0.5 border-none">
                                 <Clock className="w-2.5 h-2.5" /> Em cache
@@ -318,16 +318,16 @@ export function QuestionAIChat({
                 {isLoading && (
                   <div className="flex justify-start">
                     <div className="flex gap-2 max-w-[85%]">
-                      <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-primary/50 mt-1 shadow-sm animate-pulse" style={{ width: '32px', height: '32px', minWidth: '32px', maxWidth: '32px', minHeight: '32px', maxHeight: '32px' }}>
+                      <div className="w-8 h-8 rounded-[5px] overflow-hidden shrink-0 border border-primary/50 mt-1 shadow-sm animate-pulse" style={{ width: '32px', height: '32px', minWidth: '32px', maxWidth: '32px', minHeight: '32px', maxHeight: '32px' }}>
                         <img 
-                          src="/images/avatars/prof_hugo.jpg"
-                          alt="Prof. Hugo"
+                          src="/images/avatars/mike.png"
+                          alt="Mike"
                           className="w-full h-full object-cover block"
                         />
                       </div>
                       <div className="bg-white border border-border/50 rounded-[5px] rounded-tl-sm px-4 py-3 flex items-center gap-2.5 shadow-sm text-xs font-semibold text-primary">
                         <Loader2 className="w-4 h-4 animate-spin text-primary shrink-0" />
-                        <span>Prof. Hugo analisando sua dúvida...</span>
+                        <span>Mike analisando sua dúvida...</span>
                       </div>
                     </div>
                   </div>

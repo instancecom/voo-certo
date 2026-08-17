@@ -288,11 +288,11 @@ export default function CurriculumPage() {
   // Melhorar um trecho específico com IA no editor manual
   const handleEnhanceWithAI = async (sectionName: string, textToEnhance: string, onSuccess: (enhanced: string) => void) => {
     if (!textToEnhance.trim()) {
-      toast.error('Digite algum texto antes de pedir a melhoria ao Lucas.');
+      toast.error('Digite algum texto antes de pedir a melhoria ao Mike.');
       return;
     }
     setIsEnhancingSection(sectionName);
-    toast.info(`Lucas refinando texto da seção [${sectionName}]...`);
+    toast.info(`Mike refinando texto da seção [${sectionName}]...`);
 
     try {
       const { data: resData, error } = await supabase.functions.invoke('curriculum-ai-assistant', {
@@ -306,10 +306,10 @@ export default function CurriculumPage() {
       if (error) throw error;
       if (resData?.enhancedText) {
         onSuccess(resData.enhancedText);
-        toast.success(`Seção [${sectionName}] aprimorada com sucesso por Lucas!`);
+        toast.success(`Seção [${sectionName}] aprimorada com sucesso por Mike!`);
       }
     } catch (err: any) {
-      toast.error(`Falha ao melhorar com Lucas: ${err.message || 'Erro inesperado'}`);
+      toast.error(`Falha ao melhorar com Mike: ${err.message || 'Erro inesperado'}`);
     } finally {
       setIsEnhancingSection(null);
     }
@@ -517,10 +517,10 @@ export default function CurriculumPage() {
                     onClick={handleStartNewCurriculum}
                     className="gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap flex-1 sm:flex-initial"
                   >
-                    <span className="w-5 h-5 rounded-full overflow-hidden shrink-0 border border-amber-400 inline-block align-middle" style={{ width: '20px', height: '20px', minWidth: '20px', maxWidth: '20px', minHeight: '20px', maxHeight: '20px' }}>
-                      <img src="/images/avatars/lucas.jpg" alt="Lucas" width={20} height={20} className="w-5 h-5 rounded-full object-cover block" style={{ width: '20px', height: '20px', minWidth: '20px', maxWidth: '20px', minHeight: '20px', maxHeight: '20px', objectFit: 'cover' }} />
+                    <span className="w-5 h-5 rounded-[5px] overflow-hidden shrink-0 border border-amber-400 inline-block align-middle" style={{ width: '20px', height: '20px', minWidth: '20px', maxWidth: '20px', minHeight: '20px', maxHeight: '20px' }}>
+                      <img src="/images/avatars/mike.png" alt="Mike" width={20} height={20} className="w-5 h-5 rounded-[5px] object-cover block" style={{ width: '20px', height: '20px', minWidth: '20px', maxWidth: '20px', minHeight: '20px', maxHeight: '20px', objectFit: 'cover' }} />
                     </span>
-                    + Criar com Lucas
+                    + Criar com Mike
                   </Button>
 
                   {data.full_name && (
@@ -558,10 +558,10 @@ export default function CurriculumPage() {
                     onClick={handleStartNewCurriculum}
                     className="gap-2 font-bold text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded-[5px] hidden sm:flex shrink-0"
                   >
-                    <span className="w-5 h-5 rounded-full overflow-hidden shrink-0 border border-amber-400 inline-block align-middle" style={{ width: '20px', height: '20px', minWidth: '20px', maxWidth: '20px', minHeight: '20px', maxHeight: '20px' }}>
-                      <img src="/images/avatars/lucas.jpg" alt="Lucas" width={20} height={20} className="w-5 h-5 rounded-full object-cover block" style={{ width: '20px', height: '20px', minWidth: '20px', maxWidth: '20px', minHeight: '20px', maxHeight: '20px', objectFit: 'cover' }} />
+                    <span className="w-5 h-5 rounded-[5px] overflow-hidden shrink-0 border border-amber-400 inline-block align-middle" style={{ width: '20px', height: '20px', minWidth: '20px', maxWidth: '20px', minHeight: '20px', maxHeight: '20px' }}>
+                      <img src="/images/avatars/mike.png" alt="Mike" width={20} height={20} className="w-5 h-5 rounded-[5px] object-cover block" style={{ width: '20px', height: '20px', minWidth: '20px', maxWidth: '20px', minHeight: '20px', maxHeight: '20px', objectFit: 'cover' }} />
                     </span>
-                    + Criar Novo com Lucas
+                    + Criar Novo com Mike
                   </Button>
                 </div>
 

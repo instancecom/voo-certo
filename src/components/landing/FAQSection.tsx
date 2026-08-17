@@ -14,7 +14,7 @@ export const FAQSection = () => {
     },
     {
       q: 'Como funciona a mentoria dos professores de Inteligência Artificial?',
-      a: 'Nossa plataforma integra três mentores especializados: o Prof. Hugo (tira-dúvidas de matérias e explicações técnicas da banca), a Sofia (diagnóstico e estratégia de rendimento) e o Lucas (criação de currículos aero e orientações para processos seletivos).',
+      a: 'Nossa plataforma conta com o Mike, assistente completo de IA do Voe Certo. Ele tira dúvidas técnicas sobre matérias e bancas, realiza diagnóstico de desempenho personalizado e auxilia na criação do seu currículo aeronáutico — tudo em um só lugar.',
     },
     {
       q: 'O que é o Selo de Aprovação do LinkedIn?',

@@ -147,16 +147,16 @@ export const PlatformPreview = () => {
                     </div>
                   </div>
 
-                  {/* Hugo's IA Live Explanation */}
+                  {/* Mike's IA Live Explanation */}
                   <div className="bg-card border border-accent/20 rounded-[5px] p-4 text-xs">
                     <div className="flex items-center gap-2 mb-2">
                       <img
-                        src="/images/avatars/prof_hugo.jpg"
-                        alt="Prof. Hugo"
-                        className="w-6 h-6 rounded-full object-cover border border-accent"
+                        src="/images/avatars/mike.png"
+                        alt="Mike"
+                        className="w-6 h-6 rounded-[5px] object-cover border border-accent"
                         onError={(e) => { e.currentTarget.src = '/placeholder.svg'; }}
                       />
-                      <span className="font-bold text-accent">Prof. Hugo (IA):</span>
+                      <span className="font-bold text-accent">Mike (IA):</span>
                       <span className="text-[10px] text-muted-foreground uppercase font-bold">Explicação Técnica</span>
                     </div>
                     <p className="text-muted-foreground leading-relaxed">

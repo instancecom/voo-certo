@@ -197,13 +197,13 @@ export function AIDiagnosticModal({
         <div className="bg-primary text-primary-foreground p-4 sm:p-6 relative border-b border-primary/20">
           <div className="flex items-center gap-3 sm:gap-3.5">
             <div className="relative shrink-0 w-11 h-11 sm:w-12 sm:h-12" style={{ width: '48px', height: '48px', minWidth: '48px', maxWidth: '48px', minHeight: '48px', maxHeight: '48px' }}>
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full overflow-hidden shrink-0 border-2 border-amber-400 shadow-md" style={{ width: '48px', height: '48px', minWidth: '48px', maxWidth: '48px', minHeight: '48px', maxHeight: '48px' }}>
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-[5px] overflow-hidden shrink-0 border-2 border-amber-400 shadow-md" style={{ width: '48px', height: '48px', minWidth: '48px', maxWidth: '48px', minHeight: '48px', maxHeight: '48px' }}>
                 <img
-                  src="/images/avatars/sofia.jpg"
-                  alt="Sofia - Mentora de Desempenho"
+                  src="/images/avatars/mike.png"
+                  alt="Mike - Assistente Voe Certo"
                   width={48}
                   height={48}
-                  className="w-full h-full rounded-full object-cover block"
+                  className="w-full h-full rounded-[5px] object-cover block"
                   style={{ width: '48px', height: '48px', minWidth: '48px', maxWidth: '48px', minHeight: '48px', maxHeight: '48px', objectFit: 'cover' }}
                 />
               </div>
@@ -214,14 +214,14 @@ export function AIDiagnosticModal({
             <div className="min-w-0 flex-1 pr-6 sm:pr-0">
               <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                 <DialogTitle className="text-base sm:text-xl font-black text-primary-foreground leading-tight">
-                  Diagnóstico de Desempenho com Sofia
+                  Diagnóstico de Desempenho com Mike
                 </DialogTitle>
                 <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-300 bg-amber-400/10 rounded-[5px] shrink-0 whitespace-nowrap">
-                  Mentora de Desempenho
+                  Assistente Completo
                 </Badge>
               </div>
               <DialogDescription className="text-xs text-primary-foreground/80 font-medium mt-1 leading-snug">
-                Sofia analisa o seu histórico de simulados e indica exatamente onde focar seus estudos para evoluir.
+                Mike analisa o seu histórico de simulados e indica exatamente onde focar seus estudos para evoluir.
               </DialogDescription>
             </div>
           </div>
@@ -254,7 +254,7 @@ export function AIDiagnosticModal({
           {/* Escolha do Período */}
           <div>
             <label className="text-xs font-bold text-foreground mb-2 block">
-              Escolha o período para a análise de Sofia:
+              Escolha o período para a análise de Mike:
             </label>
             <div className="flex flex-wrap gap-2">
               <Button
@@ -289,9 +289,9 @@ export function AIDiagnosticModal({
             <div className="p-4 rounded-[5px] bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs flex items-start gap-3">
               <Clock className="w-5 h-5 shrink-0 text-amber-500 mt-0.5" />
               <div>
-                <p className="font-bold text-sm">Próxima análise com Sofia em: {remainingHours}h {remainingMinutes}min</p>
+                <p className="font-bold text-sm">Próxima análise com Mike em: {remainingHours}h {remainingMinutes}min</p>
                 <p className="mt-1 leading-relaxed">
-                  O intervalo de 24 horas garante tempo para você estudar os conteúdos recomendados antes de solicitar um novo diagnóstico à Sofia. Seu relatório atual está salvo abaixo para consulta!
+                  O intervalo de 24 horas garante tempo para você estudar os conteúdos recomendados antes de solicitar um novo diagnóstico ao Mike. Seu relatório atual está salvo abaixo para consulta!
                 </p>
               </div>
             </div>
@@ -310,17 +310,17 @@ export function AIDiagnosticModal({
             {isGenerating ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin" />
-                Sofia analisando seu histórico...
+                Mike analisando seu histórico...
               </>
             ) : isCooldownActive ? (
               <>
                 <Clock className="w-5 h-5 text-amber-500" />
-                Nova Análise de Sofia em {remainingHours}h {remainingMinutes}min
+                Nova Análise com Mike em {remainingHours}h {remainingMinutes}min
               </>
             ) : (
               <>
                 <Sparkles className="w-5 h-5 text-amber-400" />
-                Solicitar Análise de Sofia
+                Solicitar Análise com Mike
               </>
             )}
           </Button>

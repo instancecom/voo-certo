@@ -6,21 +6,21 @@ import { Star, MessageSquareQuote, CheckCircle2 } from 'lucide-react';
 export const TestimonialsSection = () => {
   const testimonials = [
     {
-      quote: 'O acompanhamento do Prof. Hugo e as explicações por IA mudaram completamente meu rendimento. Fui aprovada de primeira na banca de Comissária e já estou com processo seletivo em andamento!',
+      quote: 'O acompanhamento do Mike e as explicações por IA mudaram completamente meu rendimento. Fui aprovada de primeira na banca de Comissária e já estou com processo seletivo em andamento!',
       name: 'Ana Paula M.',
       role: 'Comissária de Voo · Aprovada ANAC',
       stars: 5,
       highlight: 'Aprovada de primeira',
     },
     {
-      quote: 'A plataforma vai muito além de questões. O diagnóstico da Sofia me mostrou exatamente onde eu perdia pontos em Navegação e Regulamentos. Cheguei calmo e seguro no dia do exame.',
+      quote: 'A plataforma vai muito além de questões. O diagnóstico do Mike me mostrou exatamente onde eu perdia pontos em Navegação e Regulamentos. Cheguei calmo e seguro no dia do exame.',
       name: 'Rafael S.',
       role: 'Piloto Privado (PP-A) · Aprovado ANAC',
       stars: 5,
       highlight: 'Evolução consistente',
     },
     {
-      quote: 'Estruturei meu currículo com o Lucas e o selo no LinkedIn chamou atenção imediata no mercado de aviação executiva. A Voe Certo me acompanhou em todas as etapas.',
+      quote: 'Estruturei meu currículo com o Mike e o selo no LinkedIn chamou atenção imediata no mercado de aviação executiva. A Voe Certo me acompanhou em todas as etapas.',
       name: 'Camila R.',
       role: 'Mecânica de Manutenção (MMA) · Contratada',
       stars: 5,

@@ -25,7 +25,7 @@ const PLANS = [
     features: [
       'Modo Livre e Bloco ilimitados',
       'Modo Banca ilimitado',
-      'Chat IA com Prof. Hugo (2 msgs/questão)',
+      'Chat IA com Mike (2 msgs/questão)',
       'Guia de Carreiras completo',
       'Progresso e histórico completos',
       'Conquistas: Bronze e Prata',
@@ -46,8 +46,8 @@ const PLANS = [
     popular: true,
     features: [
       'Tudo do plano Solo',
-      'Chat IA com Prof. Hugo (5 msgs/questão)',
-      'Diagnóstico com Sofia (IA de desempenho)',
+      'Chat IA com Mike (5 msgs/questão)',
+      'Diagnóstico com Mike (IA de desempenho)',
       'Conquistas: Bronze, Prata e Ouro',
       '🎖️ Selo "Aprovado ANAC" (LinkedIn)',
       'Currículo com IA (até 3 currículos)',
@@ -65,8 +65,8 @@ const PLANS = [
     description: 'A preparação definitiva para garantir sua vaga',
     features: [
       'Tudo do plano Tripulante',
-      'Chat IA Turbo com Prof. Hugo (15 msgs/questão)',
-      'Diagnóstico com Sofia ilimitado',
+      'Chat IA Turbo com Mike (15 msgs/questão)',
+      'Diagnóstico com Mike ilimitado',
       'Todas as Conquistas: Bronze, Prata, Ouro e Platina',
       '🎖️ Selo "Aprovado ANAC" (LinkedIn)',
       'Currículo com IA (galeria ilimitada)',

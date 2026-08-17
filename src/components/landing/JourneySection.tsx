@@ -25,7 +25,7 @@ export const JourneySection = () => {
       title: 'Evolua com Inteligência',
       tag: 'Fase 2 · Mentoria & Diagnóstico',
       subtitle: 'IA que aprende com o seu desempenho',
-      desc: 'Receba diagnósticos personalizados com Sofia para identificar pontos cegos e tire dúvidas conceituais 24/7 com o Prof. Hugo a cada questão resolvida.',
+      desc: 'Receba diagnósticos personalizados com Mike para identificar pontos cegos e tire dúvidas conceituais 24/7 com o Mike a cada questão resolvida.',
       icon: Brain,
       badgeColor: 'bg-accent/10 text-accent border-accent/20',
       highlights: [
@@ -39,7 +39,7 @@ export const JourneySection = () => {
       title: 'Conquiste sua Vaga',
       tag: 'Fase 3 · Mercado & Carreira',
       subtitle: 'Do exame até a contratação profissional',
-      desc: 'Crie seu currículo com Lucas no padrão exigido pelas grandes companhias aéreas e publique seu Selo de Aprovação verificado diretamente no LinkedIn.',
+      desc: 'Crie seu currículo com Mike no padrão exigido pelas grandes companhias aéreas e publique seu Selo de Aprovação verificado diretamente no LinkedIn.',
       icon: Award,
       badgeColor: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
       highlights: [
