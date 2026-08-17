@@ -123,11 +123,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                   .maybeSingle();
 
                 if (badge?.id) {
-                  // Insere ignorando duplicata (UNIQUE constraint na tabela user_insignias)
-                  await supabase
+                  // Verifica se o usuário já tem essa insígnia para evitar o erro 409 Conflict no console
+                  const { data: existing } = await supabase
                     .from('user_insignias')
-                    .insert({ user_id: session.user.id, insignia_id: badge.id })
-                    .throwOnError();
+                    .select('id')
+                    .eq('user_id', session.user.id)
+                    .eq('insignia_id', badge.id)
+                    .maybeSingle();
+
+                  if (!existing) {
+                    await supabase
+                      .from('user_insignias')
+                      .insert({ user_id: session.user.id, insignia_id: badge.id })
+                      .throwOnError();
+                  }
                 }
               } catch (err: any) {
                 // Código 23505 = duplicate key — usuário já tem a insígnia, ignorar

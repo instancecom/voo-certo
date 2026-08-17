@@ -144,16 +144,25 @@ export const useApproveVerification = () => {
 
       // Grant the insignia to the user
       if (verification?.insignia_id) {
-        const { error: grantError } = await supabase
+        const { data: existing } = await supabase
           .from("user_insignias")
-          .insert({
-            user_id: verification.user_id,
-            insignia_id: verification.insignia_id,
-          });
+          .select("id")
+          .eq("user_id", verification.user_id)
+          .eq("insignia_id", verification.insignia_id)
+          .maybeSingle();
 
-        // Ignore duplicate errors
-        if (grantError && grantError.code !== '23505') {
-          throw grantError;
+        if (!existing) {
+          const { error: grantError } = await supabase
+            .from("user_insignias")
+            .insert({
+              user_id: verification.user_id,
+              insignia_id: verification.insignia_id,
+            });
+
+          // Ignore duplicate errors
+          if (grantError && grantError.code !== '23505') {
+            throw grantError;
+          }
         }
       }
 

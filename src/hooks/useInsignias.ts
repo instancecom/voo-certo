@@ -83,6 +83,22 @@ export const useGrantInsignia = () => {
     mutationFn: async (insigniaId: string) => {
       if (!user?.id) throw new Error("User not authenticated");
 
+      // Verifica se o usuário já possui a insígnia para evitar o erro 409 Conflict no console
+      const { data: existing, error: checkError } = await supabase
+        .from("user_insignias")
+        .select(`
+          *,
+          insignia:insignias(*)
+        `)
+        .eq("user_id", user.id)
+        .eq("insignia_id", insigniaId)
+        .maybeSingle();
+
+      if (checkError) throw checkError;
+      if (existing) {
+        return existing as UserInsignia & { insignia: Insignia };
+      }
+
       const { data, error } = await supabase
         .from("user_insignias")
         .insert({
