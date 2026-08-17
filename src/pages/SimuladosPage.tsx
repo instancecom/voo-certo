@@ -219,7 +219,7 @@ export default function SimuladosPage() {
                       className="flex-none w-[270px] md:w-[310px]"
                     >
                       <div className="p-5 md:p-6 rounded-[5px] bg-card border border-border hover:border-primary/30 hover:shadow-xl transition-all h-full flex flex-col group relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
+                        <div className="absolute top-0 right-0 p-4 opacity-[0.05] group-hover:opacity-[0.10] transition-opacity">
                            <Plane className="w-32 h-32 rotate-12" />
                         </div>
 
@@ -231,7 +231,13 @@ export default function SimuladosPage() {
                                 alt={profession.name} 
                                 className="w-full h-full object-cover"
                                 onError={(e) => {
-                                  (e.target as HTMLImageElement).src = 'https://placehold.co/100x100?text=Erro';
+                                  // Fallback gracioso: mostrar o emoji/ícone da profissão
+                                  const target = e.target as HTMLImageElement;
+                                  target.style.display = 'none';
+                                  const parent = target.parentElement;
+                                  if (parent) {
+                                    parent.innerHTML = `<span style="font-size:1.75rem">${profession.icon || '✈️'}</span>`;
+                                  }
                                 }}
                               />
                             ) : (
