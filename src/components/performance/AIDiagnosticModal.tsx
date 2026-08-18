@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sparkles, Brain, AlertTriangle, CheckCircle2, TrendingUp, TrendingDown, Minus,
@@ -146,7 +146,7 @@ export function AIDiagnosticModal({
     }
 
     setIsGenerating(true);
-    toast.info('IA Llama 3.3 70B processando seu histórico...');
+    toast.info('Mike analisando seu histórico de simulados...');
 
     try {
       const simplifiedResults = filteredResults.map(r => {
@@ -170,7 +170,7 @@ export function AIDiagnosticModal({
       });
 
       if (error) throw error;
-      if (!data?.diagnostic) throw new Error('Servidor não retornou a análise do diagnóstico.');
+      if (!data?.diagnostic) throw new Error('O Mike não retornou os dados do diagnóstico.');
 
       const newDiagnostic = data.diagnostic;
       setDiagnostic(newDiagnostic);
@@ -181,10 +181,10 @@ export function AIDiagnosticModal({
       localStorage.setItem('voecerto_ai_diagnostic_data', JSON.stringify(newDiagnostic));
       localStorage.setItem('voecerto_ai_diagnostic_timestamp', timestamp.toString());
 
-      toast.success('Diagnóstico Completo de IA gerado com sucesso!');
+      toast.success('Diagnóstico do Mike gerado com sucesso!');
     } catch (err: any) {
       console.error('Erro ao gerar diagnóstico:', err);
-      toast.error(`Falha na IA: ${err?.message || 'Tente novamente.'}`);
+      toast.error('O Mike não conseguiu analisar seu histórico no momento. Tente novamente em instantes!');
     } finally {
       setIsGenerating(false);
     }

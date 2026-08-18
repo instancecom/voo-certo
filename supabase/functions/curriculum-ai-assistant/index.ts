@@ -31,7 +31,7 @@ Responda APENAS com o texto final melhorado — sem saudações, sem explicaçõ
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "openai/gpt-oss-20b",
+          model: "llama-3.3-70b-versatile",
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: `Seção: ${sectionName || 'Resumo'}\nTexto original: ${textToEnhance}` },
@@ -120,7 +120,8 @@ Por favor, converta esses dados em um currículo profissional em JSON válido co
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "openai/gpt-oss-20b",
+          model: "llama-3.3-70b-versatile",
+          response_format: { type: "json_object" },
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: groqUserPrompt },

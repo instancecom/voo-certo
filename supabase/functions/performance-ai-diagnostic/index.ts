@@ -84,6 +84,7 @@ Por favor, analise cuidadosamente os acertos, matérias e histórico acima e ger
       },
       body: JSON.stringify({
         model: "llama-3.3-70b-versatile",
+        response_format: { type: "json_object" },
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
@@ -110,7 +111,13 @@ Por favor, analise cuidadosamente os acertos, matérias e histórico acima e ger
       jsonString = jsonString.replace(/^```/, "").replace(/```$/, "").trim();
     }
 
-    const diagnosticResult = JSON.parse(jsonString);
+    let diagnosticResult;
+    try {
+      diagnosticResult = JSON.parse(jsonString);
+    } catch (parseError) {
+      console.error("Erro ao interpretar JSON da resposta Groq:", jsonString);
+      throw new Error("Formato inválido retornado pela IA. Tente novamente.");
+    }
 
     return new Response(JSON.stringify({ diagnostic: diagnosticResult }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
