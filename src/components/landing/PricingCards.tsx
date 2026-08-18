@@ -32,9 +32,7 @@ export const PricingCards = ({ plans }: PricingCardsProps) => {
           viewport={{ once: true }}
           className="text-center max-w-3xl mx-auto mb-16 md:mb-20"
         >
-          <Badge variant="outline" className="mb-4 text-accent border-accent/30 rounded-[5px] bg-accent/10 font-bold uppercase text-[11px] tracking-wider px-3.5 py-1">
-            <Crown className="w-3.5 h-3.5 mr-1.5" /> Planos Transparentes
-          </Badge>
+
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-foreground tracking-tight mb-5 leading-tight">
             Escolha o plano ideal para a sua <span className="text-accent">transformação</span>.
           </h2>

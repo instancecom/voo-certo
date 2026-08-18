@@ -15,9 +15,7 @@ export const LinkedInBadgeSection = () => {
             transition={{ duration: 0.6 }}
             className="lg:col-span-5"
           >
-            <Badge variant="outline" className="mb-4 text-accent border-accent/30 rounded-[5px] bg-accent/10 font-bold uppercase text-[11px] tracking-wider px-3.5 py-1">
-              <Sparkles className="w-3.5 h-3.5 mr-1.5" /> Honra ao Mérito & Reconhecimento
-            </Badge>
+
 
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-foreground tracking-tight mb-6 leading-tight">
               Comprove sua aprovação na ANAC diretamente no <span className="text-accent">LinkedIn</span>.

@@ -37,9 +37,7 @@ export const TestimonialsSection = () => {
           viewport={{ once: true }}
           className="text-center max-w-3xl mx-auto mb-16 md:mb-20"
         >
-          <Badge variant="outline" className="mb-4 text-accent border-accent/30 rounded-[5px] bg-accent/10 font-bold uppercase text-[11px] tracking-wider px-3.5 py-1">
-            <Star className="w-3.5 h-3.5 mr-1.5 fill-accent" /> Histórias de Sucesso
-          </Badge>
+
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-foreground tracking-tight mb-5 leading-tight">
             Quem transformou o sonho em <span className="text-accent">carreira</span>.
           </h2>

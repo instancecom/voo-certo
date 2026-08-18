@@ -28,9 +28,7 @@ export const CTASection = () => {
           viewport={{ once: true }}
           className="max-w-3xl mx-auto"
         >
-          <Badge className="mb-6 bg-accent text-accent-foreground border-0 rounded-[5px] font-black uppercase text-[11px] tracking-widest px-4 py-1.5 h-auto inline-flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5" /> Comece Agora
-          </Badge>
+
 
           <h2 className="text-3xl sm:text-4xl md:text-6xl font-black text-primary-foreground mb-6 leading-tight">
             Pronto para decolar sua <span className="text-accent">carreira na aviação?</span>

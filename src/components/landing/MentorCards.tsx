@@ -1,4 +1,4 @@
-﻿import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Brain, BarChart3, FileText, Sparkles, MessageSquare, Bot, Zap } from 'lucide-react';
@@ -55,9 +55,7 @@ export const MentorCards = () => {
           viewport={{ once: true }}
           className="text-center max-w-3xl mx-auto mb-16 md:mb-24"
         >
-          <Badge variant="outline" className="mb-4 text-accent border-accent/30 rounded-[5px] bg-accent/10 font-bold uppercase text-[11px] tracking-wider px-3.5 py-1">
-            <Bot className="w-3.5 h-3.5 mr-1.5" /> Assistente Inteligente
-          </Badge>
+
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-foreground tracking-tight mb-5 leading-tight">
             Conheça o <span className="text-accent">Mike</span>, seu parceiro em tudo.
           </h2>

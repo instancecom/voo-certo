@@ -43,10 +43,7 @@ export const HeroSection = () => {
         <div className="grid lg:grid-cols-2 gap-12 items-center text-center lg:text-left">
           {/* Left */}
           <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
-            <motion.div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/20 rounded-[5px] text-accent mb-6 mx-auto lg:mx-0">
-              <Sparkles className="w-4 h-4" />
-              <span className="text-sm font-bold uppercase tracking-wider">Transformação na Aviação</span>
-            </motion.div>
+
 
             <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground mb-6 leading-tight">
               Do Primeiro Voo ao Primeiro Contrato.
