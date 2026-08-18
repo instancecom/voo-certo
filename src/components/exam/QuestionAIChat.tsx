@@ -254,17 +254,12 @@ export function QuestionAIChat({
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages.length === 0 && !limitReached && (
                   <div className="flex flex-col items-center text-center py-6 px-4">
-                    <div className="w-16 h-16 rounded-[5px] bg-white shadow-md border-2 border-primary/20 flex items-center justify-center mb-4 relative shrink-0">
-                      <div className="w-16 h-16 rounded-[5px] overflow-hidden shrink-0">
-                        <img 
-                          src="/images/avatars/Mike_character.png" 
-                          alt="Mike" 
-                          className="w-full h-full object-cover block" 
-                        />
-                      </div>
-                      <div className="absolute -bottom-1 -right-1 bg-amber-500 rounded-full p-1 border-2 border-white">
-                        <Sparkles className="w-3 h-3 text-white" />
-                      </div>
+                    <div className="mb-3 relative shrink-0">
+                      <img 
+                        src="/images/logo_chat_ia_mike.png" 
+                        alt="Mike" 
+                        className="w-24 h-24 object-contain block drop-shadow-lg" 
+                      />
                     </div>
                     <h4 className="text-base font-black text-foreground mb-1">Dúvida sobre esta questão?</h4>
                     <p className="text-sm text-muted-foreground mb-6 text-balance font-medium">
