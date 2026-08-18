@@ -227,10 +227,7 @@ export default function PremiumPage() {
         <div className="container mx-auto px-4">
           {/* Hero */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 rounded-[5px] text-accent mb-6">
-              <Star className="w-4 h-4 fill-accent/20" />
-              <span className="text-sm font-bold uppercase tracking-wider">Cartão ou PIX — Acesso Imediato</span>
-            </div>
+
             <h1 className="text-4xl md:text-6xl font-black text-foreground mb-6 tracking-tight">Decole sua Aprovação</h1>
             <p className="text-muted-foreground max-w-2xl mx-auto text-lg font-medium leading-relaxed">
               Planos desenvolvidos com base nos padrões reais da banca ANAC.
