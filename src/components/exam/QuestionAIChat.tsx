@@ -1,4 +1,4 @@
-﻿import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, Send, X, Loader2, Sparkles, MessageCircle, Clock, ArrowUpRight, Lock, Plus, ArrowUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -209,7 +209,7 @@ export function QuestionAIChat({
                   <div className="relative shrink-0">
                     <div className="w-11 h-11 rounded-[5px] overflow-hidden shrink-0 border-2 border-primary shadow-sm" style={{ width: '44px', height: '44px', minWidth: '44px', maxWidth: '44px', minHeight: '44px', maxHeight: '44px' }}>
                       <img 
-                        src="/images/avatars/Mike_character.png" 
+                        src="/images/avatars/mike_character_prof.png" 
                         alt="Mike" 
                         className="w-full h-full object-cover block" 
                       />
