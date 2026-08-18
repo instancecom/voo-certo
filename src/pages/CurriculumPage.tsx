@@ -518,7 +518,7 @@ export default function CurriculumPage() {
                     className="gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap flex-1 sm:flex-initial"
                   >
                     <span className="w-5 h-5 rounded-[5px] overflow-hidden shrink-0 border border-amber-400 inline-block align-middle" style={{ width: '20px', height: '20px', minWidth: '20px', maxWidth: '20px', minHeight: '20px', maxHeight: '20px' }}>
-                      <img src="/images/avatars/Mike_character.png" alt="Mike" width={20} height={20} className="w-5 h-5 rounded-[5px] object-cover block" style={{ width: '20px', height: '20px', minWidth: '20px', maxWidth: '20px', minHeight: '20px', maxHeight: '20px', objectFit: 'cover' }} />
+                      <img src="/images/avatars/mike_character_curiculum.png" alt="Mike" width={20} height={20} className="w-5 h-5 rounded-[5px] object-cover block" style={{ width: '20px', height: '20px', minWidth: '20px', maxWidth: '20px', minHeight: '20px', maxHeight: '20px', objectFit: 'cover' }} />
                     </span>
                     + Criar com Mike
                   </Button>
@@ -559,7 +559,7 @@ export default function CurriculumPage() {
                     className="gap-2 font-bold text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded-[5px] hidden sm:flex shrink-0"
                   >
                     <span className="w-5 h-5 rounded-[5px] overflow-hidden shrink-0 border border-amber-400 inline-block align-middle" style={{ width: '20px', height: '20px', minWidth: '20px', maxWidth: '20px', minHeight: '20px', maxHeight: '20px' }}>
-                      <img src="/images/avatars/Mike_character.png" alt="Mike" width={20} height={20} className="w-5 h-5 rounded-[5px] object-cover block" style={{ width: '20px', height: '20px', minWidth: '20px', maxWidth: '20px', minHeight: '20px', maxHeight: '20px', objectFit: 'cover' }} />
+                      <img src="/images/avatars/mike_character_curiculum.png" alt="Mike" width={20} height={20} className="w-5 h-5 rounded-[5px] object-cover block" style={{ width: '20px', height: '20px', minWidth: '20px', maxWidth: '20px', minHeight: '20px', maxHeight: '20px', objectFit: 'cover' }} />
                     </span>
                     + Criar Novo com Mike
                   </Button>
@@ -1186,4 +1186,5 @@ export default function CurriculumPage() {
     </div>
   );
 }
+
 

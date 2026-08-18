@@ -202,7 +202,7 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
           <div className="relative shrink-0">
             <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-[5px] overflow-hidden shrink-0 border-2 border-amber-400 shadow-sm" style={{ width: '44px', height: '44px', minWidth: '44px', maxWidth: '44px', minHeight: '44px', maxHeight: '44px' }}>
               <img
-                src="/images/avatars/Mike_character.png"
+                src="/images/avatars/mike_character_curiculum.png"
                 alt="Mike - Assistente Completo"
                 className="w-full h-full object-cover block"
               />
@@ -257,7 +257,7 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
               {msg.sender === 'ai' && (
                 <div className="w-8 h-8 rounded-[5px] overflow-hidden shrink-0 border border-primary/30 mt-1 shadow-sm" style={{ width: '32px', height: '32px', minWidth: '32px', maxWidth: '32px', minHeight: '32px', maxHeight: '32px' }}>
                   <img
-                    src="/images/avatars/Mike_character.png"
+                    src="/images/avatars/mike_character_curiculum.png"
                     alt="Mike"
                     className="w-full h-full object-cover block"
                   />
@@ -363,4 +363,5 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
     </Card>
   );
 }
+
 
