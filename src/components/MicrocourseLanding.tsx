@@ -176,7 +176,7 @@ export function MicrocourseLanding({ course, modules, getLessons }: MicrocourseL
                       <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                     </Button>
                     <p className="text-[11px] text-center text-muted-foreground">
-                      Pagamento seguro via Cakto • Cancele quando quiser
+                      Pagamento seguro • Cancele quando quiser
                     </p>
                   </div>
                 </div>

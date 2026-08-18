@@ -350,8 +350,8 @@ export default function PremiumPage() {
             <h2 className="text-2xl font-black text-foreground mb-12 text-center uppercase tracking-tighter">Perguntas Frequentes</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
-                { q: 'Posso cancelar quando quiser?', a: 'Sim! A gestão do plano é 100% autônoma através da plataforma da Cakto no seu perfil. Sem multas e sem burocracia.' },
-                { q: 'Quais formas de pagamento são aceitas?', a: 'Aceitamos Cartão de Crédito e PIX via Cakto. Ambos com aprovação rápida e acesso imediato à plataforma.' },
+                { q: 'Posso cancelar quando quiser?', a: 'Sim! O cancelamento pode ser feito a qualquer momento diretamente no seu perfil na plataforma. Sem multas e sem burocracia.' },
+                { q: 'Quais formas de pagamento são aceitas?', a: 'Aceitamos Cartão de Crédito e PIX. Ambos com aprovação rápida e acesso imediato à plataforma.' },
                 { q: 'Meu acesso é imediato após o pagamento?', a: 'Sim! Assim que o pagamento é confirmado, seu acesso é liberado automaticamente. PIX é instantâneo.' },
                 { q: 'As questões são atualizadas?', a: 'Nossa equipe revisa o banco de questões constantemente com base nos exames reais da ANAC.' },
               ].map((faq, i) => (
@@ -397,7 +397,7 @@ export default function PremiumPage() {
                 {loading === 'manage' ? 'Acessando Portal Seguro' : 'Processando sua Escolha'}
               </h3>
               <p className="text-muted-foreground font-bold text-[10px] uppercase tracking-[0.2em] px-8 leading-loose opacity-80">
-                Transferindo você para o ambiente de faturamento seguro da Cakto.
+                Transferindo você para o ambiente de faturamento seguro.
               </p>
             </motion.div>
           </motion.div>
