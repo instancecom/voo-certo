@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -273,16 +273,13 @@ export default function CurriculumPage() {
     const updated: CurriculumData = {
       ...EMPTY_DATA,
       ...generatedData,
-      id: newId, // Atribui um ID único EXCLUSIVO para este novo currículo
+      id: newId,
       template: generatedData.recommended_template || 'ats',
     };
     
     setData(updated);
-    setMode('editor');
-    
-    if (user) {
-      saveMutation.mutate(updated); // Passa o objeto COMPLETO atualizado diretamente!
-    }
+    setMode('editor'); // Abre direto no editor para o usuário revisar antes de salvar
+    toast.info('Revise seu currículo e clique em Salvar quando estiver pronto!');
   };
 
   // Melhorar um trecho específico com IA no editor manual
