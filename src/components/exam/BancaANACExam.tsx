@@ -191,257 +191,258 @@ function BancaExamInner({
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
 
       {/* ── HEADER ──────────────────────────────────────────────────── */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-card border-b border-border shadow-sm">
-        <div className="mx-auto max-w-4xl px-3 md:px-6">
+      <header className="sticky top-0 z-40 bg-card border-b border-border shadow-sm">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 gap-4">
 
-          {/* Linha principal */}
-          <div className="flex items-center h-14 md:h-16 gap-2">
-
-            {/* Ícone + título */}
-            <div className="flex items-center gap-2.5 flex-1 min-w-0">
-              <div className="w-8 h-8 md:w-9 md:h-9 rounded-[5px] bg-accent/10 border border-accent/20 flex items-center justify-center shrink-0">
-                <Clipboard className="w-4 h-4 text-accent" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.18em] leading-none">BANCA ANAC</p>
-                <p className="text-xs md:text-sm font-black text-foreground truncate leading-tight mt-0.5">
-                  Bloco {currentBlock}
-                  <span className="text-muted-foreground font-medium hidden sm:inline"> — {blockInfo?.name}</span>
-                </p>
+            {/* Título & Modo */}
+            <div className="flex items-center gap-3">
+              <div>
+                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">BANCA ANAC</p>
+                <h1 className="text-base sm:text-lg font-black text-foreground leading-tight mt-0.5">
+                  Bloco {currentBlock} — <span className="text-primary">{blockInfo?.name}</span>
+                </h1>
               </div>
             </div>
 
-            {/* Indicadores de bloco — desktop */}
-            <div className="hidden md:flex items-center gap-1.5 shrink-0">
-              {[1, 2, 3, 4].map(b => (
-                <div key={b} className={`h-1.5 rounded-full transition-all duration-300 ${
-                  b < currentBlock ? 'bg-success w-6' :
-                  b === currentBlock ? 'bg-accent w-8' :
-                  'bg-border w-6'
-                }`} />
-              ))}
+            {/* Timer topo à direita */}
+            <div className="flex items-center gap-3">
+              <motion.div
+                animate={isTimeWarning ? { scale: [1, 1.04, 1] } : {}}
+                transition={{ repeat: isTimeWarning ? Infinity : 0, duration: 1.2 }}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-[6px] border font-mono font-black text-sm transition-all ${
+                  isTimeWarning
+                    ? 'bg-destructive/10 border-destructive/30 text-destructive'
+                    : 'bg-amber-500/10 border-amber-500/30 text-amber-600 dark:text-amber-400'
+                }`}
+              >
+                <Clock className="w-4 h-4" />
+                {formatTime(timeRemaining)}
+              </motion.div>
+
+              <button
+                onClick={() => setShowExitDialog(true)}
+                title="Sair do simulado"
+                className="w-9 h-9 rounded-[6px] bg-muted border border-border flex items-center justify-center text-muted-foreground hover:bg-destructive/10 hover:border-destructive/30 hover:text-destructive transition-all shrink-0"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
             </div>
 
-            {/* Timer */}
-            <motion.div
-              animate={isTimeWarning ? { scale: [1, 1.04, 1] } : {}}
-              transition={{ repeat: isTimeWarning ? Infinity : 0, duration: 1.2 }}
-              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-[5px] border font-mono font-black text-sm transition-all shrink-0 ${
-                isTimeWarning
-                  ? 'bg-destructive/10 border-destructive/30 text-destructive'
-                  : 'bg-muted border-border text-foreground'
-              }`}
-            >
-              <Clock className={`w-3.5 h-3.5 ${isTimeWarning ? 'text-destructive' : 'text-muted-foreground'}`} />
-              {formatTime(timeRemaining)}
-            </motion.div>
-
-            {/* Botão sair */}
-            <button
-              onClick={() => setShowExitDialog(true)}
-              title="Sair do simulado"
-              className="w-8 h-8 md:w-9 md:h-9 rounded-[5px] bg-muted border border-border flex items-center justify-center text-muted-foreground hover:bg-destructive/10 hover:border-destructive/30 hover:text-destructive transition-all shrink-0"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          {/* Barra de progresso segmentada */}
-          <div className="pb-2.5">
-            <div className="flex justify-between items-center mb-1.5">
-              <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">
-                Bloco {currentBlock}/4 · {answeredCount}/{blockQuestions.length} respondidas
-              </span>
-              <span className="text-[9px] font-black text-accent uppercase tracking-widest">
-                {Math.round(progress)}%
-              </span>
-            </div>
-            <div className="flex gap-0.5">
-              {blockQuestions.map((_: any, i: number) => {
-                const q = blockQuestions[i] as ShuffledQuestion;
-                const isAnswered = answers[q.id] !== undefined;
-                const isCurrent = i === currentQuestionIndex;
-                return (
-                  <div
-                    key={i}
-                    className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-                      isAnswered ? 'bg-success' :
-                      isCurrent ? 'bg-accent' :
-                      'bg-border'
-                    }`}
-                  />
-                );
-              })}
-            </div>
           </div>
         </div>
       </header>
 
-      {/* ── MAIN ────────────────────────────────────────────────────── */}
-      <main className="pt-[108px] md:pt-[112px] pb-28 md:pb-32">
-        <div className="mx-auto max-w-4xl px-3 md:px-6">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={`${currentBlock}-${currentQuestion.id}`}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
-            >
-              {/* Card da questão */}
-              <div className="bg-card rounded-[5px] border border-border shadow-sm p-4 md:p-8 mb-3 md:mb-4">
-                <div className="flex items-center gap-2 mb-3 md:mb-4">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[5px] bg-accent/10 border border-accent/20 text-accent text-[10px] font-black uppercase tracking-widest">
-                    Questão {currentQuestionIndex + 1}
-                  </span>
-                  <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider hidden sm:block">
-                    {blockInfo?.name}
-                  </span>
+      {/* ── MAIN 2-COLUMN CONTENT ─────────────────────────────────────── */}
+      <main className="flex-1 mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-6 pb-28">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+          {/* COLUNA ESQUERDA: QUESTÃO (8 cols) */}
+          <div className="lg:col-span-8 space-y-4">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`${currentBlock}-${currentQuestion.id}`}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className="space-y-4"
+              >
+                {/* Card da Questão */}
+                <div className="bg-card rounded-[10px] border border-border/80 shadow-sm p-6 sm:p-8 space-y-6">
+                  {/* Topo do Card: Progresso */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center text-xs font-black tracking-wider">
+                      <span className="text-muted-foreground uppercase">
+                        QUESTÃO {currentQuestionIndex + 1} DE {blockQuestions.length}
+                      </span>
+                      <span className="text-accent">
+                        {Math.round(progress)}%
+                      </span>
+                    </div>
+                    <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-accent transition-all duration-300 rounded-full"
+                        style={{ width: `${progress}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Tag Categoria */}
+                  <div>
+                    <span className="text-xs font-bold text-amber-500 dark:text-amber-400 uppercase tracking-widest">
+                      {blockInfo?.name || 'REGULAMENTAÇÃO'}
+                    </span>
+                  </div>
+
+                  {/* Enunciado */}
+                  <h2 className="text-base sm:text-lg md:text-xl font-bold text-foreground leading-relaxed">
+                    {currentQuestion.text}
+                  </h2>
+
+                  {/* Alternativas */}
+                  <div className="space-y-3 pt-2">
+                    {currentQuestion.shuffledOptions.map((option: string, index: number) => {
+                      const isSelected = selectedAnswer === index;
+                      const letter = optionLetters[index];
+
+                      return (
+                        <motion.button
+                          key={index}
+                          onClick={() => submitAnswer(currentQuestion.id, index)}
+                          className={`w-full text-left rounded-[8px] border-2 transition-all duration-200 group ${
+                            isSelected
+                              ? 'border-accent bg-accent/5 shadow-sm'
+                              : 'border-border/70 bg-card hover:border-primary/40 hover:bg-muted/40'
+                          }`}
+                          whileHover={{ scale: 1.002 }}
+                          whileTap={{ scale: 0.998 }}
+                        >
+                          <div className="flex items-center gap-4 p-4">
+                            {/* Caixa com Letra */}
+                            <span className={`w-9 h-9 rounded-[6px] flex items-center justify-center font-black text-sm transition-colors ${
+                              isSelected
+                                ? 'bg-accent text-accent-foreground shadow-sm'
+                                : 'bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary'
+                            }`}>
+                              {isSelected ? <CheckCircle2 className="w-5 h-5" /> : letter}
+                            </span>
+                            {/* Texto da Alternativa */}
+                            <span className={`text-sm sm:text-base leading-snug font-medium transition-colors ${
+                              isSelected ? 'text-foreground font-semibold' : 'text-muted-foreground group-hover:text-foreground'
+                            }`}>
+                              {option}
+                            </span>
+                          </div>
+                        </motion.button>
+                      );
+                    })}
+                  </div>
                 </div>
-                <h2 className="text-base md:text-xl font-bold text-foreground leading-snug">
-                  {currentQuestion.text}
-                </h2>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* COLUNA DIREITA: SIDEBAR (4 cols) */}
+          <div className="lg:col-span-4 space-y-5">
+            {/* Card Tempo Restante (Card Escuro) */}
+            <div className="bg-[#0f172a] dark:bg-card text-white rounded-[10px] p-5 shadow-md border border-slate-800 dark:border-border">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full border-2 border-amber-400/40 bg-amber-400/10 flex items-center justify-center shrink-0">
+                  <Clock className="w-5 h-5 text-amber-400" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">TEMPO RESTANTE</p>
+                  <p className="text-2xl font-black font-mono text-amber-400 leading-tight">
+                    {formatTime(timeRemaining)}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 pt-3 border-t border-slate-800 dark:border-border/50">
+                <p className="text-xs text-slate-400 font-medium">Foque e mantenha o ritmo!</p>
+              </div>
+            </div>
+
+            {/* Card Navegador de Questões */}
+            <div className="bg-card rounded-[10px] border border-border/80 shadow-sm p-5 space-y-4">
+              <h3 className="text-xs font-black text-foreground uppercase tracking-widest">NAVEGADOR</h3>
+
+              {/* Legenda */}
+              <div className="flex items-center justify-between gap-2 text-[11px] font-bold text-muted-foreground pb-2 border-b border-border/60">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-slate-800 dark:bg-slate-200"></span>
+                  Respondida
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                  Atual
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-muted border border-border"></span>
+                  Não respondida
+                </span>
               </div>
 
-              {/* Alternativas */}
-              <div className="space-y-2 md:space-y-3">
-                {currentQuestion.shuffledOptions.map((option: string, index: number) => {
-                  const isSelected = selectedAnswer === index;
-                  const letter = optionLetters[index];
+              {/* Grid 5 Colunas */}
+              <div className="grid grid-cols-5 gap-2 pt-1">
+                {blockQuestions.map((q: ShuffledQuestion, index: number) => {
+                  const isAnswered = answers[q.id] !== undefined;
+                  const isCurrent = index === currentQuestionIndex;
+
+                  let bubbleStyle = 'bg-muted/60 text-muted-foreground border-border hover:bg-muted';
+                  if (isCurrent) {
+                    bubbleStyle = 'bg-accent text-accent-foreground font-black ring-2 ring-accent/30 border-accent';
+                  } else if (isAnswered) {
+                    bubbleStyle = 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900 border-slate-800';
+                  }
 
                   return (
-                    <motion.button
-                      key={index}
-                      onClick={() => submitAnswer(currentQuestion.id, index)}
-                      className={`w-full text-left rounded-[5px] border-2 transition-all duration-200 group ${
-                        isSelected
-                          ? 'border-accent bg-accent/5 shadow-sm shadow-accent/10'
-                          : 'border-border bg-card hover:border-primary/40 hover:bg-primary/5'
-                      }`}
-                      whileHover={{ scale: 1.005 }}
-                      whileTap={{ scale: 0.995 }}
+                    <button
+                      key={q.id}
+                      onClick={() => goToQuestion(index)}
+                      className={`h-9 rounded-[6px] text-xs font-bold transition-all border flex items-center justify-center ${bubbleStyle}`}
                     >
-                      <div className="flex items-center gap-3 md:gap-4 p-3 md:p-4">
-                        {/* Letra */}
-                        <span className={`flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-[5px] flex items-center justify-center font-black text-sm md:text-base transition-all duration-200 ${
-                          isSelected
-                            ? 'bg-accent text-accent-foreground shadow-sm'
-                            : 'bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary'
-                        }`}>
-                          {isSelected ? <CheckCircle2 className="w-4 h-4 md:w-5 md:h-5" /> : letter}
-                        </span>
-                        {/* Texto */}
-                        <span className={`text-sm md:text-base leading-snug font-medium transition-colors duration-200 ${
-                          isSelected ? 'text-foreground font-semibold' : 'text-muted-foreground group-hover:text-foreground'
-                        }`}>
-                          {option}
-                        </span>
-                      </div>
-                    </motion.button>
+                      {index + 1}
+                    </button>
                   );
                 })}
               </div>
-            </motion.div>
-          </AnimatePresence>
+            </div>
+          </div>
+
         </div>
       </main>
 
-      {/* ── FOOTER NAV ──────────────────────────────────────────────── */}
-      <footer className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border shadow-[0_-4px_20px_rgba(0,0,0,0.04)]">
-        <div className="mx-auto max-w-4xl px-3 md:px-6 py-3 md:py-4">
-          <div className="flex items-center gap-2 md:gap-3">
+      {/* ── FOOTER BAR FIXO NA PARTE INFERIOR ──────────────────────── */}
+      <footer className="fixed bottom-0 left-0 right-0 z-40 bg-card border-t border-border shadow-lg py-3">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between gap-4">
 
-            {/* Anterior */}
+            {/* Esquerda: Botão Anterior */}
             <Button
               variant="outline"
               onClick={() => setCurrentQuestionIndex((prev: number) => Math.max(0, prev - 1))}
               disabled={currentQuestionIndex === 0}
-              className="h-10 md:h-12 px-3 md:px-6 rounded-[5px] font-bold text-xs uppercase tracking-wider shrink-0 disabled:opacity-30"
+              className="h-11 px-5 rounded-[6px] font-bold text-xs uppercase tracking-wider gap-2 border-border"
             >
               <ChevronLeft className="w-4 h-4" />
-              <span className="hidden sm:inline ml-1">Anterior</span>
+              <span>Anterior</span>
             </Button>
 
-            {/* Bubbles — desktop */}
-            <div className="hidden md:flex flex-1 min-w-0 justify-start gap-1.5 overflow-x-auto scrollbar-none py-1 px-2">
-              {blockQuestions.map((q: ShuffledQuestion, index: number) => {
-                const isAnswered = answers[q.id] !== undefined;
-                const isCurrent = index === currentQuestionIndex;
-                const isNavigable =
-                  index <= currentQuestionIndex ||
-                  answers[blockQuestions[index].id] !== undefined ||
-                  (index === currentQuestionIndex + 1 && selectedAnswer !== undefined);
+            {/* Centro: Marcar para revisão */}
+            <Button
+              variant="ghost"
+              onClick={() => toast.info('Questão marcada para revisão!')}
+              className="h-11 px-4 rounded-[6px] font-bold text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground gap-2 hidden sm:flex"
+            >
+              <Flag className="w-4 h-4" />
+              <span>Marcar para Revisão</span>
+            </Button>
 
-                return (
-                  <button
-                    key={q.id}
-                    ref={isCurrent ? activeBubbleRef : null}
-                    onClick={() => isNavigable && goToQuestion(index)}
-                    disabled={!isNavigable}
-                    className={`w-9 h-9 rounded-[6px] text-xs font-black flex items-center justify-center shrink-0 transition-all duration-200 border ${
-                      isCurrent ? 'bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20 scale-110 ring-2 ring-primary/20' :
-                      isAnswered ? 'bg-success/15 text-success border-success/45 hover:bg-success/25 hover:border-success/60' :
-                      !isNavigable ? 'bg-slate-100/50 text-slate-400/60 border-slate-200/80 cursor-not-allowed' :
-                      'bg-background border-border text-slate-600 hover:bg-primary/5 hover:border-primary/40 hover:text-primary hover:scale-105 shadow-sm'
-                    }`}
-                  >
-                    {index + 1}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Contador — mobile */}
-            <div className="md:hidden flex-1 flex justify-center">
-              <div className="flex items-center gap-2">
-                <div className="px-4 py-2 rounded-[5px] bg-primary text-primary-foreground font-black text-sm shadow-lg">
-                  {currentQuestionIndex + 1}
-                  <span className="opacity-40 mx-1 font-normal">/</span>
-                  {blockQuestions.length}
-                </div>
-                <AnimatePresence>
-                  {selectedAnswer !== undefined && (
-                    <motion.div
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      exit={{ scale: 0, opacity: 0 }}
-                      className="w-7 h-7 rounded-[5px] bg-success/20 border border-success/30 flex items-center justify-center"
-                    >
-                      <CheckCircle2 className="w-4 h-4 text-success" />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </div>
-
-            {/* Próxima / Finalizar */}
+            {/* Direita: Próxima / Finalizar */}
             {currentQuestionIndex === blockQuestions.length - 1 ? (
               <Button
                 onClick={finishCurrentBlock}
                 disabled={selectedAnswer === undefined}
-                className="h-10 md:h-12 px-4 md:px-8 rounded-[5px] font-bold text-xs uppercase tracking-wider shrink-0 bg-accent hover:bg-accent/90 text-accent-foreground shadow-lg shadow-accent/20 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="h-11 px-6 rounded-[6px] font-bold text-xs uppercase tracking-wider gap-2 bg-accent hover:bg-accent/90 text-accent-foreground shadow-md disabled:opacity-40"
               >
-                <Flag className="w-3.5 h-3.5 mr-1.5" />
-                <span className="hidden sm:inline">
-                  {currentBlock === 4 ? 'Finalizar Simulado' : 'Finalizar Bloco'}
-                </span>
-                <span className="sm:hidden">
-                  {currentBlock === 4 ? 'Finalizar' : 'Próx. Bloco'}
-                </span>
+                <span>{currentBlock === 4 ? 'Finalizar Simulado' : 'Finalizar Bloco'}</span>
+                <ChevronRight className="w-4 h-4" />
               </Button>
             ) : (
               <Button
                 onClick={nextQuestion}
                 disabled={selectedAnswer === undefined}
-                className="h-10 md:h-12 px-4 md:px-8 rounded-[5px] font-bold text-xs uppercase tracking-wider shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="h-11 px-6 rounded-[6px] font-bold text-xs uppercase tracking-wider gap-2 bg-accent hover:bg-accent/90 text-accent-foreground shadow-md disabled:opacity-40"
               >
                 <span>Próxima</span>
-                <ChevronRight className="w-4 h-4 ml-1" />
+                <ChevronRight className="w-4 h-4" />
               </Button>
             )}
+
           </div>
         </div>
       </footer>

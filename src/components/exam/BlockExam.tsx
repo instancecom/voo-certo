@@ -144,310 +144,304 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
 
       {/* ── HEADER ──────────────────────────────────────────────────── */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-card border-b border-border shadow-sm">
-        <div className="mx-auto max-w-4xl px-3 md:px-6">
+      <header className="sticky top-0 z-40 bg-card border-b border-border shadow-sm">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 gap-4">
 
-          {/* Linha principal */}
-          <div className="flex items-center h-14 md:h-16 gap-2">
-
-            {/* Ícone + título */}
-            <div className="flex items-center gap-2.5 flex-1 min-w-0">
-              <div className="w-8 h-8 md:w-9 md:h-9 rounded-[5px] bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
-                <Target className="w-4 h-4 text-primary" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.18em] leading-none">MODO BLOCO</p>
-                <p className="text-xs md:text-sm font-black text-foreground truncate leading-tight mt-0.5 max-w-[160px] sm:max-w-xs md:max-w-none">
-                  {blockName}
-                </p>
+            {/* Título & Modo */}
+            <div className="flex items-center gap-3">
+              <div>
+                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">MODO BLOCO</p>
+                <h1 className="text-base sm:text-lg font-black text-foreground leading-tight mt-0.5">
+                  <span className="text-primary font-bold">{blockName}</span>
+                </h1>
               </div>
             </div>
 
-            {/* Info respondidas — desktop */}
-            <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-[5px] bg-muted border border-border shrink-0">
-              <CheckCircle2 className="w-3.5 h-3.5 text-success" />
-              <span className="text-xs font-bold text-muted-foreground">
-                {answeredCount}/{shuffledQuestions.length} respondidas
-              </span>
+            {/* Ações Topo à Direita */}
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowFinishDialog(true)}
+                className="h-9 px-4 rounded-[6px] font-bold uppercase text-xs tracking-wider border-border"
+              >
+                <Flag className="w-3.5 h-3.5 mr-1.5" />
+                <span>Finalizar</span>
+              </Button>
+
+              <button
+                onClick={onExit}
+                title="Sair"
+                className="w-9 h-9 rounded-[6px] bg-muted border border-border flex items-center justify-center text-muted-foreground hover:bg-destructive/10 hover:border-destructive/30 hover:text-destructive transition-all shrink-0"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
             </div>
 
-            {/* Finalizar */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowFinishDialog(true)}
-              className="h-8 md:h-9 px-3 md:px-4 rounded-[5px] font-bold uppercase text-[9px] md:text-xs tracking-widest hover-yellow border-border shrink-0"
-            >
-              <Flag className="w-3.5 h-3.5 md:mr-1.5" />
-              <span className="hidden sm:inline">Finalizar</span>
-            </Button>
-
-            {/* Sair */}
-            <button
-              onClick={onExit}
-              title="Sair"
-              className="w-8 h-8 md:w-9 md:h-9 rounded-[5px] bg-muted border border-border flex items-center justify-center text-muted-foreground hover:bg-destructive/10 hover:border-destructive/30 hover:text-destructive transition-all shrink-0"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          {/* Barra de progresso segmentada */}
-          <div className="pb-2.5">
-            <div className="flex justify-between items-center mb-1.5">
-              <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">
-                Questão {currentQuestionIndex + 1} de {shuffledQuestions.length}
-              </span>
-              <span className="text-[9px] font-black text-accent uppercase tracking-widest">
-                {Math.round(progress)}%
-              </span>
-            </div>
-            <div className="flex gap-px">
-              {shuffledQuestions.map((_: any, i: number) => {
-                const q = shuffledQuestions[i] as ShuffledQuestion;
-                const isAns = answers[q.id] !== undefined;
-                const isCur = i === currentQuestionIndex;
-                return (
-                  <div
-                    key={i}
-                    className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-                      isAns ? 'bg-success' :
-                      isCur ? 'bg-accent' :
-                      'bg-border'
-                    }`}
-                  />
-                );
-              })}
-            </div>
           </div>
         </div>
       </header>
 
-      {/* ── MAIN ────────────────────────────────────────────────────── */}
-      <main className="pt-[108px] md:pt-[112px] pb-28 md:pb-32">
-        <div className="mx-auto max-w-4xl px-3 md:px-6">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentQuestion.id}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="space-y-3 md:space-y-4"
-            >
-              {/* Card da questão */}
-              <div className="bg-card rounded-[5px] border border-border shadow-sm p-4 md:p-8">
-                <div className="flex items-center gap-2 mb-3 md:mb-4">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[5px] bg-accent/10 border border-accent/20 text-accent text-[10px] font-black uppercase tracking-widest">
-                    Questão {currentQuestionIndex + 1}
-                  </span>
+      {/* ── MAIN 2-COLUMN CONTENT ─────────────────────────────────────── */}
+      <main className="flex-1 mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-6 pb-28">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+          {/* COLUNA ESQUERDA: QUESTÃO (8 cols) */}
+          <div className="lg:col-span-8 space-y-4">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentQuestion.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className="space-y-4"
+              >
+                {/* Card da Questão */}
+                <div className="bg-card rounded-[10px] border border-border/80 shadow-sm p-6 sm:p-8 space-y-6">
+                  {/* Topo do Card: Progresso */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center text-xs font-black tracking-wider">
+                      <span className="text-muted-foreground uppercase">
+                        QUESTÃO {currentQuestionIndex + 1} DE {shuffledQuestions.length}
+                      </span>
+                      <span className="text-accent">
+                        {Math.round(progress)}%
+                      </span>
+                    </div>
+                    <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-accent transition-all duration-300 rounded-full"
+                        style={{ width: `${progress}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Tag Categoria */}
+                  <div>
+                    <span className="text-xs font-bold text-amber-500 dark:text-amber-400 uppercase tracking-widest">
+                      {blockName}
+                    </span>
+                  </div>
+
+                  {/* Enunciado */}
+                  <h2 className="text-base sm:text-lg md:text-xl font-bold text-foreground leading-relaxed">
+                    {currentQuestion.text}
+                  </h2>
+
+                  {/* Alternativas */}
+                  <div className="space-y-3 pt-2">
+                    {currentQuestion.shuffledOptions.map((option: string, index: number) => {
+                      const isSelected = selectedAnswer === index;
+                      const isCorrectOption = index === currentQuestion.shuffledCorrectAnswer;
+                      const letter = optionLetters[index];
+
+                      let containerClass = 'border-border/70 bg-card hover:border-primary/40 hover:bg-muted/40';
+                      let letterClass = 'bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary';
+                      let textClass = 'text-muted-foreground group-hover:text-foreground';
+
+                      if (showAnswer) {
+                        if (isCorrectOption) {
+                          containerClass = 'border-success bg-success/5';
+                          letterClass = 'bg-success text-success-foreground';
+                          textClass = 'text-success font-semibold';
+                        } else if (isSelected && !isCorrectOption) {
+                          containerClass = 'border-destructive bg-destructive/5';
+                          letterClass = 'bg-destructive text-destructive-foreground';
+                          textClass = 'text-destructive';
+                        } else {
+                          containerClass = 'border-border/40 bg-muted/20 opacity-50';
+                          letterClass = 'bg-muted text-muted-foreground';
+                          textClass = 'text-muted-foreground';
+                        }
+                      } else if (isSelected) {
+                        containerClass = 'border-accent bg-accent/5 shadow-sm';
+                        letterClass = 'bg-accent text-accent-foreground';
+                        textClass = 'text-foreground font-semibold';
+                      }
+
+                      return (
+                        <motion.button
+                          key={index}
+                          onClick={() => submitAnswer(currentQuestion.id, index)}
+                          disabled={showAnswer}
+                          className={`w-full text-left rounded-[8px] border-2 transition-all duration-200 group ${containerClass}`}
+                          whileHover={!showAnswer ? { scale: 1.002 } : {}}
+                          whileTap={!showAnswer ? { scale: 0.998 } : {}}
+                        >
+                          <div className="flex items-center gap-4 p-4">
+                            <span className={`w-9 h-9 rounded-[6px] flex items-center justify-center font-black text-sm transition-colors ${letterClass}`}>
+                              {showAnswer && isCorrectOption ? (
+                                <CheckCircle2 className="w-5 h-5" />
+                              ) : showAnswer && isSelected && !isCorrectOption ? (
+                                <XCircle className="w-5 h-5" />
+                              ) : letter}
+                            </span>
+                            <span className={`text-sm sm:text-base leading-snug font-medium transition-colors ${textClass}`}>
+                              {option}
+                            </span>
+                          </div>
+                        </motion.button>
+                      );
+                    })}
+                  </div>
                 </div>
-                <h2 className="text-base md:text-xl font-bold text-foreground leading-snug">
-                  {currentQuestion.text}
-                </h2>
+
+                {/* Feedback Pós-Resposta & IA */}
+                <AnimatePresence>
+                  {showAnswer && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 8 }}
+                      className="space-y-4"
+                    >
+                      <div className={`flex items-center gap-3 p-4 rounded-[8px] border-2 ${
+                        isCorrect
+                          ? 'bg-success/10 border-success/30 text-success'
+                          : 'bg-destructive/10 border-destructive/30 text-destructive'
+                      }`}>
+                        {isCorrect ? <CheckCircle2 className="w-5 h-5 shrink-0" /> : <XCircle className="w-5 h-5 shrink-0" />}
+                        <span className="font-bold text-sm">
+                          {isCorrect ? 'Resposta correta! Excelente!' : 'Resposta incorreta. Confira a explicação:'}
+                        </span>
+                      </div>
+
+                      <div className="bg-card rounded-[10px] border border-border/80 p-6 space-y-2">
+                        <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-primary">
+                          <BookOpen className="w-4 h-4" />
+                          <span>Explicação Detalhada</span>
+                        </div>
+                        <p className="text-muted-foreground leading-relaxed text-sm sm:text-base pt-1">
+                          {currentQuestion.explanation || 'Questão oficial validada por nossos especialistas da aviação.'}
+                        </p>
+                      </div>
+
+                      <QuestionAIChat
+                        questionId={currentQuestion.id}
+                        questionText={currentQuestion.text}
+                        options={currentQuestion.options as string[]}
+                        correctAnswer={currentQuestion.correct_answer}
+                        explanation={currentQuestion.explanation}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* COLUNA DIREITA: SIDEBAR (4 cols) */}
+          <div className="lg:col-span-4 space-y-5">
+            {/* Card Status Respondidas */}
+            <div className="bg-[#0f172a] dark:bg-card text-white rounded-[10px] p-5 shadow-md border border-slate-800 dark:border-border">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full border-2 border-emerald-400/40 bg-emerald-400/10 flex items-center justify-center shrink-0">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">PROGRESSO DO BLOCO</p>
+                  <p className="text-xl font-black text-white leading-tight">
+                    {answeredCount} <span className="text-slate-400 text-sm font-normal">/ {shuffledQuestions.length} respondidas</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Card Navegador de Questões */}
+            <div className="bg-card rounded-[10px] border border-border/80 shadow-sm p-5 space-y-4">
+              <h3 className="text-xs font-black text-foreground uppercase tracking-widest">NAVEGADOR</h3>
+
+              {/* Legenda */}
+              <div className="flex items-center justify-between gap-2 text-[11px] font-bold text-muted-foreground pb-2 border-b border-border/60">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-slate-800 dark:bg-slate-200"></span>
+                  Respondida
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                  Atual
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-muted border border-border"></span>
+                  Não respondida
+                </span>
               </div>
 
-              {/* Alternativas */}
-              <div className="space-y-2 md:space-y-3">
-                {currentQuestion.shuffledOptions.map((option: string, index: number) => {
-                  const isSelected = selectedAnswer === index;
-                  const isCorrectOption = index === currentQuestion.shuffledCorrectAnswer;
-                  const letter = optionLetters[index];
+              {/* Grid 5 Colunas */}
+              <div className="grid grid-cols-5 gap-2 pt-1 max-h-[300px] overflow-y-auto pr-1">
+                {shuffledQuestions.map((q: ShuffledQuestion, index: number) => {
+                  const isAns = answers[q.id] !== undefined;
+                  const isCur = index === currentQuestionIndex;
 
-                  let containerClass = 'border-border bg-card hover:border-primary/40 hover:bg-primary/5';
-                  let letterClass = 'bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary';
-                  let textClass = 'text-muted-foreground group-hover:text-foreground';
-
-                  if (showAnswer) {
-                    if (isCorrectOption) {
-                      containerClass = 'border-success bg-success/5';
-                      letterClass = 'bg-success text-success-foreground';
-                      textClass = 'text-success font-semibold';
-                    } else if (isSelected && !isCorrectOption) {
-                      containerClass = 'border-destructive bg-destructive/5';
-                      letterClass = 'bg-destructive text-destructive-foreground';
-                      textClass = 'text-destructive';
-                    } else {
-                      containerClass = 'border-border/50 bg-muted/30 opacity-60';
-                      letterClass = 'bg-muted text-muted-foreground';
-                      textClass = 'text-muted-foreground';
-                    }
-                  } else if (isSelected) {
-                    containerClass = 'border-accent bg-accent/5 shadow-sm shadow-accent/10';
-                    letterClass = 'bg-accent text-accent-foreground';
-                    textClass = 'text-foreground font-semibold';
+                  let bubbleStyle = 'bg-muted/60 text-muted-foreground border-border hover:bg-muted';
+                  if (isCur) {
+                    bubbleStyle = 'bg-accent text-accent-foreground font-black ring-2 ring-accent/30 border-accent';
+                  } else if (isAns) {
+                    bubbleStyle = 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900 border-slate-800';
                   }
 
                   return (
-                    <motion.button
-                      key={index}
-                      onClick={() => submitAnswer(currentQuestion.id, index)}
-                      disabled={showAnswer}
-                      className={`w-full text-left rounded-[5px] border-2 transition-all duration-200 group ${containerClass} ${showAnswer ? 'cursor-default' : ''}`}
-                      whileHover={!showAnswer ? { scale: 1.005 } : {}}
-                      whileTap={!showAnswer ? { scale: 0.995 } : {}}
+                    <button
+                      key={q.id}
+                      onClick={() => goToQuestion(index)}
+                      className={`h-9 rounded-[6px] text-xs font-bold transition-all border flex items-center justify-center ${bubbleStyle}`}
                     >
-                      <div className="flex items-center gap-3 md:gap-4 p-3 md:p-4">
-                        <span className={`flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-[5px] flex items-center justify-center font-black text-sm md:text-base transition-all duration-200 ${letterClass}`}>
-                          {showAnswer && isCorrectOption ? (
-                            <CheckCircle2 className="w-4 h-4 md:w-5 md:h-5" />
-                          ) : showAnswer && isSelected && !isCorrectOption ? (
-                            <XCircle className="w-4 h-4 md:w-5 md:h-5" />
-                          ) : letter}
-                        </span>
-                        <span className={`text-sm md:text-base leading-snug font-medium transition-colors duration-200 ${textClass}`}>
-                          {option}
-                        </span>
-                      </div>
-                    </motion.button>
+                      {index + 1}
+                    </button>
                   );
                 })}
               </div>
+            </div>
+          </div>
 
-              {/* Feedback pós-resposta */}
-              <AnimatePresence>
-                {showAnswer && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 8 }}
-                    transition={{ duration: 0.25 }}
-                    className="space-y-3"
-                  >
-                    {/* Banner certo/errado */}
-                    <div className={`flex items-center gap-3 p-3 md:p-4 rounded-[5px] border-2 ${
-                      isCorrect
-                        ? 'bg-success/10 border-success/30 text-success'
-                        : 'bg-destructive/10 border-destructive/30 text-destructive'
-                    }`}>
-                      {isCorrect
-                        ? <CheckCircle2 className="w-5 h-5 shrink-0" />
-                        : <XCircle className="w-5 h-5 shrink-0" />}
-                      <span className="font-bold text-sm">
-                        {isCorrect ? 'Resposta correta! Muito bem!' : 'Resposta incorreta. Veja a explicação abaixo.'}
-                      </span>
-                    </div>
-
-                    {/* Explicação */}
-                    <div className="bg-card rounded-[5px] border border-border shadow-sm p-4 md:p-6">
-                      <div className="flex items-center gap-2.5 mb-3">
-                        <div className="w-7 h-7 rounded-[5px] bg-primary/10 flex items-center justify-center">
-                          <BookOpen className="w-3.5 h-3.5 text-primary" />
-                        </div>
-                        <span className="font-black text-xs uppercase tracking-widest text-foreground">Explicação</span>
-                      </div>
-                      <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
-                        {currentQuestion.explanation || 'Esta questão faz parte do banco de dados oficial. A resposta correta foi validada por nossos especialistas.'}
-                      </p>
-                    </div>
-
-                    {/* AI Chat */}
-                    <QuestionAIChat
-                      questionId={currentQuestion.id}
-                      questionText={currentQuestion.text}
-                      options={currentQuestion.options as string[]}
-                      correctAnswer={currentQuestion.correct_answer}
-                      explanation={currentQuestion.explanation}
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          </AnimatePresence>
         </div>
       </main>
 
-      {/* ── FOOTER NAV ──────────────────────────────────────────────── */}
-      <footer className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border shadow-[0_-4px_20px_rgba(0,0,0,0.04)]">
-        <div className="mx-auto max-w-4xl px-3 md:px-6 py-3 md:py-4">
-          <div className="flex items-center gap-2 md:gap-3">
+      {/* ── FOOTER BAR FIXO NA PARTE INFERIOR ──────────────────────── */}
+      <footer className="fixed bottom-0 left-0 right-0 z-40 bg-card border-t border-border shadow-lg py-3">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between gap-4">
 
-            {/* Anterior */}
+            {/* Esquerda: Botão Anterior */}
             <Button
               variant="outline"
               onClick={prevQuestion}
               disabled={currentQuestionIndex === 0}
-              className="h-10 md:h-12 px-3 md:px-6 rounded-[5px] font-bold text-xs uppercase tracking-wider shrink-0 disabled:opacity-30"
+              className="h-11 px-5 rounded-[6px] font-bold text-xs uppercase tracking-wider gap-2 border-border"
             >
               <ChevronLeft className="w-4 h-4" />
-              <span className="hidden sm:inline ml-1">Anterior</span>
+              <span>Anterior</span>
             </Button>
 
-            {/* Bubbles — desktop */}
-            <div className="hidden md:flex flex-1 min-w-0 justify-start gap-1.5 overflow-x-auto scrollbar-none py-1 px-2">
-              {shuffledQuestions.map((q: ShuffledQuestion, index: number) => {
-                const isAns = answers[q.id] !== undefined;
-                const isCur = index === currentQuestionIndex;
-                const isNav =
-                  index <= currentQuestionIndex ||
-                  answers[shuffledQuestions[index].id] !== undefined ||
-                  (index === currentQuestionIndex + 1 && answers[shuffledQuestions[currentQuestionIndex].id] !== undefined);
+            {/* Centro: Marcar para revisão */}
+            <Button
+              variant="ghost"
+              onClick={() => toast.info('Questão marcada para revisão!')}
+              className="h-11 px-4 rounded-[6px] font-bold text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground gap-2 hidden sm:flex"
+            >
+              <Flag className="w-4 h-4" />
+              <span>Marcar para Revisão</span>
+            </Button>
 
-                return (
-                  <button
-                    key={q.id}
-                    ref={isCur ? activeBubbleRef : null}
-                    onClick={() => isNav && goToQuestion(index)}
-                    disabled={!isNav}
-                    className={`w-9 h-9 rounded-[6px] text-xs font-black flex items-center justify-center shrink-0 transition-all duration-200 border ${
-                      isCur ? 'bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20 scale-110 ring-2 ring-primary/20' :
-                      isAns ? 'bg-success/15 text-success border-success/45 hover:bg-success/25 hover:border-success/60' :
-                      !isNav ? 'bg-slate-100/50 text-slate-400/60 border-slate-200/80 cursor-not-allowed' :
-                      'bg-background border-border text-slate-600 hover:bg-primary/5 hover:border-primary/40 hover:text-primary hover:scale-105 shadow-sm'
-                    }`}
-                  >
-                    {index + 1}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Contador — mobile */}
-            <div className="md:hidden flex-1 flex justify-center">
-              <div className="flex items-center gap-2">
-                <div className="px-4 py-2 rounded-[5px] bg-primary text-primary-foreground font-black text-sm shadow-lg">
-                  {currentQuestionIndex + 1}
-                  <span className="opacity-40 mx-1 font-normal">/</span>
-                  {shuffledQuestions.length}
-                </div>
-                <AnimatePresence>
-                  {isAnswered && (
-                    <motion.div
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      exit={{ scale: 0, opacity: 0 }}
-                      className={`w-7 h-7 rounded-[5px] border flex items-center justify-center ${
-                        isCorrect
-                          ? 'bg-success/20 border-success/30'
-                          : 'bg-destructive/20 border-destructive/30'
-                      }`}
-                    >
-                      {isCorrect
-                        ? <CheckCircle2 className="w-4 h-4 text-success" />
-                        : <XCircle className="w-4 h-4 text-destructive" />}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </div>
-
-            {/* Próxima / Finalizar */}
+            {/* Direita: Próxima / Finalizar */}
             <Button
               onClick={nextQuestion}
               disabled={!showAnswer && !isAnswered}
-              className={`h-10 md:h-12 px-4 md:px-8 rounded-[5px] font-bold text-xs uppercase tracking-wider shrink-0 disabled:opacity-40 disabled:cursor-not-allowed ${
+              className={`h-11 px-6 rounded-[6px] font-bold text-xs uppercase tracking-wider gap-2 bg-accent hover:bg-accent/90 text-accent-foreground shadow-md disabled:opacity-40 ${
                 currentQuestionIndex === shuffledQuestions.length - 1
-                  ? 'bg-accent hover:bg-accent/90 text-accent-foreground shadow-lg shadow-accent/20'
+                  ? 'bg-accent hover:bg-accent/90 text-accent-foreground'
                   : ''
               }`}
             >
               {currentQuestionIndex === shuffledQuestions.length - 1 ? (
                 <>
-                  <Flag className="w-3.5 h-3.5 mr-1.5" />
                   <span>Finalizar</span>
+                  <Flag className="w-4 h-4 ml-1" />
                 </>
               ) : (
                 <>
@@ -456,6 +450,7 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
                 </>
               )}
             </Button>
+
           </div>
         </div>
       </footer>
