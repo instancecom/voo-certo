@@ -43,6 +43,7 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [showAnswer, setShowAnswer] = useState(false);
   const [showFinishDialog, setShowFinishDialog] = useState(false);
+  const [showNavModal, setShowNavModal] = useState(false);
   const [startTime] = useState(Date.now());
 
   const activeBubbleRef = useRef<HTMLButtonElement | null>(null);
@@ -134,8 +135,6 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
       totalTimeSpent,
     });
   };
-
-  const [showNavModal, setShowNavModal] = useState(false);
 
   if (!currentQuestion || shuffledQuestions.length === 0) {
     return (

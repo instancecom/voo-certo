@@ -43,6 +43,7 @@ export function LivreExam({ questions, selectedBlock, questionLimit, onFinish, o
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [showAnswer, setShowAnswer] = useState(false);
   const [showFinishDialog, setShowFinishDialog] = useState(false);
+  const [showNavModal, setShowNavModal] = useState(false);
 
   const activeBubbleRef = useRef<HTMLButtonElement | null>(null);
 
@@ -127,8 +128,6 @@ export function LivreExam({ questions, selectedBlock, questionLimit, onFinish, o
 
     onFinish({ blockResults, totalCorrect, totalQuestions, overallPassed, answers: originalAnswers });
   };
-
-  const [showNavModal, setShowNavModal] = useState(false);
 
   if (!currentQuestion || shuffledQuestions.length === 0) {
     return (

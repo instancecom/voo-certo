@@ -90,6 +90,7 @@ function BancaExamInner({
   onFinish, onExit,
 }: any) {
   const activeBubbleRef = useRef<HTMLButtonElement | null>(null);
+  const [showNavModal, setShowNavModal] = useState(false);
 
   useEffect(() => {
     if (activeBubbleRef.current) {
@@ -177,8 +178,6 @@ function BancaExamInner({
   const blockInfo = BLOCKS.find(b => b.id === currentBlock);
   const answeredCount = blockQuestions.filter((q: ShuffledQuestion) => answers[q.id] !== undefined).length;
   const optionLetters = ['A', 'B', 'C', 'D', 'E'];
-
-  const [showNavModal, setShowNavModal] = useState(false);
 
   if (!currentQuestion || blockQuestions.length === 0) {
     return (
