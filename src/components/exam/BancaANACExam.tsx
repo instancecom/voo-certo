@@ -178,6 +178,8 @@ function BancaExamInner({
   const answeredCount = blockQuestions.filter((q: ShuffledQuestion) => answers[q.id] !== undefined).length;
   const optionLetters = ['A', 'B', 'C', 'D', 'E'];
 
+  const [showNavModal, setShowNavModal] = useState(false);
+
   if (!currentQuestion || blockQuestions.length === 0) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -189,8 +191,6 @@ function BancaExamInner({
       </div>
     );
   }
-
-  const [showNavModal, setShowNavModal] = useState(false);
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">

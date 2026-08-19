@@ -135,6 +135,8 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
     });
   };
 
+  const [showNavModal, setShowNavModal] = useState(false);
+
   if (!currentQuestion || shuffledQuestions.length === 0) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -142,8 +144,6 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
       </div>
     );
   }
-
-  const [showNavModal, setShowNavModal] = useState(false);
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
