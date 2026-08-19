@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Clock, ChevronRight, ChevronLeft, Flag, AlertTriangle,
-  Clipboard, LogOut, CheckCircle2,
+  Clipboard, LogOut, CheckCircle2, LayoutGrid,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -190,45 +190,47 @@ function BancaExamInner({
     );
   }
 
+  const [showNavModal, setShowNavModal] = useState(false);
+
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
 
       {/* ── HEADER ──────────────────────────────────────────────────── */}
       <header className="sticky top-0 z-40 bg-card border-b border-border shadow-sm">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 gap-4">
+        <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-14 sm:h-16 gap-2">
 
             {/* Título & Modo */}
-            <div className="flex items-center gap-3">
-              <div>
-                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">BANCA ANAC</p>
-                <h1 className="text-base sm:text-lg font-black text-foreground leading-tight mt-0.5">
-                  Bloco {currentBlock} — <span className="text-primary">{blockInfo?.name}</span>
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+              <div className="min-w-0">
+                <p className="text-[9px] sm:text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">BANCA ANAC</p>
+                <h1 className="text-xs sm:text-base lg:text-lg font-black text-foreground truncate leading-tight mt-0.5">
+                  Bloco {currentBlock} <span className="text-primary hidden sm:inline">— {blockInfo?.name}</span>
                 </h1>
               </div>
             </div>
 
             {/* Timer topo à direita */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
               <motion.div
                 animate={isTimeWarning ? { scale: [1, 1.04, 1] } : {}}
                 transition={{ repeat: isTimeWarning ? Infinity : 0, duration: 1.2 }}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-[6px] border font-mono font-black text-sm transition-all ${
+                className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-[6px] border font-mono font-black text-xs sm:text-sm transition-all ${
                   isTimeWarning
                     ? 'bg-destructive/10 border-destructive/30 text-destructive'
                     : 'bg-amber-500/10 border-amber-500/30 text-amber-600 dark:text-amber-400'
                 }`}
               >
-                <Clock className="w-4 h-4" />
+                <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 {formatTime(timeRemaining)}
               </motion.div>
 
               <button
                 onClick={() => setShowExitDialog(true)}
                 title="Sair do simulado"
-                className="w-9 h-9 rounded-[6px] bg-muted border border-border flex items-center justify-center text-muted-foreground hover:bg-destructive/10 hover:border-destructive/30 hover:text-destructive transition-all shrink-0"
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-[6px] bg-muted border border-border flex items-center justify-center text-muted-foreground hover:bg-destructive/10 hover:border-destructive/30 hover:text-destructive transition-all shrink-0"
               >
-                <LogOut className="w-4 h-4" />
+                <LogOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </button>
             </div>
 
@@ -237,10 +239,10 @@ function BancaExamInner({
       </header>
 
       {/* ── MAIN 2-COLUMN CONTENT ─────────────────────────────────────── */}
-      <main className="flex-1 mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-6 pb-28">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <main className="flex-1 mx-auto max-w-7xl w-full px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-24 sm:pb-28">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
 
-          {/* COLUNA ESQUERDA: QUESTÃO (8 cols) */}
+          {/* COLUNA ESQUERDA: QUESTÃO (8 cols em desktop, 12 cols em mobile) */}
           <div className="lg:col-span-8 space-y-4">
             <AnimatePresence mode="wait">
               <motion.div
@@ -252,18 +254,18 @@ function BancaExamInner({
                 className="space-y-4"
               >
                 {/* Card da Questão */}
-                <div className="bg-card rounded-[10px] border border-border/80 shadow-sm p-6 sm:p-8 space-y-6">
+                <div className="bg-card rounded-[10px] border border-border/80 shadow-sm p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
                   {/* Topo do Card: Progresso */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center text-xs font-black tracking-wider">
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <div className="flex justify-between items-center text-[10px] sm:text-xs font-black tracking-wider">
                       <span className="text-muted-foreground uppercase">
                         QUESTÃO {currentQuestionIndex + 1} DE {blockQuestions.length}
                       </span>
-                      <span className="text-accent">
+                      <span className="text-accent font-mono">
                         {Math.round(progress)}%
                       </span>
                     </div>
-                    <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                    <div className="w-full h-1.5 sm:h-2 bg-muted rounded-full overflow-hidden">
                       <div
                         className="h-full bg-accent transition-all duration-300 rounded-full"
                         style={{ width: `${progress}%` }}
@@ -273,18 +275,18 @@ function BancaExamInner({
 
                   {/* Tag Categoria */}
                   <div>
-                    <span className="text-xs font-bold text-amber-500 dark:text-amber-400 uppercase tracking-widest">
+                    <span className="text-[11px] sm:text-xs font-bold text-amber-500 dark:text-amber-400 uppercase tracking-widest">
                       {blockInfo?.name || 'REGULAMENTAÇÃO'}
                     </span>
                   </div>
 
                   {/* Enunciado */}
-                  <h2 className="text-base sm:text-lg md:text-xl font-bold text-foreground leading-relaxed">
+                  <h2 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-foreground leading-relaxed">
                     {currentQuestion.text}
                   </h2>
 
                   {/* Alternativas */}
-                  <div className="space-y-3 pt-2">
+                  <div className="space-y-2.5 sm:space-y-3 pt-1">
                     {currentQuestion.shuffledOptions.map((option: string, index: number) => {
                       const isSelected = selectedAnswer === index;
                       const letter = optionLetters[index];
@@ -301,17 +303,17 @@ function BancaExamInner({
                           whileHover={{ scale: 1.002 }}
                           whileTap={{ scale: 0.998 }}
                         >
-                          <div className="flex items-center gap-4 p-4">
+                          <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4">
                             {/* Caixa com Letra */}
-                            <span className={`w-9 h-9 rounded-[6px] flex items-center justify-center font-black text-sm transition-colors ${
+                            <span className={`w-7 h-7 sm:w-9 sm:h-9 rounded-[6px] flex items-center justify-center font-black text-xs sm:text-sm shrink-0 transition-colors ${
                               isSelected
                                 ? 'bg-accent text-accent-foreground shadow-sm'
                                 : 'bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary'
                             }`}>
-                              {isSelected ? <CheckCircle2 className="w-5 h-5" /> : letter}
+                              {isSelected ? <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" /> : letter}
                             </span>
                             {/* Texto da Alternativa */}
-                            <span className={`text-sm sm:text-base leading-snug font-medium transition-colors ${
+                            <span className={`text-xs sm:text-sm md:text-base leading-snug font-medium transition-colors ${
                               isSelected ? 'text-foreground font-semibold' : 'text-muted-foreground group-hover:text-foreground'
                             }`}>
                               {option}
@@ -326,9 +328,9 @@ function BancaExamInner({
             </AnimatePresence>
           </div>
 
-          {/* COLUNA DIREITA: SIDEBAR (4 cols) */}
-          <div className="lg:col-span-4 space-y-5">
-            {/* Card Tempo Restante (Card Escuro) */}
+          {/* COLUNA DIREITA: SIDEBAR (4 cols - Visível em telas lg+) */}
+          <div className="hidden lg:block lg:col-span-4 space-y-5">
+            {/* Card Tempo Restante */}
             <div className="bg-[#0f172a] dark:bg-card text-white rounded-[10px] p-5 shadow-md border border-slate-800 dark:border-border">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full border-2 border-amber-400/40 bg-amber-400/10 flex items-center justify-center shrink-0">
@@ -397,26 +399,36 @@ function BancaExamInner({
       </main>
 
       {/* ── FOOTER BAR FIXO NA PARTE INFERIOR ──────────────────────── */}
-      <footer className="fixed bottom-0 left-0 right-0 z-40 bg-card border-t border-border shadow-lg py-3">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between gap-4">
+      <footer className="fixed bottom-0 left-0 right-0 z-40 bg-card border-t border-border shadow-lg py-2.5 sm:py-3">
+        <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between gap-2 sm:gap-4">
 
             {/* Esquerda: Botão Anterior */}
             <Button
               variant="outline"
               onClick={() => setCurrentQuestionIndex((prev: number) => Math.max(0, prev - 1))}
               disabled={currentQuestionIndex === 0}
-              className="h-11 px-5 rounded-[6px] font-bold text-xs uppercase tracking-wider gap-2 border-border"
+              className="h-10 sm:h-11 px-3 sm:px-5 rounded-[6px] font-bold text-xs uppercase tracking-wider gap-1.5 border-border"
             >
               <ChevronLeft className="w-4 h-4" />
               <span>Anterior</span>
             </Button>
 
-            {/* Centro: Marcar para revisão */}
+            {/* Centro Mobile: Botão para abrir Navegador Modal */}
+            <Button
+              variant="outline"
+              onClick={() => setShowNavModal(true)}
+              className="h-10 px-3 rounded-[6px] font-bold text-xs uppercase tracking-wider gap-1.5 border-border lg:hidden"
+            >
+              <LayoutGrid className="w-4 h-4 text-accent" />
+              <span className="font-mono">{currentQuestionIndex + 1}/{blockQuestions.length}</span>
+            </Button>
+
+            {/* Centro Desktop: Marcar para revisão */}
             <Button
               variant="ghost"
               onClick={() => toast.info('Questão marcada para revisão!')}
-              className="h-11 px-4 rounded-[6px] font-bold text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground gap-2 hidden sm:flex"
+              className="h-11 px-4 rounded-[6px] font-bold text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground gap-2 hidden lg:flex"
             >
               <Flag className="w-4 h-4" />
               <span>Marcar para Revisão</span>
@@ -427,16 +439,16 @@ function BancaExamInner({
               <Button
                 onClick={finishCurrentBlock}
                 disabled={selectedAnswer === undefined}
-                className="h-11 px-6 rounded-[6px] font-bold text-xs uppercase tracking-wider gap-2 bg-accent hover:bg-accent/90 text-accent-foreground shadow-md disabled:opacity-40"
+                className="h-10 sm:h-11 px-4 sm:px-6 rounded-[6px] font-bold text-xs uppercase tracking-wider gap-1.5 bg-accent hover:bg-accent/90 text-accent-foreground shadow-md disabled:opacity-40"
               >
-                <span>{currentBlock === 4 ? 'Finalizar Simulado' : 'Finalizar Bloco'}</span>
+                <span>{currentBlock === 4 ? 'Finalizar' : 'Próx. Bloco'}</span>
                 <ChevronRight className="w-4 h-4" />
               </Button>
             ) : (
               <Button
                 onClick={nextQuestion}
                 disabled={selectedAnswer === undefined}
-                className="h-11 px-6 rounded-[6px] font-bold text-xs uppercase tracking-wider gap-2 bg-accent hover:bg-accent/90 text-accent-foreground shadow-md disabled:opacity-40"
+                className="h-10 sm:h-11 px-4 sm:px-6 rounded-[6px] font-bold text-xs uppercase tracking-wider gap-1.5 bg-accent hover:bg-accent/90 text-accent-foreground shadow-md disabled:opacity-40"
               >
                 <span>Próxima</span>
                 <ChevronRight className="w-4 h-4" />
@@ -446,6 +458,70 @@ function BancaExamInner({
           </div>
         </div>
       </footer>
+
+      {/* ── MODAL NAVEGADOR (MOBILE) ─────────────────────────────────── */}
+      <Dialog open={showNavModal} onOpenChange={setShowNavModal}>
+        <DialogContent className="rounded-[10px] border-none shadow-2xl max-w-sm p-5">
+          <DialogHeader>
+            <DialogTitle className="text-base font-black text-foreground uppercase tracking-widest flex items-center gap-2">
+              <LayoutGrid className="w-4 h-4 text-accent" />
+              Navegador de Questões
+            </DialogTitle>
+          </DialogHeader>
+
+          {/* Legenda */}
+          <div className="flex items-center justify-between gap-2 text-[11px] font-bold text-muted-foreground py-2 border-y border-border/60 mt-2">
+            <span className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-slate-800 dark:bg-slate-200"></span>
+              Respondida
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+              Atual
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-muted border border-border"></span>
+              Não respondida
+            </span>
+          </div>
+
+          {/* Grid 5 Colunas */}
+          <div className="grid grid-cols-5 gap-2 my-4 max-h-[300px] overflow-y-auto pr-1">
+            {blockQuestions.map((q: ShuffledQuestion, index: number) => {
+              const isAnswered = answers[q.id] !== undefined;
+              const isCurrent = index === currentQuestionIndex;
+
+              let bubbleStyle = 'bg-muted/60 text-muted-foreground border-border hover:bg-muted';
+              if (isCurrent) {
+                bubbleStyle = 'bg-accent text-accent-foreground font-black ring-2 ring-accent/30 border-accent';
+              } else if (isAnswered) {
+                bubbleStyle = 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900 border-slate-800';
+              }
+
+              return (
+                <button
+                  key={q.id}
+                  onClick={() => {
+                    goToQuestion(index);
+                    setShowNavModal(false);
+                  }}
+                  className={`h-10 rounded-[6px] text-xs font-bold transition-all border flex items-center justify-center ${bubbleStyle}`}
+                >
+                  {index + 1}
+                </button>
+              );
+            })}
+          </div>
+
+          <Button
+            variant="outline"
+            className="w-full h-10 rounded-[6px] font-bold text-xs uppercase"
+            onClick={() => setShowNavModal(false)}
+          >
+            Fechar Navegador
+          </Button>
+        </DialogContent>
+      </Dialog>
 
       {/* ── DIALOG SAIR ─────────────────────────────────────────────── */}
       <Dialog open={showExitDialog} onOpenChange={setShowExitDialog}>
