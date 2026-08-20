@@ -180,7 +180,7 @@ export function QuestionAIChat({
         </div>
       )}
 
-      {/* Botão Flutuante do Mike no Canto Inferior Direito (Mobile / Desktop) */}
+      {/* Botão Flutuante do Mike no Canto Inferior Direito (Apenas Mobile - lg:hidden) */}
       {showFloating && !isOpen && (
         <motion.button
           initial={{ scale: 0, opacity: 0 }}
@@ -189,7 +189,7 @@ export function QuestionAIChat({
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-20 right-4 z-40 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#0f172a] text-amber-400 border-2 border-amber-400/40 shadow-2xl flex items-center justify-center hover:border-amber-400 transition-all group"
+          className="lg:hidden fixed bottom-20 right-4 z-40 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#0f172a] text-amber-400 border-2 border-amber-400/40 shadow-2xl flex items-center justify-center hover:border-amber-400 transition-all group"
           title="Perguntar ao Mike (IA)"
         >
           <Sparkles className="w-6 h-6 text-amber-400 group-hover:rotate-12 transition-transform animate-pulse" />
@@ -203,55 +203,36 @@ export function QuestionAIChat({
             initial={{ opacity: 0, y: 50, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.95 }}
-            className="fixed inset-x-0 bottom-0 z-[100] md:absolute md:inset-auto md:bottom-full md:right-0 md:mb-3 flex flex-col md:block"
+            className="fixed inset-0 sm:inset-auto sm:bottom-20 sm:right-6 sm:w-[420px] sm:h-[550px] z-[100] flex flex-col p-2 sm:p-0"
           >
-            <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[-1] md:hidden" onClick={() => setIsOpen(false)} />
+            <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[-1]" onClick={() => setIsOpen(false)} />
 
-            <div className="bg-[#F5F7F9] border border-border/40 rounded-[5px] shadow-2xl flex flex-col h-[85vh] md:h-[500px] md:w-[420px] overflow-hidden">
-              <div className="flex items-center justify-between p-5 bg-white border-b border-border/10 shrink-0 shadow-sm relative z-10">
+            <div className="bg-[#F5F7F9] dark:bg-card border border-border/60 rounded-[10px] shadow-2xl flex flex-col h-full w-full overflow-hidden">
+              <div className="flex items-center justify-between p-4 bg-card border-b border-border/40 shrink-0 shadow-sm relative z-10">
                 <div className="flex items-center gap-3">
                   <div className="relative shrink-0">
-                    <div className="w-11 h-11 rounded-[5px] overflow-hidden shrink-0 border-2 border-primary shadow-sm" style={{ width: '44px', height: '44px', minWidth: '44px', maxWidth: '44px', minHeight: '44px', maxHeight: '44px' }}>
+                    <div className="w-10 h-10 rounded-[5px] overflow-hidden shrink-0 border-2 border-primary shadow-sm">
                       <img 
                         src="/images/avatars/mike_character_prof.png" 
                         alt="Mike" 
                         className="w-full h-full object-cover block" 
                       />
                     </div>
-                    <div className="absolute bottom-0.5 right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                    <div className="absolute bottom-0.5 right-0.5 w-2.5 h-2.5 bg-green-500 border-2 border-white rounded-full"></div>
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-base font-black text-primary leading-tight">Mike</h3>
+                      <h3 className="text-sm sm:text-base font-black text-primary leading-tight">Mike</h3>
                     </div>
-                    <div className="flex items-center gap-3 mt-1">
+                    <div className="flex items-center gap-2 mt-0.5">
                       <p className="text-[10px] text-muted-foreground flex items-center gap-1 font-bold tracking-wide uppercase">
                         <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Assistente Completo
                       </p>
-                      <div className="h-3 w-[1px] bg-border/40" />
-                      <div className="flex items-center gap-2">
-                        {isAdmin ? (
-                          <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter">
-                            Acesso Ilimitado
-                          </span>
-                        ) : (
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-[10px] bg-accent/10 text-accent px-2 py-0.5 rounded-full font-bold shadow-sm border border-accent/10">
-                              {remainingForQuestion} Questões
-                            </span>
-                            {profile?.ai_questions_count !== undefined && (
-                              <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-tight opacity-70">
-                                {Math.max(0, (aiChatDailySafetyLimit || 0) - profile.ai_questions_count)} CRÉDITOS HOJE
-                              </span>
-                            )}
-                          </div>
-                        )}
-                      </div>
                     </div>
                   </div>
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="h-9 w-9 rounded-full hover:bg-muted text-muted-foreground transition-all">
-                  <X className="w-6 h-6" />
+                <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="h-8 w-8 rounded-full hover:bg-muted text-muted-foreground transition-all">
+                  <X className="w-5 h-5" />
                 </Button>
               </div>
 
@@ -273,8 +254,8 @@ export function QuestionAIChat({
                       {['Por que essa é a resposta correta?', 'Como o erro impacta o voo?', 'Explique a regulamentação.'].map((q, i) => (
                         <button
                           key={i}
-                          onClick={() => { setInput(q); }}
-                          className="w-full text-left px-4 py-3 rounded-[5px] bg-white border border-border/50 hover:border-accent/40 shadow-sm text-sm text-muted-foreground hover:text-foreground transition-all duration-200"
+                          onClick={() => { handleSendMessage(q); }}
+                          className="w-full text-left px-4 py-3 rounded-[8px] bg-card border border-border/60 hover:border-accent/40 shadow-sm text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-all duration-200"
                         >
                           {q}
                         </button>
@@ -287,14 +268,14 @@ export function QuestionAIChat({
                   <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                     {msg.role === 'assistant' ? (
                       <div className="flex gap-2 max-w-[88%]">
-                        <div className="w-8 h-8 rounded-[5px] overflow-hidden shrink-0 border border-primary/50 mt-1 shadow-sm" style={{ width: '32px', height: '32px', minWidth: '32px', maxWidth: '32px', minHeight: '32px', maxHeight: '32px' }}>
+                        <div className="w-8 h-8 rounded-[5px] overflow-hidden shrink-0 border border-primary/50 mt-1 shadow-sm">
                           <img 
                             src="/images/avatars/Mike_character.png"
                             alt="Mike"
                             className="w-full h-full object-cover block"
                           />
                         </div>
-                        <div className="bg-white border border-primary/20 px-4 py-3 rounded-[5px] rounded-tl-sm text-[15px] text-foreground shadow-sm">
+                        <div className="bg-card border border-primary/20 px-4 py-3 rounded-[8px] rounded-tl-sm text-xs sm:text-sm text-foreground shadow-sm">
                           <div className="flex items-center gap-1.5 mb-1.5">
                             <span className="text-xs text-primary font-bold">Mike</span>
                             {msg.cached && (
@@ -307,7 +288,7 @@ export function QuestionAIChat({
                         </div>
                       </div>
                     ) : (
-                      <div className="max-w-[85%] px-4 py-3 rounded-[5px] rounded-tr-sm text-[15px] bg-primary/90 text-primary-foreground shadow-sm">
+                      <div className="max-w-[85%] px-4 py-3 rounded-[8px] rounded-tr-sm text-xs sm:text-sm bg-primary/90 text-primary-foreground shadow-sm">
                         <p className="leading-relaxed whitespace-pre-wrap">{msg.content}</p>
                       </div>
                     )}
@@ -317,14 +298,14 @@ export function QuestionAIChat({
                 {isLoading && (
                   <div className="flex justify-start">
                     <div className="flex gap-2 max-w-[85%]">
-                      <div className="w-8 h-8 rounded-[5px] overflow-hidden shrink-0 border border-primary/50 mt-1 shadow-sm animate-pulse" style={{ width: '32px', height: '32px', minWidth: '32px', maxWidth: '32px', minHeight: '32px', maxHeight: '32px' }}>
+                      <div className="w-8 h-8 rounded-[5px] overflow-hidden shrink-0 border border-primary/50 mt-1 shadow-sm animate-pulse">
                         <img 
                           src="/images/avatars/Mike_character.png"
                           alt="Mike"
                           className="w-full h-full object-cover block"
                         />
                       </div>
-                      <div className="bg-white border border-border/50 rounded-[5px] rounded-tl-sm px-4 py-3 flex items-center gap-2.5 shadow-sm text-xs font-semibold text-primary">
+                      <div className="bg-card border border-border/50 rounded-[8px] rounded-tl-sm px-4 py-3 flex items-center gap-2.5 shadow-sm text-xs font-semibold text-primary">
                         <Loader2 className="w-4 h-4 animate-spin text-primary shrink-0" />
                         <span>Mike analisando sua dúvida...</span>
                       </div>
@@ -334,14 +315,14 @@ export function QuestionAIChat({
 
                 {limitReached && !isAdmin && (
                   <div className="text-center py-4 space-y-3">
-                    <div className="bg-destructive/5 border border-destructive/20 rounded-[5px] p-5 mb-2 shadow-sm bg-white text-left">
+                    <div className="bg-destructive/5 border border-destructive/20 rounded-[8px] p-5 mb-2 shadow-sm bg-card text-left">
                       <p className="text-base text-destructive font-bold mb-1">
                         Limite por questão atingido
                       </p>
                       <p className="text-sm text-muted-foreground mb-4">
                         Você já enviou {aiChatLimitPerQuestion} perguntas para esta questão. Avance para a próxima questão ou faça um upgrade para limites maiores.
                       </p>
-                      <Button asChild className="w-full gap-2 rounded-[5px] font-bold">
+                      <Button asChild className="w-full gap-2 rounded-[6px] font-bold">
                         <Link to="/premium">
                           Fazer Upgrade <ArrowUpRight className="w-4 h-4" />
                         </Link>
@@ -353,8 +334,8 @@ export function QuestionAIChat({
                 <div ref={messagesEndRef} />
               </div>
 
-              <div className="px-5 py-3 bg-white border-t border-border/10 shrink-0 pb-8 md:pb-6 rounded-[5px] relative">
-                <div className="flex items-center justify-between mb-3 bg-accent/5 rounded-[5px] px-3 py-2 border border-accent/10 shadow-sm">
+              <div className="px-4 py-3 bg-card border-t border-border/40 shrink-0 rounded-[10px] relative">
+                <div className="flex items-center justify-between mb-2 bg-accent/5 rounded-[6px] px-3 py-1.5 border border-accent/10 shadow-sm">
                   {isAdmin ? (
                     <div className="flex items-center gap-1.5 text-[10px] font-bold text-primary uppercase tracking-widest">
                       <Sparkles className="w-3.5 h-3.5" />
@@ -374,7 +355,7 @@ export function QuestionAIChat({
                     </>
                   )}
                 </div>
-                <div className="flex gap-3 items-center">
+                <div className="flex gap-2 items-center">
                   <div className="flex-1 relative">
                     <Input
                       value={input}
@@ -383,21 +364,19 @@ export function QuestionAIChat({
                       onKeyDown={e => {
                         if (e.key === 'Enter') {
                           e.preventDefault();
-                          sendMessage();
+                          handleSendMessage();
                         }
                       }}
                       placeholder={limitReached && !isAdmin ? "Limite atingido para esta questão." : "Mande sua dúvida..."}
-                      className="text-[15px] rounded-[5px] border-border/20 shadow-sm bg-muted/30 h-12 pr-12 placeholder:text-muted-foreground/50 focus-visible:ring-2 focus-visible:ring-accent/30 transition-all border-none"
-                      disabled={isLoading || (limitReached && !isAdmin)}
+                      className="text-xs sm:text-sm rounded-[6px] border-border/40 shadow-sm bg-muted/40 h-10 pr-10 placeholder:text-muted-foreground/60 focus-visible:ring-2 focus-visible:ring-accent/30 transition-all"
                     />
                     <Button 
-                      title="Enviar mensagem"
-                      onClick={sendMessage} 
+                      onClick={() => handleSendMessage()} 
                       disabled={isLoading || !input.trim() || (limitReached && !isAdmin)} 
                       size="icon" 
-                      className="absolute right-1.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-[5px] bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg shadow-primary/20"
+                      className="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 rounded-[5px] bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-sm"
                     >
-                      {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <ArrowUp className="w-5 h-5" />}
+                      {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowUp className="w-4 h-4" />}
                     </Button>
                   </div>
                 </div>
@@ -409,4 +388,3 @@ export function QuestionAIChat({
     </>
   );
 }
-
