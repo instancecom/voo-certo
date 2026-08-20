@@ -23,7 +23,9 @@ import PremiumPage from "./pages/PremiumPage";
 import ProfessionExamPage from "./pages/ProfessionExamPage";
 import ImportQuestoesPage from "./pages/ImportQuestoesPage";
 import VerificationPage from "./pages/VerificationPage";
-import NotFound from "./pages/NotFound";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import TermsPage from "./pages/TermsPage";
+import { CookieBanner } from "./components/CookieBanner";
 import { AdminGuard } from "./components/AdminGuard";
 import { FeatureGuard } from "./components/FeatureGuard";
 import { ScrollToTop } from "./components/ScrollToTop";
@@ -41,6 +43,7 @@ const App = () => (
           <BrowserRouter>
             <ScrollToTop />
             <TesterFeedbackCard />
+            <CookieBanner />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<AuthPage />} />
@@ -65,6 +68,10 @@ const App = () => (
               <Route path="/premium" element={<PremiumPage />} />
               <Route path="/simulado-profissao/:professionId" element={<ProfessionExamPage />} />
               <Route path="/verificar/:approvalId" element={<VerificationPage />} />
+              <Route path="/privacidade" element={<PrivacyPolicyPage />} />
+              <Route path="/politica-de-privacidade" element={<PrivacyPolicyPage />} />
+              <Route path="/termos" element={<TermsPage />} />
+              <Route path="/termos-de-uso" element={<TermsPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

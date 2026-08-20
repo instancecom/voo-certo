@@ -50,13 +50,14 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Resources */}
+          {/* Resources & Legal */}
           <div>
-            <h4 className="font-bold text-sm uppercase tracking-wider mb-6">Recursos</h4>
+            <h4 className="font-bold text-sm uppercase tracking-wider mb-6">Recursos & Legal</h4>
             <ul className="space-y-3 text-sm text-primary-foreground/70">
               <li><Link to="/meu-progresso" className="hover:text-accent transition-colors">Painel de Performance</Link></li>
               <li><Link to="/premium" className="hover:text-accent transition-colors">Assinatura Premium</Link></li>
-              <li><Link to="/ajuda" className="hover:text-accent transition-colors">Central de Ajuda</Link></li>
+              <li><Link to="/privacidade" className="hover:text-accent transition-colors flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-emerald-400" /> Privacidade & LGPD</Link></li>
+              <li><Link to="/termos" className="hover:text-accent transition-colors">Termos de Uso</Link></li>
             </ul>
           </div>
 
