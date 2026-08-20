@@ -25,6 +25,7 @@ import ImportQuestoesPage from "./pages/ImportQuestoesPage";
 import VerificationPage from "./pages/VerificationPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsPage from "./pages/TermsPage";
+import NotFound from "./pages/NotFound";
 import { CookieBanner } from "./components/CookieBanner";
 import { AdminGuard } from "./components/AdminGuard";
 import { FeatureGuard } from "./components/FeatureGuard";
