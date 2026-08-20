@@ -328,6 +328,44 @@ export function LivreExam({ questions, selectedBlock, questionLimit, onFinish, o
                     </motion.div>
                   )}
                 </AnimatePresence>
+                {/* Card Navegador inline para Mobile (lg:hidden) */}
+                <div className="lg:hidden bg-card rounded-[10px] border border-border/80 shadow-sm p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xs font-black text-foreground uppercase tracking-widest">NAVEGADOR</h3>
+                    <button
+                      onClick={() => setShowNavModal(true)}
+                      className="text-xs font-bold text-accent hover:underline flex items-center gap-1"
+                    >
+                      <LayoutGrid className="w-3.5 h-3.5" />
+                      <span>Ver todas</span>
+                    </button>
+                  </div>
+
+                  {/* Carrossel/Row horizontal de números */}
+                  <div className="flex items-center gap-2 overflow-x-auto scrollbar-none py-1 px-0.5">
+                    {shuffledQuestions.map((q: ShuffledQuestion, index: number) => {
+                      const isAns = answers[q.id] !== undefined;
+                      const isCur = index === currentQuestionIndex;
+
+                      let bubbleStyle = 'bg-muted/60 text-muted-foreground border-border';
+                      if (isCur) {
+                        bubbleStyle = 'bg-amber-500 text-white font-black ring-2 ring-amber-500/30 border-amber-500';
+                      } else if (isAns) {
+                        bubbleStyle = 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 border-slate-900';
+                      }
+
+                      return (
+                        <button
+                          key={q.id}
+                          onClick={() => goToQuestion(index)}
+                          className={`w-8 h-8 rounded-[6px] text-xs font-bold shrink-0 transition-all border flex items-center justify-center ${bubbleStyle}`}
+                        >
+                          {index + 1}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               </motion.div>
             </AnimatePresence>
           </div>

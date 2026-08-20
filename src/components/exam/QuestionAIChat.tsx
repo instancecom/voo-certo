@@ -22,6 +22,7 @@ interface QuestionAIChatProps {
   options: string[];
   correctAnswer: number;
   explanation?: string | null;
+  mode?: 'inline' | 'floating' | 'both';
 }
 
 export function QuestionAIChat({
@@ -30,6 +31,7 @@ export function QuestionAIChat({
   options,
   correctAnswer,
   explanation,
+  mode = 'both',
 }: QuestionAIChatProps) {
   const { user, profile, refreshProfile, isAdmin } = useAuth();
   const { canAccessAIChat, aiChatLimitPerQuestion, aiChatDailySafetyLimit, currentPlan } = usePlan();
@@ -58,28 +60,34 @@ export function QuestionAIChat({
           }
         }
       } catch (err) {
-        console.error('Error fetching question usage:', err);
+        console.error('Error fetching AI usage:', err);
       }
     };
 
     fetchUsage();
   }, [user, questionId, isOpen, aiChatLimitPerQuestion, isAdmin]);
 
-  // Remaining messages for THIS question
   const remainingForQuestion = questionUsage !== null 
     ? Math.max(0, aiChatLimitPerQuestion - questionUsage)
     : aiChatLimitPerQuestion;
 
-  useEffect(() => {
+  const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  };
 
-  const sendMessage = async () => {
-    if (!input.trim() || isLoading || (limitReached && !isAdmin)) return;
+  useEffect(() => {
+    if (isOpen) {
+      scrollToBottom();
+    }
+  }, [messages, isOpen]);
 
-    const userMessage = input.trim();
-    setInput('');
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+  const handleSendMessage = async (customPrompt?: string) => {
+    const textToSend = customPrompt || input;
+    if (!textToSend.trim() || isLoading || (limitReached && !isAdmin)) return;
+
+    const userMessage: Message = { role: 'user', content: textToSend };
+    setMessages(prev => [...prev, userMessage]);
+    if (!customPrompt) setInput('');
     setIsLoading(true);
 
     try {
@@ -90,62 +98,33 @@ export function QuestionAIChat({
           options,
           correctAnswer,
           explanation,
-          userQuestion: userMessage,
+          userQuestion: textToSend,
+          chatHistory: messages,
         },
       });
 
-      if (error) {
-        const errorBody = (error as any)?.context?.body;
-        if (errorBody) {
-          try {
-            const parsed = typeof errorBody === 'string' ? JSON.parse(errorBody) : errorBody;
-            if (parsed.limitReached) {
-              setLimitReached(true);
-              setMessages(prev => prev.slice(0, -1));
-              return;
-            }
-            if (parsed.error) {
-              toast.error(parsed.error);
-              setMessages(prev => prev.slice(0, -1));
-              return;
-            }
-          } catch {}
+      if (error) throw error;
+
+      if (data?.reply) {
+        const assistantMessage: Message = {
+          role: 'assistant',
+          content: data.reply,
+          cached: data.cached,
+        };
+        setMessages(prev => [...prev, assistantMessage]);
+        
+        if (typeof data.questionUsage === 'number') {
+          setQuestionUsage(data.questionUsage);
+          if (data.questionUsage >= aiChatLimitPerQuestion && !isAdmin) {
+            setLimitReached(true);
+          }
         }
-        throw error;
+        
+        refreshProfile();
       }
-
-      if (data?.limitReached) {
-        setLimitReached(true);
-        toast.error(data.error);
-        setMessages(prev => prev.slice(0, -1));
-        return;
-      }
-
-      if (data?.error) {
-        toast.error(data.error);
-        setMessages(prev => prev.slice(0, -1));
-        return;
-      }
-
-      // Update local usage count if not cached
-      if (!data.cached && !isAdmin) {
-        setQuestionUsage(prev => (prev || 0) + 1);
-        if ((questionUsage || 0) + 1 >= aiChatLimitPerQuestion) {
-          setLimitReached(true);
-        }
-      }
-
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        content: data.response,
-        cached: data.cached,
-      }]);
-      
-      // Still refresh profile for the daily safety cap sync
-      refreshProfile();
-      
-    } catch (err) {
-      toast.error('Erro ao conectar com a IA. Tente novamente.');
+    } catch (err: any) {
+      console.error('Error sending AI message:', err);
+      toast.error(err.message || 'Erro ao comunicar com a IA');
       setMessages(prev => prev.slice(0, -1));
     } finally {
       setIsLoading(false);
@@ -166,33 +145,58 @@ export function QuestionAIChat({
     );
   }
 
+  const showInline = mode === 'inline' || mode === 'both';
+  const showFloating = mode === 'floating' || mode === 'both';
+
   return (
-    <div className="relative">
-      <motion.button
-        whileHover={{ scale: 1.02, translateY: -2 }}
-        whileTap={{ scale: 0.98 }}
-        onClick={() => setIsOpen(true)}
-        className="flex items-center justify-between w-full sm:w-auto min-w-[320px] px-5 py-3 rounded-[5px] bg-gradient-to-r from-primary/5 via-primary/10 to-accent/10 border border-primary/20 hover:border-accent/40 shadow-sm hover:shadow-md transition-all group overflow-hidden relative"
-      >
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-        
-        <div className="flex items-center gap-3 text-primary group-hover:text-accent transition-colors relative z-10">
-          <div className="bg-white p-1.5 rounded-full shadow-sm group-hover:shadow group-hover:rotate-12 transition-all">
-            <Sparkles className="w-4 h-4 text-accent animate-pulse" />
-          </div>
-          <span className="text-sm font-bold tracking-tight">Pergunte ao Mike</span>
-        </div>
-
-        {!isAdmin && (
-          <Badge 
-            variant="secondary" 
-            className="ml-3 bg-white/80 hover:bg-white text-accent border-accent/20 px-3 py-1 font-bold text-[10px] uppercase tracking-wider relative z-10"
+    <>
+      {/* Botão Inline no card */}
+      {showInline && (
+        <div className="relative">
+          <motion.button
+            whileHover={{ scale: 1.02, translateY: -2 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setIsOpen(true)}
+            className="flex items-center justify-between w-full sm:w-auto min-w-[280px] px-5 py-3 rounded-[8px] bg-gradient-to-r from-primary/5 via-primary/10 to-accent/10 border border-primary/20 hover:border-accent/40 shadow-sm hover:shadow-md transition-all group overflow-hidden relative"
           >
-            {remainingForQuestion} {remainingForQuestion === 1 ? 'msg restando' : 'msgs restando'}
-          </Badge>
-        )}
-      </motion.button>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+            
+            <div className="flex items-center gap-3 text-primary group-hover:text-accent transition-colors relative z-10">
+              <div className="bg-white p-1.5 rounded-full shadow-sm group-hover:shadow group-hover:rotate-12 transition-all">
+                <Sparkles className="w-4 h-4 text-accent animate-pulse" />
+              </div>
+              <span className="text-sm font-bold tracking-tight">Pergunte ao Mike</span>
+            </div>
 
+            {!isAdmin && (
+              <Badge 
+                variant="secondary" 
+                className="ml-3 bg-white/80 hover:bg-white text-accent border-accent/20 px-3 py-1 font-bold text-[10px] uppercase tracking-wider relative z-10"
+              >
+                {remainingForQuestion} {remainingForQuestion === 1 ? 'msg restando' : 'msgs restando'}
+              </Badge>
+            )}
+          </motion.button>
+        </div>
+      )}
+
+      {/* Botão Flutuante do Mike no Canto Inferior Direito (Mobile / Desktop) */}
+      {showFloating && !isOpen && (
+        <motion.button
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0, opacity: 0 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={() => setIsOpen(true)}
+          className="fixed bottom-20 right-4 z-40 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#0f172a] text-amber-400 border-2 border-amber-400/40 shadow-2xl flex items-center justify-center hover:border-amber-400 transition-all group"
+          title="Perguntar ao Mike (IA)"
+        >
+          <Sparkles className="w-6 h-6 text-amber-400 group-hover:rotate-12 transition-transform animate-pulse" />
+        </motion.button>
+      )}
+
+      {/* Modal / Sheet do Chat do Mike */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -402,7 +406,7 @@ export function QuestionAIChat({
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </>
   );
 }
 
