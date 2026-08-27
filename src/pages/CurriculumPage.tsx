@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  User, Briefcase, GraduationCap, Award, Plus, Trash2, X,
+  User, Briefcase, GraduationCap, Award, Plus, Trash2, X, ChevronLeft,
   Download, Save, Loader2, Lock, FileText, Sparkles, Layout, Globe, Star, ArrowRight, Shield, MessageSquare, Edit3, CheckCircle2, Lightbulb, Eye, Calendar, Clock
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -481,8 +481,10 @@ export default function CurriculumPage() {
           </div>
         ) : (
           <>
-            {/* Banner de Título & Workspace Header Unificado (Oculto na impressão) */}
-            <div className="print:hidden mb-8">
+            {/* ------------------------------------------------------------- */}
+            {/* HEADER DA PÁGINA: VERSÃO DESKTOP (Web Mantido Integramente)   */}
+            {/* ------------------------------------------------------------- */}
+            <div className="print:hidden hidden md:block mb-8">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-card border border-border/80 p-5 sm:p-6 rounded-[5px] shadow-sm">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
@@ -499,11 +501,11 @@ export default function CurriculumPage() {
                   </p>
                 </div>
 
-                {/* Único Botão de Ação Principal no Topo — Sem Duplicações! */}
+                {/* Único Botão de Ação Principal no Topo Web */}
                 {mode === 'dashboard' ? (
                   <Button
                     onClick={handleStartNewCurriculum}
-                    className="gap-2.5 font-bold text-xs sm:text-sm bg-[#0f172a] text-white hover:bg-slate-900 rounded-[5px] h-11 px-5 shadow-sm shrink-0 w-full sm:w-auto justify-center"
+                    className="gap-2.5 font-bold text-xs sm:text-sm bg-[#0f172a] text-white hover:bg-slate-900 rounded-[5px] h-11 px-5 shadow-sm shrink-0 justify-center"
                   >
                     <div className="w-6 h-6 rounded-[5px] overflow-hidden shrink-0 border border-amber-400/80 bg-slate-900">
                       <img src="/images/avatars/mike_character_curiculum.png" alt="Mike" className="w-full h-full object-cover block" />
@@ -514,7 +516,7 @@ export default function CurriculumPage() {
                   <Button
                     variant="outline"
                     onClick={() => setMode('dashboard')}
-                    className="gap-2 font-bold text-xs sm:text-sm border-border hover:bg-muted rounded-[5px] h-11 px-4 shrink-0 w-full sm:w-auto justify-center"
+                    className="gap-2 font-bold text-xs sm:text-sm border-border hover:bg-muted rounded-[5px] h-11 px-4 shrink-0 justify-center"
                   >
                     <Layout className="w-4 h-4 text-primary" />
                     <span>Voltar à Galeria</span>
@@ -522,15 +524,15 @@ export default function CurriculumPage() {
                 )}
               </div>
 
-              {/* Barra de Abas de Navegação Integrada */}
+              {/* Barra de Abas de Navegação Web */}
               <div className="flex items-center gap-2 pt-4">
-                <div className="flex items-center gap-1.5 bg-muted/40 p-1.5 rounded-[5px] border border-border/80 w-full sm:w-fit overflow-x-auto">
+                <div className="flex items-center gap-1.5 bg-muted/40 p-1.5 rounded-[5px] border border-border/80 w-fit">
                   {savedCurriculums.length > 0 && (
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => setMode('dashboard')}
-                      className={`gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap flex-1 sm:flex-initial h-9 px-4 transition-all ${
+                      className={`gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap h-9 px-4 transition-all ${
                         mode === 'dashboard' 
                           ? 'bg-[#0f172a] text-white shadow-sm hover:bg-[#0f172a] hover:text-white' 
                           : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
@@ -545,7 +547,7 @@ export default function CurriculumPage() {
                     variant="ghost"
                     size="sm"
                     onClick={handleStartNewCurriculum}
-                    className={`gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap flex-1 sm:flex-initial h-9 px-4 transition-all ${
+                    className={`gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap h-9 px-4 transition-all ${
                       mode === 'chat' 
                         ? 'bg-[#0f172a] text-white shadow-sm hover:bg-[#0f172a] hover:text-white' 
                         : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
@@ -560,7 +562,7 @@ export default function CurriculumPage() {
                       variant="ghost"
                       size="sm"
                       onClick={() => setMode('editor')}
-                      className={`gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap flex-1 sm:flex-initial h-9 px-4 transition-all ${
+                      className={`gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap h-9 px-4 transition-all ${
                         mode === 'editor' 
                           ? 'bg-[#0f172a] text-white shadow-sm hover:bg-[#0f172a] hover:text-white' 
                           : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
@@ -572,6 +574,99 @@ export default function CurriculumPage() {
                   )}
                 </div>
               </div>
+            </div>
+
+            {/* ------------------------------------------------------------- */}
+            {/* HEADER DA PÁGINA: VERSÃO MOBILE MINIMALISTA & ENXUTA          */}
+            {/* ------------------------------------------------------------- */}
+            <div className="print:hidden block md:hidden mb-4 space-y-2.5">
+              {mode === 'dashboard' ? (
+                <>
+                  {/* Bar topo mobile compacta */}
+                  <div className="flex items-center justify-between gap-2 bg-card border border-border/80 p-3 rounded-[5px] shadow-sm">
+                    <div className="flex items-center gap-2">
+                      <FileText className="w-5 h-5 text-primary shrink-0" />
+                      <span className="font-black text-sm text-foreground">Currículos</span>
+                      {savedCurriculums.length > 0 && (
+                        <span className="text-[10px] font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-[5px]">
+                          {savedCurriculums.length}
+                        </span>
+                      )}
+                    </div>
+
+                    <Button
+                      size="sm"
+                      onClick={handleStartNewCurriculum}
+                      className="gap-1.5 font-bold text-xs bg-[#0f172a] text-white hover:bg-slate-900 rounded-[5px] h-8 px-3 shadow-sm"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                      <span>+ Criar com Mike</span>
+                    </Button>
+                  </div>
+
+                  {/* Abas minimalistas mobile */}
+                  <div className="flex items-center gap-1 bg-muted/40 p-1 rounded-[5px] border border-border/80 w-full">
+                    {savedCurriculums.length > 0 && (
+                      <button
+                        onClick={() => setMode('dashboard')}
+                        className={`flex-1 py-1.5 text-center text-xs font-bold rounded-[5px] transition-all ${
+                          mode === 'dashboard' ? 'bg-[#0f172a] text-white shadow-sm' : 'text-muted-foreground'
+                        }`}
+                      >
+                        Galeria
+                      </button>
+                    )}
+                    <button
+                      onClick={handleStartNewCurriculum}
+                      className={`flex-1 py-1.5 text-center text-xs font-bold rounded-[5px] transition-all flex items-center justify-center gap-1 ${
+                        mode === 'chat' ? 'bg-[#0f172a] text-white shadow-sm' : 'text-muted-foreground'
+                      }`}
+                    >
+                      <Sparkles className="w-3 h-3 text-amber-400" />
+                      Assistente
+                    </button>
+                    {data.full_name && (
+                      <button
+                        onClick={() => setMode('editor')}
+                        className={`flex-1 py-1.5 text-center text-xs font-bold rounded-[5px] transition-all ${
+                          mode === 'editor' ? 'bg-[#0f172a] text-white shadow-sm' : 'text-muted-foreground'
+                        }`}
+                      >
+                        Editar
+                      </button>
+                    )}
+                  </div>
+                </>
+              ) : mode === 'chat' ? (
+                /* No chat mobile, exibe apenas a barra de voltar para dar 100% de foco à conversa */
+                <div className="flex items-center justify-between bg-card border border-border/80 p-2.5 rounded-[5px] shadow-sm">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setMode('dashboard')}
+                    className="gap-1.5 text-xs font-bold text-muted-foreground hover:text-foreground h-8 px-2.5"
+                  >
+                    <ChevronLeft className="w-4 h-4 text-primary" />
+                    <span>Voltar para Galeria</span>
+                  </Button>
+                  <Badge variant="outline" className="border-amber-400/40 text-amber-600 dark:text-amber-400 bg-amber-400/10 text-[10px] font-bold uppercase rounded-[5px]">
+                    Mike IA
+                  </Badge>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between bg-card border border-border/80 p-2.5 rounded-[5px] shadow-sm">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setMode('dashboard')}
+                    className="gap-1.5 text-xs font-bold text-muted-foreground hover:text-foreground h-8 px-2.5"
+                  >
+                    <ChevronLeft className="w-4 h-4 text-primary" />
+                    <span>Voltar para Galeria</span>
+                  </Button>
+                  <span className="text-xs font-bold text-foreground">Editar Currículo</span>
+                </div>
+              )}
             </div>
 
             {/* ------------------------------------------------------------- */}
