@@ -44,6 +44,8 @@ export default function SimuladosPage() {
   const [selectedProfession, setSelectedProfession] = useState<ProfessionWithBlocks | null>(null);
   
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(false);
 
   const scroll = (direction: 'left' | 'right') => {
     try {
@@ -56,6 +58,15 @@ export default function SimuladosPage() {
       }
     } catch (e) {
       console.error('Error scrolling:', e);
+    }
+  };
+
+  const handleScroll = () => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      const hasOverflow = scrollWidth > clientWidth + 5;
+      setShowLeftArrow(hasOverflow && scrollLeft > 10);
+      setShowRightArrow(hasOverflow && scrollLeft < scrollWidth - clientWidth - 10);
     }
   };
   
@@ -99,11 +110,29 @@ export default function SimuladosPage() {
           }))
           .filter(cat => cat.question_count > 0) as ProfessionWithBlocks[];
       } catch (err) {
-        console.error('Error in queryFn:', err);
+        console.error('Error fetching professions with blocks:', err);
         return [];
       }
     },
   });
+
+  useEffect(() => {
+    const slider = scrollContainerRef.current;
+    if (slider) {
+      slider.addEventListener('scroll', handleScroll);
+      handleScroll();
+      window.addEventListener('resize', handleScroll);
+    }
+    return () => {
+      if (slider) slider.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [professions]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => handleScroll(), 150);
+    return () => clearTimeout(timer);
+  }, [professions]);
 
   const handleStartSimulado = (professionId: string, mode: string) => {
     if (!user) {
@@ -187,23 +216,29 @@ export default function SimuladosPage() {
                 <p className="text-muted-foreground font-medium italic">Nenhum simulado disponível para esta categoria no momento.</p>
               </div>
             ) : (
-              <div className="relative group">
+              <div className="relative group/slider">
 
-                {/* Scroll buttons - Estilo Netflix */}
-                <button 
-                  onClick={() => scroll('left')}
-                  className="hidden md:flex absolute left-2 top-[40%] -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-background/80 backdrop-blur-md border border-border/85 shadow-lg items-center justify-center text-muted-foreground hover:text-primary hover:bg-background transition-all hover:scale-110 opacity-0 group-hover:opacity-100"
-                  aria-label="Scroll left"
-                >
-                  <ChevronLeft className="w-6 h-6" />
-                </button>
-                <button 
-                  onClick={() => scroll('right')}
-                  className="hidden md:flex absolute right-2 top-[40%] -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-background/80 backdrop-blur-md border border-border/85 shadow-lg items-center justify-center text-muted-foreground hover:text-primary hover:bg-background transition-all hover:scale-110 opacity-0 group-hover:opacity-100"
-                  aria-label="Scroll right"
-                >
-                  <ChevronRight className="w-6 h-6" />
-                </button>
+                {/* Left Scroll button — apenas se houver itens anteriores */}
+                {showLeftArrow && (
+                  <button 
+                    onClick={() => scroll('left')}
+                    className="hidden md:flex absolute -left-3 top-[40%] -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-background/90 backdrop-blur-md border border-border/85 shadow-lg items-center justify-center text-muted-foreground hover:text-primary hover:bg-background transition-all hover:scale-110 opacity-0 group-hover/slider:opacity-100"
+                    aria-label="Scroll left"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                )}
+
+                {/* Right Scroll button — apenas se houver mais itens extras que não cabem na tela */}
+                {showRightArrow && (
+                  <button 
+                    onClick={() => scroll('right')}
+                    className="hidden md:flex absolute -right-3 top-[40%] -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-background/90 backdrop-blur-md border border-border/85 shadow-lg items-center justify-center text-muted-foreground hover:text-primary hover:bg-background transition-all hover:scale-110 opacity-0 group-hover/slider:opacity-100"
+                    aria-label="Scroll right"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                )}
 
                 {/* Carrossel */}
                 <div 
@@ -218,8 +253,8 @@ export default function SimuladosPage() {
                       transition={{ delay: index * 0.06 }}
                       className="flex-none w-[270px] md:w-[310px]"
                     >
-                      <div className="p-5 md:p-6 rounded-[5px] bg-card border border-border hover:border-primary/30 hover:shadow-xl transition-all h-full flex flex-col group relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-4 opacity-[0.05] group-hover:opacity-[0.10] transition-opacity">
+                      <div className="p-5 md:p-6 rounded-[5px] bg-card border border-border hover:border-primary/30 hover:shadow-xl transition-all h-full flex flex-col group/card relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-4 opacity-[0.05] group-hover/card:opacity-[0.10] transition-opacity">
                            <Plane className="w-32 h-32 rotate-12" />
                         </div>
 
@@ -247,7 +282,7 @@ export default function SimuladosPage() {
                           <Badge variant="outline" className="rounded-[5px] border-primary/20 bg-primary/5 font-bold uppercase text-[9px] tracking-widest shrink-0">{profession.block_count} blocos</Badge>
                         </div>
 
-                        <h3 className="text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors">{profession.name}</h3>
+                        <h3 className="text-lg font-bold text-foreground mb-2 group-hover/card:text-primary transition-colors">{profession.name}</h3>
                         <p className="text-sm text-muted-foreground mb-5 flex-1 font-medium line-clamp-2">{profession.description || 'Simulados profissionais de alta performance.'}</p>
                         
                         <div className="flex items-center gap-4 text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-5">

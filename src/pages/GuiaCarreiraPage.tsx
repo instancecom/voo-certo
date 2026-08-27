@@ -51,7 +51,7 @@ interface CareerGuideRowProps {
 function CareerGuideRow({ title, icon, guides, navigate }: CareerGuideRowProps) {
   const sliderRef = useRef<HTMLDivElement>(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
-  const [showRightArrow, setShowRightArrow] = useState(true);
+  const [showRightArrow, setShowRightArrow] = useState(false);
 
   const scroll = (direction: 'left' | 'right') => {
     if (sliderRef.current) {
@@ -67,8 +67,9 @@ function CareerGuideRow({ title, icon, guides, navigate }: CareerGuideRowProps) 
   const handleScroll = () => {
     if (sliderRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
-      setShowLeftArrow(scrollLeft > 10);
-      setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 10);
+      const hasOverflow = scrollWidth > clientWidth + 5;
+      setShowLeftArrow(hasOverflow && scrollLeft > 10);
+      setShowRightArrow(hasOverflow && scrollLeft < scrollWidth - clientWidth - 10);
     }
   };
 
@@ -90,7 +91,7 @@ function CareerGuideRow({ title, icon, guides, navigate }: CareerGuideRowProps) 
   useEffect(() => {
     const timer = setTimeout(() => {
       handleScroll();
-    }, 100);
+    }, 150);
     return () => clearTimeout(timer);
   }, [guides]);
 
@@ -111,13 +112,13 @@ function CareerGuideRow({ title, icon, guides, navigate }: CareerGuideRowProps) 
       </div>
 
       {/* Slider Container */}
-      <div className="relative group">
+      <div className="relative group/slider">
 
         {/* Left Arrow */}
         {showLeftArrow && (
           <button
             onClick={() => scroll('left')}
-            className="hidden md:flex absolute left-2 top-[40%] -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-background/80 backdrop-blur-md border border-border/85 shadow-lg items-center justify-center text-muted-foreground hover:text-primary hover:bg-background transition-all hover:scale-110 opacity-0 group-hover:opacity-100"
+            className="hidden md:flex absolute -left-3 top-[40%] -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-background/90 backdrop-blur-md border border-border/85 shadow-lg items-center justify-center text-muted-foreground hover:text-primary hover:bg-background transition-all hover:scale-110 opacity-0 group-hover/slider:opacity-100"
             aria-label="Scroll left"
           >
             <ChevronLeft className="w-5 h-5" />
@@ -128,7 +129,7 @@ function CareerGuideRow({ title, icon, guides, navigate }: CareerGuideRowProps) 
         {showRightArrow && (
           <button
             onClick={() => scroll('right')}
-            className="hidden md:flex absolute right-2 top-[40%] -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-background/80 backdrop-blur-md border border-border/85 shadow-lg items-center justify-center text-muted-foreground hover:text-primary hover:bg-background transition-all hover:scale-110 opacity-0 group-hover:opacity-100"
+            className="hidden md:flex absolute -right-3 top-[40%] -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-background/90 backdrop-blur-md border border-border/85 shadow-lg items-center justify-center text-muted-foreground hover:text-primary hover:bg-background transition-all hover:scale-110 opacity-0 group-hover/slider:opacity-100"
             aria-label="Scroll right"
           >
             <ChevronRight className="w-5 h-5" />
@@ -153,11 +154,11 @@ function CareerGuideRow({ title, icon, guides, navigate }: CareerGuideRowProps) 
                 className="flex-none w-[240px] sm:w-[270px] md:w-[310px]"
               >
                 <div
-                  className="p-5 md:p-6 rounded-[5px] bg-card border border-border hover:border-primary/30 hover:shadow-xl transition-all h-full flex flex-col group relative overflow-hidden cursor-pointer"
+                  className="p-5 md:p-6 rounded-[5px] bg-card border border-border hover:border-primary/30 hover:shadow-xl transition-all h-full flex flex-col group/card relative overflow-hidden cursor-pointer"
                   onClick={() => navigate(`/guia-carreira/${guide.id}`)}
                 >
                   {/* Decorative bg icon */}
-                  <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity">
+                  <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover/card:opacity-[0.07] transition-opacity">
                     <CategoryIcon className="w-28 h-28 rotate-12" />
                   </div>
 
@@ -178,7 +179,7 @@ function CareerGuideRow({ title, icon, guides, navigate }: CareerGuideRowProps) 
                   </div>
 
                   {/* Title + description */}
-                  <h3 className="text-base font-bold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2 leading-snug">
+                  <h3 className="text-base font-bold text-foreground mb-2 group-hover/card:text-primary transition-colors line-clamp-2 leading-snug">
                     {guide.title}
                   </h3>
                   {guide.description && (
@@ -193,7 +194,7 @@ function CareerGuideRow({ title, icon, guides, navigate }: CareerGuideRowProps) 
                       <BookOpen className="w-3.5 h-3.5 text-primary/70 shrink-0" />
                       <span className="text-[10px] font-bold tracking-wide uppercase">Começar Guia</span>
                     </div>
-                    <div className="w-8 h-8 rounded-[5px] bg-primary/5 border border-border/50 hover:bg-primary hover:border-primary text-primary hover:text-white flex items-center justify-center transition-all duration-200 shadow-sm group-hover:bg-primary group-hover:text-white">
+                    <div className="w-8 h-8 rounded-[5px] bg-primary/5 border border-border/50 hover:bg-primary hover:border-primary text-primary hover:text-white flex items-center justify-center transition-all duration-200 shadow-sm group-hover/card:bg-primary group-hover/card:text-white">
                       <ArrowRight className="w-4 h-4" />
                     </div>
                   </div>
