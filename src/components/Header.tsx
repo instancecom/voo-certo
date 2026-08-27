@@ -126,6 +126,8 @@ export function Header() {
                 <img 
                   src={getDriveImageUrl(branding.logo_url) || ''} 
                   alt={branding.site_name} 
+                  loading="eager"
+                  decoding="async"
                   className="h-10 md:h-16 w-auto object-contain" 
                 />
               ) : (
@@ -140,54 +142,39 @@ export function Header() {
               )}
             </Link>
           </div>
- 
-          {/* Desktop Navigation */}
+           {/* Desktop Navigation - Renderiza IMEDIATAMENTE sem atrasos ou blocos de skeleton */}
           <nav className="hidden md:flex flex-none items-center justify-center gap-6">
-            {isLoading ? (
-              <div className="flex items-center gap-6 opacity-50">
-                <div className="w-16 h-4 bg-muted/40 animate-pulse rounded" />
-                <div className="w-24 h-4 bg-muted/40 animate-pulse rounded" />
-                <div className="w-20 h-4 bg-muted/40 animate-pulse rounded" />
-                <div className="w-20 h-4 bg-muted/40 animate-pulse rounded" />
-                <div className="w-16 h-4 bg-muted/40 animate-pulse rounded" />
-              </div>
-            ) : (
-              filteredMenuItems.map(item => (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  className={`text-sm font-medium transition-colors hover:text-accent ${
-                    location.pathname === item.to 
-                      ? 'text-accent' 
-                      : isHome && !isScrolled 
-                        ? 'text-white/90' 
-                        : 'text-muted-foreground'
-                  }`}
-                  onMouseEnter={item.prefetch}
-                >
-                  {item.label}
-                </Link>
-              ))
-            )}
+            {filteredMenuItems.map(item => (
+              <Link
+                key={item.to}
+                to={item.to}
+                className={`text-sm font-medium transition-colors hover:text-accent ${
+                  location.pathname === item.to 
+                    ? 'text-accent font-semibold' 
+                    : isHome && !isScrolled 
+                      ? 'text-white/95' 
+                      : 'text-muted-foreground'
+                }`}
+                onMouseEnter={item.prefetch}
+              >
+                {item.label}
+              </Link>
+            ))}
           </nav>
 
-          {/* User Actions */}
+          {/* User Actions - Renderização direta e robusta */}
           <div className="flex-1 flex items-center justify-end gap-4">
             <div className="hidden md:flex items-center gap-4 justify-end">
               {user ? (
-                /* Session found - show user UI immediately (profile data may fill in later) */
                 <>
-                  {/* Admin button area with stabilizer to prevent flicker */}
-                  {user && isLoading ? (
-                    <div className="w-20 h-8 mr-2 bg-muted/20 animate-pulse rounded-[5px]" />
-                  ) : isAdmin ? (
+                  {isAdmin && (
                     <Button variant="ghost" size="sm" asChild className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''}>
-                      <Link to="/admin" className="flex items-center gap-2">
+                      <Link to="/admin" className="flex items-center gap-2 font-semibold">
                         <Settings className="w-4 h-4" />
                         Admin
                       </Link>
                     </Button>
-                  ) : null}
+                  )}
                   
                   <NotificationBell className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''} />
                   
@@ -196,10 +183,10 @@ export function Header() {
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        className={`flex items-center gap-2 rounded-[5px] ${isHome && !isScrolled ? 'bg-white/10 text-white border-white/20 hover-yellow hover:text-foreground' : 'hover-yellow'}`}
+                        className={`flex items-center gap-2 rounded-[5px] font-semibold ${isHome && !isScrolled ? 'bg-white/10 text-white border-white/20 hover-yellow hover:text-foreground' : 'hover-yellow'}`}
                       >
                         <User className="w-4 h-4" />
-                        <span className="max-w-[100px] truncate">
+                        <span className="max-w-[110px] truncate">
                           {profile?.full_name?.split(' ')[0] || user.email?.split('@')[0]}
                         </span>
                       </Button>
@@ -227,11 +214,7 @@ export function Header() {
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </>
-              ) : isLoading ? (
-                /* Still checking auth state - show pulse to avoid flickering guest buttons */
-                <div className="w-24 h-8 bg-muted/20 animate-pulse rounded-[5px]" />
               ) : (
-                /* Confirmed guest - show login/register */
                 <>
                   <Button variant="ghost" size="sm" asChild className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''}>
                     <Link to="/auth?mode=login">Entrar</Link>
@@ -244,30 +227,15 @@ export function Header() {
             </div>
 
             <div className="flex items-center gap-2 md:hidden">
-              {user ? (
-                <>
-                  <NotificationBell className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''} />
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''}
-                    onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  >
-                    {isMenuOpen ? <X /> : < Menu />}
-                  </Button>
-                </>
-              ) : isLoading ? (
-                <div className="w-8 h-8 rounded-full bg-muted/20 animate-pulse" />
-              ) : (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''}
-                  onClick={() => setIsMenuOpen(!isMenuOpen)}
-                >
-                  {isMenuOpen ? <X /> : <Menu />}
-                </Button>
-              )}
+              {user && <NotificationBell className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''} />}
+              <Button
+                variant="ghost"
+                size="icon"
+                className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''}
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+              >
+                {isMenuOpen ? <X /> : <Menu />}
+              </Button>
             </div>
           </div>
         </div>
