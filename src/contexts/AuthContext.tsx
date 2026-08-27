@@ -31,36 +31,73 @@ interface AuthContextType {
   refreshProfile: () => Promise<void>;
 }
 
+const AUTH_CACHE_KEY = 'voecerto_auth_cache_v2';
+
+interface CachedAuthData {
+  user: User | null;
+  profile: Profile | null;
+  isAdmin: boolean;
+  isPremium: boolean;
+  isTester: boolean;
+}
+
+const getInitialAuthCache = (): CachedAuthData => {
+  try {
+    const raw = localStorage.getItem(AUTH_CACHE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.user) {
+        return parsed;
+      }
+    }
+  } catch (e) {}
+  return { user: null, profile: null, isAdmin: false, isPremium: false, isTester: false };
+};
+
+const saveAuthCache = (data: CachedAuthData) => {
+  try {
+    if (data.user) {
+      localStorage.setItem(AUTH_CACHE_KEY, JSON.stringify(data));
+    } else {
+      localStorage.removeItem(AUTH_CACHE_KEY);
+    }
+  } catch (e) {}
+};
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const initialCache = getInitialAuthCache();
+  const [user, setUser] = useState<User | null>(initialCache.user);
   const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isPremium, setIsPremium] = useState(false);
-  const [isTester, setIsTester] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [profile, setProfile] = useState<Profile | null>(initialCache.profile);
+  const [isAdmin, setIsAdmin] = useState<boolean>(initialCache.isAdmin);
+  const [isPremium, setIsPremium] = useState<boolean>(initialCache.isPremium);
+  const [isTester, setIsTester] = useState<boolean>(initialCache.isTester);
+  const [isLoading, setIsLoading] = useState<boolean>(!initialCache.user);
 
-  const fetchProfile = async (userId: string) => {
+  const fetchProfile = async (userId: string, currentUser?: User) => {
     try {
+      const targetUser = currentUser || user;
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
         .eq('user_id', userId)
         .maybeSingle();
 
-      if (profileError) {
-        console.error('Error fetching profile:', profileError);
-        return;
-      }
+      let currentProfile = profile;
+      let currentIsPremium = isPremium;
+      let currentIsTester = isTester;
+      let currentIsAdmin = isAdmin;
 
-      if (profileData) {
+      if (!profileError && profileData) {
+        currentProfile = profileData;
         setProfile(profileData);
-        // Expirar premium se a validade passou
         const hasExpired = profileData.premium_expires_at && new Date(profileData.premium_expires_at) < new Date();
-        setIsPremium((profileData.is_premium && !hasExpired) || false);
-        setIsTester(profileData.is_tester || false);
+        currentIsPremium = (profileData.is_premium && !hasExpired) || false;
+        currentIsTester = profileData.is_tester || false;
+        setIsPremium(currentIsPremium);
+        setIsTester(currentIsTester);
       }
 
       // Check if user is admin
@@ -72,9 +109,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .maybeSingle();
 
       if (!roleError && roleData) {
+        currentIsAdmin = true;
         setIsAdmin(true);
       } else {
+        currentIsAdmin = false;
         setIsAdmin(false);
+      }
+
+      // Atualiza o cache síncrono no localStorage para carregamentos instantâneos futuros
+      if (targetUser) {
+        saveAuthCache({
+          user: targetUser,
+          profile: currentProfile,
+          isAdmin: currentIsAdmin,
+          isPremium: currentIsPremium,
+          isTester: currentIsTester,
+        });
       }
     } catch (error) {
       console.error('Error in fetchProfile:', error);
@@ -83,11 +133,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const refreshProfile = async () => {
     if (user) {
-      await fetchProfile(user.id);
+      await fetchProfile(user.id, user);
     }
   };
 
   const signOut = async () => {
+    saveAuthCache({ user: null, profile: null, isAdmin: false, isPremium: false, isTester: false });
     await supabase.auth.signOut();
     setUser(null);
     setSession(null);
@@ -98,23 +149,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    // Set up auth state listener FIRST
+    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
+      async (event, currentSession) => {
+        setSession(currentSession);
+        const currentUser = currentSession?.user ?? null;
+        setUser(currentUser);
 
-        if (session?.user) {
-          // Defer profile fetch to avoid Supabase deadlock
+        if (currentUser) {
+          saveAuthCache({
+            user: currentUser,
+            profile,
+            isAdmin,
+            isPremium,
+            isTester,
+          });
+
           setTimeout(() => {
-            fetchProfile(session.user.id);
+            fetchProfile(currentUser.id, currentUser);
           }, 0);
 
           // Conceder insígnia "Check-in Feito" somente no primeiro login
           if (event === 'SIGNED_IN') {
             setTimeout(async () => {
               try {
-                // Busca a insígnia de first_login
                 const { data: badge } = await supabase
                   .from('insignias')
                   .select('id')
@@ -123,23 +181,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                   .maybeSingle();
 
                 if (badge?.id) {
-                  // Verifica se o usuário já tem essa insígnia para evitar o erro 409 Conflict no console
                   const { data: existing } = await supabase
                     .from('user_insignias')
                     .select('id')
-                    .eq('user_id', session.user.id)
+                    .eq('user_id', currentUser.id)
                     .eq('insignia_id', badge.id)
                     .maybeSingle();
 
                   if (!existing) {
                     await supabase
                       .from('user_insignias')
-                      .insert({ user_id: session.user.id, insignia_id: badge.id })
+                      .insert({ user_id: currentUser.id, insignia_id: badge.id })
                       .throwOnError();
                   }
                 }
               } catch (err: any) {
-                // Código 23505 = duplicate key — usuário já tem a insígnia, ignorar
                 if (err?.code !== '23505') {
                   console.error('Erro ao conceder insígnia de primeiro login:', err);
                 }
@@ -147,6 +203,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }, 500);
           }
         } else {
+          saveAuthCache({ user: null, profile: null, isAdmin: false, isPremium: false, isTester: false });
           setProfile(null);
           setIsAdmin(false);
           setIsPremium(false);
@@ -155,16 +212,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     );
 
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        fetchProfile(session.user.id).finally(() => {
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      setSession(currentSession);
+      const currentUser = currentSession?.user ?? null;
+      setUser(currentUser);
+
+      if (currentUser) {
+        saveAuthCache({
+          user: currentUser,
+          profile,
+          isAdmin,
+          isPremium,
+          isTester,
+        });
+        fetchProfile(currentUser.id, currentUser).finally(() => {
           setIsLoading(false);
         });
       } else {
+        saveAuthCache({ user: null, profile: null, isAdmin: false, isPremium: false, isTester: false });
         setIsLoading(false);
       }
     });
