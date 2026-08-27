@@ -482,11 +482,10 @@ export default function CurriculumPage() {
         ) : (
           <>
             {/* Banner de Título Superior (Oculto na impressão) */}
-            <div className="print:hidden mb-8">
-              <div className="flex flex-col gap-4 border-b border-border pb-6">
+            <div className="print:hidden mb-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/80 pb-6">
                 <div>
                   <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight flex items-center gap-2.5">
-                    <FileText className="w-7 h-7 sm:w-8 sm:h-8 text-primary shrink-0" />
                     Galeria de Currículos com IA
                   </h1>
                   <p className="text-muted-foreground mt-1 text-xs sm:text-sm font-medium">
@@ -494,16 +493,31 @@ export default function CurriculumPage() {
                   </p>
                 </div>
 
-                {/* Alternador de Modo de Navegação */}
-                <div className="flex items-center gap-2 bg-muted/60 p-1.5 rounded-[5px] border border-border w-full sm:w-fit overflow-x-auto">
+                {/* Botão de Destaque no Topo Direito (Estilo Imagem de Referência) */}
+                <Button
+                  onClick={handleStartNewCurriculum}
+                  className="gap-2.5 font-bold text-xs sm:text-sm bg-[#0f172a] text-white hover:bg-slate-900 rounded-[5px] h-11 px-5 shadow-sm shrink-0 w-full sm:w-auto justify-center"
+                >
+                  <div className="w-6 h-6 rounded-[5px] overflow-hidden shrink-0 border border-amber-400/80 bg-slate-900">
+                    <img src="/images/avatars/mike_character_curiculum.png" alt="Mike" className="w-full h-full object-cover block" />
+                  </div>
+                  <span>+ Criar com Mike</span>
+                </Button>
+              </div>
+
+              {/* Aba de Navegação Inferior (Estilo Galeria de Abas) */}
+              <div className="flex items-center gap-2 pt-4">
+                <div className="flex items-center gap-1.5 bg-muted/50 p-1 rounded-[5px] border border-border/80 w-full sm:w-fit overflow-x-auto">
                   {savedCurriculums.length > 0 && (
                     <Button
                       variant={mode === 'dashboard' ? 'default' : 'ghost'}
                       size="sm"
                       onClick={() => setMode('dashboard')}
-                      className="gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap flex-1 sm:flex-initial"
+                      className={`gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap flex-1 sm:flex-initial h-9 px-4 ${
+                        mode === 'dashboard' ? 'bg-card text-foreground shadow-sm border border-border/60' : 'text-muted-foreground hover:text-foreground'
+                      }`}
                     >
-                      <Layout className="w-4 h-4" />
+                      <Layout className="w-4 h-4 text-primary" />
                       Galeria ({savedCurriculums.length})
                     </Button>
                   )}
@@ -512,12 +526,12 @@ export default function CurriculumPage() {
                     variant={mode === 'chat' ? 'default' : 'ghost'}
                     size="sm"
                     onClick={handleStartNewCurriculum}
-                    className="gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap flex-1 sm:flex-initial"
+                    className={`gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap flex-1 sm:flex-initial h-9 px-4 ${
+                      mode === 'chat' ? 'bg-card text-foreground shadow-sm border border-border/60' : 'text-muted-foreground hover:text-foreground'
+                    }`}
                   >
-                    <span className="w-5 h-5 rounded-[5px] overflow-hidden shrink-0 border border-amber-400 inline-block align-middle" style={{ width: '20px', height: '20px', minWidth: '20px', maxWidth: '20px', minHeight: '20px', maxHeight: '20px' }}>
-                      <img src="/images/avatars/mike_character_curiculum.png" alt="Mike" width={20} height={20} className="w-5 h-5 rounded-[5px] object-cover block" style={{ width: '20px', height: '20px', minWidth: '20px', maxWidth: '20px', minHeight: '20px', maxHeight: '20px', objectFit: 'cover' }} />
-                    </span>
-                    + Criar com Mike
+                    <Sparkles className="w-4 h-4 text-amber-500" />
+                    Assistente Mike
                   </Button>
 
                   {data.full_name && (
@@ -525,9 +539,11 @@ export default function CurriculumPage() {
                       variant={mode === 'editor' ? 'default' : 'ghost'}
                       size="sm"
                       onClick={() => setMode('editor')}
-                      className="gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap flex-1 sm:flex-initial"
+                      className={`gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap flex-1 sm:flex-initial h-9 px-4 ${
+                        mode === 'editor' ? 'bg-card text-foreground shadow-sm border border-border/60' : 'text-muted-foreground hover:text-foreground'
+                      }`}
                     >
-                      <Edit3 className="w-4 h-4" />
+                      <Edit3 className="w-4 h-4 text-primary" />
                       Editar Currículo
                     </Button>
                   )}

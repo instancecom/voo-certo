@@ -1,12 +1,10 @@
-﻿import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bot, User, Send, Sparkles, Loader2, CheckCircle2, ArrowRight, Shield, Lightbulb, RefreshCw } from 'lucide-react';
+import { User, Send, Sparkles, Loader2, CheckCircle2, ShieldCheck, Lightbulb } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -20,6 +18,7 @@ interface Message {
   sender: 'ai' | 'user';
   text: string;
   step?: number;
+  timestamp: string;
 }
 
 const QUESTIONS = [
@@ -48,21 +47,21 @@ const QUESTIONS = [
     step: 3,
     title: 'Formação Acadêmica',
     question: 'Qual sua formação acadêmica? (Ensino médio, faculdade, pós-graduação)',
-    placeholder: 'Ex: Ensino Médio Completo no Colégio Estadual (2020) e Faculdade de Aviação Civil na Anhembi Morumbi (2023)',
+    placeholder: 'Ex: Ensino Médio Completo no Colégio Estadual (2020) e Faculdade de Aviação Civil (2023)',
     quickOptions: ['Ensino Médio Completo', 'Superior em Aviação Civil', 'Superior em Letras / Comunicação', 'Curso Homologado ANAC'],
   },
   {
     step: 4,
     title: 'Experiência Profissional',
     question: 'Tem experiência profissional anterior? Pode me contar do seu jeito (empresas, cargos e o que fazia lá).',
-    placeholder: 'Ex: Trabalhei 2 anos como atendente na Latam cuidando do embarque e 1 ano em recepção de hotel...',
+    placeholder: 'Ex: Trabalhei 2 anos como atendente cuidando do embarque e 1 ano em recepção...',
     quickOptions: ['Ainda não tenho experiência formal (Primeiro emprego)', 'Atendimento ao Cliente / Vendas', 'Experiência prévia em Aviação'],
   },
   {
     step: 5,
     title: 'Cursos & Idiomas',
     question: 'Tem cursos, certificações (ex: CCT/CMS ANAC, Primeiros Socorros) ou idiomas (Inglês, Espanhol)?',
-    placeholder: 'Ex: CCT ANAC aprovado, Curso de Comissário na EACON, Inglês Intermediário e Espanhol Básico',
+    placeholder: 'Ex: CCT ANAC aprovado, Curso de Comissário, Inglês Intermediário e Espanhol Básico',
     quickOptions: ['Banca ANAC Aprovada (CCT/CMS)', 'Inglês Intermediário / Avançado', 'Primeiros Socorros / Sobrevivência', 'Espanhol Básico'],
   },
   {
@@ -80,22 +79,28 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
     q0: userName ? `${userName}, ${userEmail || ''}` : '',
   });
   const [inputText, setInputText] = useState('');
+
+  const getFormattedTime = () =>
+    new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
   const [messages, setMessages] = useState<Message[]>([
     {
       sender: 'ai',
       text: `Olá! Sou o Mike, assistente completo do Voe Certo. ✈️\n\nVamos criar o seu currículo profissional de alto impacto?\n\n💡 **Dica importante:** Pode responder do seu jeito, sem se preocupar com gramática ou estrutura — eu cuido da formatação, ajusto os verbos de ação e escolho o modelo ideal pra você. Bora!`,
       step: -1,
+      timestamp: getFormattedTime(),
     },
     {
       sender: 'ai',
       text: QUESTIONS[0].question,
       step: 0,
+      timestamp: getFormattedTime(),
     },
   ]);
   const [isGenerating, setIsGenerating] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to bottom of conversation
+  // Scroll automático suave para a última mensagem
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
@@ -103,7 +108,6 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
   }, [messages, isGenerating]);
 
   const activeQuestion = QUESTIONS[currentStep];
-  const progressPercent = Math.round(((currentStep + 1) / QUESTIONS.length) * 100);
 
   const handleSendAnswer = async (textToSend?: string) => {
     const finalAnswer = (textToSend || inputText).trim();
@@ -118,10 +122,12 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
     };
     setAnswers(updatedAnswers);
 
-    // Add user message to chat list
+    const now = getFormattedTime();
+
+    // Adiciona mensagem do usuário
     const newMessages: Message[] = [
       ...messages,
-      { sender: 'user', text: finalAnswer || '(Passo pulado)' },
+      { sender: 'user', text: finalAnswer || '(Passo pulado)', timestamp: now },
     ];
 
     setInputText('');
@@ -133,10 +139,11 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
         sender: 'ai',
         text: QUESTIONS[nextStep].question,
         step: nextStep,
+        timestamp: getFormattedTime(),
       });
       setMessages(newMessages);
     } else {
-      // Step 6 reached -> Generate curriculum with IA!
+      // Passo final atingido -> Gerar currículo com IA!
       setMessages(newMessages);
       await generateFinalCurriculum(updatedAnswers);
     }
@@ -163,7 +170,6 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
       console.error('Erro ao gerar currículo com IA:', err);
       toast.warning('Mike formatando currículo com base nas respostas enviadas...');
 
-      // Fallback inteligente com base direta nas respostas fornecidas pelo usuário
       const fallbackCurriculum = {
         full_name: finalAnswers.q0?.split(',')[0]?.trim() || userName || 'Candidato Voe Certo',
         email: userEmail || '',
@@ -194,56 +200,85 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
     }
   };
 
+  // Helper para renderizar negritos (**texto**) no formato visual da conversa
+  const renderFormattedText = (text: string) => {
+    const parts = text.split(/(\*\*.*?\*\*)/g);
+    return parts.map((part, index) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return (
+          <strong key={index} className="font-bold text-foreground">
+            {part.slice(2, -2)}
+          </strong>
+        );
+      }
+      return part;
+    });
+  };
+
   return (
-    <Card className="border-border bg-card shadow-lg rounded-[5px] overflow-hidden max-w-3xl mx-auto flex flex-col my-2">
-      {/* Top Header Banner */}
-      <div className="bg-primary text-primary-foreground p-4 sm:p-5 flex items-center justify-between shrink-0 border-b border-primary/20">
-        <div className="flex items-center gap-3 sm:gap-3.5 min-w-0 flex-1">
+    <Card className="border-border/80 bg-card shadow-md rounded-[5px] overflow-hidden max-w-4xl mx-auto flex flex-col my-2">
+      {/* ── HEADER ESCURO DO MIKE ── */}
+      <div className="bg-[#0f172a] text-white p-4 sm:p-5 rounded-t-[5px] flex items-center justify-between shrink-0 border-b border-slate-800">
+        <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
           <div className="relative shrink-0">
-            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-[5px] overflow-hidden shrink-0 border-2 border-amber-400 shadow-sm" style={{ width: '44px', height: '44px', minWidth: '44px', maxWidth: '44px', minHeight: '44px', maxHeight: '44px' }}>
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-[5px] overflow-hidden shrink-0 border-2 border-amber-400/80 shadow-sm bg-slate-900">
               <img
                 src="/images/avatars/mike_character_curiculum.png"
                 alt="Mike - Assistente Completo"
                 className="w-full h-full object-cover block"
               />
             </div>
-            <div className="absolute -bottom-0.5 -right-0.5 bg-amber-500 rounded-full p-1 border-2 border-primary">
-              <Sparkles className="w-2.5 h-2.5 text-white" />
+            <div className="absolute -bottom-1 -right-1 bg-amber-500 rounded-[5px] p-0.5 border border-slate-900">
+              <Sparkles className="w-3 h-3 text-slate-950" />
             </div>
           </div>
           <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-center gap-1.5">
-              <h3 className="font-bold text-sm sm:text-base leading-tight">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="font-black text-base sm:text-lg text-white leading-tight">
                 Mike
               </h3>
-              <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-300 bg-amber-400/10 rounded-[5px] shrink-0 whitespace-nowrap">
+              <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-300 bg-amber-400/10 rounded-[5px] px-2 py-0.5 font-bold uppercase tracking-wider">
                 Assistente Completo
               </Badge>
             </div>
-            <p className="text-[11px] sm:text-xs text-primary-foreground/80 font-medium mt-0.5 leading-snug">
-              Conversa guiada para montagem e otimização do seu currículo
+            <p className="text-xs text-slate-300 font-medium mt-1 leading-snug truncate">
+              Seu assistente para montagem e otimização do currículo
             </p>
           </div>
         </div>
 
-        <div className="text-right shrink-0 ml-2">
-          <span className="text-[10px] sm:text-xs font-bold text-amber-300 font-mono whitespace-nowrap">Passo {currentStep + 1} de {QUESTIONS.length}</span>
-          <Progress value={progressPercent} className="w-16 sm:w-24 h-1.5 sm:h-2 mt-1 bg-primary-foreground/20 rounded-[5px]" />
+        {/* Contador e Destaque dos Passos */}
+        <div className="text-right shrink-0 ml-3 flex flex-col items-end">
+          <span className="text-xs font-bold text-amber-300 font-mono tracking-wide">
+            Passo {currentStep + 1} de {QUESTIONS.length}
+          </span>
+          <div className="flex items-center gap-1 mt-1.5">
+            {QUESTIONS.map((_, idx) => (
+              <div
+                key={idx}
+                className={`h-1.5 sm:h-2 rounded-[5px] transition-all duration-300 ${
+                  idx <= currentStep ? 'w-4 sm:w-6 bg-amber-400' : 'w-2 sm:w-3 bg-white/20'
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Motivational Reassurance Card */}
-      <div className="bg-secondary/60 border-b border-border px-4 py-2.5 flex items-start gap-2.5 text-xs text-foreground shrink-0">
-        <Lightbulb className="w-4 h-4 shrink-0 text-amber-500 mt-0.5" />
-        <span>
-          <strong>Sem estresse de escrita:</strong> Pode responder com suas palavras simples. O Mike refina a gramática, ajusta os verbos de ação e escolhe o melhor layout pra você.
-        </span>
+      {/* ── CARD DE DICA / ORIENTAÇÃO (MINIMALISTA NO MOBILE) ── */}
+      <div className="bg-sky-50 dark:bg-sky-950/40 border-b border-sky-200/60 dark:border-sky-900/60 px-4 py-3 sm:px-5 sm:py-3 flex items-start gap-3 text-xs sm:text-sm text-sky-950 dark:text-sky-200 shrink-0">
+        <Lightbulb className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-amber-500 mt-0.5" />
+        <p className="leading-relaxed">
+          <strong className="font-bold text-sky-900 dark:text-sky-100">Sem estresse de escrita:</strong>{' '}
+          <span className="hidden sm:inline">Mike ajuda você a criar um currículo claro, profissional e alinhado aos seus objetivos. Ele ajusta a gramática, os verbos de ação e sugere o melhor layout pra você.</span>
+          <span className="sm:hidden">Mike ajusta a gramática, os verbos de ação e escolhe o layout ideal pra você.</span>
+        </p>
       </div>
 
-      {/* Chat Conversation Body (With auto-scroll ref and responsive height) */}
+      {/* ── ÁREA DE CHAT / CONVERSA ── */}
       <CardContent 
         ref={chatContainerRef} 
-        className="p-4 sm:p-6 space-y-4 max-h-[380px] sm:max-h-[440px] min-h-[250px] overflow-y-auto scroll-smooth scrollbar-thin flex-1"
+        className="p-4 sm:p-6 space-y-4 max-h-[360px] sm:max-h-[460px] min-h-[250px] overflow-y-auto scroll-smooth scrollbar-thin flex-1 bg-card"
       >
         <AnimatePresence initial={false}>
           {messages.map((msg, i) => (
@@ -251,11 +286,11 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
               key={i}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.25 }}
-              className={`flex gap-2.5 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+              transition={{ duration: 0.2 }}
+              className={`flex gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {msg.sender === 'ai' && (
-                <div className="w-8 h-8 rounded-[5px] overflow-hidden shrink-0 border border-primary/30 mt-1 shadow-sm" style={{ width: '32px', height: '32px', minWidth: '32px', maxWidth: '32px', minHeight: '32px', maxHeight: '32px' }}>
+                <div className="w-8 h-8 rounded-[5px] overflow-hidden shrink-0 border border-primary/30 mt-1 shadow-sm bg-slate-900">
                   <img
                     src="/images/avatars/mike_character_curiculum.png"
                     alt="Mike"
@@ -265,17 +300,22 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
               )}
 
               <div
-                className={`max-w-[88%] sm:max-w-[78%] p-3.5 sm:p-4 rounded-[5px] text-xs sm:text-sm leading-relaxed whitespace-pre-line ${
+                className={`max-w-[88%] sm:max-w-[80%] p-3.5 sm:p-4 rounded-[5px] text-xs sm:text-sm leading-relaxed whitespace-pre-line shadow-sm border ${
                   msg.sender === 'user'
-                    ? 'bg-primary text-primary-foreground font-medium'
-                    : 'bg-muted/70 text-foreground border border-border/60'
+                    ? 'bg-[#0f172a] text-white border-slate-800 font-medium'
+                    : 'bg-card text-foreground border-border/80'
                 }`}
               >
-                {msg.text}
+                <div>{renderFormattedText(msg.text)}</div>
+                <span className={`text-[10px] font-mono text-right block mt-1.5 ${
+                  msg.sender === 'user' ? 'text-slate-400' : 'text-muted-foreground/60'
+                }`}>
+                  {msg.timestamp}
+                </span>
               </div>
 
               {msg.sender === 'user' && (
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-[5px] bg-muted flex items-center justify-center text-muted-foreground shrink-0 mt-1">
+                <div className="w-8 h-8 rounded-[5px] bg-muted border border-border flex items-center justify-center text-muted-foreground shrink-0 mt-1">
                   <User className="w-4 h-4" />
                 </div>
               )}
@@ -287,27 +327,27 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex items-center gap-3 p-4 rounded-[5px] bg-primary/5 border border-primary/20 text-primary text-xs font-bold"
+            className="flex items-center gap-3 p-4 rounded-[5px] bg-primary/5 border border-primary/20 text-primary text-xs sm:text-sm font-bold shadow-sm"
           >
-            <Loader2 className="w-5 h-5 animate-spin shrink-0" />
-            <span>Mike formatando seu histórico, aplicando verbos de ação e selecionando o modelo ideal...</span>
+            <Loader2 className="w-5 h-5 animate-spin shrink-0 text-primary" />
+            <span>Mike analisando suas respostas, aprimorando a estrutura e gerando seu currículo...</span>
           </motion.div>
         )}
       </CardContent>
 
-      {/* Quick Input Options & Form Controls */}
-      <div className="p-4 sm:p-5 border-t border-border bg-muted/20 space-y-3 shrink-0">
-        {/* Quick Suggestion Chips */}
+      {/* ── ÁREA DE INPUT E RESPOSTAS RÁPIDAS ── */}
+      <div className="p-4 sm:p-5 border-t border-border/80 bg-muted/20 space-y-3 shrink-0">
+        {/* Chips de Respostas Rápidas */}
         {!isGenerating && activeQuestion?.quickOptions && activeQuestion.quickOptions.length > 0 && (
           <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-1">
-            <span className="text-[11px] font-semibold text-muted-foreground w-full flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-amber-500" /> Respostas rápidas sugeridas:
+            <span className="text-[11px] font-bold text-muted-foreground w-full flex items-center gap-1">
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Respostas rápidas sugeridas:
             </span>
             {activeQuestion.quickOptions.map((opt, idx) => (
               <Badge
                 key={idx}
                 variant="outline"
-                className="cursor-pointer bg-background hover:bg-primary/10 hover:text-primary hover:border-primary/40 transition-colors py-1.5 px-2.5 text-[11px] sm:text-xs"
+                className="cursor-pointer bg-card hover:bg-primary/10 hover:text-primary hover:border-primary/40 transition-colors py-1.5 px-3 rounded-[5px] text-xs font-semibold border-border"
                 onClick={() => handleSendAnswer(opt)}
               >
                 {opt}
@@ -316,52 +356,98 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
           </div>
         )}
 
-        {/* Input Box */}
+        {/* Input & Botão Enviar */}
         {!isGenerating && (
-          <div className="flex gap-2 items-end">
-            <Textarea
-              rows={2}
-              placeholder={activeQuestion?.placeholder || 'Digite sua resposta...'}
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSendAnswer();
-                }
-              }}
-              className="resize-none font-medium text-xs sm:text-sm bg-background border-border"
-            />
+          <div className="space-y-2">
+            <div className="flex gap-2 items-center">
+              <Input
+                placeholder={activeQuestion?.placeholder || 'Digite sua resposta aqui...'}
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSendAnswer();
+                  }
+                }}
+                className="flex-1 font-medium text-xs sm:text-sm bg-card border-border h-11 rounded-[5px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary"
+              />
 
-            <div className="flex flex-col gap-1 shrink-0">
               <Button
                 onClick={() => handleSendAnswer()}
                 disabled={isGenerating || (!inputText.trim() && currentStep === 0)}
-                className="h-12 px-4 sm:px-5 gap-2 font-bold text-xs sm:text-sm"
+                className="h-11 px-5 rounded-[5px] font-bold text-xs sm:text-sm bg-[#0f172a] text-white hover:bg-slate-900 gap-2 shrink-0 shadow-sm"
               >
                 {currentStep === QUESTIONS.length - 1 ? (
-                  <>Gerar <Sparkles className="w-4 h-4" /></>
+                  <>Gerar <Sparkles className="w-4 h-4 text-amber-400" /></>
                 ) : (
                   <>Enviar <Send className="w-4 h-4" /></>
                 )}
               </Button>
+            </div>
 
-              {currentStep > 0 && currentStep < QUESTIONS.length - 1 && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleSendAnswer('Não se aplica / Pular')}
-                  className="text-[10px] text-muted-foreground hover:text-foreground h-6"
-                >
-                  Pular passo
-                </Button>
-              )}
+            <div className="flex flex-wrap justify-between items-center text-[10px] sm:text-xs text-muted-foreground font-medium px-1 gap-2">
+              <span className="truncate max-w-[260px] sm:max-w-none">
+                {activeQuestion?.placeholder ? `Ex: ${activeQuestion.placeholder.split(',')[0]}...` : ''}
+              </span>
+              <div className="flex items-center gap-3 ml-auto">
+                {currentStep > 0 && currentStep < QUESTIONS.length - 1 && (
+                  <button
+                    onClick={() => handleSendAnswer('Não se aplica / Pular')}
+                    className="text-muted-foreground hover:text-foreground underline transition-colors"
+                  >
+                    Pular passo
+                  </button>
+                )}
+                <span className="hidden sm:inline text-muted-foreground/70">Pressione Enter para enviar</span>
+              </div>
             </div>
           </div>
         )}
       </div>
+
+      {/* ── FOOTER DE DIFERENCIAIS (REDE DE BENEFÍCIOS MINIMALISTA NO MOBILE) ── */}
+      <div className="border-t border-border/80 bg-muted/40 p-4 sm:p-5 rounded-b-[5px]">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-left">
+          
+          <div className="flex items-center sm:items-start gap-3">
+            <div className="w-8 h-8 rounded-[5px] bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 text-primary">
+              <ShieldCheck className="w-4 h-4" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-foreground">Privacidade garantida</h4>
+              <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">
+                Seus dados estão seguros e protegidos.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center sm:items-start gap-3">
+            <div className="w-8 h-8 rounded-[5px] bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0 text-amber-500">
+              <Sparkles className="w-4 h-4" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-foreground">IA especializada</h4>
+              <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">
+                Focada em aviação civil e mercado corporativo.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center sm:items-start gap-3">
+            <div className="w-8 h-8 rounded-[5px] bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-500">
+              <CheckCircle2 className="w-4 h-4" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-foreground">Resultados rápidos</h4>
+              <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">
+                Respostas precisas para um currículo de alto impacto.
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
     </Card>
   );
 }
-
-
