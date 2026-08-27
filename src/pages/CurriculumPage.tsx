@@ -481,69 +481,92 @@ export default function CurriculumPage() {
           </div>
         ) : (
           <>
-            {/* Banner de Título Superior (Oculto na impressão) */}
-            <div className="print:hidden mb-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/80 pb-6">
-                <div>
-                  <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight flex items-center gap-2.5">
-                    Galeria de Currículos com IA
-                  </h1>
-                  <p className="text-muted-foreground mt-1 text-xs sm:text-sm font-medium">
+            {/* Banner de Título & Workspace Header Unificado (Oculto na impressão) */}
+            <div className="print:hidden mb-8">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-card border border-border/80 p-5 sm:p-6 rounded-[5px] shadow-sm">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <h1 className="text-xl sm:text-2xl font-black text-foreground tracking-tight flex items-center gap-2.5">
+                      <FileText className="w-6 h-6 text-primary shrink-0" />
+                      Galeria de Currículos com IA
+                    </h1>
+                    <Badge variant="outline" className="border-amber-400/40 text-amber-600 dark:text-amber-400 bg-amber-400/10 text-[10px] font-bold uppercase rounded-[5px]">
+                      Assistente Mike
+                    </Badge>
+                  </div>
+                  <p className="text-xs sm:text-sm text-muted-foreground font-medium">
                     Crie e gerencie currículos profissionais otimizados para a aviação civil e mercado corporativo.
                   </p>
                 </div>
 
-                {/* Botão de Destaque no Topo Direito (Estilo Imagem de Referência) */}
-                <Button
-                  onClick={handleStartNewCurriculum}
-                  className="gap-2.5 font-bold text-xs sm:text-sm bg-[#0f172a] text-white hover:bg-slate-900 rounded-[5px] h-11 px-5 shadow-sm shrink-0 w-full sm:w-auto justify-center"
-                >
-                  <div className="w-6 h-6 rounded-[5px] overflow-hidden shrink-0 border border-amber-400/80 bg-slate-900">
-                    <img src="/images/avatars/mike_character_curiculum.png" alt="Mike" className="w-full h-full object-cover block" />
-                  </div>
-                  <span>+ Criar com Mike</span>
-                </Button>
+                {/* Único Botão de Ação Principal no Topo — Sem Duplicações! */}
+                {mode === 'dashboard' ? (
+                  <Button
+                    onClick={handleStartNewCurriculum}
+                    className="gap-2.5 font-bold text-xs sm:text-sm bg-[#0f172a] text-white hover:bg-slate-900 rounded-[5px] h-11 px-5 shadow-sm shrink-0 w-full sm:w-auto justify-center"
+                  >
+                    <div className="w-6 h-6 rounded-[5px] overflow-hidden shrink-0 border border-amber-400/80 bg-slate-900">
+                      <img src="/images/avatars/mike_character_curiculum.png" alt="Mike" className="w-full h-full object-cover block" />
+                    </div>
+                    <span>+ Criar com Mike</span>
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outline"
+                    onClick={() => setMode('dashboard')}
+                    className="gap-2 font-bold text-xs sm:text-sm border-border hover:bg-muted rounded-[5px] h-11 px-4 shrink-0 w-full sm:w-auto justify-center"
+                  >
+                    <Layout className="w-4 h-4 text-primary" />
+                    <span>Voltar à Galeria</span>
+                  </Button>
+                )}
               </div>
 
-              {/* Aba de Navegação Inferior (Estilo Galeria de Abas) */}
+              {/* Barra de Abas de Navegação Integrada */}
               <div className="flex items-center gap-2 pt-4">
-                <div className="flex items-center gap-1.5 bg-muted/50 p-1 rounded-[5px] border border-border/80 w-full sm:w-fit overflow-x-auto">
+                <div className="flex items-center gap-1.5 bg-muted/40 p-1.5 rounded-[5px] border border-border/80 w-full sm:w-fit overflow-x-auto">
                   {savedCurriculums.length > 0 && (
                     <Button
-                      variant={mode === 'dashboard' ? 'default' : 'ghost'}
+                      variant="ghost"
                       size="sm"
                       onClick={() => setMode('dashboard')}
-                      className={`gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap flex-1 sm:flex-initial h-9 px-4 ${
-                        mode === 'dashboard' ? 'bg-card text-foreground shadow-sm border border-border/60' : 'text-muted-foreground hover:text-foreground'
+                      className={`gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap flex-1 sm:flex-initial h-9 px-4 transition-all ${
+                        mode === 'dashboard' 
+                          ? 'bg-[#0f172a] text-white shadow-sm hover:bg-[#0f172a] hover:text-white' 
+                          : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
                       }`}
                     >
-                      <Layout className="w-4 h-4 text-primary" />
+                      <Layout className="w-4 h-4" />
                       Galeria ({savedCurriculums.length})
                     </Button>
                   )}
 
                   <Button
-                    variant={mode === 'chat' ? 'default' : 'ghost'}
+                    variant="ghost"
                     size="sm"
                     onClick={handleStartNewCurriculum}
-                    className={`gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap flex-1 sm:flex-initial h-9 px-4 ${
-                      mode === 'chat' ? 'bg-card text-foreground shadow-sm border border-border/60' : 'text-muted-foreground hover:text-foreground'
+                    className={`gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap flex-1 sm:flex-initial h-9 px-4 transition-all ${
+                      mode === 'chat' 
+                        ? 'bg-[#0f172a] text-white shadow-sm hover:bg-[#0f172a] hover:text-white' 
+                        : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
                     }`}
                   >
-                    <Sparkles className="w-4 h-4 text-amber-500" />
+                    <Sparkles className="w-4 h-4 text-amber-400" />
                     Assistente Mike
                   </Button>
 
                   {data.full_name && (
                     <Button
-                      variant={mode === 'editor' ? 'default' : 'ghost'}
+                      variant="ghost"
                       size="sm"
                       onClick={() => setMode('editor')}
-                      className={`gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap flex-1 sm:flex-initial h-9 px-4 ${
-                        mode === 'editor' ? 'bg-card text-foreground shadow-sm border border-border/60' : 'text-muted-foreground hover:text-foreground'
+                      className={`gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap flex-1 sm:flex-initial h-9 px-4 transition-all ${
+                        mode === 'editor' 
+                          ? 'bg-[#0f172a] text-white shadow-sm hover:bg-[#0f172a] hover:text-white' 
+                          : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
                       }`}
                     >
-                      <Edit3 className="w-4 h-4 text-primary" />
+                      <Edit3 className="w-4 h-4" />
                       Editar Currículo
                     </Button>
                   )}
@@ -556,38 +579,28 @@ export default function CurriculumPage() {
             {/* ------------------------------------------------------------- */}
             {mode === 'dashboard' && savedCurriculums.length > 0 && (
               <div className="space-y-6 print:hidden">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center justify-between gap-3 border-b border-border/60 pb-3">
                   <div>
-                    <h2 className="text-lg sm:text-xl font-black text-foreground flex items-center gap-2">
+                    <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
                       <Layout className="w-5 h-5 text-primary shrink-0" />
-                      Seus Currículos Cadastrados
+                      Seus Currículos Cadastrados ({savedCurriculums.length})
                     </h2>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      Você possui {savedCurriculums.length} currículo(s) salvo(s). Clique em Visualizar para ver o PDF ou em Editar para alterar dados.
+                    <p className="text-xs text-muted-foreground mt-0.5 font-medium">
+                      Clique em Visualizar para ver o PDF completo ou em Editar para alterar informações.
                     </p>
                   </div>
-
-                  <Button
-                    onClick={handleStartNewCurriculum}
-                    className="gap-2 font-bold text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded-[5px] hidden sm:flex shrink-0"
-                  >
-                    <span className="w-5 h-5 rounded-[5px] overflow-hidden shrink-0 border border-amber-400 inline-block align-middle" style={{ width: '20px', height: '20px', minWidth: '20px', maxWidth: '20px', minHeight: '20px', maxHeight: '20px' }}>
-                      <img src="/images/avatars/mike_character_curiculum.png" alt="Mike" width={20} height={20} className="w-5 h-5 rounded-[5px] object-cover block" style={{ width: '20px', height: '20px', minWidth: '20px', maxWidth: '20px', minHeight: '20px', maxHeight: '20px', objectFit: 'cover' }} />
-                    </span>
-                    + Criar Novo com Mike
-                  </Button>
                 </div>
 
                 {/* Lista em Grid dos Currículos Salvos */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                   {savedCurriculums.map((curr) => {
                     const templateObj = TEMPLATES.find(t => t.id === (curr.template || 'ats').toLowerCase());
 
                     return (
-                      <Card key={curr.id} className="border-border bg-card shadow-sm hover:shadow-md transition-shadow rounded-[5px] flex flex-col justify-between">
+                      <Card key={curr.id} className="border-border/80 bg-card shadow-sm hover:shadow-md hover:border-primary/30 transition-all rounded-[5px] flex flex-col justify-between overflow-hidden">
                         <CardHeader className="pb-3">
                           <div className="flex items-start justify-between gap-2">
-                            <Badge variant="outline" className="text-[10px] font-bold border-primary/30 text-primary rounded-[5px]">
+                            <Badge variant="outline" className="text-[10px] font-bold border-amber-400/40 text-amber-600 dark:text-amber-400 bg-amber-400/10 rounded-[5px] uppercase">
                               {templateObj?.name || 'Digital / ATS'}
                             </Badge>
                             {curr.updated_at && (
@@ -600,12 +613,12 @@ export default function CurriculumPage() {
                           <CardTitle className="text-base font-black text-foreground mt-2 line-clamp-1">
                             {curr.profession || 'Currículo sem cargo'}
                           </CardTitle>
-                          <p className="text-xs text-muted-foreground font-medium">{curr.full_name}</p>
+                          <p className="text-xs text-muted-foreground font-semibold">{curr.full_name}</p>
                         </CardHeader>
 
                         <CardContent className="pt-0 space-y-4">
                           {(curr.city || curr.phone || curr.email) && (
-                            <div className="text-[11px] text-muted-foreground space-y-1 bg-muted/30 p-2.5 rounded-[5px] border border-border">
+                            <div className="text-[11px] text-muted-foreground space-y-1 bg-muted/40 p-3 rounded-[5px] border border-border/60 font-medium">
                               {curr.city && <p className="truncate">📍 {curr.city}</p>}
                               {curr.phone && <p className="truncate">📞 {curr.phone}</p>}
                               {curr.email && <p className="truncate">✉️ {curr.email}</p>}
@@ -613,12 +626,11 @@ export default function CurriculumPage() {
                           )}
 
                           {/* Botões de Ação do Card */}
-                          <div className="flex items-center gap-2 pt-2 border-t border-border">
+                          <div className="flex items-center gap-2 pt-2 border-t border-border/80">
                             <Button
                               size="sm"
-                              variant="default"
                               onClick={() => setPreviewModalCurriculum(curr)}
-                              className="gap-1.5 font-bold text-xs flex-1 rounded-[5px]"
+                              className="gap-1.5 font-bold text-xs flex-1 rounded-[5px] bg-[#0f172a] text-white hover:bg-slate-900 shadow-sm"
                             >
                               <Eye className="w-3.5 h-3.5" /> Visualizar
                             </Button>
@@ -630,7 +642,7 @@ export default function CurriculumPage() {
                                 setData(curr);
                                 setMode('editor');
                               }}
-                              className="gap-1.5 font-bold text-xs rounded-[5px]"
+                              className="gap-1.5 font-bold text-xs rounded-[5px] border-border hover:bg-muted"
                             >
                               <Edit3 className="w-3.5 h-3.5" /> Editar
                             </Button>
@@ -643,7 +655,8 @@ export default function CurriculumPage() {
                                   deleteMutation.mutate(curr.id);
                                 }
                               }}
-                              className="h-9 w-9 p-0 text-destructive hover:bg-destructive/10 rounded-[5px]"
+                              className="h-9 w-9 p-0 text-destructive hover:bg-destructive/10 rounded-[5px] shrink-0"
+                              title="Excluir currículo"
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>
