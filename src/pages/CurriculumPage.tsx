@@ -686,15 +686,6 @@ export default function CurriculumPage() {
                         Galeria
                       </button>
                     )}
-                    <button
-                      onClick={handleStartNewCurriculum}
-                      className={`flex-1 py-1.5 text-center text-xs font-bold rounded-[5px] transition-all flex items-center justify-center gap-1 ${
-                        mode === 'chat' ? 'bg-[#0f172a] text-white shadow-sm' : 'text-muted-foreground'
-                      }`}
-                    >
-                      <Sparkles className="w-3 h-3 text-amber-400" />
-                      Assistente
-                    </button>
                     {data.full_name && (
                       <button
                         onClick={() => setMode('editor')}
