@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -48,15 +48,15 @@ const TEMPLATES = [
     id: 'ats', 
     name: 'Digital / ATS', 
     icon: FileText, 
-    badge: 'Compatível com Gupy/LinkedIn',
-    desc: 'Coluna única ultra-limpa, sem gráficos ou tabelas. Leitura 100% perfeita para robôs de triagem automática de RH.' 
+    badge: 'CompatÃ­vel com Gupy/LinkedIn',
+    desc: 'Coluna Ãºnica ultra-limpa, sem grÃ¡ficos ou tabelas. Leitura 100% perfeita para robÃ´s de triagem automÃ¡tica de RH.' 
   },
   { 
     id: 'geral', 
     name: 'Profissional Geral', 
     icon: Briefcase, 
     badge: 'Ideal para E-mail',
-    desc: 'Visual corporativo refinado com cabeçalho azul marinho. Excelente para enviar em PDF como anexo de e-mail.' 
+    desc: 'Visual corporativo refinado com cabeÃ§alho azul marinho. Excelente para enviar em PDF como anexo de e-mail.' 
   },
   { 
     id: 'presencial', 
@@ -72,17 +72,17 @@ export default function CurriculumPage() {
   const { canSaveCurriculum } = usePlan();
   const queryClient = useQueryClient();
   
-  // Modes: 'dashboard' (Galeria em Lista) | 'chat' (Criador IA) | 'editor' (Edição Manual)
+  // Modes: 'dashboard' (Galeria em Lista) | 'chat' (Criador IA) | 'editor' (EdiÃ§Ã£o Manual)
   const [mode, setMode] = useState<'dashboard' | 'chat' | 'editor'>('dashboard');
   const [data, setData] = useState<CurriculumData>(EMPTY_DATA);
   const [newSkill, setNewSkill] = useState('');
   const [activeTab, setActiveTab] = useState('dados');
   const [isEnhancingSection, setIsEnhancingSection] = useState<string | null>(null);
   
-  // Modal de Pré-visualização na Galeria
+  // Modal de PrÃ©-visualizaÃ§Ã£o na Galeria
   const [previewModalCurriculum, setPreviewModalCurriculum] = useState<CurriculumData | null>(null);
 
-  // Carrega TODOS os currículos do usuário (Banco Supabase + Armazenamento Local)
+  // Carrega TODOS os currÃ­culos do usuÃ¡rio (Banco Supabase + Armazenamento Local)
   const { data: savedCurriculums = [], isLoading: loadingSaved } = useQuery({
     queryKey: ['curriculums', user?.id],
     queryFn: async () => {
@@ -95,7 +95,7 @@ export default function CurriculumPage() {
         .eq('user_id', user.id)
         .order('updated_at', { ascending: false });
 
-      // 2. Carrega do armazenamento local do usuário
+      // 2. Carrega do armazenamento local do usuÃ¡rio
       const localKey = `voo_certo_curriculums_${user.id}`;
       let localList: CurriculumData[] = [];
       try {
@@ -105,7 +105,7 @@ export default function CurriculumPage() {
           if (Array.isArray(parsed)) localList = parsed;
         }
 
-        // Limpa e migra chaves legadas para evitar currículos fantasmas
+        // Limpa e migra chaves legadas para evitar currÃ­culos fantasmas
         const legacyKeys = ['voo_certo_curriculums', 'voo_certo_curriculum', 'curriculum_data', 'voecerto_curriculum'];
         legacyKeys.forEach(legacyKey => {
           const legacy = localStorage.getItem(legacyKey);
@@ -131,10 +131,10 @@ export default function CurriculumPage() {
 
         localStorage.setItem(localKey, JSON.stringify(localList));
       } catch (e) {
-        console.warn('Erro ao ler/migrar localStorage de currículos:', e);
+        console.warn('Erro ao ler/migrar localStorage de currÃ­culos:', e);
       }
 
-      // Combina os currículos do banco e do localStorage sem duplicar
+      // Combina os currÃ­culos do banco e do localStorage sem duplicar
       const mergedMap = new Map<string, CurriculumData>();
 
       (list || []).forEach(curr => {
@@ -173,21 +173,17 @@ export default function CurriculumPage() {
     enabled: !!user,
   });
 
-  // Ajusta o modo inicial de forma fluida sem pulos de tela
+  // Galeria Ã© sempre o ponto de entrada â€” o usuÃ¡rio navega para o chat via botÃ£o
   useEffect(() => {
-    if (!loadingSaved) {
-      if (savedCurriculums.length > 0) {
-        setMode('dashboard');
-      } else {
-        setMode('chat');
-      }
+    if (!loadingSaved && mode !== 'chat' && mode !== 'editor') {
+      setMode('dashboard');
     }
-  }, [loadingSaved, savedCurriculums.length]);
+  }, [loadingSaved]);
 
-  // Salvar / Atualizar currículo no Supabase e LocalStorage
+  // Salvar / Atualizar currÃ­culo no Supabase e LocalStorage
   const saveMutation = useMutation({
     mutationFn: async (customData?: CurriculumData) => {
-      if (!user) throw new Error('Faça login para salvar');
+      if (!user) throw new Error('FaÃ§a login para salvar');
       
       const dataToSave = customData || data;
       const targetId = dataToSave.id || (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `curr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`);
@@ -246,21 +242,21 @@ export default function CurriculumPage() {
       return curriculumToSave;
     },
     onSuccess: () => {
-      toast.success('Currículo salvo na sua galeria!');
+      toast.success('CurrÃ­culo salvo na sua galeria!');
       queryClient.invalidateQueries({ queryKey: ['curriculums', user?.id] });
     },
     onError: (err: any) => toast.error(`Erro ao salvar: ${err.message}`),
   });
 
-  // Excluir currículo específico no Supabase e LocalStorage
+  // Excluir currÃ­culo especÃ­fico no Supabase e LocalStorage
   const deleteMutation = useMutation({
     mutationFn: async (currToDelete: CurriculumData | string) => {
-      if (!user) throw new Error('Usuário não autenticado');
+      if (!user) throw new Error('UsuÃ¡rio nÃ£o autenticado');
 
       const targetId = typeof currToDelete === 'string' ? currToDelete : currToDelete.id;
       const targetProfession = typeof currToDelete === 'string' ? currToDelete : currToDelete.profession;
 
-      // 1. Limpa de TODAS as chaves possíveis no localStorage
+      // 1. Limpa de TODAS as chaves possÃ­veis no localStorage
       const keysToClean = [
         `voo_certo_curriculums_${user.id}`,
         'voo_certo_curriculums',
@@ -303,23 +299,23 @@ export default function CurriculumPage() {
         if (idError) console.warn('Aviso ao deletar por ID no Supabase:', idError.message);
       }
 
-      // 3. Remove do Supabase por profissão e user_id (para garantir caso o registro não tivesse ID)
+      // 3. Remove do Supabase por profissÃ£o e user_id (para garantir caso o registro nÃ£o tivesse ID)
       if (targetProfession) {
         const { error: profError } = await supabase
           .from('curriculum_data')
           .delete()
           .eq('user_id', user.id)
           .eq('profession', targetProfession);
-        if (profError) console.warn('Aviso ao deletar por profissão no Supabase:', profError.message);
+        if (profError) console.warn('Aviso ao deletar por profissÃ£o no Supabase:', profError.message);
       }
     },
     onSuccess: (_, currToDelete) => {
       const targetId = typeof currToDelete === 'string' ? currToDelete : currToDelete.id;
       const targetProfession = typeof currToDelete === 'string' ? currToDelete : currToDelete.profession;
 
-      toast.success('Currículo excluído com sucesso!');
+      toast.success('CurrÃ­culo excluÃ­do com sucesso!');
 
-      // Atualização síncrona imediata no cache do React Query
+      // AtualizaÃ§Ã£o sÃ­ncrona imediata no cache do React Query
       queryClient.setQueryData(['curriculums', user?.id], (old: CurriculumData[] | undefined) => {
         if (!old) return [];
         return old.filter(item => {
@@ -331,7 +327,7 @@ export default function CurriculumPage() {
 
       if (savedCurriculums.length <= 1) {
         setData(EMPTY_DATA);
-        setMode('chat');
+        setMode('dashboard');
       }
 
       queryClient.invalidateQueries({ queryKey: ['curriculums', user?.id] });
@@ -339,7 +335,7 @@ export default function CurriculumPage() {
     onError: (err: any) => toast.error(`Erro ao excluir: ${err.message}`),
   });
 
-  // Iniciar criação de um NOVO currículo do zero com IA
+  // Iniciar criaÃ§Ã£o de um NOVO currÃ­culo do zero com IA
   const handleStartNewCurriculum = () => {
     setData({
       ...EMPTY_DATA,
@@ -348,7 +344,7 @@ export default function CurriculumPage() {
     setMode('chat');
   };
 
-  // Quando a IA gera o currículo pelo Chat Assistant
+  // Quando a IA gera o currÃ­culo pelo Chat Assistant
   const handleCurriculumGenerated = (generatedData: any) => {
     const newId = typeof crypto !== 'undefined' && crypto.randomUUID 
       ? crypto.randomUUID() 
@@ -362,18 +358,18 @@ export default function CurriculumPage() {
     };
     
     setData(updated);
-    setMode('editor'); // Abre direto no editor para o usuário revisar antes de salvar
-    toast.info('Revise seu currículo e clique em Salvar quando estiver pronto!');
+    setMode('editor'); // Abre direto no editor para o usuÃ¡rio revisar antes de salvar
+    toast.info('Revise seu currÃ­culo e clique em Salvar quando estiver pronto!');
   };
 
-  // Melhorar um trecho específico com IA no editor manual
+  // Melhorar um trecho especÃ­fico com IA no editor manual
   const handleEnhanceWithAI = async (sectionName: string, textToEnhance: string, onSuccess: (enhanced: string) => void) => {
     if (!textToEnhance.trim()) {
       toast.error('Digite algum texto antes de pedir a melhoria ao Mike.');
       return;
     }
     setIsEnhancingSection(sectionName);
-    toast.info(`Mike refinando texto da seção [${sectionName}]...`);
+    toast.info(`Mike refinando texto da seÃ§Ã£o [${sectionName}]...`);
 
     try {
       const { data: resData, error } = await supabase.functions.invoke('curriculum-ai-assistant', {
@@ -387,7 +383,7 @@ export default function CurriculumPage() {
       if (error) throw error;
       if (resData?.enhancedText) {
         onSuccess(resData.enhancedText);
-        toast.success(`Seção [${sectionName}] aprimorada com sucesso por Mike!`);
+        toast.success(`SeÃ§Ã£o [${sectionName}] aprimorada com sucesso por Mike!`);
       }
     } catch (err: any) {
       toast.error(`Falha ao melhorar com Mike: ${err.message || 'Erro inesperado'}`);
@@ -405,7 +401,7 @@ export default function CurriculumPage() {
     const element = document.getElementById(elementId) || document.getElementById('curriculum-content');
 
     if (!element) {
-      toast.error('Elemento do currículo não localizado para exportação.');
+      toast.error('Elemento do currÃ­culo nÃ£o localizado para exportaÃ§Ã£o.');
       return;
     }
 
@@ -438,7 +434,7 @@ export default function CurriculumPage() {
       const filename = `Curriculo_${namePart}_${professionPart}.pdf`;
 
       pdf.save(filename);
-      toast.success('Download do arquivo PDF concluído com sucesso!');
+      toast.success('Download do arquivo PDF concluÃ­do com sucesso!');
     } catch (err: any) {
       console.error('Erro ao gerar PDF:', err);
       window.print();
@@ -447,7 +443,7 @@ export default function CurriculumPage() {
     }
   };
 
-  // Helpers para edição manual
+  // Helpers para ediÃ§Ã£o manual
   const updateField = (field: keyof CurriculumData, value: any) => {
     setData(prev => ({ ...prev, [field]: value }));
   };
@@ -521,7 +517,7 @@ export default function CurriculumPage() {
   const addLanguage = () => {
     setData(prev => ({
       ...prev,
-      languages: [...prev.languages, { name: '', level: 'Intermediário' }],
+      languages: [...prev.languages, { name: '', level: 'IntermediÃ¡rio' }],
     }));
   };
 
@@ -557,279 +553,184 @@ export default function CurriculumPage() {
       </div>
 
       <main className="flex-1 container mx-auto px-4 pt-24 sm:pt-28 pb-12 print:p-0 print:m-0">
-        {/* State 0: Carregando dados do servidor */}
+
+        {/* Loading */}
         {loadingSaved ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-3 text-muted-foreground">
+          <div className="flex flex-col items-center justify-center py-32 gap-3 text-muted-foreground">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            <p className="text-xs font-semibold">Carregando sua galeria de currículos...</p>
+            <p className="text-xs font-semibold">Carregando sua galeria...</p>
           </div>
         ) : (
           <>
-            {/* ------------------------------------------------------------- */}
-            {/* HEADER DA PÁGINA: VERSÃO DESKTOP (Web Mantido Integramente)   */}
-            {/* ------------------------------------------------------------- */}
-            <div className="print:hidden hidden md:block mb-8">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-card border border-border/80 p-5 sm:p-6 rounded-[5px] shadow-sm">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <h1 className="text-xl sm:text-2xl font-black text-foreground tracking-tight flex items-center gap-2.5">
-                      <FileText className="w-6 h-6 text-primary shrink-0" />
-                      Galeria de Currículos com IA
+            {/* ================================================================ */}
+            {/* MODO GALERIA (dashboard)                                          */}
+            {/* ================================================================ */}
+            {mode === 'dashboard' && (
+              <div className="space-y-8 print:hidden">
+
+                {/* Header da Galeria */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight flex items-center gap-2.5">
+                      <FileText className="w-7 h-7 text-primary shrink-0" />
+                      Meus CurrÃ­culos
                     </h1>
-                    <Badge variant="outline" className="border-amber-400/40 text-amber-600 dark:text-amber-400 bg-amber-400/10 text-[10px] font-bold uppercase rounded-[5px]">
-                      Assistente Mike
-                    </Badge>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {savedCurriculums.length > 0
+                        ? `${savedCurriculums.length} currÃ­culo${savedCurriculums.length > 1 ? 's' : ''} salvo${savedCurriculums.length > 1 ? 's' : ''}`
+                        : 'Crie seu primeiro currÃ­culo profissional com ajuda da IA'}
+                    </p>
                   </div>
-                  <p className="text-xs sm:text-sm text-muted-foreground font-medium">
-                    Crie e gerencie currículos profissionais otimizados para a aviação civil e mercado corporativo.
-                  </p>
-                </div>
 
-                {/* Único Botão de Ação Principal no Topo Web */}
-                {mode === 'dashboard' ? (
-                  <Button
-                    variant="outline"
-                    onClick={handleStartNewCurriculum}
-                    className="gap-2.5 font-semibold text-xs sm:text-sm bg-muted/60 hover:bg-muted border-border text-foreground rounded-[5px] h-11 px-5 shadow-none shrink-0 justify-center"
-                  >
-                    <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
-                    <span>+ Criar com Mike</span>
-                  </Button>
-                ) : (
-                  <Button
-                    variant="outline"
-                    onClick={() => setMode('dashboard')}
-                    className="gap-2 font-bold text-xs sm:text-sm border-border hover:bg-muted rounded-[5px] h-11 px-4 shrink-0 justify-center"
-                  >
-                    <Layout className="w-4 h-4 text-primary" />
-                    <span>Voltar à Galeria</span>
-                  </Button>
-                )}
-              </div>
-
-              {/* Barra de Abas de Navegação Web */}
-              <div className="flex items-center gap-2 pt-4">
-                <div className="flex items-center gap-1.5 bg-muted/40 p-1.5 rounded-[5px] border border-border/80 w-fit">
                   {savedCurriculums.length > 0 && (
                     <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setMode('dashboard')}
-                      className={`gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap h-9 px-4 transition-all ${
-                        mode === 'dashboard' 
-                          ? 'bg-[#0f172a] text-white shadow-sm hover:bg-[#0f172a] hover:text-white' 
-                          : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
-                      }`}
+                      variant="outline"
+                      onClick={handleStartNewCurriculum}
+                      className="gap-2 font-semibold text-sm bg-muted/60 hover:bg-muted border-border text-foreground rounded-[5px] h-10 px-5 shadow-none shrink-0"
                     >
-                      <Layout className="w-4 h-4" />
-                      Galeria ({savedCurriculums.length})
-                    </Button>
-                  )}
-
-                  {data.full_name && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setMode('editor')}
-                      className={`gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap h-9 px-4 transition-all ${
-                        mode === 'editor' 
-                          ? 'bg-[#0f172a] text-white shadow-sm hover:bg-[#0f172a] hover:text-white' 
-                          : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
-                      }`}
-                    >
-                      <Edit3 className="w-4 h-4" />
-                      Editar Currículo
+                      <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
+                      Criar CurrÃ­culo
                     </Button>
                   )}
                 </div>
-              </div>
-            </div>
 
-            {/* ------------------------------------------------------------- */}
-            {/* HEADER DA PÁGINA: VERSÃO MOBILE MINIMALISTA & ENXUTA          */}
-            {/* ------------------------------------------------------------- */}
-            <div className="print:hidden block md:hidden mb-4 space-y-2.5">
-              {mode === 'dashboard' ? (
-                <>
-                  {/* Bar topo mobile compacta */}
-                  <div className="flex items-center justify-between gap-2 bg-card border border-border/80 p-3 rounded-[5px] shadow-sm">
-                    <div className="flex items-center gap-2">
-                      <FileText className="w-5 h-5 text-primary shrink-0" />
-                      <span className="font-black text-sm text-foreground">Currículos</span>
-                      {savedCurriculums.length > 0 && (
-                        <span className="text-[10px] font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-[5px]">
-                          {savedCurriculums.length}
-                        </span>
-                      )}
+                {/* â”€â”€â”€ EMPTY STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+                {savedCurriculums.length === 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex flex-col items-center justify-center py-20 text-center gap-6"
+                  >
+                    <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
+                      <FileText className="w-10 h-10 text-primary" />
                     </div>
-
+                    <div className="space-y-2 max-w-sm">
+                      <h2 className="text-xl font-black text-foreground">Nenhum currÃ­culo ainda</h2>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        Crie seu primeiro currÃ­culo profissional em minutos com a ajuda do Mike, nossa IA especializada em aviaÃ§Ã£o civil.
+                      </p>
+                    </div>
                     <Button
-                      size="sm"
-                      variant="outline"
                       onClick={handleStartNewCurriculum}
-                      className="gap-1.5 font-semibold text-xs bg-muted/60 hover:bg-muted border-border text-foreground rounded-[5px] h-8 px-3 shadow-none"
+                      className="gap-2.5 font-semibold text-sm bg-muted/80 hover:bg-muted border border-border text-foreground rounded-[5px] h-12 px-8 shadow-none"
+                      variant="outline"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                      <span>+ Criar com Mike</span>
+                      <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
+                      Criar meu primeiro CurrÃ­culo com Mike
                     </Button>
-                  </div>
+                  </motion.div>
+                )}
 
-                  {/* Abas minimalistas mobile */}
-                  <div className="flex items-center gap-1 bg-muted/40 p-1 rounded-[5px] border border-border/80 w-full">
-                    {savedCurriculums.length > 0 && (
-                      <button
-                        onClick={() => setMode('dashboard')}
-                        className={`flex-1 py-1.5 text-center text-xs font-bold rounded-[5px] transition-all ${
-                          mode === 'dashboard' ? 'bg-[#0f172a] text-white shadow-sm' : 'text-muted-foreground'
-                        }`}
-                      >
-                        Galeria
-                      </button>
-                    )}
-                    {data.full_name && (
-                      <button
-                        onClick={() => setMode('editor')}
-                        className={`flex-1 py-1.5 text-center text-xs font-bold rounded-[5px] transition-all ${
-                          mode === 'editor' ? 'bg-[#0f172a] text-white shadow-sm' : 'text-muted-foreground'
-                        }`}
-                      >
-                        Editar
-                      </button>
-                    )}
+                {/* â”€â”€â”€ NETFLIX GRID â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+                {savedCurriculums.length > 0 && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+                    {savedCurriculums.map((curr) => {
+                      const templateObj = TEMPLATES.find(t => t.id === (curr.template || 'ats').toLowerCase());
+
+                      return (
+                        <motion.div
+                          key={curr.id}
+                          initial={{ opacity: 0, scale: 0.97 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.2 }}
+                          className="group relative bg-card border border-border/80 rounded-[5px] overflow-hidden shadow-sm hover:shadow-md hover:border-primary/30 transition-all"
+                        >
+                          {/* Faixa de cor no topo â€” estilo Netflix */}
+                          <div className="h-1.5 w-full bg-gradient-to-r from-primary via-sky-500 to-primary/40" />
+
+                          {/* ConteÃºdo principal */}
+                          <div className="p-4 sm:p-5">
+                            <div className="flex items-start justify-between gap-2 mb-3">
+                              <Badge
+                                variant="outline"
+                                className="text-[10px] font-bold border-amber-400/40 text-amber-600 dark:text-amber-400 bg-amber-400/10 rounded-[5px] uppercase shrink-0"
+                              >
+                                {templateObj?.name || 'Digital / ATS'}
+                              </Badge>
+                              {curr.updated_at && (
+                                <span className="text-[10px] text-muted-foreground flex items-center gap-1 font-mono shrink-0">
+                                  <Clock className="w-3 h-3" />
+                                  {format(new Date(curr.updated_at), 'dd/MM/yy', { locale: ptBR })}
+                                </span>
+                              )}
+                            </div>
+
+                            <h3 className="font-black text-base text-foreground line-clamp-1 mb-0.5">
+                              {curr.profession || 'Sem cargo definido'}
+                            </h3>
+                            <p className="text-xs text-muted-foreground font-semibold mb-3 truncate">{curr.full_name}</p>
+
+                            {(curr.city || curr.email) && (
+                              <div className="text-[11px] text-muted-foreground space-y-0.5 mb-4">
+                                {curr.city && <p className="truncate">ðŸ“ {curr.city}</p>}
+                                {curr.email && <p className="truncate">âœ‰ï¸ {curr.email}</p>}
+                              </div>
+                            )}
+
+                            {/* AÃ§Ãµes â€” sempre visÃ­veis no mobile, hover no desktop */}
+                            <div className="flex items-center gap-2 pt-3 border-t border-border/70
+                                            sm:opacity-0 sm:translate-y-1
+                                            sm:group-hover:opacity-100 sm:group-hover:translate-y-0
+                                            transition-all duration-200">
+                              <Button
+                                size="sm"
+                                onClick={() => setPreviewModalCurriculum(curr)}
+                                className="gap-1.5 font-bold text-xs flex-1 rounded-[5px] bg-[#0f172a] text-white hover:bg-slate-800 shadow-sm h-8"
+                              >
+                                <Eye className="w-3.5 h-3.5" /> Visualizar
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => { setData(curr); setMode('editor'); }}
+                                className="gap-1.5 font-bold text-xs rounded-[5px] border-border hover:bg-muted h-8"
+                              >
+                                <Edit3 className="w-3.5 h-3.5" /> Editar
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => {
+                                  if (window.confirm(`Excluir o currÃ­culo "${curr.profession || 'selecionado'}"?`)) {
+                                    deleteMutation.mutate(curr);
+                                  }
+                                }}
+                                className="h-8 w-8 p-0 text-destructive hover:bg-destructive/10 rounded-[5px] shrink-0"
+                                title="Excluir"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
                   </div>
-                </>
-              ) : mode === 'chat' ? (
-                /* No chat mobile, exibe apenas a barra de voltar para dar 100% de foco à conversa */
-                <div className="flex items-center justify-between bg-card border border-border/80 p-2.5 rounded-[5px] shadow-sm">
+                )}
+              </div>
+            )}
+
+            {/* ================================================================ */}
+            {/* MODO CHAT (criaÃ§Ã£o com Mike)                                      */}
+            {/* ================================================================ */}
+            {mode === 'chat' && (
+              <div className="print:hidden space-y-4">
+                {/* Barra de sub-fluxo */}
+                <div className="flex items-center justify-between bg-card border border-border/80 px-4 py-3 rounded-[5px] shadow-sm">
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => setMode('dashboard')}
-                    className="gap-1.5 text-xs font-bold text-muted-foreground hover:text-foreground h-8 px-2.5"
+                    className="gap-2 text-sm font-bold text-muted-foreground hover:text-foreground h-9 px-3"
                   >
                     <ChevronLeft className="w-4 h-4 text-primary" />
-                    <span>Voltar para Galeria</span>
+                    Galeria de CurrÃ­culos
                   </Button>
                   <Badge variant="outline" className="border-amber-400/40 text-amber-600 dark:text-amber-400 bg-amber-400/10 text-[10px] font-bold uppercase rounded-[5px]">
                     Mike IA
                   </Badge>
                 </div>
-              ) : (
-                <div className="flex items-center justify-between bg-card border border-border/80 p-2.5 rounded-[5px] shadow-sm">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setMode('dashboard')}
-                    className="gap-1.5 text-xs font-bold text-muted-foreground hover:text-foreground h-8 px-2.5"
-                  >
-                    <ChevronLeft className="w-4 h-4 text-primary" />
-                    <span>Voltar para Galeria</span>
-                  </Button>
-                  <span className="text-xs font-bold text-foreground">Editar Currículo</span>
-                </div>
-              )}
-            </div>
 
-            {/* ------------------------------------------------------------- */}
-            {/* MODO 1: DASHBOARD / GALERIA DE CURRÍCULOS (LISTA DE CARDS)   */}
-            {/* ------------------------------------------------------------- */}
-            {mode === 'dashboard' && savedCurriculums.length > 0 && (
-              <div className="space-y-6 print:hidden">
-                <div className="flex items-center justify-between gap-3 border-b border-border/60 pb-3">
-                  <div>
-                    <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
-                      <Layout className="w-5 h-5 text-primary shrink-0" />
-                      Seus Currículos Cadastrados ({savedCurriculums.length})
-                    </h2>
-                    <p className="text-xs text-muted-foreground mt-0.5 font-medium">
-                      Clique em Visualizar para ver o PDF completo ou em Editar para alterar informações.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Lista em Grid dos Currículos Salvos */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {savedCurriculums.map((curr) => {
-                    const templateObj = TEMPLATES.find(t => t.id === (curr.template || 'ats').toLowerCase());
-
-                    return (
-                      <Card key={curr.id} className="border-border/80 bg-card shadow-sm hover:shadow-md hover:border-primary/30 transition-all rounded-[5px] flex flex-col justify-between overflow-hidden">
-                        <CardHeader className="pb-3">
-                          <div className="flex items-start justify-between gap-2">
-                            <Badge variant="outline" className="text-[10px] font-bold border-amber-400/40 text-amber-600 dark:text-amber-400 bg-amber-400/10 rounded-[5px] uppercase">
-                              {templateObj?.name || 'Digital / ATS'}
-                            </Badge>
-                            {curr.updated_at && (
-                              <span className="text-[10px] text-muted-foreground flex items-center gap-1 font-mono">
-                                <Clock className="w-3 h-3" />
-                                {format(new Date(curr.updated_at), 'dd/MM/yyyy', { locale: ptBR })}
-                              </span>
-                            )}
-                          </div>
-                          <CardTitle className="text-base font-black text-foreground mt-2 line-clamp-1">
-                            {curr.profession || 'Currículo sem cargo'}
-                          </CardTitle>
-                          <p className="text-xs text-muted-foreground font-semibold">{curr.full_name}</p>
-                        </CardHeader>
-
-                        <CardContent className="pt-0 space-y-4">
-                          {(curr.city || curr.phone || curr.email) && (
-                            <div className="text-[11px] text-muted-foreground space-y-1 bg-muted/40 p-3 rounded-[5px] border border-border/60 font-medium">
-                              {curr.city && <p className="truncate">📍 {curr.city}</p>}
-                              {curr.phone && <p className="truncate">📞 {curr.phone}</p>}
-                              {curr.email && <p className="truncate">✉️ {curr.email}</p>}
-                            </div>
-                          )}
-
-                          {/* Botões de Ação do Card */}
-                          <div className="flex items-center gap-2 pt-2 border-t border-border/80">
-                            <Button
-                              size="sm"
-                              onClick={() => setPreviewModalCurriculum(curr)}
-                              className="gap-1.5 font-bold text-xs flex-1 rounded-[5px] bg-[#0f172a] text-white hover:bg-slate-900 shadow-sm"
-                            >
-                              <Eye className="w-3.5 h-3.5" /> Visualizar
-                            </Button>
-
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => {
-                                setData(curr);
-                                setMode('editor');
-                              }}
-                              className="gap-1.5 font-bold text-xs rounded-[5px] border-border hover:bg-muted"
-                            >
-                              <Edit3 className="w-3.5 h-3.5" /> Editar
-                            </Button>
-
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => {
-                                if (window.confirm(`Deseja excluir o currículo "${curr.profession || 'selecionado'}"?`)) {
-                                  deleteMutation.mutate(curr);
-                                }
-                              }}
-                              className="h-9 w-9 p-0 text-destructive hover:bg-destructive/10 rounded-[5px] shrink-0"
-                              title="Excluir currículo"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* ------------------------------------------------------------- */}
-            {/* MODO 2: CONVERSA COM IA (CHAT ASSISTANT)                      */}
-            {/* ------------------------------------------------------------- */}
-            {mode === 'chat' && (
-              <div className="print:hidden py-4">
                 <CurriculumChatAssistant
                   onCurriculumGenerated={handleCurriculumGenerated}
                   userEmail={user?.email}
@@ -838,26 +739,36 @@ export default function CurriculumPage() {
               </div>
             )}
 
-            {/* ------------------------------------------------------------- */}
-            {/* MODO 3: EDITOR & VISUALIZAÇÃO                                 */}
-            {/* ------------------------------------------------------------- */}
+            {/* ================================================================ */}
+            {/* MODO EDITOR                                                       */}
+            {/* ================================================================ */}
             {mode === 'editor' && (
               <div className="space-y-6">
-                {/* Template Selector Bar (Oculto na impressão) */}
+                {/* Barra de sub-fluxo do editor */}
                 <Card className="print:hidden border-border bg-card shadow-sm rounded-[5px]">
                   <CardContent className="p-4 sm:p-6">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-                      <div>
-                        <h3 className="font-bold text-base text-foreground flex items-center gap-2">
-                          <Layout className="w-5 h-5 text-primary" />
-                          Escolha o Modelo de Currículo
-                        </h3>
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          Alterne entre os modelos otimizados conforme o tipo de vaga ou envio desejado.
-                        </p>
+                      <div className="flex items-center gap-3">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setMode('dashboard')}
+                          className="gap-2 font-bold text-xs text-muted-foreground hover:text-foreground rounded-[5px] h-8 px-3"
+                        >
+                          <ChevronLeft className="w-4 h-4 text-primary" />
+                          Galeria
+                        </Button>
+                        <div>
+                          <h3 className="font-bold text-base text-foreground flex items-center gap-2">
+                            <Layout className="w-5 h-5 text-primary" />
+                            Escolha o Modelo de CurrÃ­culo
+                          </h3>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            Alterne entre os modelos otimizados conforme o tipo de vaga.
+                          </p>
+                        </div>
                       </div>
 
-                      {/* Ações Rápidas de Salvar & Baixar */}
                       <div className="flex items-center gap-2">
                         {user && (
                           <Button
@@ -871,7 +782,6 @@ export default function CurriculumPage() {
                             Salvar
                           </Button>
                         )}
-
                         <Button
                           size="sm"
                           onClick={handleDownloadPDF}
@@ -879,16 +789,6 @@ export default function CurriculumPage() {
                         >
                           <Download className="w-4 h-4" />
                           Baixar PDF
-                        </Button>
-
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setMode('dashboard')}
-                          className="gap-2 font-bold text-xs text-muted-foreground hover:text-foreground rounded-[5px]"
-                        >
-                          <Layout className="w-4 h-4" />
-                          Voltar à Galeria
                         </Button>
                       </div>
                     </div>
@@ -919,14 +819,11 @@ export default function CurriculumPage() {
                                   {tmpl.badge}
                                 </Badge>
                               </div>
-                              <p className="text-xs text-muted-foreground leading-relaxed mb-3">
-                                {tmpl.desc}
-                              </p>
+                              <p className="text-xs text-muted-foreground leading-relaxed mb-3">{tmpl.desc}</p>
                             </div>
-
                             {isRecommended && (
                               <div className="flex items-center gap-1.5 text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-[5px] border border-amber-500/20 mt-2">
-                                <Sparkles className="w-3 h-3 shrink-0" /> Recomendado pela IA para sua situação
+                                <Sparkles className="w-3 h-3 shrink-0" /> Recomendado pela IA
                               </div>
                             )}
                           </div>
@@ -934,7 +831,6 @@ export default function CurriculumPage() {
                       })}
                     </div>
 
-                    {/* Justificativa da Recomendação da IA (se houver) */}
                     {data.recommendation_reason && (
                       <div className="mt-4 p-3 rounded-[5px] bg-primary/5 border border-primary/20 text-xs text-primary flex items-start gap-2">
                         <Lightbulb className="w-4 h-4 shrink-0 mt-0.5" />
@@ -944,19 +840,17 @@ export default function CurriculumPage() {
                   </CardContent>
                 </Card>
 
-                {/* Split Screen: Form Editor (Esquerda) vs Curriculum Preview (Direita) */}
+                {/* Split Screen: Form + Preview */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                  {/* Formulário de Edição Manual (Oculto na impressão) */}
                   <div className="print:hidden lg:col-span-5 space-y-6">
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                       <TabsList className="grid grid-cols-4 w-full bg-muted/60">
                         <TabsTrigger value="dados" className="text-xs font-bold">Dados</TabsTrigger>
-                        <TabsTrigger value="experiencia" className="text-xs font-bold">Experiência</TabsTrigger>
-                        <TabsTrigger value="formacao" className="text-xs font-bold">Formação</TabsTrigger>
+                        <TabsTrigger value="experiencia" className="text-xs font-bold">ExperiÃªncia</TabsTrigger>
+                        <TabsTrigger value="formacao" className="text-xs font-bold">FormaÃ§Ã£o</TabsTrigger>
                         <TabsTrigger value="extras" className="text-xs font-bold">Extras</TabsTrigger>
                       </TabsList>
 
-                      {/* TAB 1: Dados Pessoais & Resumo */}
                       <TabsContent value="dados" className="space-y-4 mt-4">
                         <Card className="rounded-[5px]">
                           <CardHeader className="pb-3">
@@ -967,87 +861,45 @@ export default function CurriculumPage() {
                           <CardContent className="space-y-4">
                             <div>
                               <Label className="text-xs font-bold">Nome Completo</Label>
-                              <Input
-                                value={data.full_name}
-                                onChange={(e) => updateField('full_name', e.target.value)}
-                                placeholder="Ex: Ana Maria Silva"
-                                className="mt-1 text-xs rounded-[5px]"
-                              />
+                              <Input value={data.full_name} onChange={(e) => updateField('full_name', e.target.value)} placeholder="Ex: Ana Maria Silva" className="mt-1 text-xs rounded-[5px]" />
                             </div>
-
                             <div>
-                              <Label className="text-xs font-bold">Cargo Desejado / Área</Label>
-                              <Input
-                                value={data.profession}
-                                onChange={(e) => updateField('profession', e.target.value)}
-                                placeholder="Ex: Comissária de Bordo / ANAC CCT"
-                                className="mt-1 text-xs rounded-[5px]"
-                              />
+                              <Label className="text-xs font-bold">Cargo Desejado / Ãrea</Label>
+                              <Input value={data.profession} onChange={(e) => updateField('profession', e.target.value)} placeholder="Ex: ComissÃ¡ria de Bordo / ANAC CCT" className="mt-1 text-xs rounded-[5px]" />
                             </div>
-
                             <div className="grid grid-cols-2 gap-2">
                               <div>
                                 <Label className="text-xs font-bold">E-mail</Label>
-                                <Input
-                                  value={data.email}
-                                  onChange={(e) => updateField('email', e.target.value)}
-                                  placeholder="seu.email@exemplo.com"
-                                  className="mt-1 text-xs rounded-[5px]"
-                                />
+                                <Input value={data.email} onChange={(e) => updateField('email', e.target.value)} placeholder="seu.email@exemplo.com" className="mt-1 text-xs rounded-[5px]" />
                               </div>
                               <div>
                                 <Label className="text-xs font-bold">Telefone</Label>
-                                <Input
-                                  value={data.phone}
-                                  onChange={(e) => updateField('phone', e.target.value)}
-                                  placeholder="(11) 98888-7777"
-                                  className="mt-1 text-xs rounded-[5px]"
-                                />
+                                <Input value={data.phone} onChange={(e) => updateField('phone', e.target.value)} placeholder="(11) 98888-7777" className="mt-1 text-xs rounded-[5px]" />
                               </div>
                             </div>
-
                             <div>
                               <Label className="text-xs font-bold">Cidade e Estado</Label>
-                              <Input
-                                value={data.city}
-                                onChange={(e) => updateField('city', e.target.value)}
-                                placeholder="Ex: São Paulo - SP"
-                                className="mt-1 text-xs rounded-[5px]"
-                              />
+                              <Input value={data.city} onChange={(e) => updateField('city', e.target.value)} placeholder="Ex: SÃ£o Paulo - SP" className="mt-1 text-xs rounded-[5px]" />
                             </div>
-
                             <div>
                               <div className="flex items-center justify-between mb-1">
                                 <Label className="text-xs font-bold">Resumo / Perfil Profissional</Label>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  disabled={isEnhancingSection === 'summary'}
-                                  onClick={() => handleEnhanceWithAI('Resumo Profissional', data.summary, (enhanced) => updateField('summary', enhanced))}
-                                  className="h-6 px-2 text-[10px] text-primary hover:bg-primary/10 gap-1 font-bold rounded-[5px]"
-                                >
+                                <Button variant="ghost" size="sm" disabled={isEnhancingSection === 'summary'} onClick={() => handleEnhanceWithAI('Resumo Profissional', data.summary, (enhanced) => updateField('summary', enhanced))} className="h-6 px-2 text-[10px] text-primary hover:bg-primary/10 gap-1 font-bold rounded-[5px]">
                                   {isEnhancingSection === 'summary' ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3 text-amber-500" />}
                                   Melhorar com IA
                                 </Button>
                               </div>
-                              <Textarea
-                                rows={4}
-                                value={data.summary}
-                                onChange={(e) => updateField('summary', e.target.value)}
-                                placeholder="Breve resumo com suas qualificações..."
-                                className="text-xs leading-relaxed rounded-[5px]"
-                              />
+                              <Textarea rows={4} value={data.summary} onChange={(e) => updateField('summary', e.target.value)} placeholder="Breve resumo com suas qualificaÃ§Ãµes..." className="text-xs leading-relaxed rounded-[5px]" />
                             </div>
                           </CardContent>
                         </Card>
                       </TabsContent>
 
-                      {/* TAB 2: Experiência Profissional */}
                       <TabsContent value="experiencia" className="space-y-4 mt-4">
                         <Card className="rounded-[5px]">
                           <CardHeader className="pb-3 flex flex-row items-center justify-between">
                             <CardTitle className="text-sm font-bold flex items-center gap-2">
-                              <Briefcase className="w-4 h-4 text-primary" /> Histórico Profissional
+                              <Briefcase className="w-4 h-4 text-primary" /> HistÃ³rico Profissional
                             </CardTitle>
                             <Button size="sm" variant="outline" onClick={addExperience} className="h-7 text-xs font-bold gap-1 rounded-[5px]">
                               <Plus className="w-3.5 h-3.5" /> Adicionar
@@ -1055,80 +907,30 @@ export default function CurriculumPage() {
                           </CardHeader>
                           <CardContent className="space-y-4">
                             {data.experience.length === 0 ? (
-                              <p className="text-xs text-muted-foreground text-center py-4">Nenhuma experiência adicionada. Clique em Adicionar se tiver histórico prévio.</p>
+                              <p className="text-xs text-muted-foreground text-center py-4">Nenhuma experiÃªncia adicionada.</p>
                             ) : (
                               data.experience.map((exp, idx) => (
                                 <div key={idx} className="p-3 border border-border rounded-[5px] bg-muted/20 space-y-3 relative">
                                   <div className="flex justify-between items-center">
-                                    <span className="text-xs font-bold text-primary">Experiência #{idx + 1}</span>
-                                    <Button variant="ghost" size="icon" onClick={() => removeExperience(idx)} className="h-6 w-6 text-destructive rounded-[5px]">
-                                      <Trash2 className="w-3.5 h-3.5" />
-                                    </Button>
+                                    <span className="text-xs font-bold text-primary">ExperiÃªncia #{idx + 1}</span>
+                                    <Button variant="ghost" size="icon" onClick={() => removeExperience(idx)} className="h-6 w-6 text-destructive rounded-[5px]"><Trash2 className="w-3.5 h-3.5" /></Button>
                                   </div>
-
                                   <div className="grid grid-cols-2 gap-2">
-                                    <div>
-                                      <Label className="text-[10px] font-bold">Empresa</Label>
-                                      <Input
-                                        value={exp.company}
-                                        onChange={(e) => updateExperience(idx, 'company', e.target.value)}
-                                        placeholder="Ex: Latam / Hotel XYZ"
-                                        className="text-xs h-8 rounded-[5px]"
-                                      />
-                                    </div>
-                                    <div>
-                                      <Label className="text-[10px] font-bold">Cargo</Label>
-                                      <Input
-                                        value={exp.role}
-                                        onChange={(e) => updateExperience(idx, 'role', e.target.value)}
-                                        placeholder="Ex: Atendente de Solo"
-                                        className="text-xs h-8 rounded-[5px]"
-                                      />
-                                    </div>
+                                    <div><Label className="text-[10px] font-bold">Empresa</Label><Input value={exp.company} onChange={(e) => updateExperience(idx, 'company', e.target.value)} placeholder="Ex: Latam" className="text-xs h-8 rounded-[5px]" /></div>
+                                    <div><Label className="text-[10px] font-bold">Cargo</Label><Input value={exp.role} onChange={(e) => updateExperience(idx, 'role', e.target.value)} placeholder="Ex: Atendente de Solo" className="text-xs h-8 rounded-[5px]" /></div>
                                   </div>
-
                                   <div className="grid grid-cols-2 gap-2">
-                                    <div>
-                                      <Label className="text-[10px] font-bold">Início</Label>
-                                      <Input
-                                        value={exp.start}
-                                        onChange={(e) => updateExperience(idx, 'start', e.target.value)}
-                                        placeholder="Ex: 2021"
-                                        className="text-xs h-8 rounded-[5px]"
-                                      />
-                                    </div>
-                                    <div>
-                                      <Label className="text-[10px] font-bold">Fim</Label>
-                                      <Input
-                                        value={exp.end}
-                                        onChange={(e) => updateExperience(idx, 'end', e.target.value)}
-                                        placeholder="Ex: 2023 ou Atual"
-                                        className="text-xs h-8 rounded-[5px]"
-                                      />
-                                    </div>
+                                    <div><Label className="text-[10px] font-bold">InÃ­cio</Label><Input value={exp.start} onChange={(e) => updateExperience(idx, 'start', e.target.value)} placeholder="Ex: 2021" className="text-xs h-8 rounded-[5px]" /></div>
+                                    <div><Label className="text-[10px] font-bold">Fim</Label><Input value={exp.end} onChange={(e) => updateExperience(idx, 'end', e.target.value)} placeholder="Ex: 2023 ou Atual" className="text-xs h-8 rounded-[5px]" /></div>
                                   </div>
-
                                   <div>
                                     <div className="flex items-center justify-between mb-1">
                                       <Label className="text-[10px] font-bold">Atividades e Conquistas</Label>
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        disabled={isEnhancingSection === `exp_${idx}`}
-                                        onClick={() => handleEnhanceWithAI('Descrição da Experiência', exp.description, (enhanced) => updateExperience(idx, 'description', enhanced))}
-                                        className="h-5 px-1.5 text-[9px] text-primary hover:bg-primary/10 gap-1 font-bold rounded-[5px]"
-                                      >
-                                        {isEnhancingSection === `exp_${idx}` ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3 text-amber-500" />}
-                                        Refinar com IA
+                                      <Button variant="ghost" size="sm" disabled={isEnhancingSection === `exp_${idx}`} onClick={() => handleEnhanceWithAI('DescriÃ§Ã£o da ExperiÃªncia', exp.description, (enhanced) => updateExperience(idx, 'description', enhanced))} className="h-5 px-1.5 text-[9px] text-primary hover:bg-primary/10 gap-1 font-bold rounded-[5px]">
+                                        {isEnhancingSection === `exp_${idx}` ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3 text-amber-500" />} Refinar com IA
                                       </Button>
                                     </div>
-                                    <Textarea
-                                      rows={2}
-                                      value={exp.description}
-                                      onChange={(e) => updateExperience(idx, 'description', e.target.value)}
-                                      placeholder="Descrição das responsabilidades..."
-                                      className="text-xs rounded-[5px]"
-                                    />
+                                    <Textarea rows={2} value={exp.description} onChange={(e) => updateExperience(idx, 'description', e.target.value)} placeholder="DescriÃ§Ã£o das responsabilidades..." className="text-xs rounded-[5px]" />
                                   </div>
                                 </div>
                               ))
@@ -1137,104 +939,45 @@ export default function CurriculumPage() {
                         </Card>
                       </TabsContent>
 
-                      {/* TAB 3: Formação Acadêmica */}
                       <TabsContent value="formacao" className="space-y-4 mt-4">
                         <Card className="rounded-[5px]">
                           <CardHeader className="pb-3 flex flex-row items-center justify-between">
                             <CardTitle className="text-sm font-bold flex items-center gap-2">
-                              <GraduationCap className="w-4 h-4 text-primary" /> Formação Acadêmica
+                              <GraduationCap className="w-4 h-4 text-primary" /> FormaÃ§Ã£o AcadÃªmica
                             </CardTitle>
-                            <Button size="sm" variant="outline" onClick={addEducation} className="h-7 text-xs font-bold gap-1 rounded-[5px]">
-                              <Plus className="w-3.5 h-3.5" /> Adicionar
-                            </Button>
+                            <Button size="sm" variant="outline" onClick={addEducation} className="h-7 text-xs font-bold gap-1 rounded-[5px]"><Plus className="w-3.5 h-3.5" /> Adicionar</Button>
                           </CardHeader>
                           <CardContent className="space-y-3">
                             {data.education.map((edu, idx) => (
                               <div key={idx} className="p-3 border border-border rounded-[5px] bg-muted/20 space-y-2 relative">
                                 <div className="flex justify-between items-center">
-                                  <span className="text-xs font-bold text-primary">Formação #{idx + 1}</span>
-                                  <Button variant="ghost" size="icon" onClick={() => removeEducation(idx)} className="h-6 w-6 text-destructive rounded-[5px]">
-                                    <Trash2 className="w-3.5 h-3.5" />
-                                  </Button>
+                                  <span className="text-xs font-bold text-primary">FormaÃ§Ã£o #{idx + 1}</span>
+                                  <Button variant="ghost" size="icon" onClick={() => removeEducation(idx)} className="h-6 w-6 text-destructive rounded-[5px]"><Trash2 className="w-3.5 h-3.5" /></Button>
                                 </div>
                                 <div className="grid grid-cols-2 gap-2">
-                                  <div>
-                                    <Label className="text-[10px] font-bold">Curso / Grau</Label>
-                                    <Input
-                                      value={edu.degree}
-                                      onChange={(e) => updateEducation(idx, 'degree', e.target.value)}
-                                      placeholder="Ex: Aviação Civil"
-                                      className="text-xs h-8 rounded-[5px]"
-                                    />
-                                  </div>
-                                  <div>
-                                    <Label className="text-[10px] font-bold">Instituição</Label>
-                                    <Input
-                                      value={edu.institution}
-                                      onChange={(e) => updateEducation(idx, 'institution', e.target.value)}
-                                      placeholder="Ex: Anhembi Morumbi"
-                                      className="text-xs h-8 rounded-[5px]"
-                                    />
-                                  </div>
+                                  <div><Label className="text-[10px] font-bold">Curso / Grau</Label><Input value={edu.degree} onChange={(e) => updateEducation(idx, 'degree', e.target.value)} placeholder="Ex: AviaÃ§Ã£o Civil" className="text-xs h-8 rounded-[5px]" /></div>
+                                  <div><Label className="text-[10px] font-bold">InstituiÃ§Ã£o</Label><Input value={edu.institution} onChange={(e) => updateEducation(idx, 'institution', e.target.value)} placeholder="Ex: Anhembi Morumbi" className="text-xs h-8 rounded-[5px]" /></div>
                                 </div>
-                                <div>
-                                  <Label className="text-[10px] font-bold">Ano de Conclusão</Label>
-                                  <Input
-                                    value={edu.year}
-                                    onChange={(e) => updateEducation(idx, 'year', e.target.value)}
-                                    placeholder="Ex: 2023"
-                                    className="text-xs h-8 rounded-[5px]"
-                                  />
-                                </div>
+                                <div><Label className="text-[10px] font-bold">Ano de ConclusÃ£o</Label><Input value={edu.year} onChange={(e) => updateEducation(idx, 'year', e.target.value)} placeholder="Ex: 2023" className="text-xs h-8 rounded-[5px]" /></div>
                               </div>
                             ))}
                           </CardContent>
                         </Card>
                       </TabsContent>
 
-                      {/* TAB 4: Certificados, Idiomas & Habilidades */}
                       <TabsContent value="extras" className="space-y-4 mt-4">
                         <Card className="rounded-[5px]">
                           <CardHeader className="pb-3 flex flex-row items-center justify-between">
-                            <CardTitle className="text-sm font-bold flex items-center gap-2">
-                              <Award className="w-4 h-4 text-primary" /> Cursos & Certificações ANAC
-                            </CardTitle>
-                            <Button size="sm" variant="outline" onClick={addCertificate} className="h-7 text-xs font-bold gap-1 rounded-[5px]">
-                              <Plus className="w-3.5 h-3.5" /> Adicionar
-                            </Button>
+                            <CardTitle className="text-sm font-bold flex items-center gap-2"><Award className="w-4 h-4 text-primary" /> Cursos & CertificaÃ§Ãµes ANAC</CardTitle>
+                            <Button size="sm" variant="outline" onClick={addCertificate} className="h-7 text-xs font-bold gap-1 rounded-[5px]"><Plus className="w-3.5 h-3.5" /> Adicionar</Button>
                           </CardHeader>
                           <CardContent className="space-y-2">
                             {data.certificates.map((cert, idx) => (
                               <div key={idx} className="p-2 border border-border rounded-[5px] bg-muted/20 grid grid-cols-12 gap-2 items-center">
-                                <div className="col-span-5">
-                                  <Input
-                                    value={cert.name}
-                                    onChange={(e) => updateCertificate(idx, 'name', e.target.value)}
-                                    placeholder="Ex: CCT ANAC Comissário"
-                                    className="text-xs h-7 rounded-[5px]"
-                                  />
-                                </div>
-                                <div className="col-span-4">
-                                  <Input
-                                    value={cert.issuer}
-                                    onChange={(e) => updateCertificate(idx, 'issuer', e.target.value)}
-                                    placeholder="Órgão/Escola"
-                                    className="text-xs h-7 rounded-[5px]"
-                                  />
-                                </div>
-                                <div className="col-span-2">
-                                  <Input
-                                    value={cert.year}
-                                    onChange={(e) => updateCertificate(idx, 'year', e.target.value)}
-                                    placeholder="Ano"
-                                    className="text-xs h-7 rounded-[5px]"
-                                  />
-                                </div>
-                                <div className="col-span-1 text-right">
-                                  <Button variant="ghost" size="icon" onClick={() => removeCertificate(idx)} className="h-6 w-6 text-destructive rounded-[5px]">
-                                    <Trash2 className="w-3 h-3" />
-                                  </Button>
-                                </div>
+                                <div className="col-span-5"><Input value={cert.name} onChange={(e) => updateCertificate(idx, 'name', e.target.value)} placeholder="Ex: CCT ANAC ComissÃ¡rio" className="text-xs h-7 rounded-[5px]" /></div>
+                                <div className="col-span-4"><Input value={cert.issuer} onChange={(e) => updateCertificate(idx, 'issuer', e.target.value)} placeholder="Ã“rgÃ£o/Escola" className="text-xs h-7 rounded-[5px]" /></div>
+                                <div className="col-span-2"><Input value={cert.year} onChange={(e) => updateCertificate(idx, 'year', e.target.value)} placeholder="Ano" className="text-xs h-7 rounded-[5px]" /></div>
+                                <div className="col-span-1 text-right"><Button variant="ghost" size="icon" onClick={() => removeCertificate(idx)} className="h-6 w-6 text-destructive rounded-[5px]"><Trash2 className="w-3 h-3" /></Button></div>
                               </div>
                             ))}
                           </CardContent>
@@ -1242,31 +985,15 @@ export default function CurriculumPage() {
 
                         <Card className="rounded-[5px]">
                           <CardHeader className="pb-3 flex flex-row items-center justify-between">
-                            <CardTitle className="text-sm font-bold flex items-center gap-2">
-                              <Globe className="w-4 h-4 text-primary" /> Idiomas
-                            </CardTitle>
-                            <Button size="sm" variant="outline" onClick={addLanguage} className="h-7 text-xs font-bold gap-1 rounded-[5px]">
-                              <Plus className="w-3.5 h-3.5" /> Adicionar
-                            </Button>
+                            <CardTitle className="text-sm font-bold flex items-center gap-2"><Globe className="w-4 h-4 text-primary" /> Idiomas</CardTitle>
+                            <Button size="sm" variant="outline" onClick={addLanguage} className="h-7 text-xs font-bold gap-1 rounded-[5px]"><Plus className="w-3.5 h-3.5" /> Adicionar</Button>
                           </CardHeader>
                           <CardContent className="space-y-2">
                             {data.languages.map((lang, idx) => (
                               <div key={idx} className="flex gap-2 items-center">
-                                <Input
-                                  value={lang.name}
-                                  onChange={(e) => updateLanguage(idx, 'name', e.target.value)}
-                                  placeholder="Idioma (ex: Inglês)"
-                                  className="text-xs h-8 flex-1 rounded-[5px]"
-                                />
-                                <Input
-                                  value={lang.level}
-                                  onChange={(e) => updateLanguage(idx, 'level', e.target.value)}
-                                  placeholder="Nível (ex: Avançado)"
-                                  className="text-xs h-8 flex-1 rounded-[5px]"
-                                />
-                                <Button variant="ghost" size="icon" onClick={() => removeLanguage(idx)} className="h-8 w-8 text-destructive rounded-[5px]">
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                </Button>
+                                <Input value={lang.name} onChange={(e) => updateLanguage(idx, 'name', e.target.value)} placeholder="Idioma (ex: InglÃªs)" className="text-xs h-8 flex-1 rounded-[5px]" />
+                                <Input value={lang.level} onChange={(e) => updateLanguage(idx, 'level', e.target.value)} placeholder="NÃ­vel (ex: AvanÃ§ado)" className="text-xs h-8 flex-1 rounded-[5px]" />
+                                <Button variant="ghost" size="icon" onClick={() => removeLanguage(idx)} className="h-8 w-8 text-destructive rounded-[5px]"><Trash2 className="w-3.5 h-3.5" /></Button>
                               </div>
                             ))}
                           </CardContent>
@@ -1274,19 +1001,11 @@ export default function CurriculumPage() {
 
                         <Card className="rounded-[5px]">
                           <CardHeader className="pb-3">
-                            <CardTitle className="text-sm font-bold flex items-center gap-2">
-                              <Star className="w-4 h-4 text-primary" /> Competências & Habilidades
-                            </CardTitle>
+                            <CardTitle className="text-sm font-bold flex items-center gap-2"><Star className="w-4 h-4 text-primary" /> CompetÃªncias & Habilidades</CardTitle>
                           </CardHeader>
                           <CardContent className="space-y-3">
                             <div className="flex gap-2">
-                              <Input
-                                value={newSkill}
-                                onChange={(e) => setNewSkill(e.target.value)}
-                                onKeyDown={(e) => e.key === 'Enter' && addSkill()}
-                                placeholder="Ex: Gestão de Crises, CRM, Atendimento VIP..."
-                                className="text-xs h-8 flex-1 rounded-[5px]"
-                              />
+                              <Input value={newSkill} onChange={(e) => setNewSkill(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && addSkill()} placeholder="Ex: GestÃ£o de Crises, CRM..." className="text-xs h-8 flex-1 rounded-[5px]" />
                               <Button size="sm" onClick={addSkill} className="h-8 text-xs font-bold rounded-[5px]">Adicionar</Button>
                             </div>
                             <div className="flex flex-wrap gap-1.5">
@@ -1303,19 +1022,16 @@ export default function CurriculumPage() {
                     </Tabs>
                   </div>
 
-                  {/* Pré-visualização do Currículo (Visualização Direta na Direita) */}
+                  {/* Preview */}
                   <div className="lg:col-span-7 print:col-span-12">
                     <div className="sticky top-20">
                       <div className="print:hidden mb-3 flex items-center justify-between">
                         <span className="text-xs font-bold text-muted-foreground flex items-center gap-1.5">
                           <CheckCircle2 className="w-4 h-4 text-success" />
-                          Visualização em Tempo Real ({TEMPLATES.find(t => t.id === (data.template || 'ats').toLowerCase())?.name})
+                          VisualizaÃ§Ã£o em Tempo Real ({TEMPLATES.find(t => t.id === (data.template || 'ats').toLowerCase())?.name})
                         </span>
-                        <span className="text-[10px] text-muted-foreground font-mono">
-                          Formato A4 (210mm x 297mm)
-                        </span>
+                        <span className="text-[10px] text-muted-foreground font-mono">Formato A4 (210mm Ã— 297mm)</span>
                       </div>
-
                       <CurriculumPreview data={data} />
                     </div>
                   </div>
@@ -1326,7 +1042,7 @@ export default function CurriculumPage() {
         )}
       </main>
 
-      {/* Modal de Pré-visualização na Galeria */}
+      {/* Modal de PrÃ©-visualizaÃ§Ã£o */}
       {previewModalCurriculum && (
         <Dialog open={!!previewModalCurriculum} onOpenChange={(open) => !open && setPreviewModalCurriculum(null)}>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-6 rounded-[5px]">
@@ -1334,27 +1050,23 @@ export default function CurriculumPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <DialogTitle className="text-lg font-black text-foreground">
-                    {previewModalCurriculum.profession || 'Pré-visualização do Currículo'}
+                    {previewModalCurriculum.profession || 'PrÃ©-visualizaÃ§Ã£o do CurrÃ­culo'}
                   </DialogTitle>
                   <DialogDescription className="text-xs text-muted-foreground">
-                    {previewModalCurriculum.full_name} • Modelo {TEMPLATES.find(t => t.id === (previewModalCurriculum.template || 'ats').toLowerCase())?.name}
+                    {previewModalCurriculum.full_name} â€¢ Modelo {TEMPLATES.find(t => t.id === (previewModalCurriculum.template || 'ats').toLowerCase())?.name}
                   </DialogDescription>
                 </div>
-
-                <div className="flex items-center gap-2">
-                  <Button
-                    size="sm"
-                    disabled={isDownloadingPDF}
-                    onClick={() => handleDownloadPDF(previewModalCurriculum)}
-                    className="gap-2 font-bold text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded-[5px]"
-                  >
-                    {isDownloadingPDF ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                    Baixar PDF
-                  </Button>
-                </div>
+                <Button
+                  size="sm"
+                  disabled={isDownloadingPDF}
+                  onClick={() => handleDownloadPDF(previewModalCurriculum)}
+                  className="gap-2 font-bold text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded-[5px]"
+                >
+                  {isDownloadingPDF ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                  Baixar PDF
+                </Button>
               </div>
             </DialogHeader>
-
             <div id="curriculum-preview-modal-element" className="py-4 bg-white">
               <CurriculumPreview data={previewModalCurriculum} />
             </div>
@@ -1368,5 +1080,3 @@ export default function CurriculumPage() {
     </div>
   );
 }
-
-
