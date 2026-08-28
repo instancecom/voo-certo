@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Plane, Menu, X, User, Crown, LogOut, Settings, 
   BookOpen, Award, TrendingUp, GraduationCap, 
-  FileText, LayoutDashboard, Sparkles
+  FileText, Sparkles, ChevronDown, LayoutDashboard
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
@@ -16,6 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu';
 import { NotificationBell } from './notifications/NotificationBell';
 import { useBranding } from '@/contexts/BrandingContext';
@@ -39,6 +40,16 @@ export function Header() {
     const fileMatch = url.match(/drive\.google\.com\/file\/d\/([^/]+)/);
     if (fileMatch) return `https://lh3.googleusercontent.com/d/${fileMatch[1]}`;
     return url;
+  };
+
+  // Iniciais do avatar
+  const getInitials = () => {
+    const name = profile?.full_name || user?.email || '';
+    const parts = name.split(/[\s@]/);
+    if (parts.length >= 2 && parts[0] && parts[1]) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
   };
 
   const prefetchCategories = () => {
@@ -88,53 +99,71 @@ export function Header() {
     navigate('/');
   };
 
-  const menuItems = [
+  // Itens de navegação principal — o que fica visível na barra
+  const primaryNavItems = [
     { to: '/simulados', label: 'Simulados', icon: BookOpen, prefetch: prefetchCategories },
     { to: '/guia-carreira', label: 'Guia de Carreira', icon: GraduationCap, prefetch: prefetchCareerGuides, feature: 'career_guide' as const },
     { to: '/microcursos', label: 'Microcursos', icon: Sparkles, prefetch: prefetchMicrocourses, feature: 'microcourses' as const },
-    { to: '/conquistas', label: 'Conquistas', icon: Award, authOnly: true, feature: 'achievements' as const },
     { to: '/meu-progresso', label: 'Progresso', icon: TrendingUp, authOnly: true, feature: 'progress' as const },
-    { to: '/curriculo', label: 'Currículo', icon: FileText, authOnly: true, feature: 'curriculum' as const },
   ];
 
-  const filteredMenuItems = menuItems.filter(item => {
-    // Check if user is authenticated if authOnly is true
+  // Itens que ficam no dropdown do perfil do usuário
+  const profileDropdownItems = [
+    { to: '/curriculo', label: 'Currículo com IA', icon: FileText, authOnly: true, feature: 'curriculum' as const },
+    { to: '/conquistas', label: 'Conquistas', icon: Award, authOnly: true, feature: 'achievements' as const },
+  ];
+
+  const filteredPrimaryItems = primaryNavItems.filter(item => {
     if (item.authOnly && !user) return false;
-    
-    // Check if feature is enabled in branding settings
-    if (item.feature && branding.features && branding.features[item.feature] === false) {
-      return false;
-    }
-    
+    if (item.feature && branding.features && branding.features[item.feature] === false) return false;
     return true;
   });
+
+  const filteredProfileItems = profileDropdownItems.filter(item => {
+    if (!user) return false;
+    if (item.feature && branding.features && branding.features[item.feature] === false) return false;
+    return true;
+  });
+
+  // Itens para menu mobile — une tudo em sequência lógica
+  const allMobileItems = [
+    ...primaryNavItems,
+    ...profileDropdownItems,
+  ].filter(item => {
+    if (item.authOnly && !user) return false;
+    if (item.feature && branding.features && branding.features[item.feature] === false) return false;
+    return true;
+  });
+
+  const isTransparent = isHome && !isScrolled;
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 border-b ${
-        isHome && !isScrolled 
-          ? 'bg-transparent border-transparent py-4' 
+        isTransparent
+          ? 'bg-transparent border-transparent py-4'
           : 'bg-white border-border py-4 shadow-sm'
       }`}
     >
       <div className="container mx-auto">
         <div className="flex items-center justify-between h-16 md:h-20">
+
           {/* Logo */}
           <div className="flex-1 flex items-center justify-start">
             <Link to="/" className="flex items-center gap-2 group">
               {branding.logo_url ? (
-                <img 
-                  src={getDriveImageUrl(branding.logo_url) || ''} 
-                  alt={branding.site_name} 
+                <img
+                  src={getDriveImageUrl(branding.logo_url) || ''}
+                  alt={branding.site_name}
                   loading="eager"
                   decoding="async"
-                  className="h-10 md:h-16 w-auto object-contain" 
+                  className="h-10 md:h-16 w-auto object-contain"
                 />
               ) : (
                 <>
                   <Plane className="w-10 h-10 md:w-12 md:h-12 text-accent" />
                   <span className={`text-xl md:text-2xl font-bold tracking-tight ${
-                    isHome && !isScrolled ? 'text-white' : 'text-foreground'
+                    isTransparent ? 'text-white' : 'text-foreground'
                   }`}>
                     {branding.site_name}
                   </span>
@@ -142,17 +171,18 @@ export function Header() {
               )}
             </Link>
           </div>
-           {/* Desktop Navigation - Renderiza IMEDIATAMENTE sem atrasos ou blocos de skeleton */}
+
+          {/* Desktop Navigation — apenas itens primários */}
           <nav className="hidden md:flex flex-none items-center justify-center gap-6">
-            {filteredMenuItems.map(item => (
+            {filteredPrimaryItems.map(item => (
               <Link
                 key={item.to}
                 to={item.to}
                 className={`text-sm font-medium transition-colors hover:text-accent ${
-                  location.pathname === item.to 
-                    ? 'text-accent font-semibold' 
-                    : isHome && !isScrolled 
-                      ? 'text-white/95' 
+                  location.pathname === item.to
+                    ? 'text-accent font-semibold'
+                    : isTransparent
+                      ? 'text-white/95'
                       : 'text-muted-foreground'
                 }`}
                 onMouseEnter={item.prefetch}
@@ -162,61 +192,109 @@ export function Header() {
             ))}
           </nav>
 
-          {/* User Actions - Renderização direta e robusta */}
-          <div className="flex-1 flex items-center justify-end gap-4">
-            <div className="hidden md:flex items-center gap-4 justify-end">
+          {/* Ações do usuário */}
+          <div className="flex-1 flex items-center justify-end gap-3">
+
+            {/* Desktop */}
+            <div className="hidden md:flex items-center gap-3 justify-end">
               {user ? (
                 <>
-                  {isAdmin && (
-                    <Button variant="ghost" size="sm" asChild className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''}>
-                      <Link to="/admin" className="flex items-center gap-2 font-semibold">
-                        <Settings className="w-4 h-4" />
-                        Admin
-                      </Link>
-                    </Button>
-                  )}
-                  
-                  <NotificationBell className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''} />
-                  
+                  <NotificationBell className={isTransparent ? 'text-white hover:bg-white/10' : ''} />
+
+                  {/* Dropdown de perfil — rico com todas as opções de conta */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className={`flex items-center gap-2 rounded-[5px] font-semibold ${isHome && !isScrolled ? 'bg-white/10 text-white border-white/20 hover-yellow hover:text-foreground' : 'hover-yellow'}`}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={`flex items-center gap-2 rounded-[5px] font-semibold pr-2.5 pl-1.5 ${
+                          isTransparent
+                            ? 'bg-white/10 text-white border-white/20 hover:bg-white/20 hover:text-white'
+                            : 'hover-yellow border-border'
+                        }`}
                       >
-                        <User className="w-4 h-4" />
-                        <span className="max-w-[110px] truncate">
+                        {/* Avatar com iniciais */}
+                        <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 ${
+                          isTransparent ? 'bg-white/20 text-white' : 'bg-primary text-white'
+                        }`}>
+                          {getInitials()}
+                        </span>
+                        <span className="max-w-[100px] truncate text-sm">
                           {profile?.full_name?.split(' ')[0] || user.email?.split('@')[0]}
                         </span>
+                        <ChevronDown className="w-3.5 h-3.5 opacity-60 shrink-0" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56 rounded-[5px]">
-                      <div className="px-2 py-1.5">
-                        <p className="text-xs text-muted-foreground leading-none mb-1">Logado como</p>
-                        <p className="text-sm font-medium truncate">{profile?.full_name || user.email}</p>
+
+                    <DropdownMenuContent align="end" className="w-60 rounded-[5px] p-0 overflow-hidden">
+                      {/* Cabeçalho do perfil */}
+                      <div className="px-4 py-3 bg-muted/40 border-b border-border">
+                        <div className="flex items-center gap-3">
+                          <span className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-sm font-black text-white shrink-0">
+                            {getInitials()}
+                          </span>
+                          <div className="min-w-0">
+                            <p className="text-sm font-semibold truncate text-foreground">
+                              {profile?.full_name || user.email?.split('@')[0]}
+                            </p>
+                            <p className="text-[11px] text-muted-foreground truncate">{user.email}</p>
+                          </div>
+                        </div>
                       </div>
+
+                      {/* Ferramentas pessoais */}
+                      <div className="py-1">
+                        {filteredProfileItems.map(item => {
+                          const Icon = item.icon;
+                          return (
+                            <DropdownMenuItem key={item.to} asChild>
+                              <Link
+                                to={item.to}
+                                className={`flex items-center gap-2.5 px-4 py-2 cursor-pointer ${
+                                  location.pathname === item.to ? 'text-accent font-semibold' : ''
+                                }`}
+                              >
+                                <Icon className="w-4 h-4 text-muted-foreground" />
+                                <span>{item.label}</span>
+                              </Link>
+                            </DropdownMenuItem>
+                          );
+                        })}
+                      </div>
+
+                      {/* Admin — só visível para admins */}
+                      {isAdmin && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <div className="py-1">
+                            <DropdownMenuItem asChild>
+                              <Link to="/admin" className="flex items-center gap-2.5 px-4 py-2 cursor-pointer">
+                                <LayoutDashboard className="w-4 h-4 text-muted-foreground" />
+                                <span>Painel Admin</span>
+                              </Link>
+                            </DropdownMenuItem>
+                          </div>
+                        </>
+                      )}
+
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem asChild>
-                        <Link to="/meu-progresso" className="flex items-center gap-2">
-                          <TrendingUp className="w-4 h-4" /> Progresso
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link to="/conquistas" className="flex items-center gap-2">
-                          <Award className="w-4 h-4" /> Conquistas
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
-                        <LogOut className="w-4 h-4 mr-2" /> Sair
-                      </DropdownMenuItem>
+
+                      {/* Sair */}
+                      <div className="py-1">
+                        <DropdownMenuItem
+                          onClick={handleSignOut}
+                          className="flex items-center gap-2.5 px-4 py-2 text-destructive focus:text-destructive cursor-pointer"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          <span>Sair da conta</span>
+                        </DropdownMenuItem>
+                      </div>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </>
               ) : (
                 <>
-                  <Button variant="ghost" size="sm" asChild className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''}>
+                  <Button variant="ghost" size="sm" asChild className={isTransparent ? 'text-white hover:bg-white/10' : ''}>
                     <Link to="/auth?mode=login">Entrar</Link>
                   </Button>
                   <Button size="sm" asChild className="rounded-[5px] shadow-sm font-semibold hover-yellow">
@@ -226,12 +304,13 @@ export function Header() {
               )}
             </div>
 
+            {/* Mobile — sino + hamburguer */}
             <div className="flex items-center gap-2 md:hidden">
-              {user && <NotificationBell className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''} />}
+              {user && <NotificationBell className={isTransparent ? 'text-white hover:bg-white/10' : ''} />}
               <Button
                 variant="ghost"
                 size="icon"
-                className={isHome && !isScrolled ? 'text-white hover:bg-white/10' : ''}
+                className={isTransparent ? 'text-white hover:bg-white/10' : ''}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
               >
                 {isMenuOpen ? <X /> : <Menu />}
@@ -251,7 +330,24 @@ export function Header() {
             className="md:hidden bg-white border-b border-border overflow-hidden"
           >
             <div className="container mx-auto px-4 py-4 space-y-1">
-              {filteredMenuItems.map((item) => {
+
+              {/* Perfil do usuário no topo do menu mobile */}
+              {user && (
+                <div className="flex items-center gap-3 p-3 mb-2 bg-muted/40 rounded-lg border border-border/60">
+                  <span className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-sm font-black text-white shrink-0">
+                    {getInitials()}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold truncate">
+                      {profile?.full_name || user.email?.split('@')[0]}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground truncate">{user.email}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Todos os itens de navegação em ordem lógica */}
+              {allMobileItems.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
@@ -259,8 +355,8 @@ export function Header() {
                     to={item.to}
                     onClick={() => setIsMenuOpen(false)}
                     className={`flex items-center gap-3 p-3 rounded-lg text-sm font-medium transition-colors ${
-                      location.pathname === item.to 
-                        ? 'bg-accent/10 text-accent' 
+                      location.pathname === item.to
+                        ? 'bg-accent/10 text-accent'
                         : 'text-muted-foreground hover:bg-muted'
                     }`}
                   >
@@ -269,9 +365,9 @@ export function Header() {
                   </Link>
                 );
               })}
-              
+
               <DropdownMenuSeparator className="my-2" />
-              
+
               {user ? (
                 <>
                   {isAdmin && (
@@ -280,7 +376,7 @@ export function Header() {
                       onClick={() => setIsMenuOpen(false)}
                       className="flex items-center gap-3 p-3 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted"
                     >
-                      <Settings className="w-5 h-5" />
+                      <LayoutDashboard className="w-5 h-5" />
                       Painel Admin
                     </Link>
                   )}
@@ -289,7 +385,7 @@ export function Header() {
                     className="flex items-center gap-3 p-3 w-full rounded-lg text-sm font-medium text-destructive hover:bg-destructive/5"
                   >
                     <LogOut className="w-5 h-5" />
-                    Sair
+                    Sair da conta
                   </button>
                 </>
               ) : (
