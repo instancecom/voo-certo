@@ -1,4 +1,4 @@
-﻿import { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
@@ -219,18 +219,10 @@ export default function ProgressPage() {
 
             <Button
               onClick={() => setIsDiagnosticOpen(true)}
-              className="gap-2.5 font-bold text-xs sm:text-sm h-11 px-5 bg-gradient-to-r from-primary via-sky-600 to-slate-900 text-white hover:opacity-90 shadow-md rounded-[5px] shrink-0"
+              variant="outline"
+              className="gap-2.5 font-semibold text-xs sm:text-sm h-11 px-5 bg-muted/60 hover:bg-muted border-border text-foreground rounded-[5px] shrink-0 shadow-none"
             >
-              <span className="w-6 h-6 rounded-[5px] overflow-hidden shrink-0 border border-amber-400 inline-block align-middle" style={{ width: '24px', height: '24px', minWidth: '24px', maxWidth: '24px', minHeight: '24px', maxHeight: '24px' }}>
-                <img
-                  src="/images/avatars/mike_character_analytic.png"
-                  alt="Mike"
-                  width={24}
-                  height={24}
-                  className="w-6 h-6 rounded-[5px] object-cover block"
-                  style={{ width: '24px', height: '24px', minWidth: '24px', maxWidth: '24px', minHeight: '24px', maxHeight: '24px', objectFit: 'cover' }}
-                />
-              </span>
+              <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
               Diagnóstico com Mike
             </Button>
           </div>
