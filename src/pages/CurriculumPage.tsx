@@ -100,9 +100,38 @@ export default function CurriculumPage() {
       let localList: CurriculumData[] = [];
       try {
         const stored = localStorage.getItem(localKey);
-        if (stored) localList = JSON.parse(stored);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed)) localList = parsed;
+        }
+
+        // Limpa e migra chaves legadas para evitar currículos fantasmas
+        const legacyKeys = ['voo_certo_curriculums', 'voo_certo_curriculum', 'curriculum_data', 'voecerto_curriculum'];
+        legacyKeys.forEach(legacyKey => {
+          const legacy = localStorage.getItem(legacyKey);
+          if (legacy) {
+            try {
+              const parsed = JSON.parse(legacy);
+              if (Array.isArray(parsed)) {
+                parsed.forEach(p => {
+                  if (p && (p.id || p.profession)) {
+                    const exists = localList.some(item => (item.id && item.id === p.id) || (item.profession && item.profession === p.profession));
+                    if (!exists) localList.push(p);
+                  }
+                });
+              } else if (parsed && typeof parsed === 'object') {
+                if (!localList.some(item => item.id === parsed.id || item.profession === parsed.profession)) {
+                  localList.push(parsed);
+                }
+              }
+            } catch (e) {}
+            localStorage.removeItem(legacyKey);
+          }
+        });
+
+        localStorage.setItem(localKey, JSON.stringify(localList));
       } catch (e) {
-        console.warn('Erro ao ler localStorage de currículos:', e);
+        console.warn('Erro ao ler/migrar localStorage de currículos:', e);
       }
 
       // Combina os currículos do banco e do localStorage sem duplicar
@@ -129,8 +158,9 @@ export default function CurriculumPage() {
       });
 
       localList.forEach(item => {
-        if (item.id && !mergedMap.has(item.id)) {
-          mergedMap.set(item.id, item);
+        const key = item.id || item.profession || `local_${Math.random()}`;
+        if (!mergedMap.has(key)) {
+          mergedMap.set(key, { ...item, id: item.id || key });
         }
       });
 
@@ -169,7 +199,7 @@ export default function CurriculumPage() {
         updated_at: updatedAt,
       };
 
-      // 1. Salva no localStorage para garantir múltiplos currículos sem sobrescrever
+      // 1. Salva no localStorage
       const localKey = `voo_certo_curriculums_${user.id}`;
       let currentLocalList: CurriculumData[] = [];
       try {
@@ -177,7 +207,7 @@ export default function CurriculumPage() {
         if (stored) currentLocalList = JSON.parse(stored);
       } catch (e) {}
 
-      const idx = currentLocalList.findIndex(c => c.id === targetId);
+      const idx = currentLocalList.findIndex(c => c.id === targetId || (c.profession && c.profession === curriculumToSave.profession));
       if (idx >= 0) {
         currentLocalList[idx] = curriculumToSave;
       } else {
@@ -227,29 +257,60 @@ export default function CurriculumPage() {
     mutationFn: async (curriculumId: string) => {
       if (!user) throw new Error('Usuário não autenticado');
       
-      // 1. Remove do localStorage
-      const localKey = `voo_certo_curriculums_${user.id}`;
-      try {
-        const stored = localStorage.getItem(localKey);
-        if (stored) {
-          const list: CurriculumData[] = JSON.parse(stored);
-          const filtered = list.filter(c => c.id !== curriculumId);
-          localStorage.setItem(localKey, JSON.stringify(filtered));
-        }
-      } catch (e) {}
+      // 1. Limpa de TODAS as chaves possíveis no localStorage
+      const keysToClean = [
+        `voo_certo_curriculums_${user.id}`,
+        'voo_certo_curriculums',
+        'voo_certo_curriculum',
+        'curriculum_data',
+        'voecerto_curriculum'
+      ];
+
+      keysToClean.forEach(key => {
+        try {
+          const stored = localStorage.getItem(key);
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            if (Array.isArray(parsed)) {
+              const filtered = parsed.filter((c: any) => c.id !== curriculumId && c.profession !== curriculumId);
+              if (filtered.length > 0) {
+                localStorage.setItem(key, JSON.stringify(filtered));
+              } else {
+                localStorage.removeItem(key);
+              }
+            } else if (parsed && typeof parsed === 'object') {
+              if (parsed.id === curriculumId || parsed.profession === curriculumId) {
+                localStorage.removeItem(key);
+              }
+            }
+          }
+        } catch (e) {}
+      });
 
       // 2. Remove do Supabase
-      await supabase
+      const { error } = await supabase
         .from('curriculum_data')
         .delete()
-        .eq('id', curriculumId);
+        .or(`id.eq.${curriculumId},profession.eq.${curriculumId}`);
+
+      if (error) {
+        console.warn('Aviso ao deletar do Supabase (removido do armazenamento local):', error.message);
+      }
     },
-    onSuccess: () => {
+    onSuccess: (_, curriculumId) => {
       toast.success('Currículo excluído com sucesso!');
+
+      // Atualização síncrona do cache React Query para remoção imediata da interface
+      queryClient.setQueryData(['curriculums', user?.id], (old: CurriculumData[] | undefined) => {
+        if (!old) return [];
+        return old.filter(c => c.id !== curriculumId && c.profession !== curriculumId);
+      });
+
       if (savedCurriculums.length <= 1) {
         setData(EMPTY_DATA);
         setMode('chat');
       }
+
       queryClient.invalidateQueries({ queryKey: ['curriculums', user?.id] });
     },
     onError: (err: any) => toast.error(`Erro ao excluir: ${err.message}`),
@@ -746,8 +807,9 @@ export default function CurriculumPage() {
                               size="sm"
                               variant="ghost"
                               onClick={() => {
-                                if (curr.id && window.confirm(`Deseja excluir o currículo "${curr.profession}"?`)) {
-                                  deleteMutation.mutate(curr.id);
+                                const targetId = curr.id || curr.profession;
+                                if (targetId && window.confirm(`Deseja excluir o currículo "${curr.profession || 'selecionado'}"?`)) {
+                                  deleteMutation.mutate(targetId);
                                 }
                               }}
                               className="h-9 w-9 p-0 text-destructive hover:bg-destructive/10 rounded-[5px] shrink-0"
