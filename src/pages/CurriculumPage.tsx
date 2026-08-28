@@ -588,12 +588,11 @@ export default function CurriculumPage() {
                 {/* Único Botão de Ação Principal no Topo Web */}
                 {mode === 'dashboard' ? (
                   <Button
+                    variant="outline"
                     onClick={handleStartNewCurriculum}
-                    className="gap-2.5 font-bold text-xs sm:text-sm bg-[#0f172a] text-white hover:bg-slate-900 rounded-[5px] h-11 px-5 shadow-sm shrink-0 justify-center"
+                    className="gap-2.5 font-semibold text-xs sm:text-sm bg-muted/60 hover:bg-muted border-border text-foreground rounded-[5px] h-11 px-5 shadow-none shrink-0 justify-center"
                   >
-                    <div className="w-6 h-6 rounded-[5px] overflow-hidden shrink-0 border border-amber-400/80 bg-slate-900">
-                      <img src="/images/avatars/mike_character_curiculum.png" alt="Mike" className="w-full h-full object-cover block" />
-                    </div>
+                    <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
                     <span>+ Criar com Mike</span>
                   </Button>
                 ) : (
@@ -626,20 +625,6 @@ export default function CurriculumPage() {
                       Galeria ({savedCurriculums.length})
                     </Button>
                   )}
-
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleStartNewCurriculum}
-                    className={`gap-2 font-bold text-xs rounded-[5px] whitespace-nowrap h-9 px-4 transition-all ${
-                      mode === 'chat' 
-                        ? 'bg-[#0f172a] text-white shadow-sm hover:bg-[#0f172a] hover:text-white' 
-                        : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
-                    }`}
-                  >
-                    <Sparkles className="w-4 h-4 text-amber-400" />
-                    Assistente Mike
-                  </Button>
 
                   {data.full_name && (
                     <Button
@@ -680,10 +665,11 @@ export default function CurriculumPage() {
 
                     <Button
                       size="sm"
+                      variant="outline"
                       onClick={handleStartNewCurriculum}
-                      className="gap-1.5 font-bold text-xs bg-[#0f172a] text-white hover:bg-slate-900 rounded-[5px] h-8 px-3 shadow-sm"
+                      className="gap-1.5 font-semibold text-xs bg-muted/60 hover:bg-muted border-border text-foreground rounded-[5px] h-8 px-3 shadow-none"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                      <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                       <span>+ Criar com Mike</span>
                     </Button>
                   </div>
