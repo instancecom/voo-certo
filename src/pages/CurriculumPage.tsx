@@ -254,9 +254,12 @@ export default function CurriculumPage() {
 
   // Excluir currículo específico no Supabase e LocalStorage
   const deleteMutation = useMutation({
-    mutationFn: async (curriculumId: string) => {
+    mutationFn: async (currToDelete: CurriculumData | string) => {
       if (!user) throw new Error('Usuário não autenticado');
-      
+
+      const targetId = typeof currToDelete === 'string' ? currToDelete : currToDelete.id;
+      const targetProfession = typeof currToDelete === 'string' ? currToDelete : currToDelete.profession;
+
       // 1. Limpa de TODAS as chaves possíveis no localStorage
       const keysToClean = [
         `voo_certo_curriculums_${user.id}`,
@@ -272,14 +275,18 @@ export default function CurriculumPage() {
           if (stored) {
             const parsed = JSON.parse(stored);
             if (Array.isArray(parsed)) {
-              const filtered = parsed.filter((c: any) => c.id !== curriculumId && c.profession !== curriculumId);
+              const filtered = parsed.filter((item: any) => {
+                if (targetId && item.id === targetId) return false;
+                if (targetProfession && item.profession === targetProfession) return false;
+                return true;
+              });
               if (filtered.length > 0) {
                 localStorage.setItem(key, JSON.stringify(filtered));
               } else {
                 localStorage.removeItem(key);
               }
             } else if (parsed && typeof parsed === 'object') {
-              if (parsed.id === curriculumId || parsed.profession === curriculumId) {
+              if ((targetId && parsed.id === targetId) || (targetProfession && parsed.profession === targetProfession)) {
                 localStorage.removeItem(key);
               }
             }
@@ -287,23 +294,39 @@ export default function CurriculumPage() {
         } catch (e) {}
       });
 
-      // 2. Remove do Supabase
-      const { error } = await supabase
-        .from('curriculum_data')
-        .delete()
-        .or(`id.eq.${curriculumId},profession.eq.${curriculumId}`);
+      // 2. Remove do Supabase por ID (se existir)
+      if (targetId) {
+        const { error: idError } = await supabase
+          .from('curriculum_data')
+          .delete()
+          .eq('id', targetId);
+        if (idError) console.warn('Aviso ao deletar por ID no Supabase:', idError.message);
+      }
 
-      if (error) {
-        console.warn('Aviso ao deletar do Supabase (removido do armazenamento local):', error.message);
+      // 3. Remove do Supabase por profissão e user_id (para garantir caso o registro não tivesse ID)
+      if (targetProfession) {
+        const { error: profError } = await supabase
+          .from('curriculum_data')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('profession', targetProfession);
+        if (profError) console.warn('Aviso ao deletar por profissão no Supabase:', profError.message);
       }
     },
-    onSuccess: (_, curriculumId) => {
+    onSuccess: (_, currToDelete) => {
+      const targetId = typeof currToDelete === 'string' ? currToDelete : currToDelete.id;
+      const targetProfession = typeof currToDelete === 'string' ? currToDelete : currToDelete.profession;
+
       toast.success('Currículo excluído com sucesso!');
 
-      // Atualização síncrona do cache React Query para remoção imediata da interface
+      // Atualização síncrona imediata no cache do React Query
       queryClient.setQueryData(['curriculums', user?.id], (old: CurriculumData[] | undefined) => {
         if (!old) return [];
-        return old.filter(c => c.id !== curriculumId && c.profession !== curriculumId);
+        return old.filter(item => {
+          if (targetId && item.id === targetId) return false;
+          if (targetProfession && item.profession === targetProfession) return false;
+          return true;
+        });
       });
 
       if (savedCurriculums.length <= 1) {
@@ -807,9 +830,8 @@ export default function CurriculumPage() {
                               size="sm"
                               variant="ghost"
                               onClick={() => {
-                                const targetId = curr.id || curr.profession;
-                                if (targetId && window.confirm(`Deseja excluir o currículo "${curr.profession || 'selecionado'}"?`)) {
-                                  deleteMutation.mutate(targetId);
+                                if (window.confirm(`Deseja excluir o currículo "${curr.profession || 'selecionado'}"?`)) {
+                                  deleteMutation.mutate(curr);
                                 }
                               }}
                               className="h-9 w-9 p-0 text-destructive hover:bg-destructive/10 rounded-[5px] shrink-0"
