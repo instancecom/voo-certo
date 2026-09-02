@@ -39,7 +39,7 @@ interface ProfessionWithBlocks {
 export default function SimuladosPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { canAccessModoLivre, canAccessModoBloco, canAccessModoBanca } = usePlan();
+  const { canAccessModoLivre, canAccessModoBloco, canAccessModoBanca, currentPlan } = usePlan();
   const [blockDialogOpen, setBlockDialogOpen] = useState(false);
   const [selectedProfession, setSelectedProfession] = useState<ProfessionWithBlocks | null>(null);
   
@@ -172,10 +172,6 @@ export default function SimuladosPage() {
         <section className="pt-32 pb-16 bg-muted/20">
           <div className="container mx-auto px-4">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 rounded-[5px] text-primary mb-6">
-                <Plane className="w-4 h-4" />
-                <span className="text-[10px] font-bold uppercase tracking-widest">Plataforma de Treinamento</span>
-              </div>
               <h1 className="text-3xl md:text-5xl font-black text-foreground mb-4 tracking-tight">Centro de Simulados</h1>
               <p className="text-muted-foreground max-w-2xl mx-auto font-medium leading-relaxed">
                 Nossos simulados são desenvolvidos com base nos padrões reais da ANAC, 
@@ -336,24 +332,26 @@ export default function SimuladosPage() {
           </div>
         </section>
 
-        <section className="py-20">
-          <div className="container mx-auto px-4 text-center">
-             <div className="p-12 rounded-[5px] bg-primary text-primary-foreground relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-accent/10 rounded-[5px] blur-3xl -mr-32 -mt-32" />
-                <div className="relative z-10 max-w-3xl mx-auto flex flex-col md:flex-row items-center justify-between gap-10">
-                  <div className="text-left">
-                    <div className="flex items-center gap-3 mb-4">
-                      <Crown className="w-8 h-8 text-accent fill-accent/20" />
-                      <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent">Voe Certo Premium</span>
+        {currentPlan !== 'comandante' && (
+          <section className="py-20">
+            <div className="container mx-auto px-4 text-center">
+               <div className="p-12 rounded-[5px] bg-primary text-primary-foreground relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-accent/10 rounded-[5px] blur-3xl -mr-32 -mt-32" />
+                  <div className="relative z-10 max-w-3xl mx-auto flex flex-col md:flex-row items-center justify-between gap-10">
+                    <div className="text-left">
+                      <div className="flex items-center gap-3 mb-4">
+                        <Crown className="w-8 h-8 text-accent fill-accent/20" />
+                        <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent">Voe Certo Premium</span>
+                      </div>
+                      <h3 className="text-3xl md:text-4xl font-black mb-4">Acesso total à elite dos simulados</h3>
+                      <p className="text-primary-foreground/70 font-medium">Relatórios de performance avançados, Chat IA ilimitado e muito mais.</p>
                     </div>
-                    <h3 className="text-3xl md:text-4xl font-black mb-4">Acesso total à elite dos simulados</h3>
-                    <p className="text-primary-foreground/70 font-medium">Relatórios de performance avançados, Chat IA ilimitado e muito mais.</p>
+                    <Button variant="hero" size="xl" asChild className="rounded-[5px] h-14 px-10 font-bold whitespace-nowrap"><Link to="/premium">Ver Planos de Acesso</Link></Button>
                   </div>
-                  <Button variant="hero" size="xl" asChild className="rounded-[5px] h-14 px-10 font-bold whitespace-nowrap"><Link to="/premium">Ver Planos de Acesso</Link></Button>
-                </div>
-             </div>
-          </div>
-        </section>
+               </div>
+            </div>
+          </section>
+        )}
 
         {/* Modal de Autenticação */}
         <Dialog open={showAuthModal} onOpenChange={setShowAuthModal}>
