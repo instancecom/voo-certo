@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import {
   ArrowRight, Plane, Loader2, Lock, BookOpen, Crown, Wrench, ChevronLeft, ChevronRight,
-  Filter, Check,
+  Filter, Check, Target, ChevronDown, CheckCircle2, MapPin,
 } from 'lucide-react';
 
 
@@ -224,45 +224,167 @@ export default function GuiaCarreiraPage() {
       <Header />
 
       <main className="pt-16 md:pt-20">
-        {/* Hero Section */}
-        <section className="relative py-20 md:py-32 overflow-hidden bg-primary text-primary-foreground min-h-[400px] flex items-center">
-          <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-20">
-            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[60%] rounded-full bg-accent blur-[120px]" />
-            <div className="absolute bottom-[10%] right-[-5%] w-[30%] h-[50%] rounded-full bg-sky-400 blur-[100px]" />
-          </div>
+        {/* Hero Section — Split Layout */}
+        <section className="relative overflow-hidden bg-primary text-primary-foreground">
+          {/* Subtle grid pattern overlay */}
+          <div
+            className="absolute inset-0 z-0 opacity-[0.04] pointer-events-none"
+            style={{
+              backgroundImage:
+                'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)',
+              backgroundSize: '40px 40px',
+            }}
+          />
+          {/* Accent glow — apenas no canto superior esquerdo, mais contido */}
+          <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-accent/20 blur-[140px] pointer-events-none z-0" />
 
-          <div className="container mx-auto px-4 relative z-10">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="max-w-4xl mx-auto text-center"
-            >
-              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-[5px] px-4 py-2 mb-8 border border-white/20 animate-float">
-                <Plane className="w-5 h-5 text-accent" />
-                <span className="text-primary-foreground/90 text-sm font-semibold tracking-wide">Guia de Carreira Exclusivo</span>
-              </div>
+          <div className="container mx-auto px-4 relative z-10 py-24 md:py-32">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
-              <h1 className="text-4xl md:text-6xl font-black text-primary-foreground mb-8 leading-[1.1] tracking-tight">
-                Trace sua Rota para o{' '}
-                <span className="text-accent underline decoration-accent/30 underline-offset-8">Sucesso Profissional</span>
-              </h1>
+              {/* ── Lado Esquerdo: Texto + CTAs ─────────────────────────── */}
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.7 }}
+              >
+                {/* Eyebrow label */}
+                <div className="inline-flex items-center gap-2 bg-white/10 border border-white/15 rounded-[5px] px-3 py-1.5 mb-6">
+                  <MapPin className="w-3.5 h-3.5 text-accent shrink-0" />
+                  <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary-foreground/80">Guia de Carreira</span>
+                </div>
 
-              <p className="text-lg md:text-2xl text-primary-foreground/80 mb-10 max-w-2xl mx-auto font-medium">
-                Siga roteiros estruturados com simulados e microcursos focados na sua aprovação e crescimento.
-              </p>
+                {/* Título principal */}
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-primary-foreground leading-[1.05] tracking-tight mb-5">
+                  Sua rota de carreira{' '}
+                  <span className="text-accent relative">
+                    na aviação,
+                    <span className="absolute bottom-0 left-0 w-full h-[3px] bg-accent/40 rounded-full" />
+                  </span>{' '}
+                  passo a passo
+                </h1>
 
-              <div className="flex flex-wrap justify-center gap-3">
-                <Badge variant="secondary" className="px-5 py-2.5 text-xs font-bold uppercase tracking-wider bg-white/10 text-white border-white/20 rounded-[5px]">📚 Etapas</Badge>
-                <Badge variant="secondary" className="px-5 py-2.5 text-xs font-bold uppercase tracking-wider bg-white/10 text-white border-white/20 rounded-[5px]">🎯 Simulados</Badge>
-                <Badge variant="secondary" className="px-5 py-2.5 text-xs font-bold uppercase tracking-wider bg-white/10 text-white border-white/20 rounded-[5px]">🎓 Cursos</Badge>
-              </div>
-            </motion.div>
+                {/* Subtítulo */}
+                <p className="text-base md:text-lg text-primary-foreground/70 mb-8 max-w-lg leading-relaxed font-medium">
+                  Roteiros estruturados com etapas reais, simulados ANAC e dicas de mercado — tudo o que você precisa para decolar na carreira aeronáutica.
+                </p>
+
+                {/* CTAs */}
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-10">
+                  <Button
+                    size="lg"
+                    variant="hero"
+                    className="rounded-[5px] h-12 px-7 font-bold text-sm gap-2 shadow-lg shadow-black/20"
+                    onClick={() => {
+                      const el = document.getElementById('guias-section');
+                      el?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                  >
+                    <BookOpen className="w-4 h-4" />
+                    Ver Guias de Carreira
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="ghost"
+                    className="rounded-[5px] h-12 px-5 font-bold text-sm gap-2 text-primary-foreground/70 hover:text-primary-foreground hover:bg-white/10 border border-white/10"
+                    onClick={() => {
+                      const el = document.getElementById('guias-section');
+                      el?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                  >
+                    Como funciona
+                    <ChevronDown className="w-4 h-4" />
+                  </Button>
+                </div>
+
+                {/* Micro-stats */}
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-white/10 pt-6">
+                  {[
+                    { icon: <BookOpen className="w-3.5 h-3.5 text-accent" />, label: 'Guias de carreira' },
+                    { icon: <Target className="w-3.5 h-3.5 text-accent" />, label: 'Simulados inclusos' },
+                    { icon: <CheckCircle2 className="w-3.5 h-3.5 text-accent" />, label: 'Etapas validadas' },
+                  ].map((s, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      {s.icon}
+                      <span className="text-xs font-bold text-primary-foreground/60 uppercase tracking-wide">{s.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* ── Lado Direito: Card Roadmap ilustrativo ───────────────── */}
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.7, delay: 0.15 }}
+                className="hidden lg:flex justify-center"
+              >
+                <div className="w-full max-w-sm bg-white/8 backdrop-blur-md border border-white/15 rounded-[5px] p-6 shadow-2xl">
+                  {/* Card header */}
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent mb-0.5">Exemplo de Rota</p>
+                      <h3 className="text-sm font-black text-primary-foreground">Comissário de Bordo</h3>
+                    </div>
+                    <div className="w-9 h-9 rounded-[5px] bg-accent/20 border border-accent/30 flex items-center justify-center">
+                      <Plane className="w-4 h-4 text-accent -rotate-45" />
+                    </div>
+                  </div>
+
+                  {/* Roadmap steps */}
+                  <div className="space-y-0">
+                    {[
+                      { step: '01', label: 'Estudo Teórico', desc: 'Regulamentos ANAC e segurança de voo', done: true },
+                      { step: '02', label: 'Simulados Práticos', desc: 'Questões do padrão banca ANAC', done: true },
+                      { step: '03', label: 'Treinamento de CRM', desc: 'Gestão de recursos e emergências', done: false },
+                      { step: '04', label: 'Certificação CCT', desc: 'Exame e obtenção do certificado', done: false },
+                    ].map((item, i, arr) => (
+                      <div key={i} className="flex gap-3">
+                        {/* Linha vertical + círculo */}
+                        <div className="flex flex-col items-center">
+                          <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 border-2 transition-all ${
+                            item.done
+                              ? 'bg-accent border-accent'
+                              : 'bg-white/5 border-white/20'
+                          }`}>
+                            {item.done
+                              ? <Check className="w-3.5 h-3.5 text-primary font-black" />
+                              : <span className="text-[9px] font-black text-primary-foreground/40">{item.step}</span>
+                            }
+                          </div>
+                          {i < arr.length - 1 && (
+                            <div className={`w-px flex-1 my-1 ${item.done ? 'bg-accent/40' : 'bg-white/10'}`} style={{ minHeight: '20px' }} />
+                          )}
+                        </div>
+
+                        {/* Conteúdo */}
+                        <div className={`pb-4 flex-1 ${i === arr.length - 1 ? 'pb-0' : ''}`}>
+                          <p className={`text-sm font-bold leading-none mb-0.5 ${item.done ? 'text-primary-foreground' : 'text-primary-foreground/50'}`}>
+                            {item.label}
+                          </p>
+                          <p className={`text-xs leading-relaxed ${item.done ? 'text-primary-foreground/60' : 'text-primary-foreground/30'}`}>
+                            {item.desc}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Footer do card */}
+                  <div className="mt-5 pt-4 border-t border-white/10 flex items-center gap-2">
+                    <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                      <div className="h-full w-1/2 bg-accent rounded-full" />
+                    </div>
+                    <span className="text-[10px] font-bold text-accent shrink-0">50% concluído</span>
+                  </div>
+                </div>
+              </motion.div>
+
+            </div>
           </div>
         </section>
 
         {/* Guides list - visible to all, content links locked for non-Tripulante+ */}
-        <section className="py-16 md:py-24 overflow-hidden">
+        <section id="guias-section" className="py-16 md:py-24 overflow-hidden">
           <div className="container mx-auto px-4 md:px-8">
             <div className="max-w-7xl mx-auto">
               <div className="mb-12 pl-2">
