@@ -210,7 +210,7 @@ export default function ProgressPage() {
             <div>
               <h1 className="text-2xl font-bold text-foreground mb-1 flex items-center gap-2">
                 <BarChart3 className="w-7 h-7 text-primary" />
-                Central de Performance
+                Seu Progresso
               </h1>
               <p className="text-muted-foreground text-sm">
                 Sua evolução baseada em padrões reais da ANAC.
