@@ -1,7 +1,7 @@
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Trophy, Lock, Award, Star, Crown, Gem, ChevronLeft, ChevronRight, Loader2, Sparkles } from "lucide-react";
+import { Trophy, Lock, Award, Star, Crown, Gem, Loader2, Sparkles } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { BadgeCard } from "@/components/badges/BadgeCard";
@@ -19,20 +19,15 @@ const rarityConfig: Record<BadgeRarity, { icon: React.ElementType; label: string
 
 const RARITY_ORDER: BadgeRarity[] = ["bronze", "silver", "gold", "platinum"];
 
-function ScrollRow({ rarity, badges, earnedIds, earnedMap }: {
+function BadgeTierSection({ rarity, badges, earnedIds, earnedMap }: {
   rarity: BadgeRarity;
   badges: any[];
   earnedIds: Set<string>;
   earnedMap: Map<string, string>;
 }) {
-  const scrollRef = useRef<HTMLDivElement>(null);
   const cfg = rarityConfig[rarity];
   const Icon = cfg.icon;
   const earned = badges.filter((b: any) => earnedIds.has(b.id)).length;
-
-  const scroll = (dir: number) => {
-    scrollRef.current?.scrollBy({ left: dir * 300, behavior: "smooth" });
-  };
 
   if (badges.length === 0) return null;
 
@@ -40,7 +35,7 @@ function ScrollRow({ rarity, badges, earnedIds, earnedMap }: {
     <motion.section
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="relative group/row"
+      className="relative"
     >
       {/* Row header */}
       <div className="flex items-center justify-between mb-4 px-1">
@@ -54,14 +49,6 @@ function ScrollRow({ rarity, badges, earnedIds, earnedMap }: {
               {earned} de {badges.length} conquistadas
             </p>
           </div>
-        </div>
-        <div className="flex items-center gap-1 opacity-0 group-hover/row:opacity-100 transition-opacity">
-          <button onClick={() => scroll(-1)} className="p-2 rounded-[5px] bg-card border border-border hover:bg-muted transition-colors shadow-sm">
-            <ChevronLeft className="w-4 h-4 text-foreground" />
-          </button>
-          <button onClick={() => scroll(1)} className="p-2 rounded-[5px] bg-card border border-border hover:bg-muted transition-colors shadow-sm">
-            <ChevronRight className="w-4 h-4 text-foreground" />
-          </button>
         </div>
       </div>
 
@@ -246,7 +233,7 @@ const ConquistasPage = () => {
             <div className="space-y-8">
               {RARITY_ORDER.map((rarity, i) => (
                 <motion.div key={rarity} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 + i * 0.1 }}>
-                  <ScrollRow
+                  <BadgeTierSection
                     rarity={rarity}
                     badges={byRarity[rarity] || []}
                     earnedIds={earnedBadgeIds}
