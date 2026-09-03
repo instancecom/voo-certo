@@ -711,28 +711,13 @@ export default function CurriculumPage() {
             )}
 
             {/* ================================================================ */}
-            {/* MODO CHAT (criação com Mike)                                      */}
+            {/* MODO CHAT (criação com Mike - Estilo ChatGPT)                    */}
             {/* ================================================================ */}
             {mode === 'chat' && (
-              <div className="print:hidden space-y-4">
-                {/* Barra de sub-fluxo */}
-                <div className="flex items-center justify-between bg-card border border-border/80 px-4 py-3 rounded-[5px] shadow-sm">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setMode('dashboard')}
-                    className="gap-2 text-sm font-bold text-muted-foreground hover:text-foreground h-9 px-3"
-                  >
-                    <ChevronLeft className="w-4 h-4 text-primary" />
-                    Galeria de Currículos
-                  </Button>
-                  <Badge variant="outline" className="border-amber-400/40 text-amber-600 dark:text-amber-400 bg-amber-400/10 text-[10px] font-bold uppercase rounded-[5px]">
-                    Mike IA
-                  </Badge>
-                </div>
-
+              <div className="print:hidden">
                 <CurriculumChatAssistant
                   onCurriculumGenerated={handleCurriculumGenerated}
+                  onBackToGallery={() => setMode('dashboard')}
                   userEmail={user?.email}
                   userName={user?.user_metadata?.full_name}
                 />
