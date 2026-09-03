@@ -35,31 +35,32 @@ function BadgeTierSection({ rarity, badges, earnedIds, earnedMap }: {
     <motion.section
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="relative"
+      className="relative p-4 sm:p-6 rounded-[5px] bg-white dark:bg-card border border-border/80 shadow-sm"
     >
       {/* Row header */}
-      <div className="flex items-center justify-between mb-4 px-1">
+      <div className="flex items-center justify-between mb-4 pb-3 border-b border-border/60">
         <div className="flex items-center gap-3">
-          <div className={cn("w-10 h-10 rounded-[5px] flex items-center justify-center", cfg.bgColor)}>
+          <div className={cn("w-10 h-10 rounded-[5px] flex items-center justify-center shadow-sm", cfg.bgColor)}>
             <Icon className={cn("w-5 h-5", cfg.color)} />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-foreground">{cfg.label}</h2>
-            <p className="text-xs text-muted-foreground">
+            <h2 className="text-base sm:text-lg font-bold text-foreground">{cfg.label}</h2>
+            <p className="text-xs text-muted-foreground font-medium">
               {earned} de {badges.length} conquistadas
             </p>
           </div>
         </div>
       </div>
 
-      {/* Grid container em vez de scroll horizontal */}
-      <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-x-2 gap-y-6 sm:gap-4 py-4">
+      {/* Grid container com cards estruturados */}
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 pt-1">
         {badges.map((insignia: any, i: number) => (
           <motion.div
             key={insignia.id}
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: i * 0.04 }}
+            transition={{ delay: i * 0.03 }}
+            className="flex"
           >
             <BadgeCard
               insignia={insignia}
@@ -201,13 +202,16 @@ const ConquistasPage = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15 }}
-              className="mb-10"
+              className="mb-10 p-4 sm:p-6 rounded-[5px] bg-white dark:bg-card border border-amber-500/30 shadow-sm"
             >
-              <div className="flex items-center gap-2 mb-4 px-1">
-                <Sparkles className="w-5 h-5 text-accent" />
-                <h2 className="text-lg font-bold text-foreground">Últimas Conquistas</h2>
+              <div className="flex items-center gap-2 mb-4 pb-3 border-b border-border/60">
+                <Sparkles className="w-5 h-5 text-amber-500" />
+                <div>
+                  <h2 className="text-base sm:text-lg font-bold text-foreground">Últimas Conquistas</h2>
+                  <p className="text-xs text-muted-foreground">Suas insígnias desbloqueadas mais recentes</p>
+                </div>
               </div>
-              <div className="grid grid-cols-3 gap-2 sm:gap-4 pb-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 pt-1">
                 {[...userInsignias]
                   .sort((a, b) => new Date(b.earned_at).getTime() - new Date(a.earned_at).getTime())
                   .slice(0, 3)
@@ -215,7 +219,7 @@ const ConquistasPage = () => {
                     const badge = insignias?.find((i) => i.id === ui.insignia_id);
                     if (!badge) return null;
                     return (
-                      <div key={ui.id} className="w-full">
+                      <div key={ui.id} className="w-full flex">
                         <BadgeCard insignia={badge} earned earnedAt={ui.earned_at} large />
                       </div>
                     );

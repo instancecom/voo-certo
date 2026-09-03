@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Lock, Upload, Award } from "lucide-react";
+import { Lock, Upload, Award, CheckCircle2, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DynamicIcon } from "@/components/ui/dynamic-icon";
 import type { Insignia, BadgeRarity } from "@/hooks/useInsignias";
 import { VerificationSubmitModal } from "./VerificationSubmitModal";
-import { CertificateGeneratorModal } from "./CertificateGeneratorModal";
 import { BadgePreviewModal } from "./BadgePreviewModal";
 import { useUserVerifications } from "@/hooks/useBadgeVerifications";
 import { useAuth } from "@/contexts/AuthContext";
 import { getInsigniaFallback } from "@/hooks/useInsigniasFallback";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 interface BadgeCardProps {
   insignia: Insignia;
@@ -20,15 +21,38 @@ interface BadgeCardProps {
   onClick?: () => void;
 }
 
-const rarityColors: Record<BadgeRarity, { text: string; bgGlow: string; badgeBg: string }> = {
-  bronze: { text: "text-amber-700", bgGlow: "bg-amber-600", badgeBg: "bg-gradient-to-br from-amber-300 to-amber-600" },
-  silver: { text: "text-slate-600", bgGlow: "bg-slate-400", badgeBg: "bg-gradient-to-br from-slate-200 to-slate-400" },
-  gold: { text: "text-yellow-600", bgGlow: "bg-yellow-400", badgeBg: "bg-gradient-to-br from-yellow-300 to-yellow-500" },
-  platinum: { text: "text-cyan-600", bgGlow: "bg-cyan-400", badgeBg: "bg-gradient-to-br from-cyan-300 to-cyan-500" },
+const rarityColors: Record<BadgeRarity, { text: string; bgGlow: string; badgeBg: string; borderAccent: string }> = {
+  bronze: {
+    text: "text-amber-700",
+    bgGlow: "bg-amber-600",
+    badgeBg: "bg-gradient-to-br from-amber-400 to-amber-600",
+    borderAccent: "border-amber-500/30 hover:border-amber-500/60",
+  },
+  silver: {
+    text: "text-slate-600",
+    bgGlow: "bg-slate-400",
+    badgeBg: "bg-gradient-to-br from-slate-300 to-slate-500",
+    borderAccent: "border-slate-300 hover:border-slate-400",
+  },
+  gold: {
+    text: "text-yellow-600",
+    bgGlow: "bg-yellow-400",
+    badgeBg: "bg-gradient-to-br from-yellow-400 to-yellow-600",
+    borderAccent: "border-yellow-500/40 hover:border-yellow-500/70",
+  },
+  platinum: {
+    text: "text-cyan-600",
+    bgGlow: "bg-cyan-400",
+    badgeBg: "bg-gradient-to-br from-cyan-400 to-cyan-600",
+    borderAccent: "border-cyan-500/40 hover:border-cyan-500/70",
+  },
 };
 
 const rarityLabels: Record<BadgeRarity, string> = {
-  bronze: "Bronze", silver: "Prata", gold: "Ouro", platinum: "Platina",
+  bronze: "Bronze",
+  silver: "Prata",
+  gold: "Ouro",
+  platinum: "Platina",
 };
 
 const getDriveImageUrl = (url: string | null): string | null => {
@@ -41,7 +65,14 @@ const getDriveImageUrl = (url: string | null): string | null => {
   return url;
 };
 
-export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = true, large, onClick }: BadgeCardProps) => {
+export const BadgeCard = ({
+  insignia,
+  earned = false,
+  earnedAt,
+  showDetails = true,
+  large,
+  onClick
+}: BadgeCardProps) => {
   const { user } = useAuth();
   const colors = rarityColors[insignia.rarity];
   const fallback = getInsigniaFallback(insignia.name);
@@ -53,7 +84,6 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
   const isAnacBadge = insignia.condition_type === 'anac_approval';
   const verification = userVerifications?.find((v) => v.insignia_id === insignia.id);
   const hasPendingVerification = verification?.status === 'pending';
-  const hasApprovedVerification = verification?.status === 'approved';
 
   const handleClick = () => {
     if (onClick) { onClick(); return; }
@@ -66,22 +96,47 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
     setPreviewModalOpen(true);
   };
 
+  const formattedDate = earnedAt ? (() => {
+    try {
+      return format(new Date(earnedAt), "dd/MM/yy", { locale: ptBR });
+    } catch {
+      return null;
+    }
+  })() : null;
+
   return (
     <>
       <motion.div
-        whileHover={{ scale: 1.1, y: -5 }}
-        whileTap={{ scale: 0.95 }}
+        whileHover={{ y: -4, transition: { duration: 0.2 } }}
+        whileTap={{ scale: 0.98 }}
         className={cn(
-          "relative cursor-pointer transition-all duration-300 flex flex-col items-center justify-start group mx-auto",
-          large ? "w-28 sm:w-32" : "w-24 sm:w-28",
-          hasPendingVerification && "opacity-90"
+          "relative cursor-pointer transition-all duration-300 flex flex-col items-center justify-between text-center p-4 rounded-[5px] border bg-white dark:bg-card shadow-sm hover:shadow-md group h-full min-h-[210px] sm:min-h-[225px] w-full",
+          earned
+            ? `${colors.borderAccent} bg-gradient-to-b from-white to-amber-50/20 dark:from-card dark:to-card`
+            : "border-border/70 hover:border-border/90 bg-slate-50/50 dark:bg-card/40 opacity-75 hover:opacity-100",
+          hasPendingVerification && "border-yellow-400 bg-yellow-50/30"
         )}
         onClick={handleClick}
       >
-        {/* Icon Container */}
+        {/* Rarity Pill Top-Right */}
+        <div className="w-full flex items-center justify-between gap-1 mb-1">
+          <span className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-wider">
+            {insignia.condition_type === 'anac_approval' ? 'Oficial ANAC' : 'Conquista'}
+          </span>
+          <span
+            className={cn(
+              "text-[9px] font-extrabold px-2 py-0.5 rounded-[4px] text-white shadow-sm shrink-0",
+              colors.badgeBg
+            )}
+          >
+            {rarityLabels[insignia.rarity]}
+          </span>
+        </div>
+
+        {/* Insignia Icon Container with Glow */}
         <div className={cn(
-          "relative flex items-center justify-center rounded-full transition-all duration-500",
-          large ? "w-20 h-20 sm:w-24 sm:h-24 mb-3 sm:mb-4" : "w-16 h-16 sm:w-20 sm:h-20 mb-2 sm:mb-3",
+          "relative flex items-center justify-center my-2",
+          large ? "w-20 h-20 sm:w-24 sm:h-24" : "w-16 h-16 sm:w-20 sm:h-20",
           earned ? "" : "grayscale opacity-50 group-hover:opacity-80"
         )}>
           {/* Animated Glow behind the image if earned */}
@@ -92,23 +147,13 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
             )} />
           )}
 
-          {/* Rarity small badge */}
-          {earned && (
-             <div className={cn(
-               "absolute -top-1 -right-2 text-[0.6rem] font-extrabold px-2 py-0.5 rounded-full shadow-lg z-20 text-white",
-               colors.badgeBg
-             )}>
-               {rarityLabels[insignia.rarity]}
-             </div>
-          )}
-
           {/* Image / Icon */}
-          <div className="relative z-10 w-full h-full flex items-center justify-center drop-shadow-xl group-hover:drop-shadow-2xl transition-all duration-500">
+          <div className="relative z-10 w-full h-full flex items-center justify-center drop-shadow-md group-hover:drop-shadow-xl transition-all duration-500">
             {imageUrl ? (
               <img
                 src={imageUrl}
                 alt={insignia.name}
-                className="w-full h-full object-contain transform group-hover:rotate-3 transition-transform duration-500"
+                className="w-full h-full object-contain transform group-hover:scale-105 group-hover:rotate-2 transition-transform duration-500"
                 crossOrigin="anonymous"
                 referrerPolicy="no-referrer"
                 onError={(e) => {
@@ -119,39 +164,53 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
             ) : null}
             <DynamicIcon
               name={insignia.icon}
-              size={large ? 48 : 36}
-              className={cn(imageUrl ? "hidden" : "transform group-hover:rotate-3 transition-transform duration-500", earned ? colors.text : "text-muted-foreground", "sm:w-[56px] sm:h-[56px]")}
+              size={large ? 44 : 34}
+              className={cn(
+                imageUrl ? "hidden" : "transform group-hover:scale-105 transition-transform duration-500",
+                earned ? colors.text : "text-muted-foreground"
+              )}
             />
           </div>
         </div>
 
-        {/* Name */}
-        <h3 className={cn(
-          "font-bold text-center leading-tight line-clamp-2 transition-colors duration-300",
-          large ? "text-xs sm:text-sm" : "text-[10px] sm:text-xs",
-          earned ? "text-[#1A233A] group-hover:text-primary" : "text-muted-foreground group-hover:text-slate-600"
-        )}>
-          {insignia.name}
-        </h3>
+        {/* Text Section (Name + Description) */}
+        <div className="w-full space-y-1 my-1">
+          <h3 className={cn(
+            "font-bold text-xs sm:text-sm text-center leading-tight line-clamp-1 transition-colors duration-200",
+            earned ? "text-[#1A233A] dark:text-foreground group-hover:text-primary" : "text-muted-foreground group-hover:text-foreground"
+          )}>
+            {insignia.name}
+          </h3>
 
-        {/* Hover info for unearned */}
-        {!earned && !hasPendingVerification && (
-          <div className="absolute inset-x-0 bottom-full mb-2 flex flex-col items-center justify-end opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-30">
-            <span className="text-[10px] text-muted-foreground font-semibold flex items-center gap-1 bg-white/90 px-2.5 py-1 rounded-full shadow-md backdrop-blur-sm border border-slate-200">
-             {isAnacBadge ? <Upload size={12} /> : <Lock size={12} />}
-             {isAnacBadge ? "Enviar Doc" : "Bloqueada"}
-            </span>
-          </div>
-        )}
+          <p className="text-[11px] text-muted-foreground line-clamp-2 leading-relaxed px-1 min-h-[30px] flex items-center justify-center">
+            {insignia.description || "Conquista especial da jornada aeronáutica."}
+          </p>
+        </div>
 
-        {/* Pending verification info */}
-        {hasPendingVerification && !earned && (
-          <div className="absolute inset-x-0 bottom-full mb-2 flex flex-col items-center justify-end opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-30">
-            <span className="text-[10px] text-yellow-700 font-semibold flex items-center gap-1 bg-yellow-100/90 px-2.5 py-1 rounded-full shadow-md backdrop-blur-sm border border-yellow-300">
-             Aguardando aprovação
-            </span>
-          </div>
-        )}
+        {/* Bottom Status Pill */}
+        <div className="pt-2 w-full flex justify-center">
+          {earned ? (
+            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-[4px] bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold">
+              <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+              <span>{formattedDate ? `Conquistada em ${formattedDate}` : "Conquistada"}</span>
+            </div>
+          ) : hasPendingVerification ? (
+            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-[4px] bg-yellow-500/15 border border-yellow-500/30 text-yellow-800 dark:text-yellow-300 text-[10px] font-bold">
+              <Clock className="w-3 h-3 text-yellow-600" />
+              <span>Em análise</span>
+            </div>
+          ) : isAnacBadge ? (
+            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-[4px] bg-primary/10 border border-primary/25 text-primary text-[10px] font-bold group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+              <Upload className="w-3 h-3" />
+              <span>Enviar Doc</span>
+            </div>
+          ) : (
+            <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[4px] bg-muted text-muted-foreground border border-border/80 text-[10px] font-medium">
+              <Lock className="w-3 h-3" />
+              <span>Bloqueada</span>
+            </div>
+          )}
+        </div>
       </motion.div>
 
       {/* Modals */}
@@ -169,8 +228,6 @@ export const BadgeCard = ({ insignia, earned = false, earnedAt, showDetails = tr
         insigniaId={insignia.id}
         insigniaName={insignia.name}
       />
-
-      {/* Removed separate CertificateGeneratorModal as it's now integrated into BadgePreviewModal */}
     </>
   );
 };
