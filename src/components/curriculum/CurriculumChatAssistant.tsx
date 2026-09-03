@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Send, Sparkles, Loader2, CheckCircle2, ShieldCheck, Lightbulb } from 'lucide-react';
+import { User, Send, Sparkles, Loader2, ArrowUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -216,48 +215,48 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
   };
 
   return (
-    <Card className="border-border/80 bg-card shadow-md rounded-[5px] overflow-hidden max-w-4xl mx-auto flex flex-col my-2">
-      {/* ── HEADER ESCURO DO MIKE ── */}
-      <div className="bg-[#0f172a] text-white p-4 sm:p-5 rounded-t-[5px] flex items-center justify-between shrink-0 border-b border-slate-800">
-        <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+    <div className="bg-card border border-border/80 shadow-md rounded-[5px] overflow-hidden max-w-4xl mx-auto flex flex-col my-2 h-[720px] max-h-[85vh]">
+      {/* ── HEADER MINIMALISTA ESTILO CHATGPT ── */}
+      <div className="bg-card/95 backdrop-blur-md px-4 py-3 sm:px-6 sm:py-3.5 border-b border-border flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-3 min-w-0">
           <div className="relative shrink-0">
-            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-[5px] overflow-hidden shrink-0 border-2 border-amber-400/80 shadow-sm bg-slate-900">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-[5px] overflow-hidden border border-border bg-slate-900 shadow-sm">
               <img
                 src="/images/avatars/mike_character_curiculum.png"
-                alt="Mike - Assistente de Carreira"
+                alt="Mike"
                 className="w-full h-full object-cover block"
               />
             </div>
-            <div className="absolute -bottom-1 -right-1 bg-amber-500 rounded-[5px] p-0.5 border border-slate-900">
-              <Sparkles className="w-3 h-3 text-slate-950" />
+            <div className="absolute -bottom-0.5 -right-0.5 bg-amber-500 rounded-full p-0.5 border-2 border-card">
+              <Sparkles className="w-2 h-2 text-slate-950" />
             </div>
           </div>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="font-black text-base sm:text-lg text-white leading-tight">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <h3 className="font-black text-sm sm:text-base text-foreground leading-tight">
                 Mike
               </h3>
-              <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-300 bg-amber-400/10 rounded-[5px] px-2 py-0.5 font-bold uppercase tracking-wider">
-                Assistente de Carreira
+              <Badge variant="outline" className="text-[10px] border-amber-500/30 text-amber-600 dark:text-amber-400 bg-amber-500/10 rounded-[5px] px-1.5 py-0 font-bold uppercase tracking-wider">
+                IA
               </Badge>
             </div>
-            <p className="text-xs text-slate-300 font-medium mt-1 leading-snug truncate">
-              Seu assistente para estruturação e otimização de currículos
+            <p className="text-[11px] text-muted-foreground truncate">
+              Assistente de Carreira em Aviação
             </p>
           </div>
         </div>
 
-        {/* Contador e Destaque dos Passos */}
-        <div className="text-right shrink-0 ml-3 flex flex-col items-end">
-          <span className="text-xs font-bold text-amber-300 font-mono tracking-wide">
-            Passo {currentStep + 1} de {QUESTIONS.length}
+        {/* Indicador de Progresso dos Passos */}
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] font-bold text-muted-foreground font-mono">
+            {currentStep + 1}/{QUESTIONS.length}
           </span>
-          <div className="flex items-center gap-1 mt-1.5">
+          <div className="flex items-center gap-1">
             {QUESTIONS.map((_, idx) => (
               <div
                 key={idx}
-                className={`h-1.5 sm:h-2 rounded-[5px] transition-all duration-300 ${
-                  idx <= currentStep ? 'w-4 sm:w-6 bg-amber-400' : 'w-2 sm:w-3 bg-white/20'
+                className={`h-1.5 rounded-[5px] transition-all duration-300 ${
+                  idx <= currentStep ? 'w-3.5 bg-primary' : 'w-1.5 bg-muted'
                 }`}
               />
             ))}
@@ -265,103 +264,106 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
         </div>
       </div>
 
-      {/* ── CARD DE ORIENTAÇÃO (MINIMALISTA) ── */}
-      <div className="bg-sky-50 dark:bg-sky-950/40 border-b border-sky-200/60 dark:border-sky-900/60 px-4 py-3 sm:px-5 sm:py-3 flex items-start gap-3 text-xs sm:text-sm text-sky-950 dark:text-sky-200 shrink-0">
-        <Lightbulb className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-amber-500 mt-0.5" />
-        <p className="leading-relaxed">
-          <strong className="font-bold text-sky-900 dark:text-sky-100">Criação inteligente com IA:</strong>{' '}
-          <span className="hidden sm:inline">Mike organiza suas informações no padrão exigido pelo setor aéreo, aplicando verbos de ação e sugerindo a melhor formatação para sua vaga.</span>
-          <span className="sm:hidden">Mike estrutura e formata seu currículo no padrão exigido pela aviação.</span>
-        </p>
+      {/* ── ÁREA DE CHAT (ESTILO CHATGPT) ── */}
+      <div 
+        ref={chatContainerRef} 
+        className="flex-1 p-4 sm:p-6 space-y-5 overflow-y-auto scroll-smooth scrollbar-thin bg-background/50"
+      >
+        <div className="max-w-3xl mx-auto space-y-5">
+          <AnimatePresence initial={false}>
+            {messages.map((msg, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2 }}
+                className={`flex gap-3 sm:gap-3.5 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                {/* Avatar do Mike */}
+                {msg.sender === 'ai' && (
+                  <div className="w-8 h-8 rounded-[5px] overflow-hidden shrink-0 border border-border mt-0.5 shadow-sm bg-slate-900">
+                    <img
+                      src="/images/avatars/mike_character_curiculum.png"
+                      alt="Mike"
+                      className="w-full h-full object-cover block"
+                    />
+                  </div>
+                )}
+
+                {/* Balão de Mensagem */}
+                <div
+                  className={`max-w-[88%] sm:max-w-[78%] p-3.5 sm:p-4 rounded-[5px] text-xs sm:text-sm leading-relaxed whitespace-pre-line shadow-sm ${
+                    msg.sender === 'user'
+                      ? 'bg-primary text-primary-foreground font-medium'
+                      : 'bg-card text-foreground border border-border/80'
+                  }`}
+                >
+                  <div>{renderFormattedText(msg.text)}</div>
+                  <span className={`text-[10px] font-mono text-right block mt-1.5 ${
+                    msg.sender === 'user' ? 'text-primary-foreground/70' : 'text-muted-foreground/60'
+                  }`}>
+                    {msg.timestamp}
+                  </span>
+                </div>
+
+                {/* Avatar do Usuário */}
+                {msg.sender === 'user' && (
+                  <div className="w-8 h-8 rounded-[5px] bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0 mt-0.5">
+                    <User className="w-4 h-4" />
+                  </div>
+                )}
+              </motion.div>
+            ))}
+          </AnimatePresence>
+
+          {/* Estado de Geração / Digitação */}
+          {isGenerating && (
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex gap-3 sm:gap-3.5 justify-start"
+            >
+              <div className="w-8 h-8 rounded-[5px] overflow-hidden shrink-0 border border-border mt-0.5 shadow-sm bg-slate-900">
+                <img
+                  src="/images/avatars/mike_character_curiculum.png"
+                  alt="Mike"
+                  className="w-full h-full object-cover block"
+                />
+              </div>
+              <div className="p-3.5 sm:p-4 rounded-[5px] bg-card border border-border/80 text-foreground text-xs sm:text-sm flex items-center gap-3 shadow-sm">
+                <Loader2 className="w-4 h-4 animate-spin text-primary shrink-0" />
+                <span className="font-medium text-muted-foreground">Mike está estruturando o seu currículo...</span>
+              </div>
+            </motion.div>
+          )}
+        </div>
       </div>
 
-      {/* ── ÁREA DE CHAT / CONVERSA ── */}
-      <CardContent 
-        ref={chatContainerRef} 
-        className="p-4 sm:p-6 space-y-4 max-h-[360px] sm:max-h-[460px] min-h-[250px] overflow-y-auto scroll-smooth scrollbar-thin flex-1 bg-card"
-      >
-        <AnimatePresence initial={false}>
-          {messages.map((msg, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2 }}
-              className={`flex gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
-              {msg.sender === 'ai' && (
-                <div className="w-8 h-8 rounded-[5px] overflow-hidden shrink-0 border border-primary/30 mt-1 shadow-sm bg-slate-900">
-                  <img
-                    src="/images/avatars/mike_character_curiculum.png"
-                    alt="Mike"
-                    className="w-full h-full object-cover block"
-                  />
-                </div>
-              )}
+      {/* ── BARRA DE INPUT ESTILO CHATGPT ── */}
+      <div className="p-3.5 sm:p-4 border-t border-border bg-card shrink-0">
+        <div className="max-w-3xl mx-auto space-y-2.5">
+          
+          {/* Chips de Respostas Rápidas */}
+          {!isGenerating && activeQuestion?.quickOptions && activeQuestion.quickOptions.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 sm:gap-2">
+              {activeQuestion.quickOptions.map((opt, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => handleSendAnswer(opt)}
+                  className="bg-muted/70 hover:bg-muted text-foreground border border-border/70 hover:border-primary/40 transition-colors py-1 px-2.5 sm:px-3 rounded-[5px] text-[11px] sm:text-xs font-semibold text-left"
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
+          )}
 
-              <div
-                className={`max-w-[88%] sm:max-w-[80%] p-3.5 sm:p-4 rounded-[5px] text-xs sm:text-sm leading-relaxed whitespace-pre-line shadow-sm border ${
-                  msg.sender === 'user'
-                    ? 'bg-[#0f172a] text-white border-slate-800 font-medium'
-                    : 'bg-card text-foreground border-border/80'
-                }`}
-              >
-                <div>{renderFormattedText(msg.text)}</div>
-                <span className={`text-[10px] font-mono text-right block mt-1.5 ${
-                  msg.sender === 'user' ? 'text-slate-400' : 'text-muted-foreground/60'
-                }`}>
-                  {msg.timestamp}
-                </span>
-              </div>
-
-              {msg.sender === 'user' && (
-                <div className="w-8 h-8 rounded-[5px] bg-muted border border-border flex items-center justify-center text-muted-foreground shrink-0 mt-1">
-                  <User className="w-4 h-4" />
-                </div>
-              )}
-            </motion.div>
-          ))}
-        </AnimatePresence>
-
-        {isGenerating && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex items-center gap-3 p-4 rounded-[5px] bg-primary/5 border border-primary/20 text-primary text-xs sm:text-sm font-bold shadow-sm"
-          >
-            <Loader2 className="w-5 h-5 animate-spin shrink-0 text-primary" />
-            <span>Mike analisando suas respostas, aprimorando a estrutura e gerando seu currículo...</span>
-          </motion.div>
-        )}
-      </CardContent>
-
-      {/* ── ÁREA DE INPUT E RESPOSTAS RÁPIDAS ── */}
-      <div className="p-4 sm:p-5 border-t border-border/80 bg-muted/20 space-y-3 shrink-0">
-        {/* Chips de Respostas Rápidas */}
-        {!isGenerating && activeQuestion?.quickOptions && activeQuestion.quickOptions.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-1">
-            <span className="text-[11px] font-bold text-muted-foreground w-full flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Sugestões de resposta rápida:
-            </span>
-            {activeQuestion.quickOptions.map((opt, idx) => (
-              <Badge
-                key={idx}
-                variant="outline"
-                className="cursor-pointer bg-card hover:bg-primary/10 hover:text-primary hover:border-primary/40 transition-colors py-1.5 px-3 rounded-[5px] text-xs font-semibold border-border"
-                onClick={() => handleSendAnswer(opt)}
-              >
-                {opt}
-              </Badge>
-            ))}
-          </div>
-        )}
-
-        {/* Input & Botão Enviar */}
-        {!isGenerating && (
-          <div className="space-y-2">
-            <div className="flex gap-2 items-center">
+          {/* Cápsula de Entrada Estilo ChatGPT */}
+          {!isGenerating && (
+            <div className="relative flex items-center bg-muted/30 border border-border rounded-[5px] p-1.5 focus-within:border-primary/60 focus-within:ring-1 focus-within:ring-primary/20 transition-all shadow-sm">
               <Input
-                placeholder={activeQuestion?.placeholder || 'Digite sua resposta aqui...'}
+                placeholder={activeQuestion?.placeholder || 'Envie uma mensagem para o Mike...'}
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 onKeyDown={(e) => {
@@ -370,84 +372,44 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
                     handleSendAnswer();
                   }
                 }}
-                className="flex-1 font-medium text-xs sm:text-sm bg-card border-border h-11 rounded-[5px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary"
+                className="border-none bg-transparent shadow-none focus-visible:ring-0 text-xs sm:text-sm h-10 px-3 flex-1 font-medium placeholder:text-muted-foreground/60"
               />
 
-              <Button
-                onClick={() => handleSendAnswer()}
-                disabled={isGenerating || (!inputText.trim() && currentStep === 0)}
-                className="h-11 px-5 rounded-[5px] font-bold text-xs sm:text-sm bg-[#0f172a] text-white hover:bg-slate-900 gap-2 shrink-0 shadow-sm"
-              >
-                {currentStep === QUESTIONS.length - 1 ? (
-                  <>Gerar <Sparkles className="w-4 h-4 text-amber-400" /></>
-                ) : (
-                  <>Enviar <Send className="w-4 h-4" /></>
-                )}
-              </Button>
-            </div>
-
-            <div className="flex flex-wrap justify-between items-center text-[10px] sm:text-xs text-muted-foreground font-medium px-1 gap-2">
-              <span className="truncate max-w-[260px] sm:max-w-none">
-                {activeQuestion?.placeholder ? `Ex: ${activeQuestion.placeholder.split(',')[0]}...` : ''}
-              </span>
-              <div className="flex items-center gap-3 ml-auto">
+              <div className="flex items-center gap-1.5 pr-1">
                 {currentStep > 0 && currentStep < QUESTIONS.length - 1 && (
                   <button
-                    onClick={() => handleSendAnswer('Não se aplica / Pular')}
-                    className="text-muted-foreground hover:text-foreground underline transition-colors"
+                    type="button"
+                    onClick={() => handleSendAnswer('Não informado / Pular')}
+                    className="text-[11px] text-muted-foreground hover:text-foreground font-semibold px-2 py-1 rounded-[5px] hover:bg-muted/80 transition-colors"
                   >
-                    Pular passo
+                    Pular
                   </button>
                 )}
-                <span className="hidden sm:inline text-muted-foreground/70">Pressione Enter para enviar</span>
+
+                <Button
+                  type="button"
+                  size="icon"
+                  onClick={() => handleSendAnswer()}
+                  disabled={isGenerating || (!inputText.trim() && currentStep === 0)}
+                  className="h-8 w-8 rounded-[5px] bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm shrink-0 disabled:opacity-40"
+                  title="Enviar"
+                >
+                  {currentStep === QUESTIONS.length - 1 ? (
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                  ) : (
+                    <ArrowUp className="w-4 h-4" />
+                  )}
+                </Button>
               </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
 
-      {/* ── FOOTER DE DIFERENCIAIS ── */}
-      <div className="border-t border-border/80 bg-muted/40 p-4 sm:p-5 rounded-b-[5px]">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-left">
-          
-          <div className="flex items-center sm:items-start gap-3">
-            <div className="w-8 h-8 rounded-[5px] bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 text-primary">
-              <ShieldCheck className="w-4 h-4" />
-            </div>
-            <div>
-              <h4 className="text-xs font-bold text-foreground">Privacidade garantida</h4>
-              <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">
-                Seus dados estão seguros e protegidos.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center sm:items-start gap-3">
-            <div className="w-8 h-8 rounded-[5px] bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0 text-amber-500">
-              <Sparkles className="w-4 h-4" />
-            </div>
-            <div>
-              <h4 className="text-xs font-bold text-foreground">IA especializada</h4>
-              <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">
-                Focada em aviação civil e mercado de trabalho.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center sm:items-start gap-3">
-            <div className="w-8 h-8 rounded-[5px] bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-500">
-              <CheckCircle2 className="w-4 h-4" />
-            </div>
-            <div>
-              <h4 className="text-xs font-bold text-foreground">Resultados rápidos</h4>
-              <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">
-                Currículo pronto e formatado para download em PDF.
-              </p>
-            </div>
-          </div>
-
+          {/* Rodapé limpo e discreto sem poluição */}
+          <p className="text-[10px] text-center text-muted-foreground/70">
+            Mike utiliza inteligência artificial especializada para estruturar currículos na aviação civil.
+          </p>
         </div>
       </div>
-    </Card>
+    </div>
   );
 }
