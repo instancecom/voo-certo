@@ -25,51 +25,51 @@ const QUESTIONS = [
   {
     step: 0,
     title: 'Dados Pessoais',
-    question: 'Para começar, qual o seu nome completo, telefone para contato e cidade onde mora?',
+    question: 'Para começar, qual é o seu nome completo, telefone para contato e a cidade/estado onde reside?',
     placeholder: 'Ex: Ana Silva, (11) 98888-7777, São Paulo - SP',
     quickOptions: [],
   },
   {
     step: 1,
     title: 'Cargo & Área',
-    question: 'Qual sua área de atuação e o cargo que você está buscando?',
-    placeholder: 'Ex: Comissário(a) de Bordo, Piloto Comercial, Agente de Atendimento...',
-    quickOptions: ['Comissário(a) de Bordo', 'Piloto Comercial / PP', 'Agente de Atendimento Aéreo', 'Atendimento ao Cliente / VIP'],
+    question: 'Qual é a sua área de atuação e o cargo pretendido na aviação?',
+    placeholder: 'Ex: Comissário(a) de Voo, Piloto Privado / Comercial, Agente de Aeroporto...',
+    quickOptions: ['Comissário(a) de Voo', 'Piloto Privado / Comercial', 'Agente de Aeroporto / Atendimento', 'Mecânico de Manutenção'],
   },
   {
     step: 2,
-    title: 'Destino do Currículo',
-    question: 'Como vai usar esse currículo — plataformas online (Gupy, LinkedIn), envio por e-mail ou entrega pessoal impressa?',
-    placeholder: 'Ex: Pretendo aplicar na Gupy e mandar por e-mail...',
+    title: 'Finalidade do Currículo',
+    question: 'Qual será o principal canal de envio desse currículo (plataformas online como Gupy/LinkedIn, e-mail em PDF ou impresso)?',
+    placeholder: 'Ex: Pretendo aplicar na Gupy e enviar por e-mail...',
     quickOptions: ['Plataformas Online (Gupy, Catho, LinkedIn)', 'Envio por E-mail em PDF', 'Entrega Pessoal Impressa'],
   },
   {
     step: 3,
     title: 'Formação Acadêmica',
-    question: 'Qual sua formação acadêmica? (Ensino médio, faculdade, pós-graduação)',
-    placeholder: 'Ex: Ensino Médio Completo no Colégio Estadual (2020) e Faculdade de Aviação Civil (2023)',
-    quickOptions: ['Ensino Médio Completo', 'Superior em Aviação Civil', 'Superior em Letras / Comunicação', 'Curso Homologado ANAC'],
+    question: 'Qual é o seu nível de escolaridade e formações concluídas ou em andamento?',
+    placeholder: 'Ex: Ensino Médio Completo (2021) e Ciências Aeronáuticas (Cursando)',
+    quickOptions: ['Ensino Médio Completo', 'Superior em Aviação Civil / Ciências Aeronáuticas', 'Curso Homologado ANAC', 'Ensino Superior em Andamento'],
   },
   {
     step: 4,
     title: 'Experiência Profissional',
-    question: 'Tem experiência profissional anterior? Pode me contar do seu jeito (empresas, cargos e o que fazia lá).',
-    placeholder: 'Ex: Trabalhei 2 anos como atendente cuidando do embarque e 1 ano em recepção...',
-    quickOptions: ['Ainda não tenho experiência formal (Primeiro emprego)', 'Atendimento ao Cliente / Vendas', 'Experiência prévia em Aviação'],
+    question: 'Conte-me sobre suas experiências de trabalho anteriores (empresas, funções e principais atividades desempenhadas).',
+    placeholder: 'Ex: 2 anos como atendente ao cliente e 1 ano em recepção hospitalar...',
+    quickOptions: ['Primeiro emprego (sem experiência formal)', 'Atendimento ao Cliente / Vendas', 'Experiência anterior na Aviação'],
   },
   {
     step: 5,
     title: 'Cursos & Idiomas',
-    question: 'Tem cursos, certificações (ex: CCT/CMS ANAC, Primeiros Socorros) ou idiomas (Inglês, Espanhol)?',
+    question: 'Possui certificações (ex: CCT/CMS ANAC, Primeiros Socorros) ou idiomas (Inglês, Espanhol)?',
     placeholder: 'Ex: CCT ANAC aprovado, Curso de Comissário, Inglês Intermediário e Espanhol Básico',
-    quickOptions: ['Banca ANAC Aprovada (CCT/CMS)', 'Inglês Intermediário / Avançado', 'Primeiros Socorros / Sobrevivência', 'Espanhol Básico'],
+    quickOptions: ['Banca ANAC Aprovada (CCT/CMS)', 'Inglês Intermediário / Avançado', 'Primeiros Socorros / Sobrevivência na Selva', 'Espanhol Básico'],
   },
   {
     step: 6,
     title: 'Objetivo & Diferenciais',
-    question: 'Para finalizar, qual o seu objetivo profissional ou algum ponto forte que deseja destacar?',
-    placeholder: 'Ex: Buscar vaga de comissária para aplicar meu foco em segurança de voo e excelência em atendimento...',
-    quickOptions: ['Foco em Segurança e Atendimento VIP', 'Disponibilidade para viagens e mudança', 'Paixão pela Aviação Civil'],
+    question: 'Para concluir, qual é o seu objetivo profissional e quais pontos fortes você gostaria de destacar?',
+    placeholder: 'Ex: Atuar como comissário aplicando foco em segurança operacional e excelência no atendimento...',
+    quickOptions: ['Foco em Segurança e Atendimento VIP', 'Disponibilidade para viagens e mudança', 'Foco em crescimento na aviação civil'],
   },
 ];
 
@@ -86,7 +86,7 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
   const [messages, setMessages] = useState<Message[]>([
     {
       sender: 'ai',
-      text: `Olá! Sou o Mike, assistente completo do Voe Certo. ✈️\n\nVamos criar o seu currículo profissional de alto impacto?\n\n💡 **Dica importante:** Pode responder do seu jeito, sem se preocupar com gramática ou estrutura — eu cuido da formatação, ajusto os verbos de ação e escolho o modelo ideal pra você. Bora!`,
+      text: `Olá! Sou o Mike, seu assistente de carreira do Voe Certo. ✈️\n\nVamos estruturar o seu currículo profissional de alto impacto?\n\n💡 **Dica:** Pode responder com suas próprias palavras — organizarei cada informação na estrutura correta, refinando verbos de ação e aplicando o layout ideal para processos seletivos.`,
       step: -1,
       timestamp: getFormattedTime(),
     },
@@ -176,7 +176,7 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
         phone: '',
         city: finalAnswers.q0?.split(',')[1]?.trim() || '',
         profession: finalAnswers.q1 || 'Profissional da Aviação Civil',
-        summary: finalAnswers.q6 || 'Profissional dedicado, com foco em segurança de voo, excelência no atendimento e constante aprimoramento na aviação.',
+        summary: finalAnswers.q6 || 'Profissional dedicado, com foco em segurança operacional, excelência no atendimento e constante aprimoramento na aviação.',
         experience: finalAnswers.q4 && finalAnswers.q4 !== '(Passo pulado)' 
           ? [{ company: 'Experiência Profissional', role: finalAnswers.q1 || 'Cargo', start: 'Anterior', end: 'Atual', description: finalAnswers.q4 }] 
           : [],
@@ -224,7 +224,7 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
             <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-[5px] overflow-hidden shrink-0 border-2 border-amber-400/80 shadow-sm bg-slate-900">
               <img
                 src="/images/avatars/mike_character_curiculum.png"
-                alt="Mike - Assistente Completo"
+                alt="Mike - Assistente de Carreira"
                 className="w-full h-full object-cover block"
               />
             </div>
@@ -238,11 +238,11 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
                 Mike
               </h3>
               <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-300 bg-amber-400/10 rounded-[5px] px-2 py-0.5 font-bold uppercase tracking-wider">
-                Assistente Completo
+                Assistente de Carreira
               </Badge>
             </div>
             <p className="text-xs text-slate-300 font-medium mt-1 leading-snug truncate">
-              Seu assistente para montagem e otimização do currículo
+              Seu assistente para estruturação e otimização de currículos
             </p>
           </div>
         </div>
@@ -265,13 +265,13 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
         </div>
       </div>
 
-      {/* ── CARD DE DICA / ORIENTAÇÃO (MINIMALISTA NO MOBILE) ── */}
+      {/* ── CARD DE ORIENTAÇÃO (MINIMALISTA) ── */}
       <div className="bg-sky-50 dark:bg-sky-950/40 border-b border-sky-200/60 dark:border-sky-900/60 px-4 py-3 sm:px-5 sm:py-3 flex items-start gap-3 text-xs sm:text-sm text-sky-950 dark:text-sky-200 shrink-0">
         <Lightbulb className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-amber-500 mt-0.5" />
         <p className="leading-relaxed">
-          <strong className="font-bold text-sky-900 dark:text-sky-100">Sem estresse de escrita:</strong>{' '}
-          <span className="hidden sm:inline">Mike ajuda você a criar um currículo claro, profissional e alinhado aos seus objetivos. Ele ajusta a gramática, os verbos de ação e sugere o melhor layout pra você.</span>
-          <span className="sm:hidden">Mike ajusta a gramática, os verbos de ação e escolhe o layout ideal pra você.</span>
+          <strong className="font-bold text-sky-900 dark:text-sky-100">Criação inteligente com IA:</strong>{' '}
+          <span className="hidden sm:inline">Mike organiza suas informações no padrão exigido pelo setor aéreo, aplicando verbos de ação e sugerindo a melhor formatação para sua vaga.</span>
+          <span className="sm:hidden">Mike estrutura e formata seu currículo no padrão exigido pela aviação.</span>
         </p>
       </div>
 
@@ -341,7 +341,7 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
         {!isGenerating && activeQuestion?.quickOptions && activeQuestion.quickOptions.length > 0 && (
           <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-1">
             <span className="text-[11px] font-bold text-muted-foreground w-full flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Respostas rápidas sugeridas:
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Sugestões de resposta rápida:
             </span>
             {activeQuestion.quickOptions.map((opt, idx) => (
               <Badge
@@ -406,7 +406,7 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
         )}
       </div>
 
-      {/* ── FOOTER DE DIFERENCIAIS (REDE DE BENEFÍCIOS MINIMALISTA NO MOBILE) ── */}
+      {/* ── FOOTER DE DIFERENCIAIS ── */}
       <div className="border-t border-border/80 bg-muted/40 p-4 sm:p-5 rounded-b-[5px]">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-left">
           
@@ -429,7 +429,7 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
             <div>
               <h4 className="text-xs font-bold text-foreground">IA especializada</h4>
               <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">
-                Focada em aviação civil e mercado corporativo.
+                Focada em aviação civil e mercado de trabalho.
               </p>
             </div>
           </div>
@@ -441,7 +441,7 @@ export function CurriculumChatAssistant({ onCurriculumGenerated, userEmail, user
             <div>
               <h4 className="text-xs font-bold text-foreground">Resultados rápidos</h4>
               <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">
-                Respostas precisas para um currículo de alto impacto.
+                Currículo pronto e formatado para download em PDF.
               </p>
             </div>
           </div>

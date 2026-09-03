@@ -1,9 +1,9 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   User, Briefcase, GraduationCap, Award, Plus, Trash2, X, ChevronLeft,
-  Download, Save, Loader2, Lock, FileText, Sparkles, Layout, Globe, Star, ArrowRight, Shield, MessageSquare, Edit3, CheckCircle2, Lightbulb, Eye, Calendar, Clock
+  Download, Save, Loader2, Lock, FileText, Sparkles, Layout, Globe, Star, ArrowRight, Shield, MessageSquare, Edit3, CheckCircle2, Lightbulb, Eye, Calendar, Clock, MapPin, Mail
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -48,15 +48,15 @@ const TEMPLATES = [
     id: 'ats', 
     name: 'Digital / ATS', 
     icon: FileText, 
-    badge: 'CompatÃ­vel com Gupy/LinkedIn',
-    desc: 'Coluna Ãºnica ultra-limpa, sem grÃ¡ficos ou tabelas. Leitura 100% perfeita para robÃ´s de triagem automÃ¡tica de RH.' 
+    badge: 'Compatível com Gupy/LinkedIn',
+    desc: 'Coluna única ultra-limpa, sem gráficos ou tabelas. Leitura 100% perfeita para robôs de triagem automática de RH.' 
   },
   { 
     id: 'geral', 
     name: 'Profissional Geral', 
     icon: Briefcase, 
     badge: 'Ideal para E-mail',
-    desc: 'Visual corporativo refinado com cabeÃ§alho azul marinho. Excelente para enviar em PDF como anexo de e-mail.' 
+    desc: 'Visual corporativo refinado com cabeçalho azul marinho. Excelente para enviar em PDF como anexo de e-mail.' 
   },
   { 
     id: 'presencial', 
@@ -72,17 +72,17 @@ export default function CurriculumPage() {
   const { canSaveCurriculum } = usePlan();
   const queryClient = useQueryClient();
   
-  // Modes: 'dashboard' (Galeria em Lista) | 'chat' (Criador IA) | 'editor' (EdiÃ§Ã£o Manual)
+  // Modes: 'dashboard' (Galeria em Lista) | 'chat' (Criador IA) | 'editor' (Edição Manual)
   const [mode, setMode] = useState<'dashboard' | 'chat' | 'editor'>('dashboard');
   const [data, setData] = useState<CurriculumData>(EMPTY_DATA);
   const [newSkill, setNewSkill] = useState('');
   const [activeTab, setActiveTab] = useState('dados');
   const [isEnhancingSection, setIsEnhancingSection] = useState<string | null>(null);
   
-  // Modal de PrÃ©-visualizaÃ§Ã£o na Galeria
+  // Modal de Pré-visualização na Galeria
   const [previewModalCurriculum, setPreviewModalCurriculum] = useState<CurriculumData | null>(null);
 
-  // Carrega TODOS os currÃ­culos do usuÃ¡rio (Banco Supabase + Armazenamento Local)
+  // Carrega TODOS os currículos do usuário (Banco Supabase + Armazenamento Local)
   const { data: savedCurriculums = [], isLoading: loadingSaved } = useQuery({
     queryKey: ['curriculums', user?.id],
     queryFn: async () => {
@@ -95,7 +95,7 @@ export default function CurriculumPage() {
         .eq('user_id', user.id)
         .order('updated_at', { ascending: false });
 
-      // 2. Carrega do armazenamento local do usuÃ¡rio
+      // 2. Carrega do armazenamento local do usuário
       const localKey = `voo_certo_curriculums_${user.id}`;
       let localList: CurriculumData[] = [];
       try {
@@ -105,7 +105,7 @@ export default function CurriculumPage() {
           if (Array.isArray(parsed)) localList = parsed;
         }
 
-        // Limpa e migra chaves legadas para evitar currÃ­culos fantasmas
+        // Limpa e migra chaves legadas para evitar currículos fantasmas
         const legacyKeys = ['voo_certo_curriculums', 'voo_certo_curriculum', 'curriculum_data', 'voecerto_curriculum'];
         legacyKeys.forEach(legacyKey => {
           const legacy = localStorage.getItem(legacyKey);
@@ -131,10 +131,10 @@ export default function CurriculumPage() {
 
         localStorage.setItem(localKey, JSON.stringify(localList));
       } catch (e) {
-        console.warn('Erro ao ler/migrar localStorage de currÃ­culos:', e);
+        console.warn('Erro ao ler/migrar localStorage de currículos:', e);
       }
 
-      // Combina os currÃ­culos do banco e do localStorage sem duplicar
+      // Combina os currículos do banco e do localStorage sem duplicar
       const mergedMap = new Map<string, CurriculumData>();
 
       (list || []).forEach(curr => {
@@ -173,17 +173,17 @@ export default function CurriculumPage() {
     enabled: !!user,
   });
 
-  // Galeria Ã© sempre o ponto de entrada â€” o usuÃ¡rio navega para o chat via botÃ£o
+  // Galeria é sempre o ponto de entrada — o usuário navega para o chat via botão
   useEffect(() => {
     if (!loadingSaved && mode !== 'chat' && mode !== 'editor') {
       setMode('dashboard');
     }
   }, [loadingSaved]);
 
-  // Salvar / Atualizar currÃ­culo no Supabase e LocalStorage
+  // Salvar / Atualizar currículo no Supabase e LocalStorage
   const saveMutation = useMutation({
     mutationFn: async (customData?: CurriculumData) => {
-      if (!user) throw new Error('FaÃ§a login para salvar');
+      if (!user) throw new Error('Faça login para salvar');
       
       const dataToSave = customData || data;
       const targetId = dataToSave.id || (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `curr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`);
@@ -242,21 +242,21 @@ export default function CurriculumPage() {
       return curriculumToSave;
     },
     onSuccess: () => {
-      toast.success('CurrÃ­culo salvo na sua galeria!');
+      toast.success('Currículo salvo na sua galeria!');
       queryClient.invalidateQueries({ queryKey: ['curriculums', user?.id] });
     },
     onError: (err: any) => toast.error(`Erro ao salvar: ${err.message}`),
   });
 
-  // Excluir currÃ­culo especÃ­fico no Supabase e LocalStorage
+  // Excluir currículo específico no Supabase e LocalStorage
   const deleteMutation = useMutation({
     mutationFn: async (currToDelete: CurriculumData | string) => {
-      if (!user) throw new Error('UsuÃ¡rio nÃ£o autenticado');
+      if (!user) throw new Error('Usuário não autenticado');
 
       const targetId = typeof currToDelete === 'string' ? currToDelete : currToDelete.id;
       const targetProfession = typeof currToDelete === 'string' ? currToDelete : currToDelete.profession;
 
-      // 1. Limpa de TODAS as chaves possÃ­veis no localStorage
+      // 1. Limpa de TODAS as chaves possíveis no localStorage
       const keysToClean = [
         `voo_certo_curriculums_${user.id}`,
         'voo_certo_curriculums',
@@ -299,23 +299,23 @@ export default function CurriculumPage() {
         if (idError) console.warn('Aviso ao deletar por ID no Supabase:', idError.message);
       }
 
-      // 3. Remove do Supabase por profissÃ£o e user_id (para garantir caso o registro nÃ£o tivesse ID)
+      // 3. Remove do Supabase por profissão e user_id (para garantir caso o registro não tivesse ID)
       if (targetProfession) {
         const { error: profError } = await supabase
           .from('curriculum_data')
           .delete()
           .eq('user_id', user.id)
           .eq('profession', targetProfession);
-        if (profError) console.warn('Aviso ao deletar por profissÃ£o no Supabase:', profError.message);
+        if (profError) console.warn('Aviso ao deletar por profissão no Supabase:', profError.message);
       }
     },
     onSuccess: (_, currToDelete) => {
       const targetId = typeof currToDelete === 'string' ? currToDelete : currToDelete.id;
       const targetProfession = typeof currToDelete === 'string' ? currToDelete : currToDelete.profession;
 
-      toast.success('CurrÃ­culo excluÃ­do com sucesso!');
+      toast.success('Currículo excluído com sucesso!');
 
-      // AtualizaÃ§Ã£o sÃ­ncrona imediata no cache do React Query
+      // Atualização síncrona imediata no cache do React Query
       queryClient.setQueryData(['curriculums', user?.id], (old: CurriculumData[] | undefined) => {
         if (!old) return [];
         return old.filter(item => {
@@ -335,7 +335,7 @@ export default function CurriculumPage() {
     onError: (err: any) => toast.error(`Erro ao excluir: ${err.message}`),
   });
 
-  // Iniciar criaÃ§Ã£o de um NOVO currÃ­culo do zero com IA
+  // Iniciar criação de um NOVO currículo do zero com IA
   const handleStartNewCurriculum = () => {
     setData({
       ...EMPTY_DATA,
@@ -344,7 +344,7 @@ export default function CurriculumPage() {
     setMode('chat');
   };
 
-  // Quando a IA gera o currÃ­culo pelo Chat Assistant
+  // Quando a IA gera o currículo pelo Chat Assistant
   const handleCurriculumGenerated = (generatedData: any) => {
     const newId = typeof crypto !== 'undefined' && crypto.randomUUID 
       ? crypto.randomUUID() 
@@ -358,18 +358,18 @@ export default function CurriculumPage() {
     };
     
     setData(updated);
-    setMode('editor'); // Abre direto no editor para o usuÃ¡rio revisar antes de salvar
-    toast.info('Revise seu currÃ­culo e clique em Salvar quando estiver pronto!');
+    setMode('editor'); // Abre direto no editor para o usuário revisar antes de salvar
+    toast.info('Revise seu currículo e clique em Salvar quando estiver pronto!');
   };
 
-  // Melhorar um trecho especÃ­fico com IA no editor manual
+  // Melhorar um trecho específico com IA no editor manual
   const handleEnhanceWithAI = async (sectionName: string, textToEnhance: string, onSuccess: (enhanced: string) => void) => {
     if (!textToEnhance.trim()) {
       toast.error('Digite algum texto antes de pedir a melhoria ao Mike.');
       return;
     }
     setIsEnhancingSection(sectionName);
-    toast.info(`Mike refinando texto da seÃ§Ã£o [${sectionName}]...`);
+    toast.info(`Mike refinando texto da seção [${sectionName}]...`);
 
     try {
       const { data: resData, error } = await supabase.functions.invoke('curriculum-ai-assistant', {
@@ -383,7 +383,7 @@ export default function CurriculumPage() {
       if (error) throw error;
       if (resData?.enhancedText) {
         onSuccess(resData.enhancedText);
-        toast.success(`SeÃ§Ã£o [${sectionName}] aprimorada com sucesso por Mike!`);
+        toast.success(`Seção [${sectionName}] aprimorada com sucesso por Mike!`);
       }
     } catch (err: any) {
       toast.error(`Falha ao melhorar com Mike: ${err.message || 'Erro inesperado'}`);
@@ -401,7 +401,7 @@ export default function CurriculumPage() {
     const element = document.getElementById(elementId) || document.getElementById('curriculum-content');
 
     if (!element) {
-      toast.error('Elemento do currÃ­culo nÃ£o localizado para exportaÃ§Ã£o.');
+      toast.error('Elemento do currículo não localizado para exportação.');
       return;
     }
 
@@ -434,7 +434,7 @@ export default function CurriculumPage() {
       const filename = `Curriculo_${namePart}_${professionPart}.pdf`;
 
       pdf.save(filename);
-      toast.success('Download do arquivo PDF concluÃ­do com sucesso!');
+      toast.success('Download do arquivo PDF concluído com sucesso!');
     } catch (err: any) {
       console.error('Erro ao gerar PDF:', err);
       window.print();
@@ -443,7 +443,7 @@ export default function CurriculumPage() {
     }
   };
 
-  // Helpers para ediÃ§Ã£o manual
+  // Helpers para edição manual
   const updateField = (field: keyof CurriculumData, value: any) => {
     setData(prev => ({ ...prev, [field]: value }));
   };
@@ -517,7 +517,7 @@ export default function CurriculumPage() {
   const addLanguage = () => {
     setData(prev => ({
       ...prev,
-      languages: [...prev.languages, { name: '', level: 'IntermediÃ¡rio' }],
+      languages: [...prev.languages, { name: '', level: 'Intermediário' }],
     }));
   };
 
@@ -573,12 +573,12 @@ export default function CurriculumPage() {
                   <div>
                     <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight flex items-center gap-2.5">
                       <FileText className="w-7 h-7 text-primary shrink-0" />
-                      Meus CurrÃ­culos
+                      Meus Currículos
                     </h1>
                     <p className="text-sm text-muted-foreground mt-1">
                       {savedCurriculums.length > 0
-                        ? `${savedCurriculums.length} currÃ­culo${savedCurriculums.length > 1 ? 's' : ''} salvo${savedCurriculums.length > 1 ? 's' : ''}`
-                        : 'Crie seu primeiro currÃ­culo profissional com ajuda da IA'}
+                        ? `${savedCurriculums.length} currículo${savedCurriculums.length > 1 ? 's' : ''} salvo${savedCurriculums.length > 1 ? 's' : ''}`
+                        : 'Crie seu primeiro currículo profissional com ajuda da IA'}
                     </p>
                   </div>
 
@@ -586,15 +586,15 @@ export default function CurriculumPage() {
                     <Button
                       variant="outline"
                       onClick={handleStartNewCurriculum}
-                      className="gap-2 font-semibold text-sm bg-muted/60 hover:bg-muted border-border text-foreground rounded-[5px] h-10 px-5 shadow-none shrink-0"
+                      className="gap-2 font-semibold text-xs sm:text-sm bg-muted/60 hover:bg-muted border-border text-foreground rounded-[5px] h-10 px-5 shadow-none shrink-0"
                     >
                       <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
-                      Criar CurrÃ­culo
+                      Criar Currículo
                     </Button>
                   )}
                 </div>
 
-                {/* â”€â”€â”€ EMPTY STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+                {/* ─── EMPTY STATE ────────────────────────────────────────── */}
                 {savedCurriculums.length === 0 && (
                   <motion.div
                     initial={{ opacity: 0, y: 16 }}
@@ -605,9 +605,9 @@ export default function CurriculumPage() {
                       <FileText className="w-10 h-10 text-primary" />
                     </div>
                     <div className="space-y-2 max-w-sm">
-                      <h2 className="text-xl font-black text-foreground">Nenhum currÃ­culo ainda</h2>
+                      <h2 className="text-xl font-black text-foreground">Nenhum currículo ainda</h2>
                       <p className="text-sm text-muted-foreground leading-relaxed">
-                        Crie seu primeiro currÃ­culo profissional em minutos com a ajuda do Mike, nossa IA especializada em aviaÃ§Ã£o civil.
+                        Crie seu primeiro currículo profissional em minutos com a ajuda do Mike, nossa IA especializada em aviação civil.
                       </p>
                     </div>
                     <Button
@@ -616,12 +616,12 @@ export default function CurriculumPage() {
                       variant="outline"
                     >
                       <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
-                      Criar meu primeiro CurrÃ­culo com Mike
+                      Criar meu primeiro Currículo com Mike
                     </Button>
                   </motion.div>
                 )}
 
-                {/* â”€â”€â”€ NETFLIX GRID â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+                {/* ─── NETFLIX GRID ───────────────────────────────────────── */}
                 {savedCurriculums.length > 0 && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
                     {savedCurriculums.map((curr) => {
@@ -635,10 +635,10 @@ export default function CurriculumPage() {
                           transition={{ duration: 0.2 }}
                           className="group relative bg-card border border-border/80 rounded-[5px] overflow-hidden shadow-sm hover:shadow-md hover:border-primary/30 transition-all"
                         >
-                          {/* Faixa de cor no topo â€” estilo Netflix */}
+                          {/* Faixa de cor no topo — estilo Netflix */}
                           <div className="h-1.5 w-full bg-gradient-to-r from-primary via-sky-500 to-primary/40" />
 
-                          {/* ConteÃºdo principal */}
+                          {/* Conteúdo principal */}
                           <div className="p-4 sm:p-5">
                             <div className="flex items-start justify-between gap-2 mb-3">
                               <Badge
@@ -662,12 +662,12 @@ export default function CurriculumPage() {
 
                             {(curr.city || curr.email) && (
                               <div className="text-[11px] text-muted-foreground space-y-0.5 mb-4">
-                                {curr.city && <p className="truncate">ðŸ“ {curr.city}</p>}
-                                {curr.email && <p className="truncate">âœ‰ï¸ {curr.email}</p>}
+                                {curr.city && <p className="truncate flex items-center gap-1"><MapPin className="w-3 h-3 text-muted-foreground/70 shrink-0" /> {curr.city}</p>}
+                                {curr.email && <p className="truncate flex items-center gap-1"><Mail className="w-3 h-3 text-muted-foreground/70 shrink-0" /> {curr.email}</p>}
                               </div>
                             )}
 
-                            {/* AÃ§Ãµes â€” sempre visÃ­veis no mobile, hover no desktop */}
+                            {/* Ações — sempre visíveis no mobile, hover no desktop */}
                             <div className="flex items-center gap-2 pt-3 border-t border-border/70
                                             sm:opacity-0 sm:translate-y-1
                                             sm:group-hover:opacity-100 sm:group-hover:translate-y-0
@@ -691,7 +691,7 @@ export default function CurriculumPage() {
                                 size="sm"
                                 variant="ghost"
                                 onClick={() => {
-                                  if (window.confirm(`Excluir o currÃ­culo "${curr.profession || 'selecionado'}"?`)) {
+                                  if (window.confirm(`Excluir o currículo "${curr.profession || 'selecionado'}"?`)) {
                                     deleteMutation.mutate(curr);
                                   }
                                 }}
@@ -711,7 +711,7 @@ export default function CurriculumPage() {
             )}
 
             {/* ================================================================ */}
-            {/* MODO CHAT (criaÃ§Ã£o com Mike)                                      */}
+            {/* MODO CHAT (criação com Mike)                                      */}
             {/* ================================================================ */}
             {mode === 'chat' && (
               <div className="print:hidden space-y-4">
@@ -724,7 +724,7 @@ export default function CurriculumPage() {
                     className="gap-2 text-sm font-bold text-muted-foreground hover:text-foreground h-9 px-3"
                   >
                     <ChevronLeft className="w-4 h-4 text-primary" />
-                    Galeria de CurrÃ­culos
+                    Galeria de Currículos
                   </Button>
                   <Badge variant="outline" className="border-amber-400/40 text-amber-600 dark:text-amber-400 bg-amber-400/10 text-[10px] font-bold uppercase rounded-[5px]">
                     Mike IA
@@ -761,7 +761,7 @@ export default function CurriculumPage() {
                         <div>
                           <h3 className="font-bold text-base text-foreground flex items-center gap-2">
                             <Layout className="w-5 h-5 text-primary" />
-                            Escolha o Modelo de CurrÃ­culo
+                            Escolha o Modelo de Currículo
                           </h3>
                           <p className="text-xs text-muted-foreground mt-0.5">
                             Alterne entre os modelos otimizados conforme o tipo de vaga.
@@ -846,8 +846,8 @@ export default function CurriculumPage() {
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                       <TabsList className="grid grid-cols-4 w-full bg-muted/60">
                         <TabsTrigger value="dados" className="text-xs font-bold">Dados</TabsTrigger>
-                        <TabsTrigger value="experiencia" className="text-xs font-bold">ExperiÃªncia</TabsTrigger>
-                        <TabsTrigger value="formacao" className="text-xs font-bold">FormaÃ§Ã£o</TabsTrigger>
+                        <TabsTrigger value="experiencia" className="text-xs font-bold">Experiência</TabsTrigger>
+                        <TabsTrigger value="formacao" className="text-xs font-bold">Formação</TabsTrigger>
                         <TabsTrigger value="extras" className="text-xs font-bold">Extras</TabsTrigger>
                       </TabsList>
 
@@ -864,8 +864,8 @@ export default function CurriculumPage() {
                               <Input value={data.full_name} onChange={(e) => updateField('full_name', e.target.value)} placeholder="Ex: Ana Maria Silva" className="mt-1 text-xs rounded-[5px]" />
                             </div>
                             <div>
-                              <Label className="text-xs font-bold">Cargo Desejado / Ãrea</Label>
-                              <Input value={data.profession} onChange={(e) => updateField('profession', e.target.value)} placeholder="Ex: ComissÃ¡ria de Bordo / ANAC CCT" className="mt-1 text-xs rounded-[5px]" />
+                              <Label className="text-xs font-bold">Cargo Desejado / Área</Label>
+                              <Input value={data.profession} onChange={(e) => updateField('profession', e.target.value)} placeholder="Ex: Comissária de Bordo / ANAC CCT" className="mt-1 text-xs rounded-[5px]" />
                             </div>
                             <div className="grid grid-cols-2 gap-2">
                               <div>
@@ -879,7 +879,7 @@ export default function CurriculumPage() {
                             </div>
                             <div>
                               <Label className="text-xs font-bold">Cidade e Estado</Label>
-                              <Input value={data.city} onChange={(e) => updateField('city', e.target.value)} placeholder="Ex: SÃ£o Paulo - SP" className="mt-1 text-xs rounded-[5px]" />
+                              <Input value={data.city} onChange={(e) => updateField('city', e.target.value)} placeholder="Ex: São Paulo - SP" className="mt-1 text-xs rounded-[5px]" />
                             </div>
                             <div>
                               <div className="flex items-center justify-between mb-1">
@@ -889,7 +889,7 @@ export default function CurriculumPage() {
                                   Melhorar com IA
                                 </Button>
                               </div>
-                              <Textarea rows={4} value={data.summary} onChange={(e) => updateField('summary', e.target.value)} placeholder="Breve resumo com suas qualificaÃ§Ãµes..." className="text-xs leading-relaxed rounded-[5px]" />
+                              <Textarea rows={4} value={data.summary} onChange={(e) => updateField('summary', e.target.value)} placeholder="Breve resumo com suas qualificações..." className="text-xs leading-relaxed rounded-[5px]" />
                             </div>
                           </CardContent>
                         </Card>
@@ -899,7 +899,7 @@ export default function CurriculumPage() {
                         <Card className="rounded-[5px]">
                           <CardHeader className="pb-3 flex flex-row items-center justify-between">
                             <CardTitle className="text-sm font-bold flex items-center gap-2">
-                              <Briefcase className="w-4 h-4 text-primary" /> HistÃ³rico Profissional
+                              <Briefcase className="w-4 h-4 text-primary" /> Histórico Profissional
                             </CardTitle>
                             <Button size="sm" variant="outline" onClick={addExperience} className="h-7 text-xs font-bold gap-1 rounded-[5px]">
                               <Plus className="w-3.5 h-3.5" /> Adicionar
@@ -907,12 +907,12 @@ export default function CurriculumPage() {
                           </CardHeader>
                           <CardContent className="space-y-4">
                             {data.experience.length === 0 ? (
-                              <p className="text-xs text-muted-foreground text-center py-4">Nenhuma experiÃªncia adicionada.</p>
+                              <p className="text-xs text-muted-foreground text-center py-4">Nenhuma experiência adicionada.</p>
                             ) : (
                               data.experience.map((exp, idx) => (
                                 <div key={idx} className="p-3 border border-border rounded-[5px] bg-muted/20 space-y-3 relative">
                                   <div className="flex justify-between items-center">
-                                    <span className="text-xs font-bold text-primary">ExperiÃªncia #{idx + 1}</span>
+                                    <span className="text-xs font-bold text-primary">Experiência #{idx + 1}</span>
                                     <Button variant="ghost" size="icon" onClick={() => removeExperience(idx)} className="h-6 w-6 text-destructive rounded-[5px]"><Trash2 className="w-3.5 h-3.5" /></Button>
                                   </div>
                                   <div className="grid grid-cols-2 gap-2">
@@ -920,17 +920,17 @@ export default function CurriculumPage() {
                                     <div><Label className="text-[10px] font-bold">Cargo</Label><Input value={exp.role} onChange={(e) => updateExperience(idx, 'role', e.target.value)} placeholder="Ex: Atendente de Solo" className="text-xs h-8 rounded-[5px]" /></div>
                                   </div>
                                   <div className="grid grid-cols-2 gap-2">
-                                    <div><Label className="text-[10px] font-bold">InÃ­cio</Label><Input value={exp.start} onChange={(e) => updateExperience(idx, 'start', e.target.value)} placeholder="Ex: 2021" className="text-xs h-8 rounded-[5px]" /></div>
+                                    <div><Label className="text-[10px] font-bold">Início</Label><Input value={exp.start} onChange={(e) => updateExperience(idx, 'start', e.target.value)} placeholder="Ex: 2021" className="text-xs h-8 rounded-[5px]" /></div>
                                     <div><Label className="text-[10px] font-bold">Fim</Label><Input value={exp.end} onChange={(e) => updateExperience(idx, 'end', e.target.value)} placeholder="Ex: 2023 ou Atual" className="text-xs h-8 rounded-[5px]" /></div>
                                   </div>
                                   <div>
                                     <div className="flex items-center justify-between mb-1">
                                       <Label className="text-[10px] font-bold">Atividades e Conquistas</Label>
-                                      <Button variant="ghost" size="sm" disabled={isEnhancingSection === `exp_${idx}`} onClick={() => handleEnhanceWithAI('DescriÃ§Ã£o da ExperiÃªncia', exp.description, (enhanced) => updateExperience(idx, 'description', enhanced))} className="h-5 px-1.5 text-[9px] text-primary hover:bg-primary/10 gap-1 font-bold rounded-[5px]">
+                                      <Button variant="ghost" size="sm" disabled={isEnhancingSection === `exp_${idx}`} onClick={() => handleEnhanceWithAI('Descrição da Experiência', exp.description, (enhanced) => updateExperience(idx, 'description', enhanced))} className="h-5 px-1.5 text-[9px] text-primary hover:bg-primary/10 gap-1 font-bold rounded-[5px]">
                                         {isEnhancingSection === `exp_${idx}` ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3 text-amber-500" />} Refinar com IA
                                       </Button>
                                     </div>
-                                    <Textarea rows={2} value={exp.description} onChange={(e) => updateExperience(idx, 'description', e.target.value)} placeholder="DescriÃ§Ã£o das responsabilidades..." className="text-xs rounded-[5px]" />
+                                    <Textarea rows={2} value={exp.description} onChange={(e) => updateExperience(idx, 'description', e.target.value)} placeholder="Descrição das responsabilidades..." className="text-xs rounded-[5px]" />
                                   </div>
                                 </div>
                               ))
@@ -943,7 +943,7 @@ export default function CurriculumPage() {
                         <Card className="rounded-[5px]">
                           <CardHeader className="pb-3 flex flex-row items-center justify-between">
                             <CardTitle className="text-sm font-bold flex items-center gap-2">
-                              <GraduationCap className="w-4 h-4 text-primary" /> FormaÃ§Ã£o AcadÃªmica
+                              <GraduationCap className="w-4 h-4 text-primary" /> Formação Acadêmica
                             </CardTitle>
                             <Button size="sm" variant="outline" onClick={addEducation} className="h-7 text-xs font-bold gap-1 rounded-[5px]"><Plus className="w-3.5 h-3.5" /> Adicionar</Button>
                           </CardHeader>
@@ -951,14 +951,14 @@ export default function CurriculumPage() {
                             {data.education.map((edu, idx) => (
                               <div key={idx} className="p-3 border border-border rounded-[5px] bg-muted/20 space-y-2 relative">
                                 <div className="flex justify-between items-center">
-                                  <span className="text-xs font-bold text-primary">FormaÃ§Ã£o #{idx + 1}</span>
+                                  <span className="text-xs font-bold text-primary">Formação #{idx + 1}</span>
                                   <Button variant="ghost" size="icon" onClick={() => removeEducation(idx)} className="h-6 w-6 text-destructive rounded-[5px]"><Trash2 className="w-3.5 h-3.5" /></Button>
                                 </div>
                                 <div className="grid grid-cols-2 gap-2">
-                                  <div><Label className="text-[10px] font-bold">Curso / Grau</Label><Input value={edu.degree} onChange={(e) => updateEducation(idx, 'degree', e.target.value)} placeholder="Ex: AviaÃ§Ã£o Civil" className="text-xs h-8 rounded-[5px]" /></div>
-                                  <div><Label className="text-[10px] font-bold">InstituiÃ§Ã£o</Label><Input value={edu.institution} onChange={(e) => updateEducation(idx, 'institution', e.target.value)} placeholder="Ex: Anhembi Morumbi" className="text-xs h-8 rounded-[5px]" /></div>
+                                  <div><Label className="text-[10px] font-bold">Curso / Grau</Label><Input value={edu.degree} onChange={(e) => updateEducation(idx, 'degree', e.target.value)} placeholder="Ex: Aviação Civil" className="text-xs h-8 rounded-[5px]" /></div>
+                                  <div><Label className="text-[10px] font-bold">Instituição</Label><Input value={edu.institution} onChange={(e) => updateEducation(idx, 'institution', e.target.value)} placeholder="Ex: Anhembi Morumbi" className="text-xs h-8 rounded-[5px]" /></div>
                                 </div>
-                                <div><Label className="text-[10px] font-bold">Ano de ConclusÃ£o</Label><Input value={edu.year} onChange={(e) => updateEducation(idx, 'year', e.target.value)} placeholder="Ex: 2023" className="text-xs h-8 rounded-[5px]" /></div>
+                                <div><Label className="text-[10px] font-bold">Ano de Conclusão</Label><Input value={edu.year} onChange={(e) => updateEducation(idx, 'year', e.target.value)} placeholder="Ex: 2023" className="text-xs h-8 rounded-[5px]" /></div>
                               </div>
                             ))}
                           </CardContent>
@@ -968,14 +968,14 @@ export default function CurriculumPage() {
                       <TabsContent value="extras" className="space-y-4 mt-4">
                         <Card className="rounded-[5px]">
                           <CardHeader className="pb-3 flex flex-row items-center justify-between">
-                            <CardTitle className="text-sm font-bold flex items-center gap-2"><Award className="w-4 h-4 text-primary" /> Cursos & CertificaÃ§Ãµes ANAC</CardTitle>
+                            <CardTitle className="text-sm font-bold flex items-center gap-2"><Award className="w-4 h-4 text-primary" /> Cursos & Certificações ANAC</CardTitle>
                             <Button size="sm" variant="outline" onClick={addCertificate} className="h-7 text-xs font-bold gap-1 rounded-[5px]"><Plus className="w-3.5 h-3.5" /> Adicionar</Button>
                           </CardHeader>
                           <CardContent className="space-y-2">
                             {data.certificates.map((cert, idx) => (
                               <div key={idx} className="p-2 border border-border rounded-[5px] bg-muted/20 grid grid-cols-12 gap-2 items-center">
-                                <div className="col-span-5"><Input value={cert.name} onChange={(e) => updateCertificate(idx, 'name', e.target.value)} placeholder="Ex: CCT ANAC ComissÃ¡rio" className="text-xs h-7 rounded-[5px]" /></div>
-                                <div className="col-span-4"><Input value={cert.issuer} onChange={(e) => updateCertificate(idx, 'issuer', e.target.value)} placeholder="Ã“rgÃ£o/Escola" className="text-xs h-7 rounded-[5px]" /></div>
+                                <div className="col-span-5"><Input value={cert.name} onChange={(e) => updateCertificate(idx, 'name', e.target.value)} placeholder="Ex: CCT ANAC Comissário" className="text-xs h-7 rounded-[5px]" /></div>
+                                <div className="col-span-4"><Input value={cert.issuer} onChange={(e) => updateCertificate(idx, 'issuer', e.target.value)} placeholder="Órgão/Escola" className="text-xs h-7 rounded-[5px]" /></div>
                                 <div className="col-span-2"><Input value={cert.year} onChange={(e) => updateCertificate(idx, 'year', e.target.value)} placeholder="Ano" className="text-xs h-7 rounded-[5px]" /></div>
                                 <div className="col-span-1 text-right"><Button variant="ghost" size="icon" onClick={() => removeCertificate(idx)} className="h-6 w-6 text-destructive rounded-[5px]"><Trash2 className="w-3 h-3" /></Button></div>
                               </div>
@@ -991,8 +991,8 @@ export default function CurriculumPage() {
                           <CardContent className="space-y-2">
                             {data.languages.map((lang, idx) => (
                               <div key={idx} className="flex gap-2 items-center">
-                                <Input value={lang.name} onChange={(e) => updateLanguage(idx, 'name', e.target.value)} placeholder="Idioma (ex: InglÃªs)" className="text-xs h-8 flex-1 rounded-[5px]" />
-                                <Input value={lang.level} onChange={(e) => updateLanguage(idx, 'level', e.target.value)} placeholder="NÃ­vel (ex: AvanÃ§ado)" className="text-xs h-8 flex-1 rounded-[5px]" />
+                                <Input value={lang.name} onChange={(e) => updateLanguage(idx, 'name', e.target.value)} placeholder="Idioma (ex: Inglês)" className="text-xs h-8 flex-1 rounded-[5px]" />
+                                <Input value={lang.level} onChange={(e) => updateLanguage(idx, 'level', e.target.value)} placeholder="Nível (ex: Avançado)" className="text-xs h-8 flex-1 rounded-[5px]" />
                                 <Button variant="ghost" size="icon" onClick={() => removeLanguage(idx)} className="h-8 w-8 text-destructive rounded-[5px]"><Trash2 className="w-3.5 h-3.5" /></Button>
                               </div>
                             ))}
@@ -1001,11 +1001,11 @@ export default function CurriculumPage() {
 
                         <Card className="rounded-[5px]">
                           <CardHeader className="pb-3">
-                            <CardTitle className="text-sm font-bold flex items-center gap-2"><Star className="w-4 h-4 text-primary" /> CompetÃªncias & Habilidades</CardTitle>
+                            <CardTitle className="text-sm font-bold flex items-center gap-2"><Star className="w-4 h-4 text-primary" /> Competências & Habilidades</CardTitle>
                           </CardHeader>
                           <CardContent className="space-y-3">
                             <div className="flex gap-2">
-                              <Input value={newSkill} onChange={(e) => setNewSkill(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && addSkill()} placeholder="Ex: GestÃ£o de Crises, CRM..." className="text-xs h-8 flex-1 rounded-[5px]" />
+                              <Input value={newSkill} onChange={(e) => setNewSkill(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && addSkill()} placeholder="Ex: Gestão de Crises, CRM..." className="text-xs h-8 flex-1 rounded-[5px]" />
                               <Button size="sm" onClick={addSkill} className="h-8 text-xs font-bold rounded-[5px]">Adicionar</Button>
                             </div>
                             <div className="flex flex-wrap gap-1.5">
@@ -1028,9 +1028,9 @@ export default function CurriculumPage() {
                       <div className="print:hidden mb-3 flex items-center justify-between">
                         <span className="text-xs font-bold text-muted-foreground flex items-center gap-1.5">
                           <CheckCircle2 className="w-4 h-4 text-success" />
-                          VisualizaÃ§Ã£o em Tempo Real ({TEMPLATES.find(t => t.id === (data.template || 'ats').toLowerCase())?.name})
+                          Visualização em Tempo Real ({TEMPLATES.find(t => t.id === (data.template || 'ats').toLowerCase())?.name})
                         </span>
-                        <span className="text-[10px] text-muted-foreground font-mono">Formato A4 (210mm Ã— 297mm)</span>
+                        <span className="text-[10px] text-muted-foreground font-mono">Formato A4 (210mm × 297mm)</span>
                       </div>
                       <CurriculumPreview data={data} />
                     </div>
@@ -1042,7 +1042,7 @@ export default function CurriculumPage() {
         )}
       </main>
 
-      {/* Modal de PrÃ©-visualizaÃ§Ã£o */}
+      {/* Modal de Pré-visualização */}
       {previewModalCurriculum && (
         <Dialog open={!!previewModalCurriculum} onOpenChange={(open) => !open && setPreviewModalCurriculum(null)}>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-6 rounded-[5px]">
@@ -1050,10 +1050,10 @@ export default function CurriculumPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <DialogTitle className="text-lg font-black text-foreground">
-                    {previewModalCurriculum.profession || 'PrÃ©-visualizaÃ§Ã£o do CurrÃ­culo'}
+                    {previewModalCurriculum.profession || 'Pré-visualização do Currículo'}
                   </DialogTitle>
                   <DialogDescription className="text-xs text-muted-foreground">
-                    {previewModalCurriculum.full_name} â€¢ Modelo {TEMPLATES.find(t => t.id === (previewModalCurriculum.template || 'ats').toLowerCase())?.name}
+                    {previewModalCurriculum.full_name} • Modelo {TEMPLATES.find(t => t.id === (previewModalCurriculum.template || 'ats').toLowerCase())?.name}
                   </DialogDescription>
                 </div>
                 <Button
