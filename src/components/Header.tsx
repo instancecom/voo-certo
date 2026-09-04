@@ -157,12 +157,12 @@ export function Header() {
                   alt={branding.site_name}
                   loading="eager"
                   decoding="async"
-                  className="h-8 md:h-9 w-auto object-contain transition-transform group-hover:scale-105"
+                  className="h-10 md:h-12 w-auto object-contain transition-transform group-hover:scale-105"
                 />
               ) : (
                 <>
-                  <Plane className="w-6 h-6 md:w-7 md:h-7 text-accent" />
-                  <span className={`text-lg md:text-xl font-bold tracking-tight ${
+                  <Plane className="w-8 h-8 md:w-9 md:h-9 text-accent" />
+                  <span className={`text-xl md:text-2xl font-bold tracking-tight ${
                     isTransparent ? 'text-white' : 'text-foreground'
                   }`}>
                     {branding.site_name}
