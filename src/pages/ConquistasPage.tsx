@@ -52,15 +52,15 @@ function BadgeTierSection({ rarity, badges, earnedIds, earnedMap }: {
         </div>
       </div>
 
-      {/* Grid container com cards estruturados */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 pt-1">
+      {/* Mobile: Galeria estilo Netflix (cards menores e deslizáveis) / Desktop: Grade */}
+      <div className="flex sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4 pt-1 overflow-x-auto sm:overflow-x-visible scrollbar-none pb-2 sm:pb-0 snap-x snap-mandatory touch-pan-x -mx-1 px-1">
         {badges.map((insignia: any, i: number) => (
           <motion.div
             key={insignia.id}
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: i * 0.03 }}
-            className="flex"
+            className="flex-shrink-0 w-[140px] sm:w-auto snap-start flex"
           >
             <BadgeCard
               insignia={insignia}
@@ -211,7 +211,8 @@ const ConquistasPage = () => {
                   <p className="text-xs text-muted-foreground">Suas insígnias desbloqueadas mais recentes</p>
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 pt-1">
+              {/* Mobile: Galeria estilo Netflix / Desktop: Grade */}
+              <div className="flex sm:grid sm:grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-4 pt-1 overflow-x-auto sm:overflow-x-visible scrollbar-none pb-2 sm:pb-0 snap-x snap-mandatory touch-pan-x -mx-1 px-1">
                 {[...userInsignias]
                   .sort((a, b) => new Date(b.earned_at).getTime() - new Date(a.earned_at).getTime())
                   .slice(0, 3)
@@ -219,7 +220,7 @@ const ConquistasPage = () => {
                     const badge = insignias?.find((i) => i.id === ui.insignia_id);
                     if (!badge) return null;
                     return (
-                      <div key={ui.id} className="w-full flex">
+                      <div key={ui.id} className="flex-shrink-0 w-[140px] sm:w-auto snap-start flex">
                         <BadgeCard insignia={badge} earned earnedAt={ui.earned_at} large />
                       </div>
                     );

@@ -110,7 +110,7 @@ export const BadgeCard = ({
         whileHover={{ y: -4, transition: { duration: 0.2 } }}
         whileTap={{ scale: 0.98 }}
         className={cn(
-          "relative cursor-pointer transition-all duration-300 flex flex-col items-center justify-between text-center p-4 rounded-[5px] border bg-white dark:bg-card shadow-sm hover:shadow-md group h-full min-h-[210px] sm:min-h-[225px] w-full",
+          "relative cursor-pointer transition-all duration-300 flex flex-col items-center justify-between text-center p-3 sm:p-4 rounded-[5px] border bg-white dark:bg-card shadow-sm hover:shadow-md group h-full min-h-[195px] sm:min-h-[225px] w-full",
           earned
             ? `${colors.borderAccent} bg-gradient-to-b from-white to-amber-50/20 dark:from-card dark:to-card`
             : "border-border/70 hover:border-border/90 bg-slate-50/50 dark:bg-card/40 opacity-75 hover:opacity-100",
@@ -120,12 +120,12 @@ export const BadgeCard = ({
       >
         {/* Rarity Pill Top-Right */}
         <div className="w-full flex items-center justify-between gap-1 mb-1">
-          <span className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-wider">
-            {insignia.condition_type === 'anac_approval' ? 'Oficial ANAC' : 'Conquista'}
+          <span className="text-[9px] sm:text-[10px] font-bold text-muted-foreground/60 uppercase tracking-wider truncate">
+            {insignia.condition_type === 'anac_approval' ? 'ANAC' : 'Conquista'}
           </span>
           <span
             className={cn(
-              "text-[9px] font-extrabold px-2 py-0.5 rounded-[4px] text-white shadow-sm shrink-0",
+              "text-[8px] sm:text-[9px] font-extrabold px-1.5 sm:px-2 py-0.5 rounded-[4px] text-white shadow-sm shrink-0",
               colors.badgeBg
             )}
           >
@@ -135,8 +135,8 @@ export const BadgeCard = ({
 
         {/* Insignia Icon Container with Glow */}
         <div className={cn(
-          "relative flex items-center justify-center my-2",
-          large ? "w-20 h-20 sm:w-24 sm:h-24" : "w-16 h-16 sm:w-20 sm:h-20",
+          "relative flex items-center justify-center my-1.5 sm:my-2",
+          large ? "w-16 h-16 sm:w-24 sm:h-24" : "w-13 h-13 sm:w-20 sm:h-20 max-w-[56px] sm:max-w-none max-h-[56px] sm:max-h-none",
           earned ? "" : "grayscale opacity-50 group-hover:opacity-80"
         )}>
           {/* Animated Glow behind the image if earned */}
