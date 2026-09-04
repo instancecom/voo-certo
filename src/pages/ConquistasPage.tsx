@@ -60,7 +60,7 @@ function BadgeTierSection({ rarity, badges, earnedIds, earnedMap }: {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: i * 0.03 }}
-            className="flex-shrink-0 w-[140px] sm:w-auto snap-start flex"
+            className="flex-shrink-0 w-[112px] sm:w-auto snap-start flex"
           >
             <BadgeCard
               insignia={insignia}
@@ -220,7 +220,7 @@ const ConquistasPage = () => {
                     const badge = insignias?.find((i) => i.id === ui.insignia_id);
                     if (!badge) return null;
                     return (
-                      <div key={ui.id} className="flex-shrink-0 w-[140px] sm:w-auto snap-start flex">
+                      <div key={ui.id} className="flex-shrink-0 w-[112px] sm:w-auto snap-start flex">
                         <BadgeCard insignia={badge} earned earnedAt={ui.earned_at} large />
                       </div>
                     );

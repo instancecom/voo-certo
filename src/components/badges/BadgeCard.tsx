@@ -110,7 +110,7 @@ export const BadgeCard = ({
         whileHover={{ y: -4, transition: { duration: 0.2 } }}
         whileTap={{ scale: 0.98 }}
         className={cn(
-          "relative cursor-pointer transition-all duration-300 flex flex-col items-center justify-between text-center p-3 sm:p-4 rounded-[5px] border bg-white dark:bg-card shadow-sm hover:shadow-md group h-full min-h-[195px] sm:min-h-[225px] w-full",
+          "relative cursor-pointer transition-all duration-300 flex flex-col items-center justify-between text-center p-2.5 sm:p-4 rounded-[5px] border bg-white dark:bg-card shadow-sm hover:shadow-md group h-full min-h-[115px] sm:min-h-[225px] w-full",
           earned
             ? `${colors.borderAccent} bg-gradient-to-b from-white to-amber-50/20 dark:from-card dark:to-card`
             : "border-border/70 hover:border-border/90 bg-slate-50/50 dark:bg-card/40 opacity-75 hover:opacity-100",
@@ -118,14 +118,14 @@ export const BadgeCard = ({
         )}
         onClick={handleClick}
       >
-        {/* Rarity Pill Top-Right */}
-        <div className="w-full flex items-center justify-between gap-1 mb-1">
-          <span className="text-[9px] sm:text-[10px] font-bold text-muted-foreground/60 uppercase tracking-wider truncate">
+        {/* Rarity Pill Top-Right (Desktop Only) */}
+        <div className="hidden sm:flex w-full items-center justify-between gap-1 mb-1">
+          <span className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-wider truncate">
             {insignia.condition_type === 'anac_approval' ? 'ANAC' : 'Conquista'}
           </span>
           <span
             className={cn(
-              "text-[8px] sm:text-[9px] font-extrabold px-1.5 sm:px-2 py-0.5 rounded-[4px] text-white shadow-sm shrink-0",
+              "text-[9px] font-extrabold px-2 py-0.5 rounded-[4px] text-white shadow-sm shrink-0",
               colors.badgeBg
             )}
           >
@@ -133,10 +133,22 @@ export const BadgeCard = ({
           </span>
         </div>
 
+        {/* Mobile Tiny Lock Icon */}
+        {!earned && (
+          <div className="sm:hidden absolute top-2 right-2 text-muted-foreground/50">
+            <Lock className="w-2.5 h-2.5" />
+          </div>
+        )}
+        {hasPendingVerification && (
+          <div className="sm:hidden absolute top-2 right-2 text-yellow-500">
+            <Clock className="w-2.5 h-2.5" />
+          </div>
+        )}
+
         {/* Insignia Icon Container with Glow */}
         <div className={cn(
-          "relative flex items-center justify-center my-1.5 sm:my-2",
-          large ? "w-16 h-16 sm:w-24 sm:h-24" : "w-13 h-13 sm:w-20 sm:h-20 max-w-[56px] sm:max-w-none max-h-[56px] sm:max-h-none",
+          "relative flex items-center justify-center my-1 sm:my-2",
+          large ? "w-14 h-14 sm:w-24 sm:h-24" : "w-13 h-13 sm:w-20 sm:h-20",
           earned ? "" : "grayscale opacity-50 group-hover:opacity-80"
         )}>
           {/* Animated Glow behind the image if earned */}
@@ -164,7 +176,7 @@ export const BadgeCard = ({
             ) : null}
             <DynamicIcon
               name={insignia.icon}
-              size={large ? 44 : 34}
+              size={large ? 40 : 32}
               className={cn(
                 imageUrl ? "hidden" : "transform group-hover:scale-105 transition-transform duration-500",
                 earned ? colors.text : "text-muted-foreground"
@@ -173,22 +185,22 @@ export const BadgeCard = ({
           </div>
         </div>
 
-        {/* Text Section (Name + Description) */}
-        <div className="w-full space-y-1 my-1">
+        {/* Text Section (Name on mobile, Name + Description on desktop) */}
+        <div className="w-full space-y-1 my-0.5 sm:my-1">
           <h3 className={cn(
-            "font-bold text-xs sm:text-sm text-center leading-tight line-clamp-1 transition-colors duration-200",
+            "font-bold text-[11px] sm:text-sm text-center leading-tight line-clamp-1 transition-colors duration-200",
             earned ? "text-[#1A233A] dark:text-foreground group-hover:text-primary" : "text-muted-foreground group-hover:text-foreground"
           )}>
             {insignia.name}
           </h3>
 
-          <p className="text-[11px] text-muted-foreground line-clamp-2 leading-relaxed px-1 min-h-[30px] flex items-center justify-center">
+          <p className="hidden sm:flex text-[11px] text-muted-foreground line-clamp-2 leading-relaxed px-1 min-h-[30px] items-center justify-center">
             {insignia.description || "Conquista especial da jornada aeronáutica."}
           </p>
         </div>
 
-        {/* Bottom Status Pill */}
-        <div className="pt-2 w-full flex justify-center">
+        {/* Bottom Status Pill (Desktop Only) */}
+        <div className="hidden sm:flex pt-2 w-full justify-center">
           {earned ? (
             <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-[4px] bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold">
               <CheckCircle2 className="w-3 h-3 text-emerald-500" />
