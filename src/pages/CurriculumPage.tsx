@@ -549,7 +549,7 @@ export default function CurriculumPage() {
   // MODO CHAT TELA CHEIA (Sem Header/Footer, 100% da tela)
   if (mode === 'chat') {
     return (
-      <div className="fixed inset-0 z-50 h-screen w-screen bg-background flex flex-col overflow-hidden">
+      <div className="fixed inset-0 z-50 h-[100dvh] w-screen bg-background flex flex-col overflow-hidden">
         <CurriculumChatAssistant
           onCurriculumGenerated={handleCurriculumGenerated}
           onBackToGallery={() => setMode('dashboard')}

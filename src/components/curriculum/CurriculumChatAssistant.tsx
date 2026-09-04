@@ -119,12 +119,36 @@ export function CurriculumChatAssistant({
   const [isGenerating, setIsGenerating] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
+  // Ajuste automático dinâmico para barra de pesquisa do navegador e teclado mobile
+  const [viewportHeight, setViewportHeight] = useState<string>('100dvh');
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (typeof window !== 'undefined' && window.visualViewport) {
+        setViewportHeight(`${window.visualViewport.height}px`);
+      }
+    };
+
+    if (typeof window !== 'undefined' && window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleResize);
+      window.visualViewport.addEventListener('scroll', handleResize);
+      handleResize();
+    }
+
+    return () => {
+      if (typeof window !== 'undefined' && window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', handleResize);
+        window.visualViewport.removeEventListener('scroll', handleResize);
+      }
+    };
+  }, []);
+
   // Scroll automático suave para a última mensagem
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
-  }, [messages, isGenerating]);
+  }, [messages, isGenerating, viewportHeight]);
 
   const activeQuestion = QUESTIONS[currentStep];
   const userMessagesCount = messages.filter(m => m.sender === 'user').length;
@@ -266,7 +290,10 @@ export function CurriculumChatAssistant({
     .join('') || 'VC';
 
   return (
-    <div className="flex h-full w-full bg-background overflow-hidden">
+    <div
+      style={{ height: viewportHeight }}
+      className="flex w-full bg-background overflow-hidden fixed inset-0 z-50"
+    >
 
       {/* ── SIDEBAR LATERAL (DESKTOP ESTILO CHATGPT) ── */}
       <aside className="hidden md:flex flex-col w-64 border-r border-border/80 bg-muted/20 justify-between shrink-0 p-3.5 h-full">
@@ -352,7 +379,7 @@ export function CurriculumChatAssistant({
       <div className="flex-1 flex flex-col h-full bg-background relative overflow-hidden">
         
         {/* Header Superior (Mobile & Minimal Desktop Topbar) */}
-        <header className="h-12 border-b border-border/80 px-3.5 sm:px-5 flex items-center justify-between shrink-0 bg-card/80 backdrop-blur-sm z-10">
+        <header className="h-14 border-b border-border/80 px-3.5 sm:px-5 pt-[env(safe-area-inset-top,0px)] flex items-center justify-between shrink-0 bg-card/80 backdrop-blur-sm z-10">
           <div className="flex items-center gap-2">
             {onBackToGallery && (
               <Button
@@ -494,7 +521,7 @@ export function CurriculumChatAssistant({
         </div>
 
         {/* ── BARRA INFERIOR DE ENTRADA (ESTILO CÁPSULA CHATGPT) ── */}
-        <div className="p-3.5 sm:p-4 border-t border-border/80 bg-card shrink-0">
+        <div className="p-3 sm:p-4 pb-[max(env(safe-area-inset-bottom,0px)+0.5rem,1rem)] border-t border-border/80 bg-card shrink-0 z-20">
           <div className="max-w-2xl mx-auto space-y-2.5">
 
             {/* Chips de Resposta Rápida (quando a pergunta possui opções) */}
