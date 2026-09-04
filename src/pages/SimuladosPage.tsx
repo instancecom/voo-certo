@@ -169,7 +169,7 @@ export default function SimuladosPage() {
       <div className="min-h-screen bg-background">
         <Header />
 
-        <section className="pt-32 pb-16 bg-muted/20">
+        <section className="pt-20 sm:pt-24 pb-16 bg-muted/20">
           <div className="container mx-auto px-4">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center">
               <h1 className="text-3xl md:text-5xl font-black text-foreground mb-4 tracking-tight">Centro de Simulados</h1>

@@ -141,12 +141,12 @@ export function Header() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 border-b ${
         isTransparent
-          ? 'bg-transparent border-transparent py-4'
-          : 'bg-white border-border py-4 shadow-sm'
+          ? 'bg-transparent border-transparent'
+          : 'bg-white/95 backdrop-blur-md border-border/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)]'
       }`}
     >
-      <div className="container mx-auto">
-        <div className="flex items-center justify-between h-16 md:h-20">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="flex items-center justify-between h-14 md:h-16">
 
           {/* Logo */}
           <div className="flex-1 flex items-center justify-start">
@@ -157,12 +157,12 @@ export function Header() {
                   alt={branding.site_name}
                   loading="eager"
                   decoding="async"
-                  className="h-10 md:h-16 w-auto object-contain"
+                  className="h-8 md:h-9 w-auto object-contain transition-transform group-hover:scale-105"
                 />
               ) : (
                 <>
-                  <Plane className="w-10 h-10 md:w-12 md:h-12 text-accent" />
-                  <span className={`text-xl md:text-2xl font-bold tracking-tight ${
+                  <Plane className="w-6 h-6 md:w-7 md:h-7 text-accent" />
+                  <span className={`text-lg md:text-xl font-bold tracking-tight ${
                     isTransparent ? 'text-white' : 'text-foreground'
                   }`}>
                     {branding.site_name}
@@ -207,7 +207,7 @@ export function Header() {
                       <Button
                         variant="outline"
                         size="sm"
-                        className={`flex items-center gap-2 rounded-[5px] font-semibold pr-2.5 pl-1.5 ${
+                        className={`h-9 flex items-center gap-2 rounded-[5px] font-semibold pr-2.5 pl-1.5 ${
                           isTransparent
                             ? 'bg-white/10 text-white border-white/20 hover:bg-white/20 hover:text-white'
                             : 'hover-yellow border-border'
@@ -310,10 +310,10 @@ export function Header() {
               <Button
                 variant="ghost"
                 size="icon"
-                className={isTransparent ? 'text-white hover:bg-white/10' : ''}
+                className={`h-9 w-9 p-0 ${isTransparent ? 'text-white hover:bg-white/10' : ''}`}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
               >
-                {isMenuOpen ? <X /> : <Menu />}
+                {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </Button>
             </div>
           </div>

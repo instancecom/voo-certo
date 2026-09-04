@@ -130,7 +130,7 @@ const ConquistasPage = () => {
     <div className="min-h-screen bg-[#F5F7F9] flex flex-col">
       <Header />
 
-      <main className="flex-1 pt-24 pb-16">
+      <main className="flex-1 pt-20 sm:pt-24 pb-16">
         <div className="container mx-auto px-4">
 
           {/* Hero banner */}

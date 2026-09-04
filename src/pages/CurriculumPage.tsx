@@ -566,7 +566,7 @@ export default function CurriculumPage() {
         <Header />
       </div>
 
-      <main className="flex-1 container mx-auto px-4 pt-24 sm:pt-28 pb-12 print:p-0 print:m-0">
+      <main className="flex-1 container mx-auto px-4 pt-20 sm:pt-24 pb-12 print:p-0 print:m-0">
 
         {/* Loading */}
         {loadingSaved ? (
