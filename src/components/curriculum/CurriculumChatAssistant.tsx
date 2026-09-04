@@ -266,10 +266,10 @@ export function CurriculumChatAssistant({
     .join('') || 'VC';
 
   return (
-    <div className="flex h-[calc(100vh-8.5rem)] min-h-[580px] max-h-[820px] w-full bg-background border border-border/80 rounded-[5px] overflow-hidden shadow-lg">
+    <div className="flex h-full w-full bg-background overflow-hidden">
 
       {/* ── SIDEBAR LATERAL (DESKTOP ESTILO CHATGPT) ── */}
-      <aside className="hidden md:flex flex-col w-64 border-r border-border/80 bg-muted/20 justify-between shrink-0 p-3.5">
+      <aside className="hidden md:flex flex-col w-64 border-r border-border/80 bg-muted/20 justify-between shrink-0 p-3.5 h-full">
         <div className="space-y-4">
           {/* Top Actions */}
           <div className="space-y-1.5">

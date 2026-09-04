@@ -546,6 +546,20 @@ export default function CurriculumPage() {
     setData(prev => ({ ...prev, skills: prev.skills.filter((_, i) => i !== index) }));
   };
 
+  // MODO CHAT TELA CHEIA (Sem Header/Footer, 100% da tela)
+  if (mode === 'chat') {
+    return (
+      <div className="fixed inset-0 z-50 h-screen w-screen bg-background flex flex-col overflow-hidden">
+        <CurriculumChatAssistant
+          onCurriculumGenerated={handleCurriculumGenerated}
+          onBackToGallery={() => setMode('dashboard')}
+          userEmail={user?.email}
+          userName={user?.user_metadata?.full_name}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background flex flex-col print:bg-white print:p-0">
       <div className="print:hidden">
@@ -710,19 +724,6 @@ export default function CurriculumPage() {
               </div>
             )}
 
-            {/* ================================================================ */}
-            {/* MODO CHAT (criação com Mike - Estilo ChatGPT)                    */}
-            {/* ================================================================ */}
-            {mode === 'chat' && (
-              <div className="print:hidden">
-                <CurriculumChatAssistant
-                  onCurriculumGenerated={handleCurriculumGenerated}
-                  onBackToGallery={() => setMode('dashboard')}
-                  userEmail={user?.email}
-                  userName={user?.user_metadata?.full_name}
-                />
-              </div>
-            )}
 
             {/* ================================================================ */}
             {/* MODO EDITOR                                                       */}
