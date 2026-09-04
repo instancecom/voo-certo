@@ -2,10 +2,10 @@ import { PageTransition } from '@/components/PageTransition';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { HeroSection } from '@/components/landing/HeroSection';
-import { ProblemSection } from '@/components/landing/ProblemSection';
+import { JourneySection } from '@/components/landing/JourneySection';
 import { MentorCards } from '@/components/landing/MentorCards';
-import { FeaturesSection } from '@/components/landing/FeaturesSection';
 import { PlatformPreview } from '@/components/landing/PlatformPreview';
+import { LinkedInBadgeSection } from '@/components/landing/LinkedInBadgeSection';
 import { TestimonialsSection } from '@/components/landing/TestimonialsSection';
 import { PricingCards } from '@/components/landing/PricingCards';
 import { FAQSection } from '@/components/landing/FAQSection';
@@ -27,7 +27,7 @@ const PLANS = [
       'Guia de Carreiras completo da aviação',
       'Histórico e métricas de desempenho',
       'Conquistas: Medalhas Bronze e Prata',
-      'Selo de Aprovação para LinkedIn',
+      '🎖️ Selo "Aprovado ANAC" (LinkedIn)',
       'Gerador de Currículo IA (1 currículo)',
     ],
     highlight: false,
@@ -46,7 +46,7 @@ const PLANS = [
       'Chat IA com Mike (5 msgs/questão)',
       'Diagnóstico de Desempenho com Mike',
       'Conquistas: Bronze, Prata e Ouro',
-      'Selo de Aprovação para LinkedIn',
+      '🎖️ Selo "Aprovado ANAC" (LinkedIn)',
       'Gerador de Currículo IA (até 3 currículos)',
       'Suporte prioritário da equipe',
     ],
@@ -66,7 +66,7 @@ const PLANS = [
       'Chat IA Turbo com Mike (15 msgs/questão)',
       'Diagnóstico com Mike ilimitado',
       'Todas as Conquistas: Bronze, Prata, Ouro e Platina',
-      'Selo de Aprovação para LinkedIn',
+      '🎖️ Selo "Aprovado ANAC" (LinkedIn)',
       'Gerador de Currículo IA (galeria ilimitada)',
       'Acesso antecipado a novos módulos',
     ],
@@ -86,7 +86,7 @@ export default function Index() {
             '@context': 'https://schema.org',
             '@type': 'SoftwareApplication',
             name: 'Voe Certo',
-            description: 'Plataforma de simulados com padrão ANAC, mentoria de IA e ferramentas de carreira para aviação civil.',
+            description: 'Plataforma de preparação e acompanhamento de carreira para aviação civil — simulados ANAC, mentoria de IA e selo LinkedIn.',
             operatingSystem: 'Web, Android, iOS',
             applicationCategory: 'EducationalApplication',
             aggregateRating: {
@@ -105,28 +105,28 @@ export default function Index() {
         {/* 1. Header */}
         <Header />
 
-        {/* 2. Hero */}
+        {/* 2. Hero Section */}
         <HeroSection />
 
-        {/* 3. Problema / Dor do candidato */}
-        <ProblemSection />
+        {/* 3. Journey (Estude, Evolua, Conquiste) */}
+        <JourneySection />
 
-        {/* 4. Mike — o assistente de IA */}
+        {/* 4. Assistente Mike */}
         <MentorCards />
 
-        {/* 5. Funcionalidades reais em layout alternado */}
-        <FeaturesSection />
-
-        {/* 6. Preview interativo da plataforma */}
+        {/* 5. Plataforma / Cockpit Preview */}
         <PlatformPreview />
 
-        {/* 7. Planos & Preços */}
-        <PricingCards plans={PLANS} />
+        {/* 6. Selo de Aprovação LinkedIn */}
+        <LinkedInBadgeSection />
 
-        {/* 8. Depoimentos */}
+        {/* 7. Depoimentos / Histórias Reais */}
         <TestimonialsSection />
 
-        {/* 9. FAQ */}
+        {/* 8. Planos & Preços */}
+        <PricingCards plans={PLANS} />
+
+        {/* 9. Perguntas Frequentes (FAQ) */}
         <FAQSection />
 
         {/* 10. CTA Final */}
