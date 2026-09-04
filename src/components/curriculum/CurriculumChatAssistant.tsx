@@ -119,27 +119,23 @@ export function CurriculumChatAssistant({
   const [isGenerating, setIsGenerating] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // Ajuste automático dinâmico para barra de pesquisa do navegador e teclado mobile
-  const [viewportHeight, setViewportHeight] = useState<string>('100dvh');
-
+  // Trava o scroll do body no iOS Safari para não deslocar a tela ao abrir o teclado
   useEffect(() => {
-    const handleResize = () => {
-      if (typeof window !== 'undefined' && window.visualViewport) {
-        setViewportHeight(`${window.visualViewport.height}px`);
-      }
-    };
+    const originalOverflow = document.body.style.overflow;
+    const originalPosition = document.body.style.position;
+    const originalWidth = document.body.style.width;
+    const originalHeight = document.body.style.height;
 
-    if (typeof window !== 'undefined' && window.visualViewport) {
-      window.visualViewport.addEventListener('resize', handleResize);
-      window.visualViewport.addEventListener('scroll', handleResize);
-      handleResize();
-    }
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+    document.body.style.height = '100%';
 
     return () => {
-      if (typeof window !== 'undefined' && window.visualViewport) {
-        window.visualViewport.removeEventListener('resize', handleResize);
-        window.visualViewport.removeEventListener('scroll', handleResize);
-      }
+      document.body.style.overflow = originalOverflow;
+      document.body.style.position = originalPosition;
+      document.body.style.width = originalWidth;
+      document.body.style.height = originalHeight;
     };
   }, []);
 
@@ -148,7 +144,7 @@ export function CurriculumChatAssistant({
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
-  }, [messages, isGenerating, viewportHeight]);
+  }, [messages, isGenerating]);
 
   const activeQuestion = QUESTIONS[currentStep];
   const userMessagesCount = messages.filter(m => m.sender === 'user').length;
@@ -290,10 +286,7 @@ export function CurriculumChatAssistant({
     .join('') || 'VC';
 
   return (
-    <div
-      style={{ height: viewportHeight }}
-      className="flex w-full bg-background overflow-hidden fixed inset-0 z-50"
-    >
+    <div className="flex w-full h-[100dvh] bg-background overflow-hidden fixed inset-0 z-50 overscroll-none">
 
       {/* ── SIDEBAR LATERAL (DESKTOP ESTILO CHATGPT) ── */}
       <aside className="hidden md:flex flex-col w-64 border-r border-border/80 bg-muted/20 justify-between shrink-0 p-3.5 h-full">
@@ -548,6 +541,14 @@ export function CurriculumChatAssistant({
                   placeholder={activeQuestion?.placeholder || 'Responda aqui...'}
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
+                  onFocus={() => {
+                    setTimeout(() => {
+                      window.scrollTo(0, 0);
+                      if (chatContainerRef.current) {
+                        chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+                      }
+                    }, 80);
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       e.preventDefault();
