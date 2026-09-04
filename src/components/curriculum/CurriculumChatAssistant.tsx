@@ -516,7 +516,8 @@ export function CurriculumChatAssistant({
             {/* Cápsula de Entrada */}
             {!isGenerating && (
               <div className="relative flex items-center bg-muted/40 border border-border rounded-full sm:rounded-[5px] p-1.5 focus-within:border-primary/60 focus-within:ring-1 focus-within:ring-primary/20 transition-all shadow-sm">
-                <Input
+                <input
+                  type="text"
                   placeholder={activeQuestion?.placeholder || 'Responda aqui...'}
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
@@ -526,7 +527,8 @@ export function CurriculumChatAssistant({
                       handleSendAnswer();
                     }
                   }}
-                  className="border-none bg-transparent shadow-none focus-visible:ring-0 text-xs sm:text-sm h-10 px-3.5 flex-1 font-medium placeholder:text-muted-foreground/60"
+                  className="w-full bg-transparent border-0 outline-none ring-0 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 text-[16px] sm:text-sm h-10 px-3.5 flex-1 font-medium placeholder:text-muted-foreground/60 shadow-none"
+                  style={{ fontSize: '16px', outline: 'none', border: 'none', boxShadow: 'none' }}
                 />
 
                 <div className="flex items-center gap-1.5 pr-1">
