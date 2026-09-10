@@ -241,132 +241,140 @@ export default function ProfilePage() {
       <Header />
 
       <main className="flex-1 pt-20 sm:pt-24 pb-20">
-        <div className="container mx-auto px-4 max-w-xl">
+        <div className="container mx-auto px-4 sm:px-6 max-w-5xl">
 
           {/* ═════════════════════════════════════════════════════════
-              CARD PRINCIPAL DO PERFIL (Inspirado na referência)
+              CARD PRINCIPAL DO PERFIL (Responsivo Mobile & Web)
              ═════════════════════════════════════════════════════════ */}
-          <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden mb-6">
+          <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden mb-6 sm:mb-8">
             
-            {/* Banner Superior no azul marinho da plataforma */}
-            <div className="h-28 sm:h-32 bg-gradient-to-r from-[#091326] via-[#0f172a] to-[#1e293b] relative">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(245,158,11,0.15),transparent_70%)]" />
+            {/* Banner Superior Panorâmico */}
+            <div className="h-28 sm:h-36 md:h-44 bg-gradient-to-r from-[#091326] via-[#0f172a] to-[#1e293b] relative">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(245,158,11,0.18),transparent_70%)]" />
             </div>
 
-            {/* Conteúdo Centralizado */}
-            <div className="px-5 sm:px-8 pb-6 text-center relative">
+            {/* Conteúdo do Card (Mobile: centralizado | Desktop: alinhado e fluido) */}
+            <div className="px-5 sm:px-8 pb-6 sm:pb-8 relative">
               
-              {/* Avatar Flutuante Central */}
-              <div className="-mt-14 sm:-mt-16 mb-3 flex justify-center">
-                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-card bg-primary text-white flex items-center justify-center text-3xl font-black shadow-md">
-                  {getInitials()}
+              {/* Top Row Desktop: Avatar + Info + Botão Editar */}
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                
+                <div className="flex flex-col md:flex-row items-center md:items-end gap-4 text-center md:text-left">
+                  {/* Avatar Flutuante */}
+                  <div className="-mt-14 sm:-mt-16 md:-mt-20 shrink-0">
+                    <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full border-4 border-card bg-primary text-white flex items-center justify-center text-3xl md:text-4xl font-black shadow-md">
+                      {getInitials()}
+                    </div>
+                  </div>
+
+                  {/* Informações de Identificação */}
+                  <div className="min-w-0 pb-1">
+                    <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-foreground tracking-tight truncate">
+                      {profile?.full_name || user.email?.split('@')[0]}
+                    </h1>
+                    <p className="text-xs sm:text-sm font-semibold text-accent mt-0.5">
+                      {selectedRoleLabel || 'Aeronauta em formação'}
+                      {examDateFormatted && (
+                        <span className="text-muted-foreground font-normal"> • Exame ANAC: {examDateFormatted}</span>
+                      )}
+                    </p>
+                  </div>
                 </div>
+
+                {/* Botão de Edição (Centralizado no mobile, à direita no desktop) */}
+                <div className="flex justify-center md:justify-end pb-1 shrink-0">
+                  <Button
+                    onClick={() => setIsEditModalOpen(true)}
+                    className="rounded-full px-6 sm:px-8 h-10 font-bold text-xs sm:text-sm bg-accent text-accent-foreground hover:bg-accent/90 shadow-sm transition-all hover:scale-[1.02]"
+                  >
+                    <Edit2 className="w-3.5 h-3.5 mr-2" />
+                    Editar Perfil
+                  </Button>
+                </div>
+
               </div>
 
-              {/* Nome do Usuário */}
-              <h1 className="text-xl sm:text-2xl font-black text-foreground tracking-tight">
-                {profile?.full_name || user.email?.split('@')[0]}
-              </h1>
-
-              {/* Subtítulo: Objetivo de Voo & Data do Exame ANAC */}
-              <p className="text-xs sm:text-sm font-semibold text-accent mt-1">
-                {selectedRoleLabel || 'Aeronauta em formação'}
-                {examDateFormatted && (
-                  <span className="text-muted-foreground font-normal"> • Exame ANAC: {examDateFormatted}</span>
-                )}
-              </p>
-
-              {/* Bio / Sobre Você (até 200 caracteres) */}
-              <div className="mt-3 max-w-md mx-auto">
+              {/* Bio / Sobre Você */}
+              <div className="mt-4 text-center md:text-left max-w-2xl">
                 {bio ? (
-                  <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed font-normal italic">
+                  <p className="text-xs sm:text-sm text-foreground/85 leading-relaxed font-normal italic">
                     "{bio}"
                   </p>
                 ) : (
                   <p className="text-xs text-muted-foreground italic">
-                    Toque em Editar Perfil para adicionar um breve resumo sobre você.
+                    Nenhum resumo adicionado ainda. Clique em Editar Perfil para contar um pouco sobre sua trajetória na aviação.
                   </p>
                 )}
               </div>
 
-              {/* Botão Principal Central (Igual à referência) */}
-              <div className="mt-5 flex justify-center">
-                <Button
-                  onClick={() => setIsEditModalOpen(true)}
-                  className="rounded-full px-8 h-10 font-bold text-sm bg-accent text-accent-foreground hover:bg-accent/90 shadow-sm transition-all hover:scale-[1.02]"
-                >
-                  <Edit2 className="w-4 h-4 mr-2" />
-                  Editar Perfil
-                </Button>
-              </div>
-
-              {/* Linha com as 3 Métricas Rápidas (Exatamente como na referência) */}
-              <div className="mt-6 pt-5 border-t border-border grid grid-cols-3 divide-x divide-border">
-                
-                {/* 1. Conquistas */}
+              {/* Linha com as 3 Métricas Rápidas */}
+              <div className="mt-6 pt-5 border-t border-border grid grid-cols-3 divide-x divide-border text-center">
                 <div className="px-2">
-                  <span className="block text-lg sm:text-xl font-black text-foreground">
+                  <span className="block text-lg sm:text-2xl font-black text-foreground">
                     {earnedInsignias.length}
                   </span>
-                  <span className="text-[11px] font-medium text-muted-foreground">
+                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">
                     Conquistas
                   </span>
                 </div>
 
-                {/* 2. Plano Atual */}
                 <div className="px-2">
-                  <span className="block text-lg sm:text-xl font-black text-foreground capitalize truncate">
+                  <span className="block text-lg sm:text-2xl font-black text-foreground capitalize truncate">
                     {planLabel}
                   </span>
-                  <span className="text-[11px] font-medium text-muted-foreground">
+                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">
                     Plano Ativo
                   </span>
                 </div>
 
-                {/* 3. Currículos Criados */}
                 <div className="px-2">
-                  <span className="block text-lg sm:text-xl font-black text-foreground">
+                  <span className="block text-lg sm:text-2xl font-black text-foreground">
                     {savedCurriculums.length}
                   </span>
-                  <span className="text-[11px] font-medium text-muted-foreground">
+                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">
                     Currículos
                   </span>
                 </div>
-
               </div>
 
             </div>
           </div>
 
           {/* ═════════════════════════════════════════════════════════
-              SEÇÃO 1: INSÍGNIAS CONQUISTADAS (Carrossel Horizontal)
+              SEÇÃO 1: INSÍGNIAS CONQUISTADAS (Largura Total)
              ═════════════════════════════════════════════════════════ */}
-          <div className="bg-card border border-border rounded-2xl shadow-sm p-5 sm:p-6 mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm sm:text-base font-bold text-foreground flex items-center gap-2">
-                Insígnias Conquistadas
-                <span className="text-xs font-normal text-muted-foreground">({earnedInsignias.length})</span>
-              </h2>
+          <div className="bg-card border border-border rounded-2xl shadow-sm p-5 sm:p-7 mb-6 sm:mb-8">
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-foreground flex items-center gap-2">
+                  Insígnias Conquistadas
+                  <span className="text-xs font-normal text-muted-foreground">({earnedInsignias.length})</span>
+                </h2>
+                <p className="text-xs text-muted-foreground hidden sm:block">
+                  Conquistas desbloqueadas durante o seu treinamento em simulados.
+                </p>
+              </div>
               <Link to="/conquistas" className="text-xs font-bold text-accent hover:underline flex items-center gap-0.5">
                 Ver todas <ChevronRight className="w-3.5 h-3.5" />
               </Link>
             </div>
 
             {loadingInsignias ? (
-              <div className="flex items-center justify-center py-6">
+              <div className="flex items-center justify-center py-8">
                 <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
               </div>
             ) : earnedInsignias.length === 0 ? (
-              <div className="text-center py-6">
-                <Award className="w-8 h-8 text-muted-foreground/30 mx-auto mb-1.5" />
-                <p className="text-xs text-muted-foreground">Você ainda não conquistou insígnias.</p>
-                <Button asChild size="sm" variant="outline" className="mt-2.5 rounded-full text-xs font-semibold h-8">
-                  <Link to="/simulados">Fazer Simulado</Link>
+              <div className="text-center py-8 border border-dashed border-border rounded-xl">
+                <Award className="w-8 h-8 text-muted-foreground/30 mx-auto mb-2" />
+                <p className="text-xs sm:text-sm font-semibold text-foreground">Você ainda não conquistou insígnias</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Complete simulados para desbloquear suas medalhas de honra.</p>
+                <Button asChild size="sm" variant="outline" className="mt-3 rounded-full text-xs font-semibold h-8">
+                  <Link to="/simulados">Iniciar Simulado</Link>
                 </Button>
               </div>
             ) : (
-              /* Carrossel Horizontal Circular (Estilo lista de seguidores da referência) */
-              <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-none snap-x touch-pan-x -mx-1 px-1">
+              /* Mobile: Carrossel touch horizontal | Desktop: Grade fluida de até 8 itens */
+              <div className="flex md:grid md:grid-cols-6 lg:grid-cols-8 gap-4 overflow-x-auto pb-2 md:pb-0 scrollbar-none snap-x touch-pan-x -mx-1 px-1">
                 {earnedInsignias.map((ui) => {
                   const insignia = ui.insignia!;
                   const fallback = getInsigniaFallback(insignia.name);
@@ -379,9 +387,9 @@ export default function ProfilePage() {
                         setSelectedBadge(insignia);
                         setSelectedEarnedAt(ui.earned_at);
                       }}
-                      className="shrink-0 w-20 flex flex-col items-center text-center cursor-pointer group snap-start"
+                      className="shrink-0 w-20 md:w-auto flex flex-col items-center text-center cursor-pointer group snap-start"
                     >
-                      <div className="w-16 h-16 rounded-full p-1.5 bg-muted/40 border border-border group-hover:border-accent/50 transition-all flex items-center justify-center shadow-xs group-hover:scale-105">
+                      <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-full p-2 bg-muted/40 border border-border group-hover:border-accent/50 transition-all flex items-center justify-center shadow-xs group-hover:scale-105">
                         {imageUrl ? (
                           <img
                             src={imageUrl}
@@ -395,7 +403,7 @@ export default function ProfilePage() {
                         ) : null}
                         <DynamicIcon
                           name={insignia.icon}
-                          size={24}
+                          size={26}
                           className={imageUrl ? 'hidden text-accent' : 'text-accent'}
                         />
                       </div>
@@ -410,112 +418,122 @@ export default function ProfilePage() {
           </div>
 
           {/* ═════════════════════════════════════════════════════════
-              SEÇÃO 2: MEUS CURRÍCULOS CRIADOS (Cards Diretos)
+              SEÇÃO 2 & 3: GRID RESPONSIVO (Currículos + Assinatura)
              ═════════════════════════════════════════════════════════ */}
-          <div className="bg-card border border-border rounded-2xl shadow-sm p-5 sm:p-6 mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm sm:text-base font-bold text-foreground flex items-center gap-2">
-                Meus Currículos
-                <span className="text-xs font-normal text-muted-foreground">({savedCurriculums.length})</span>
-              </h2>
-              <Button asChild size="sm" variant="ghost" className="text-xs font-bold text-accent hover:text-accent p-0 h-auto">
-                <Link to="/curriculo" className="flex items-center gap-1">
-                  <Plus className="w-3.5 h-3.5" /> Criar Novo
-                </Link>
-              </Button>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-6">
 
-            {loadingCurriculums ? (
-              <div className="flex items-center justify-center py-6">
-                <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
-              </div>
-            ) : savedCurriculums.length === 0 ? (
-              <div className="text-center py-6">
-                <FileText className="w-8 h-8 text-muted-foreground/30 mx-auto mb-1.5" />
-                <p className="text-xs text-muted-foreground">Nenhum currículo criado ainda.</p>
-                <Button asChild size="sm" className="mt-2.5 rounded-full text-xs font-bold h-8 hover-yellow">
-                  <Link to="/curriculo">Criar Currículo com Mike</Link>
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-2.5">
-                {savedCurriculums.map((curr) => {
-                  const dateFormatted = curr.updatedAt
-                    ? format(new Date(curr.updatedAt), "dd/MM/yyyy", { locale: ptBR })
-                    : 'Recente';
-
-                  return (
-                    <div
-                      key={curr.id}
-                      className="p-3.5 rounded-xl border border-border bg-muted/20 hover:border-accent/30 transition-colors flex items-center justify-between gap-3"
-                    >
-                      <div className="min-w-0">
-                        <p className="text-xs sm:text-sm font-bold text-foreground truncate">{curr.title}</p>
-                        <p className="text-[11px] text-muted-foreground mt-0.5">Atualizado em {dateFormatted}</p>
-                      </div>
-
-                      <Button asChild size="sm" variant="outline" className="rounded-full text-xs font-bold shrink-0 h-8 px-3">
-                        <Link to="/curriculo" className="flex items-center gap-1">
-                          Abrir <ExternalLink className="w-3 h-3 ml-0.5" />
-                        </Link>
-                      </Button>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          {/* ═════════════════════════════════════════════════════════
-              SEÇÃO 3: CARD DO PLANO & ASSINATURA (Upgrade / Cancelar)
-             ═════════════════════════════════════════════════════════ */}
-          <div className="bg-card border border-border rounded-2xl shadow-sm p-5 sm:p-6 mb-6">
-            <h2 className="text-sm sm:text-base font-bold text-foreground mb-3">
-              Plano de Assinatura
-            </h2>
-
-            <div className="p-4 rounded-xl border border-border bg-muted/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            {/* Meus Currículos (Desktop: 7 colunas) */}
+            <div className="md:col-span-7 bg-card border border-border rounded-2xl shadow-sm p-5 sm:p-6 flex flex-col justify-between">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Assinatura Atual</span>
-                <p className="text-base sm:text-lg font-black text-foreground">Plano {planLabel}</p>
-                {planExpiryFormatted && currentPlan !== 'free' ? (
-                  <p className="text-xs text-muted-foreground mt-0.5">Próxima renovação em {planExpiryFormatted}</p>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-base font-bold text-foreground flex items-center gap-2">
+                    Meus Currículos
+                    <span className="text-xs font-normal text-muted-foreground">({savedCurriculums.length})</span>
+                  </h2>
+                  <Button asChild size="sm" variant="ghost" className="text-xs font-bold text-accent hover:text-accent p-0 h-auto">
+                    <Link to="/curriculo" className="flex items-center gap-1">
+                      <Plus className="w-3.5 h-3.5" /> Criar Novo
+                    </Link>
+                  </Button>
+                </div>
+
+                {loadingCurriculums ? (
+                  <div className="flex items-center justify-center py-6">
+                    <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+                  </div>
+                ) : savedCurriculums.length === 0 ? (
+                  <div className="text-center py-8 border border-dashed border-border rounded-xl">
+                    <FileText className="w-8 h-8 text-muted-foreground/30 mx-auto mb-1.5" />
+                    <p className="text-xs sm:text-sm font-semibold text-foreground">Nenhum currículo cadastrado</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Crie seu currículo com IA no padrão das companhias aéreas.</p>
+                    <Button asChild size="sm" className="mt-3 rounded-full text-xs font-bold h-8 hover-yellow">
+                      <Link to="/curriculo">Criar Currículo</Link>
+                    </Button>
+                  </div>
                 ) : (
-                  <p className="text-xs text-muted-foreground mt-0.5">Acesso gratuito com limite diário de simulados</p>
+                  <div className="space-y-2.5">
+                    {savedCurriculums.map((curr) => {
+                      const dateFormatted = curr.updatedAt
+                        ? format(new Date(curr.updatedAt), "dd/MM/yyyy", { locale: ptBR })
+                        : 'Recente';
+
+                      return (
+                        <div
+                          key={curr.id}
+                          className="p-3 sm:p-3.5 rounded-xl border border-border bg-muted/20 hover:border-accent/30 transition-colors flex items-center justify-between gap-3"
+                        >
+                          <div className="min-w-0">
+                            <p className="text-xs sm:text-sm font-bold text-foreground truncate">{curr.title}</p>
+                            <p className="text-[11px] text-muted-foreground mt-0.5">Atualizado em {dateFormatted}</p>
+                          </div>
+
+                          <Button asChild size="sm" variant="outline" className="rounded-full text-xs font-bold shrink-0 h-8 px-3">
+                            <Link to="/curriculo" className="flex items-center gap-1">
+                              Abrir <ExternalLink className="w-3 h-3 ml-0.5" />
+                            </Link>
+                          </Button>
+                        </div>
+                      );
+                    })}
+                  </div>
                 )}
               </div>
+            </div>
 
-              <div className="flex flex-wrap items-center gap-2">
-                {/* Botão de Upgrade caso tenha plano acima */}
+            {/* Plano de Assinatura (Desktop: 5 colunas) */}
+            <div className="md:col-span-5 bg-card border border-border rounded-2xl shadow-sm p-5 sm:p-6 flex flex-col justify-between">
+              <div>
+                <h2 className="text-base font-bold text-foreground mb-3">
+                  Plano de Assinatura
+                </h2>
+
+                <div className="p-4 rounded-xl border border-border bg-muted/20 mb-4">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Assinatura Atual</span>
+                  <p className="text-lg font-black text-foreground mt-0.5">Plano {planLabel}</p>
+                  {planExpiryFormatted && currentPlan !== 'free' ? (
+                    <p className="text-xs text-muted-foreground mt-1">Próxima renovação: {planExpiryFormatted}</p>
+                  ) : (
+                    <p className="text-xs text-muted-foreground mt-1">Acesso gratuito com simulados limitados</p>
+                  )}
+                </div>
+
+                <p className="text-xs text-muted-foreground leading-relaxed mb-4">
+                  {currentPlan === 'comandante'
+                    ? 'Você possui o plano mais avançado da plataforma, com IA Turbo e diagnósticos ilimitados.'
+                    : 'Acesse simulações completas, explicações técnicas do Mike e gerador de currículos.'}
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-2 pt-2">
                 {currentPlan !== 'comandante' && (
-                  <Button asChild size="sm" className="rounded-full text-xs font-bold hover-yellow h-8 px-4">
-                    <Link to="/premium" className="flex items-center gap-1">
-                      Fazer Upgrade <ArrowRight className="w-3.5 h-3.5" />
+                  <Button asChild size="sm" className="rounded-full text-xs font-bold hover-yellow h-9 w-full">
+                    <Link to="/premium" className="flex items-center justify-center gap-1.5">
+                      Fazer Upgrade do Plano <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                   </Button>
                 )}
 
-                {/* Cancelar ou Gerenciar se for pagante */}
                 {currentPlan !== 'free' && (
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={handleManageOrCancelSubscription}
                     disabled={portalLoading}
-                    className="rounded-full text-xs font-semibold text-destructive hover:text-destructive border-destructive/30 hover:bg-destructive/10 h-8 px-3.5"
+                    className="rounded-full text-xs font-semibold text-destructive hover:text-destructive border-destructive/30 hover:bg-destructive/10 h-9 w-full"
                   >
                     {portalLoading ? (
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
                     ) : (
-                      'Cancelar assinatura'
+                      'Cancelar ou gerenciar assinatura'
                     )}
                   </Button>
                 )}
               </div>
             </div>
+
           </div>
 
-          {/* Footer discreto de deslogar */}
+          {/* Footer com link de desconectar */}
           <div className="text-center pt-2">
             <button
               onClick={signOut}
@@ -529,14 +547,14 @@ export default function ProfilePage() {
       </main>
 
       {/* ═════════════════════════════════════════════════════════
-          MODAL DE EDIÇÃO DE PERFIL (Aberto pelo botão principal)
+          MODAL DE EDIÇÃO DE PERFIL
          ═════════════════════════════════════════════════════════ */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
         <DialogContent className="sm:max-w-md rounded-2xl">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold">Editar Perfil</DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground">
-              Atualize seu nome, resumo e metas na aviação civil.
+              Atualize seu nome, resumo e objetivos na aviação.
             </DialogDescription>
           </DialogHeader>
 
@@ -633,7 +651,7 @@ export default function ProfilePage() {
         </DialogContent>
       </Dialog>
 
-      {/* Modal de Preview 3D da Insígnia ao tocar no carrossel */}
+      {/* Modal de Preview 3D da Insígnia */}
       {selectedBadge && (
         <BadgePreviewModal
           open={!!selectedBadge}
