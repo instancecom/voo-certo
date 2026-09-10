@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { BadgeCard } from '@/components/badges/BadgeCard';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePlan } from '@/hooks/usePlan';
 import { useUserInsignias } from '@/hooks/useInsignias';
@@ -42,20 +43,6 @@ const PLAN_COLORS: Record<string, string> = {
   solo: 'text-sky-500 border-sky-500/30 bg-sky-500/5',
   tripulante: 'text-accent border-accent/30 bg-accent/5',
   comandante: 'text-purple-400 border-purple-400/30 bg-purple-400/5',
-};
-
-const RARITY_LABELS: Record<string, string> = {
-  bronze: 'Bronze',
-  silver: 'Prata',
-  gold: 'Ouro',
-  platinum: 'Platina',
-};
-
-const RARITY_COLORS: Record<string, string> = {
-  bronze: 'text-amber-700 bg-amber-700/10 border-amber-700/20',
-  silver: 'text-slate-400 bg-slate-400/10 border-slate-400/20',
-  gold: 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20',
-  platinum: 'text-purple-400 bg-purple-400/10 border-purple-400/20',
 };
 
 const PROFILE_PREFS_KEY = 'voecerto_profile_prefs_v1';
@@ -580,30 +567,17 @@ export default function ProfilePage() {
                       </div>
                     ) : (
                       /* Mobile: Smooth horizontal swipe | Desktop: Grid */
-                      <div className="flex sm:grid sm:grid-cols-3 lg:grid-cols-6 gap-3 overflow-x-auto pb-2 sm:pb-0 scrollbar-none snap-x">
-                        {recentBadges.map((ui, i) => (
+                      <div className="flex sm:grid sm:grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 overflow-x-auto sm:overflow-x-visible pb-2 sm:pb-0 scrollbar-none snap-x snap-mandatory touch-pan-x -mx-1 px-1">
+                        {recentBadges.map((ui) => ui.insignia && (
                           <div
                             key={ui.id}
-                            className="shrink-0 w-[110px] sm:w-auto flex flex-col items-center gap-1.5 p-2.5 bg-muted/20 border border-border/60 rounded-[5px] text-center snap-start"
+                            className="shrink-0 w-[120px] sm:w-auto snap-start h-full"
                           >
-                            <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center">
-                              {ui.insignia?.model_url ? (
-                                <img
-                                  src={ui.insignia.model_url}
-                                  alt={ui.insignia.name}
-                                  className="w-full h-full object-contain"
-                                  onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
-                                />
-                              ) : (
-                                <div className="text-xl sm:text-2xl">{ui.insignia?.icon || '🏅'}</div>
-                              )}
-                            </div>
-                            <p className="text-[10px] font-bold text-foreground leading-tight line-clamp-1 w-full">
-                              {ui.insignia?.name}
-                            </p>
-                            <span className={`text-[8px] sm:text-[9px] font-bold uppercase px-1.5 py-0.2 rounded-[3px] border ${RARITY_COLORS[ui.insignia?.rarity || 'bronze']}`}>
-                              {RARITY_LABELS[ui.insignia?.rarity || 'bronze']}
-                            </span>
+                            <BadgeCard
+                              insignia={ui.insignia}
+                              earned={true}
+                              earnedAt={ui.earned_at}
+                            />
                           </div>
                         ))}
                       </div>
