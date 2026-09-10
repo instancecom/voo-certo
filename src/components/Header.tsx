@@ -242,6 +242,21 @@ export function Header() {
                         </div>
                       </div>
 
+                      {/* Meu Perfil */}
+                      <div className="py-1 border-b border-border">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            to="/perfil"
+                            className={`flex items-center gap-2.5 px-4 py-2 cursor-pointer ${
+                              location.pathname === '/perfil' ? 'text-accent font-semibold' : ''
+                            }`}
+                          >
+                            <User className="w-4 h-4 text-muted-foreground" />
+                            <span>Meu Perfil</span>
+                          </Link>
+                        </DropdownMenuItem>
+                      </div>
+
                       {/* Ferramentas pessoais */}
                       <div className="py-1">
                         {filteredProfileItems.map(item => {
@@ -344,6 +359,22 @@ export function Header() {
                     <p className="text-[11px] text-muted-foreground truncate">{user.email}</p>
                   </div>
                 </div>
+              )}
+
+              {/* Meu Perfil — link direto no mobile */}
+              {user && (
+                <Link
+                  to="/perfil"
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`flex items-center gap-3 p-3 rounded-lg text-sm font-medium transition-colors ${
+                    location.pathname === '/perfil'
+                      ? 'bg-accent/10 text-accent'
+                      : 'text-muted-foreground hover:bg-muted'
+                  }`}
+                >
+                  <User className="w-5 h-5" />
+                  Meu Perfil
+                </Link>
               )}
 
               {/* Todos os itens de navegação em ordem lógica */}
