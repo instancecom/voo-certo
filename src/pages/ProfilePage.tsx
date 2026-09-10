@@ -1,149 +1,100 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import {
-  User, Plane, Crown, Zap, Shield, Calendar,
-  CheckCircle2, Award, FileText, TrendingUp, ArrowRight,
-  Loader2, Edit2, Save, X, Key, LogOut, ChevronRight,
-  Target, BookOpen, Flame,
-} from 'lucide-react';
+import { Loader2, CheckCircle2, ArrowRight } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BadgeCard } from '@/components/badges/BadgeCard';
+import { Card, CardContent } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePlan } from '@/hooks/usePlan';
-import { useUserInsignias } from '@/hooks/useInsignias';
-import { useUserResults } from '@/hooks/useExams';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 const PROFESSIONS = [
-  { value: 'piloto', label: 'Piloto Privado / Comercial' },
-  { value: 'comissario', label: 'Comissário de Voo' },
-  { value: 'mecanico', label: 'Mecânico de Manutenção' },
+  { value: 'piloto_privado', label: 'Piloto Privado (PP)' },
+  { value: 'piloto_comercial', label: 'Piloto Comercial (PC)' },
+  { value: 'comissario', label: 'Comissário de Voo (CMS)' },
+  { value: 'mecanico', label: 'Mecânico de Manutenção Aeronáutica (MMA)' },
   { value: 'agente', label: 'Agente de Aeroporto' },
-  { value: 'outro', label: 'Outro' },
+  { value: 'outro', label: 'Outra área da aviação' },
 ];
 
-const PLAN_ICONS: Record<string, React.ComponentType<any>> = {
-  free: Shield,
-  solo: Plane,
-  tripulante: Zap,
-  comandante: Crown,
+const PLAN_BADGES: Record<string, { label: string; style: string }> = {
+  free: { label: 'Plano Gratuito', style: 'bg-muted text-muted-foreground border-border' },
+  solo: { label: 'Plano Solo', style: 'bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20' },
+  tripulante: { label: 'Plano Tripulante', style: 'bg-accent/10 text-accent border-accent/30 font-semibold' },
+  comandante: { label: 'Plano Comandante', style: 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30 font-semibold' },
 };
 
-const PLAN_COLORS: Record<string, string> = {
-  free: 'text-muted-foreground border-border bg-muted/40',
-  solo: 'text-sky-500 border-sky-500/30 bg-sky-500/5',
-  tripulante: 'text-accent border-accent/30 bg-accent/5',
-  comandante: 'text-purple-400 border-purple-400/30 bg-purple-400/5',
-};
+const PROFILE_STORAGE_KEY = 'voecerto_profile_data_v2';
 
-const PROFILE_PREFS_KEY = 'voecerto_profile_prefs_v1';
-
-interface ProfilePrefs {
+interface CareerData {
   profession: string;
+  canac: string;
   targetExamDate: string;
 }
 
-const getProfilePrefs = (): ProfilePrefs => {
+const getStoredCareerData = (): CareerData => {
   try {
-    const raw = localStorage.getItem(PROFILE_PREFS_KEY);
+    const raw = localStorage.getItem(PROFILE_STORAGE_KEY);
     if (raw) return JSON.parse(raw);
   } catch {}
-  return { profession: '', targetExamDate: '' };
-};
-
-const saveProfilePrefs = (prefs: ProfilePrefs) => {
-  try {
-    localStorage.setItem(PROFILE_PREFS_KEY, JSON.stringify(prefs));
-  } catch {}
+  return { profession: '', canac: '', targetExamDate: '' };
 };
 
 export default function ProfilePage() {
   const { user, profile, signOut, refreshProfile } = useAuth();
   const { currentPlan, planLabel } = usePlan();
-  const { data: userInsignias, isLoading: insigniasLoading } = useUserInsignias();
-  const { data: examResults, isLoading: resultsLoading } = useUserResults();
-  const { toast } = useToast();
 
-  // Edit states
-  const [isEditingName, setIsEditingName] = useState(false);
-  const [nameInput, setNameInput] = useState(profile?.full_name || '');
-  const [isSavingName, setIsSavingName] = useState(false);
+  // Form states
+  const [fullName, setFullName] = useState(profile?.full_name || '');
+  const [career, setCareer] = useState<CareerData>(getStoredCareerData);
+  const [isSaving, setIsSaving] = useState(false);
 
-  const [isEditingPrefs, setIsEditingPrefs] = useState(false);
-  const [prefs, setPrefs] = useState<ProfilePrefs>(getProfilePrefs);
-  const [prefsInput, setPrefsInput] = useState<ProfilePrefs>(getProfilePrefs);
-
-  // Password reset
+  // Password reset state
   const [isSendingReset, setIsSendingReset] = useState(false);
   const [resetSent, setResetSent] = useState(false);
 
   useEffect(() => {
-    if (profile?.full_name) setNameInput(profile.full_name);
+    if (profile?.full_name) {
+      setFullName(profile.full_name);
+    }
   }, [profile?.full_name]);
 
-  // ── Stats ────────────────────────────────────────────────────────────────────
-  const stats = (() => {
-    if (!examResults || examResults.length === 0) return null;
-    const total = examResults.length;
-    const avg = Math.round(examResults.reduce((a, r) => a + (Number(r.score) || 0), 0) / total);
-    const totalQ = examResults.reduce((a, r) => a + (Number(r.total_questions) || 0), 0);
-    return { total, avg, totalQ };
-  })();
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
 
-  // ── Streak ────────────────────────────────────────────────────────────────────
-  const streak = (() => {
-    if (!examResults || examResults.length === 0) return 0;
-    const dates = [...new Set(
-      examResults
-        .map(r => new Date(r.completed_at).toDateString())
-        .filter(Boolean)
-    )].map(d => new Date(d)).sort((a, b) => b.getTime() - a.getTime());
-    if (!dates.length) return 0;
-    const diff = Math.floor((Date.now() - dates[0].getTime()) / 86400000);
-    if (diff > 1) return 0;
-    let s = 1;
-    for (let i = 1; i < dates.length; i++) {
-      const dayDiff = Math.floor((dates[i - 1].getTime() - dates[i].getTime()) / 86400000);
-      if (dayDiff === 1) s++;
-      else break;
-    }
-    return s;
-  })();
-
-  // ── Handlers ─────────────────────────────────────────────────────────────────
-  const handleSaveName = async () => {
-    if (!user || !nameInput.trim()) return;
-    setIsSavingName(true);
+    setIsSaving(true);
     try {
+      // 1. Atualiza nome no banco
+      const trimmedName = fullName.trim();
       const { error } = await supabase
         .from('profiles')
-        .update({ full_name: nameInput.trim(), updated_at: new Date().toISOString() })
+        .update({
+          full_name: trimmedName,
+          updated_at: new Date().toISOString(),
+        })
         .eq('user_id', user.id);
-      if (error) throw error;
-      await refreshProfile();
-      setIsEditingName(false);
-      toast({ title: 'Nome atualizado!', description: 'Seu perfil foi salvo com sucesso.' });
-    } catch {
-      toast({ title: 'Erro ao salvar', description: 'Tente novamente.', variant: 'destructive' });
-    } finally {
-      setIsSavingName(false);
-    }
-  };
 
-  const handleSavePrefs = () => {
-    saveProfilePrefs(prefsInput);
-    setPrefs(prefsInput);
-    setIsEditingPrefs(false);
-    toast({ title: 'Preferências salvas!', description: 'Seu perfil foi atualizado.' });
+      if (error) throw error;
+
+      // 2. Salva informações aeronáuticas localmente
+      localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(career));
+
+      await refreshProfile();
+      toast.success('Perfil atualizado com sucesso.');
+    } catch (err) {
+      toast.error('Não foi possível salvar as alterações. Tente novamente.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handlePasswordReset = async () => {
@@ -155,473 +106,341 @@ export default function ProfilePage() {
       });
       if (error) throw error;
       setResetSent(true);
-      toast({ title: 'E-mail enviado!', description: 'Verifique sua caixa de entrada para redefinir sua senha.' });
+      toast.success('Link de recuperação enviado para o seu e-mail.');
     } catch {
-      toast({ title: 'Erro ao enviar e-mail', description: 'Tente novamente.', variant: 'destructive' });
+      toast.error('Erro ao enviar link de redefinição.');
     } finally {
       setIsSendingReset(false);
     }
   };
 
-  // ── Derived data ─────────────────────────────────────────────────────────────
   const getInitials = () => {
     const name = profile?.full_name || user?.email || '';
-    const parts = name.split(/[\s@]/);
-    if (parts.length >= 2 && parts[0] && parts[1]) return (parts[0][0] + parts[1][0]).toUpperCase();
+    const parts = name.trim().split(/[\s@]+/);
+    if (parts.length >= 2 && parts[0] && parts[1]) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
     return name.slice(0, 2).toUpperCase();
   };
 
-  const PlanIcon = PLAN_ICONS[currentPlan] || Shield;
-  const recentBadges = (userInsignias || []).slice(0, 6);
-  const selectedProfessionLabel = PROFESSIONS.find(p => p.value === prefs.profession)?.label;
   const memberSince = profile?.created_at
     ? format(new Date(profile.created_at), "MMMM 'de' yyyy", { locale: ptBR })
     : null;
-  const planExpiry = profile?.plan_expires_at
+
+  const planExpiryFormatted = profile?.plan_expires_at
     ? format(new Date(profile.plan_expires_at), "dd/MM/yyyy", { locale: ptBR })
     : null;
 
+  const planBadge = PLAN_BADGES[currentPlan] || PLAN_BADGES.free;
+
   if (!user) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background text-foreground flex flex-col">
         <Header />
-        <div className="flex items-center justify-center min-h-[60vh] pt-20">
-          <p className="text-muted-foreground text-sm">Você precisa estar logado para acessar esta página.</p>
-        </div>
+        <main className="flex-1 flex items-center justify-center pt-20 px-4">
+          <p className="text-muted-foreground text-sm">Acesse sua conta para visualizar seu perfil.</p>
+        </main>
         <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
       <Header />
 
-      <main className="pt-20 sm:pt-24 pb-16">
+      <main className="flex-1 pt-24 sm:pt-28 pb-20">
         <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
 
-          {/* Page Header — Minimalist Title */}
-          <div className="border-b border-border/80 pb-4 sm:pb-6 mb-6 sm:mb-8 flex items-center justify-between">
-            <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-foreground flex items-center gap-2">
-                <User className="w-5 h-5 sm:w-6 sm:h-6 text-accent" />
-                Meu Perfil
-              </h1>
-              <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
-                Dados pessoais, preferências e status da conta.
-              </p>
+          {/* Top User Header — Clean Executive Bar */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-8 mb-8 border-b border-border">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-[5px] bg-primary text-primary-foreground font-semibold text-xl flex items-center justify-center shadow-sm shrink-0">
+                {getInitials()}
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground truncate">
+                    {profile?.full_name || user.email?.split('@')[0]}
+                  </h1>
+                  <span className={`text-[11px] uppercase tracking-wider px-2 py-0.5 rounded-[4px] border font-medium ${planBadge.style}`}>
+                    {planBadge.label}
+                  </span>
+                </div>
+                <p className="text-sm text-muted-foreground truncate mt-0.5">{user.email}</p>
+                {memberSince && (
+                  <p className="text-xs text-muted-foreground/80 mt-1">
+                    Membro da tripulação desde {memberSince}
+                  </p>
+                )}
+              </div>
             </div>
-            <div className={`hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-[5px] border text-xs font-bold ${PLAN_COLORS[currentPlan]}`}>
-              <PlanIcon className="w-3.5 h-3.5" />
-              Plano {planLabel}
-            </div>
+
+            {currentPlan !== 'comandante' && (
+              <Button asChild size="sm" className="rounded-[5px] font-semibold hover-yellow self-start sm:self-center shrink-0">
+                <Link to="/premium" className="flex items-center gap-1.5">
+                  Fazer upgrade <ArrowRight className="w-4 h-4" />
+                </Link>
+              </Button>
+            )}
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-5 sm:gap-6">
+          {/* Navigation Tabs — Minimalist and Direct */}
+          <Tabs defaultValue="perfil" className="space-y-6">
+            <TabsList className="bg-transparent p-0 h-auto border-b border-border rounded-none w-full justify-start gap-8">
+              <TabsTrigger
+                value="perfil"
+                className="bg-transparent border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent rounded-none px-1 pb-3 text-sm font-medium text-muted-foreground data-[state=active]:text-foreground shadow-none"
+              >
+                Dados & Carreira
+              </TabsTrigger>
+              <TabsTrigger
+                value="plano"
+                className="bg-transparent border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent rounded-none px-1 pb-3 text-sm font-medium text-muted-foreground data-[state=active]:text-foreground shadow-none"
+              >
+                Plano & Assinatura
+              </TabsTrigger>
+              <TabsTrigger
+                value="seguranca"
+                className="bg-transparent border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent rounded-none px-1 pb-3 text-sm font-medium text-muted-foreground data-[state=active]:text-foreground shadow-none"
+              >
+                Segurança & Acesso
+              </TabsTrigger>
+            </TabsList>
 
-            {/* ── Left Column: Identity, Quick Stats, Security ── */}
-            <div className="lg:col-span-1 space-y-5">
-
-              {/* User Identity Card */}
-              <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
-                <Card className="rounded-[5px] shadow-none border border-border/80 bg-card">
-                  <CardContent className="p-5 sm:p-6 flex flex-col items-center text-center">
-                    {/* Avatar */}
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-primary flex items-center justify-center text-xl sm:text-2xl font-black text-white mb-3 sm:mb-4 shadow-sm">
-                      {getInitials()}
+            {/* TAB 1: Dados Pessoais & Carreira */}
+            <TabsContent value="perfil" className="space-y-6 pt-2 outline-none">
+              <Card className="rounded-[5px] border-border bg-card shadow-none">
+                <CardContent className="p-6 sm:p-8">
+                  <form onSubmit={handleSaveProfile} className="space-y-6">
+                    <div>
+                      <h2 className="text-base font-bold text-foreground">Identificação</h2>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Informações associadas aos seus relatórios e certificados.
+                      </p>
                     </div>
 
-                    {/* Name */}
-                    {isEditingName ? (
-                      <div className="w-full space-y-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                      <div className="space-y-1.5">
+                        <Label htmlFor="name" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                          Nome Completo
+                        </Label>
                         <Input
-                          value={nameInput}
-                          onChange={e => setNameInput(e.target.value)}
+                          id="name"
+                          value={fullName}
+                          onChange={(e) => setFullName(e.target.value)}
                           placeholder="Seu nome completo"
                           style={{ fontSize: '16px' }}
-                          className="text-center rounded-[5px] h-9"
-                          autoFocus
-                          onKeyDown={e => {
-                            if (e.key === 'Enter') handleSaveName();
-                            if (e.key === 'Escape') setIsEditingName(false);
-                          }}
+                          className="rounded-[5px] h-10 text-sm"
                         />
-                        <div className="flex gap-2">
-                          <Button size="sm" onClick={handleSaveName} disabled={isSavingName} className="flex-1 rounded-[5px] h-8 text-xs hover-yellow font-bold">
-                            {isSavingName ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Save className="w-3 h-3 mr-1" />Salvar</>}
-                          </Button>
-                          <Button size="sm" variant="ghost" onClick={() => { setIsEditingName(false); setNameInput(profile?.full_name || ''); }} className="rounded-[5px] h-8 text-xs px-2.5">
-                            <X className="w-3.5 h-3.5" />
-                          </Button>
-                        </div>
                       </div>
-                    ) : (
-                      <div className="w-full">
-                        <div className="flex items-center justify-center gap-1.5 mb-0.5">
-                          <h2 className="text-base font-bold text-foreground truncate max-w-[180px]">
-                            {profile?.full_name || user.email?.split('@')[0]}
-                          </h2>
-                          <button
-                            onClick={() => setIsEditingName(true)}
-                            aria-label="Editar nome"
-                            className="text-muted-foreground hover:text-accent transition-colors p-1"
-                          >
-                            <Edit2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                        <p className="text-xs text-muted-foreground truncate">{user.email}</p>
-                      </div>
-                    )}
 
-                    {/* Plan Badge on Mobile */}
-                    <div className={`mt-3 flex sm:hidden items-center gap-1.5 px-2.5 py-1 rounded-[5px] border text-[11px] font-bold ${PLAN_COLORS[currentPlan]}`}>
-                      <PlanIcon className="w-3 h-3" />
-                      Plano {planLabel}
+                      <div className="space-y-1.5">
+                        <Label htmlFor="email" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                          E-mail da Conta
+                        </Label>
+                        <Input
+                          id="email"
+                          value={user.email || ''}
+                          disabled
+                          style={{ fontSize: '16px' }}
+                          className="rounded-[5px] h-10 text-sm bg-muted/40 text-muted-foreground cursor-not-allowed"
+                        />
+                      </div>
                     </div>
 
-                    {memberSince && (
-                      <p className="text-[11px] text-muted-foreground/70 mt-3 font-medium">
-                        Membro desde {memberSince}
+                    <div className="pt-4 border-t border-border/60">
+                      <h2 className="text-base font-bold text-foreground">Perfil Aeronáutico</h2>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Ajuda o Mike a calibrar o diagnóstico de simulados e as recomendações de estudo.
                       </p>
-                    )}
-                  </CardContent>
-                </Card>
-              </motion.div>
+                    </div>
 
-              {/* Quick Stats Grid — Compact 2x2 */}
-              <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.05 }}>
-                <Card className="rounded-[5px] shadow-none border border-border/80 bg-card">
-                  <CardHeader className="pb-2 pt-4 px-4">
-                    <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                      Desempenho Rápido
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="px-4 pb-4">
-                    {resultsLoading ? (
-                      <div className="flex items-center justify-center py-6">
-                        <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                      <div className="space-y-1.5 sm:col-span-1">
+                        <Label htmlFor="profession" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                          Foco de Habilitação
+                        </Label>
+                        <select
+                          id="profession"
+                          value={career.profession}
+                          onChange={(e) => setCareer((prev) => ({ ...prev, profession: e.target.value }))}
+                          style={{ fontSize: '16px' }}
+                          className="w-full h-10 rounded-[5px] border border-input bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-accent"
+                        >
+                          <option value="">Selecione sua habilitação</option>
+                          {PROFESSIONS.map((p) => (
+                            <option key={p.value} value={p.value}>
+                              {p.label}
+                            </option>
+                          ))}
+                        </select>
                       </div>
-                    ) : (
-                      <div className="grid grid-cols-2 gap-2.5">
-                        <div className="p-2.5 rounded-[5px] bg-muted/40 border border-border/60">
-                          <div className="flex items-center gap-1.5 text-muted-foreground text-[11px] font-medium mb-1">
-                            <BookOpen className="w-3.5 h-3.5 text-sky-500" />
-                            <span>Simulados</span>
-                          </div>
-                          <p className="text-lg font-bold text-foreground">{stats?.total ?? 0}</p>
-                        </div>
 
-                        <div className="p-2.5 rounded-[5px] bg-muted/40 border border-border/60">
-                          <div className="flex items-center gap-1.5 text-muted-foreground text-[11px] font-medium mb-1">
-                            <Target className="w-3.5 h-3.5 text-accent" />
-                            <span>Média Geral</span>
-                          </div>
-                          <p className="text-lg font-bold text-foreground">{stats?.avg ?? 0}%</p>
-                        </div>
-
-                        <div className="p-2.5 rounded-[5px] bg-muted/40 border border-border/60">
-                          <div className="flex items-center gap-1.5 text-muted-foreground text-[11px] font-medium mb-1">
-                            <Flame className="w-3.5 h-3.5 text-orange-500" />
-                            <span>Sequência</span>
-                          </div>
-                          <p className="text-lg font-bold text-foreground">{streak}d</p>
-                        </div>
-
-                        <div className="p-2.5 rounded-[5px] bg-muted/40 border border-border/60">
-                          <div className="flex items-center gap-1.5 text-muted-foreground text-[11px] font-medium mb-1">
-                            <Award className="w-3.5 h-3.5 text-yellow-500" />
-                            <span>Conquistas</span>
-                          </div>
-                          <p className="text-lg font-bold text-foreground">{userInsignias?.length ?? 0}</p>
-                        </div>
+                      <div className="space-y-1.5 sm:col-span-1">
+                        <Label htmlFor="canac" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                          Código ANAC (CANAC)
+                        </Label>
+                        <Input
+                          id="canac"
+                          value={career.canac}
+                          onChange={(e) => setCareer((prev) => ({ ...prev, canac: e.target.value }))}
+                          placeholder="Ex: 123456 (opcional)"
+                          style={{ fontSize: '16px' }}
+                          className="rounded-[5px] h-10 text-sm"
+                        />
                       </div>
-                    )}
 
-                    <Link
-                      to="/meu-progresso"
-                      className="flex items-center justify-between pt-3 mt-3 border-t border-border/60 text-xs text-accent font-semibold hover:underline"
-                    >
-                      <span>Ver progresso detalhado</span>
-                      <ChevronRight className="w-3.5 h-3.5" />
-                    </Link>
-                  </CardContent>
-                </Card>
-              </motion.div>
+                      <div className="space-y-1.5 sm:col-span-1">
+                        <Label htmlFor="targetDate" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                          Previsão da Banca ANAC
+                        </Label>
+                        <Input
+                          id="targetDate"
+                          type="date"
+                          value={career.targetExamDate}
+                          onChange={(e) => setCareer((prev) => ({ ...prev, targetExamDate: e.target.value }))}
+                          style={{ fontSize: '16px' }}
+                          className="rounded-[5px] h-10 text-sm"
+                        />
+                      </div>
+                    </div>
 
-              {/* Account Security */}
-              <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.1 }}>
-                <Card className="rounded-[5px] shadow-none border border-border/80 bg-card">
-                  <CardHeader className="pb-2 pt-4 px-4">
-                    <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                      Segurança
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="px-4 pb-4 space-y-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full rounded-[5px] justify-start gap-2 text-xs sm:text-sm font-medium h-9"
-                      onClick={handlePasswordReset}
-                      disabled={isSendingReset || resetSent}
-                    >
-                      {isSendingReset ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      ) : resetSent ? (
-                        <CheckCircle2 className="w-3.5 h-3.5 text-success" />
-                      ) : (
-                        <Key className="w-3.5 h-3.5 text-muted-foreground" />
-                      )}
-                      {resetSent ? 'E-mail enviado com sucesso!' : 'Redefinir minha senha'}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full rounded-[5px] justify-start gap-2 text-xs sm:text-sm font-medium h-9 text-destructive hover:text-destructive border-destructive/20 hover:bg-destructive/5"
-                      onClick={signOut}
-                    >
-                      <LogOut className="w-3.5 h-3.5" />
-                      Sair da conta
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </div>
-
-            {/* ── Right Column: Career Prefs, Plan, Badges, Quick Access ── */}
-            <div className="lg:col-span-2 space-y-5">
-
-              {/* Career Info */}
-              <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.04 }}>
-                <Card className="rounded-[5px] shadow-none border border-border/80 bg-card">
-                  <CardHeader className="pb-3 pt-4 px-4 sm:px-5 flex flex-row items-center justify-between">
-                    <CardTitle className="text-sm font-bold text-foreground">
-                      Informações de Carreira
-                    </CardTitle>
-                    {!isEditingPrefs ? (
-                      <button
-                        onClick={() => { setPrefsInput(prefs); setIsEditingPrefs(true); }}
-                        className="text-xs text-accent font-semibold flex items-center gap-1 hover:underline"
+                    <div className="flex justify-end pt-4 border-t border-border/60">
+                      <Button
+                        type="submit"
+                        disabled={isSaving}
+                        className="rounded-[5px] font-semibold hover-yellow px-6"
                       >
-                        <Edit2 className="w-3 h-3" /> Editar
-                      </button>
-                    ) : (
-                      <div className="flex items-center gap-3">
-                        <button
-                          onClick={handleSavePrefs}
-                          className="text-xs text-accent font-semibold flex items-center gap-1 hover:underline"
-                        >
-                          <Save className="w-3 h-3" /> Salvar
-                        </button>
-                        <button
-                          onClick={() => setIsEditingPrefs(false)}
-                          className="text-xs text-muted-foreground flex items-center gap-1 hover:underline"
-                        >
-                          <X className="w-3 h-3" /> Cancelar
-                        </button>
-                      </div>
-                    )}
-                  </CardHeader>
+                        {isSaving ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                            Salvando...
+                          </>
+                        ) : (
+                          'Salvar alterações'
+                        )}
+                      </Button>
+                    </div>
+                  </form>
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-                  <CardContent className="px-4 sm:px-5 pb-5 space-y-4">
-                    {isEditingPrefs ? (
-                      <div className="space-y-3.5">
-                        <div className="space-y-1.5">
-                          <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                            Área de Atuação
-                          </Label>
-                          <select
-                            value={prefsInput.profession}
-                            onChange={e => setPrefsInput(p => ({ ...p, profession: e.target.value }))}
-                            style={{ fontSize: '16px' }}
-                            className="w-full h-10 rounded-[5px] border border-input bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-accent"
-                          >
-                            <option value="">Selecione sua área de foco</option>
-                            {PROFESSIONS.map(p => (
-                              <option key={p.value} value={p.value}>{p.label}</option>
-                            ))}
-                          </select>
-                        </div>
-                        <div className="space-y-1.5">
-                          <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                            Data Alvo da Prova ANAC
-                          </Label>
-                          <Input
-                            type="date"
-                            value={prefsInput.targetExamDate}
-                            onChange={e => setPrefsInput(p => ({ ...p, targetExamDate: e.target.value }))}
-                            style={{ fontSize: '16px' }}
-                            className="rounded-[5px] h-10 text-sm"
-                          />
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                        <div className="flex items-start gap-3 p-3 rounded-[5px] bg-muted/20 border border-border/50">
-                          <div className="w-8 h-8 rounded-[5px] bg-accent/10 flex items-center justify-center shrink-0">
-                            <Plane className="w-4 h-4 text-accent" />
-                          </div>
-                          <div className="min-w-0">
-                            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-0.5">Área de atuação</p>
-                            <p className="text-xs sm:text-sm font-semibold text-foreground truncate">
-                              {selectedProfessionLabel || <span className="text-muted-foreground font-normal italic">Não definida</span>}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-start gap-3 p-3 rounded-[5px] bg-muted/20 border border-border/50">
-                          <div className="w-8 h-8 rounded-[5px] bg-accent/10 flex items-center justify-center shrink-0">
-                            <Calendar className="w-4 h-4 text-accent" />
-                          </div>
-                          <div className="min-w-0">
-                            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-0.5">Data alvo da prova</p>
-                            <p className="text-xs sm:text-sm font-semibold text-foreground truncate">
-                              {prefs.targetExamDate
-                                ? format(new Date(prefs.targetExamDate + 'T12:00:00'), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
-                                : <span className="text-muted-foreground font-normal italic">Não definida</span>}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {!isEditingPrefs && !prefs.profession && !prefs.targetExamDate && (
-                      <p className="text-xs text-muted-foreground bg-muted/30 rounded-[5px] p-3 border border-border/60 leading-relaxed font-normal">
-                        💡 Definir sua área e prazo ajuda o Mike a calibrar suas recomendações e diagnósticos de estudo.
-                      </p>
-                    )}
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              {/* Current Plan Overview */}
-              <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.08 }}>
-                <Card className="rounded-[5px] shadow-none border border-border/80 bg-card">
-                  <CardHeader className="pb-3 pt-4 px-4 sm:px-5">
-                    <CardTitle className="text-sm font-bold text-foreground">
-                      Assinatura & Recursos
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="px-4 sm:px-5 pb-5">
-                    <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 sm:p-4 rounded-[5px] border ${PLAN_COLORS[currentPlan]}`}>
-                      <div className="flex items-center gap-3">
-                        <PlanIcon className="w-5 h-5 shrink-0" />
-                        <div>
-                          <p className="text-sm font-bold">Plano {planLabel}</p>
-                          {planExpiry && currentPlan !== 'free' && (
-                            <p className="text-[11px] opacity-70">Renovação prevista em {planExpiry}</p>
-                          )}
-                          {currentPlan === 'free' && (
-                            <p className="text-[11px] opacity-70">Acesso gratuito com limite diário de simulados</p>
-                          )}
-                        </div>
-                      </div>
-                      {currentPlan !== 'comandante' && (
-                        <Button size="sm" asChild className="rounded-[5px] hover-yellow text-xs h-8 font-bold w-full sm:w-auto shrink-0 shadow-sm">
-                          <Link to="/premium" className="flex items-center justify-center gap-1">
-                            Fazer upgrade <ArrowRight className="w-3.5 h-3.5 ml-0.5" />
-                          </Link>
-                        </Button>
+            {/* TAB 2: Plano & Assinatura */}
+            <TabsContent value="plano" className="space-y-6 pt-2 outline-none">
+              <Card className="rounded-[5px] border-border bg-card shadow-none">
+                <CardContent className="p-6 sm:p-8 space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border/60">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Plano Atual</p>
+                      <h2 className="text-xl font-bold text-foreground mt-0.5">{planLabel}</h2>
+                      {planExpiryFormatted && currentPlan !== 'free' ? (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Vigência ativa até {planExpiryFormatted}.
+                        </p>
+                      ) : (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Acesso básico aos simulados teóricos da plataforma.
+                        </p>
                       )}
                     </div>
 
-                    {/* Features checklist */}
-                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    <Button asChild className="rounded-[5px] font-semibold hover-yellow">
+                      <Link to="/premium">
+                        {currentPlan === 'comandante' ? 'Gerenciar Plano' : 'Mudar de Plano'}
+                      </Link>
+                    </Button>
+                  </div>
+
+                  <div>
+                    <h3 className="text-sm font-bold text-foreground mb-4">Recursos Ativos na sua Assinatura</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                       {[
-                        { ok: true, text: 'Simulados no padrão ANAC' },
-                        { ok: currentPlan !== 'free', text: 'Chat IA com Mike por questão' },
-                        { ok: currentPlan === 'tripulante' || currentPlan === 'comandante', text: 'Diagnóstico com Mike' },
-                        { ok: currentPlan !== 'free', text: 'Gerador de Currículo com IA' },
-                      ].map((item, i) => (
-                        <div key={i} className={`flex items-center gap-2 ${item.ok ? 'text-foreground/85 font-medium' : 'text-muted-foreground/50'}`}>
-                          <CheckCircle2 className={`w-3.5 h-3.5 shrink-0 ${item.ok ? 'text-success' : 'text-muted-foreground/30'}`} />
-                          <span className="truncate">{item.text}</span>
+                        { title: 'Simulados Padrão ANAC', active: true, desc: 'Modos Livre e Bloco' },
+                        { title: 'Modo Banca com Cronômetro', active: true, desc: currentPlan === 'free' ? '1 simulado diário' : 'Ilimitado' },
+                        { title: 'Explicações com Mike (IA)', active: currentPlan !== 'free', desc: currentPlan === 'comandante' ? 'Até 15 mensagens por questão' : currentPlan === 'tripulante' ? 'Até 5 mensagens por questão' : currentPlan === 'solo' ? 'Até 2 mensagens por questão' : 'Disponível nos planos pagos' },
+                        { title: 'Diagnóstico de Desempenho', active: currentPlan === 'tripulante' || currentPlan === 'comandante', desc: 'Análise detalhada por matéria' },
+                        { title: 'Criador de Currículo Aeronáutico', active: currentPlan !== 'free', desc: 'Padrão das companhias aéreas' },
+                        { title: 'Selo Oficial de Aprovação ANAC', active: currentPlan !== 'free', desc: 'Credencial digital para o LinkedIn' },
+                      ].map((item, idx) => (
+                        <div key={idx} className="flex items-start gap-3 p-3.5 rounded-[5px] border border-border/60 bg-muted/20">
+                          <CheckCircle2
+                            className={`w-4 h-4 mt-0.5 shrink-0 ${
+                              item.active ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground/40'
+                            }`}
+                          />
+                          <div>
+                            <p className={`text-xs font-semibold ${item.active ? 'text-foreground' : 'text-muted-foreground'}`}>
+                              {item.title}
+                            </p>
+                            <p className="text-[11px] text-muted-foreground mt-0.5">{item.desc}</p>
+                          </div>
                         </div>
                       ))}
                     </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-              {/* Recent Badges — Minimalist Card & Horizontal Scroll on Mobile */}
-              <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.12 }}>
-                <Card className="rounded-[5px] shadow-none border border-border/80 bg-card">
-                  <CardHeader className="pb-3 pt-4 px-4 sm:px-5 flex flex-row items-center justify-between">
-                    <CardTitle className="text-sm font-bold text-foreground">
-                      Conquistas Recentes
-                    </CardTitle>
-                    <Link to="/conquistas" className="text-xs text-accent font-semibold flex items-center gap-1 hover:underline">
-                      Ver todas <ChevronRight className="w-3 h-3" />
-                    </Link>
-                  </CardHeader>
+            {/* TAB 3: Segurança & Acesso */}
+            <TabsContent value="seguranca" className="space-y-6 pt-2 outline-none">
+              <Card className="rounded-[5px] border-border bg-card shadow-none">
+                <CardContent className="p-6 sm:p-8 space-y-6">
+                  <div>
+                    <h2 className="text-base font-bold text-foreground">Credenciais de Acesso</h2>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Gerencie sua autenticação e segurança da conta.
+                    </p>
+                  </div>
 
-                  <CardContent className="px-4 sm:px-5 pb-5">
-                    {insigniasLoading ? (
-                      <div className="flex items-center justify-center py-6">
-                        <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
-                      </div>
-                    ) : recentBadges.length === 0 ? (
-                      <div className="text-center py-6">
-                        <Award className="w-8 h-8 text-muted-foreground/30 mx-auto mb-2" />
-                        <p className="text-sm text-muted-foreground font-medium">Nenhuma conquista ainda.</p>
-                        <p className="text-xs text-muted-foreground/70 mt-0.5">Resolva simulados para desbloquear suas insígnias.</p>
-                      </div>
-                    ) : (
-                      /* Mobile: Smooth horizontal swipe | Desktop: Grid */
-                      <div className="flex sm:grid sm:grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 overflow-x-auto sm:overflow-x-visible pb-2 sm:pb-0 scrollbar-none snap-x snap-mandatory touch-pan-x -mx-1 px-1">
-                        {recentBadges.map((ui) => ui.insignia && (
-                          <div
-                            key={ui.id}
-                            className="shrink-0 w-[120px] sm:w-auto snap-start h-full"
-                          >
-                            <BadgeCard
-                              insignia={ui.insignia}
-                              earned={true}
-                              earnedAt={ui.earned_at}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </motion.div>
+                  <div className="p-4 rounded-[5px] border border-border/60 bg-muted/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">Senha de Acesso</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Um link seguro será enviado para <span className="text-foreground font-medium">{user.email}</span>.
+                      </p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      onClick={handlePasswordReset}
+                      disabled={isSendingReset || resetSent}
+                      className="rounded-[5px] text-xs font-semibold shrink-0"
+                    >
+                      {isSendingReset ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />
+                          Enviando...
+                        </>
+                      ) : resetSent ? (
+                        'E-mail enviado'
+                      ) : (
+                        'Redefinir senha'
+                      )}
+                    </Button>
+                  </div>
 
-              {/* Quick Access Grid */}
-              <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.16 }}>
-                <Card className="rounded-[5px] shadow-none border border-border/80 bg-card">
-                  <CardHeader className="pb-2 pt-4 px-4 sm:px-5">
-                    <CardTitle className="text-sm font-bold text-foreground">
-                      Acesso Rápido
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="px-4 sm:px-5 pb-5 grid grid-cols-3 gap-2.5 sm:gap-3">
-                    {[
-                      { to: '/simulados', icon: BookOpen, label: 'Simulados', color: 'text-sky-500 bg-sky-500/10' },
-                      { to: '/meu-progresso', icon: TrendingUp, label: 'Progresso', color: 'text-accent bg-accent/10' },
-                      { to: '/curriculo', icon: FileText, label: 'Currículo', color: 'text-emerald-500 bg-emerald-500/10' },
-                    ].map(item => {
-                      const Icon = item.icon;
-                      return (
-                        <Link
-                          key={item.to}
-                          to={item.to}
-                          className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-1.5 sm:gap-3 p-2.5 sm:p-3 rounded-[5px] border border-border/60 hover:border-accent/30 bg-card hover:bg-accent/5 transition-all duration-200 group text-center sm:text-left"
-                        >
-                          <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-[5px] flex items-center justify-center shrink-0 ${item.color}`}>
-                            <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                          </div>
-                          <span className="text-xs sm:text-sm font-medium text-foreground group-hover:text-accent transition-colors truncate w-full">
-                            {item.label}
-                          </span>
-                        </Link>
-                      );
-                    })}
-                  </CardContent>
-                </Card>
-              </motion.div>
+                  <div className="pt-4 border-t border-border/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">Encerrar Sessão</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Desconectar sua conta deste dispositivo com segurança.
+                      </p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      onClick={signOut}
+                      className="rounded-[5px] text-xs font-semibold text-destructive hover:text-destructive border-destructive/30 hover:bg-destructive/10 shrink-0"
+                    >
+                      Sair da conta
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
 
-            </div>
-          </div>
         </div>
       </main>
 
