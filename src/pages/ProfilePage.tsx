@@ -246,21 +246,21 @@ export default function ProfilePage() {
           {/* ═════════════════════════════════════════════════════════
               CARD PRINCIPAL DO PERFIL (Responsivo Mobile & Web)
              ═════════════════════════════════════════════════════════ */}
-          <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden mb-6 sm:mb-8">
+          <div className="bg-card border border-border rounded-[5px] shadow-sm overflow-hidden mb-6 sm:mb-8">
             
             {/* Banner Superior Panorâmico */}
             <div className="h-28 sm:h-36 md:h-44 bg-gradient-to-r from-[#091326] via-[#0f172a] to-[#1e293b] relative">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(245,158,11,0.18),transparent_70%)]" />
             </div>
 
-            {/* Conteúdo do Card (Mobile: centralizado | Desktop: alinhado e fluido) */}
+            {/* Conteúdo do Card */}
             <div className="px-5 sm:px-8 pb-6 sm:pb-8 relative">
               
-              {/* Top Row Desktop: Avatar + Info + Botão Editar */}
+              {/* Top Row: Avatar + Info + Botão Editar */}
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 
                 <div className="flex flex-col md:flex-row items-center md:items-end gap-4 text-center md:text-left">
-                  {/* Avatar Flutuante */}
+                  {/* Avatar Circular Mantido */}
                   <div className="-mt-14 sm:-mt-16 md:-mt-20 shrink-0">
                     <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full border-4 border-card bg-primary text-white flex items-center justify-center text-3xl md:text-4xl font-black shadow-md">
                       {getInitials()}
@@ -281,11 +281,11 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                {/* Botão de Edição (Centralizado no mobile, à direita no desktop) */}
+                {/* Botão de Edição com rounded-[5px] */}
                 <div className="flex justify-center md:justify-end pb-1 shrink-0">
                   <Button
                     onClick={() => setIsEditModalOpen(true)}
-                    className="rounded-full px-6 sm:px-8 h-10 font-bold text-xs sm:text-sm bg-accent text-accent-foreground hover:bg-accent/90 shadow-sm transition-all hover:scale-[1.02]"
+                    className="rounded-[5px] px-6 sm:px-8 h-10 font-bold text-xs sm:text-sm bg-accent text-accent-foreground hover:bg-accent/90 shadow-sm transition-all hover:scale-[1.02]"
                   >
                     <Edit2 className="w-3.5 h-3.5 mr-2" />
                     Editar Perfil
@@ -343,7 +343,7 @@ export default function ProfilePage() {
           {/* ═════════════════════════════════════════════════════════
               SEÇÃO 1: INSÍGNIAS CONQUISTADAS (Largura Total)
              ═════════════════════════════════════════════════════════ */}
-          <div className="bg-card border border-border rounded-2xl shadow-sm p-5 sm:p-7 mb-6 sm:mb-8">
+          <div className="bg-card border border-border rounded-[5px] shadow-sm p-5 sm:p-7 mb-6 sm:mb-8">
             <div className="flex items-center justify-between mb-5">
               <div>
                 <h2 className="text-base sm:text-lg font-bold text-foreground flex items-center gap-2">
@@ -364,11 +364,11 @@ export default function ProfilePage() {
                 <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
               </div>
             ) : earnedInsignias.length === 0 ? (
-              <div className="text-center py-8 border border-dashed border-border rounded-xl">
+              <div className="text-center py-8 border border-dashed border-border rounded-[5px]">
                 <Award className="w-8 h-8 text-muted-foreground/30 mx-auto mb-2" />
                 <p className="text-xs sm:text-sm font-semibold text-foreground">Você ainda não conquistou insígnias</p>
                 <p className="text-xs text-muted-foreground mt-0.5">Complete simulados para desbloquear suas medalhas de honra.</p>
-                <Button asChild size="sm" variant="outline" className="mt-3 rounded-full text-xs font-semibold h-8">
+                <Button asChild size="sm" variant="outline" className="mt-3 rounded-[5px] text-xs font-semibold h-8">
                   <Link to="/simulados">Iniciar Simulado</Link>
                 </Button>
               </div>
@@ -422,8 +422,8 @@ export default function ProfilePage() {
              ═════════════════════════════════════════════════════════ */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-6">
 
-            {/* Meus Currículos (Desktop: 7 colunas) */}
-            <div className="md:col-span-7 bg-card border border-border rounded-2xl shadow-sm p-5 sm:p-6 flex flex-col justify-between">
+            {/* Meus Currículos (Desktop: 7 colunas) com rounded-[5px] */}
+            <div className="md:col-span-7 bg-card border border-border rounded-[5px] shadow-sm p-5 sm:p-6 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-base font-bold text-foreground flex items-center gap-2">
@@ -442,11 +442,11 @@ export default function ProfilePage() {
                     <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
                   </div>
                 ) : savedCurriculums.length === 0 ? (
-                  <div className="text-center py-8 border border-dashed border-border rounded-xl">
+                  <div className="text-center py-8 border border-dashed border-border rounded-[5px]">
                     <FileText className="w-8 h-8 text-muted-foreground/30 mx-auto mb-1.5" />
                     <p className="text-xs sm:text-sm font-semibold text-foreground">Nenhum currículo cadastrado</p>
                     <p className="text-xs text-muted-foreground mt-0.5">Crie seu currículo com IA no padrão das companhias aéreas.</p>
-                    <Button asChild size="sm" className="mt-3 rounded-full text-xs font-bold h-8 hover-yellow">
+                    <Button asChild size="sm" className="mt-3 rounded-[5px] text-xs font-bold h-8 hover-yellow">
                       <Link to="/curriculo">Criar Currículo</Link>
                     </Button>
                   </div>
@@ -460,14 +460,14 @@ export default function ProfilePage() {
                       return (
                         <div
                           key={curr.id}
-                          className="p-3 sm:p-3.5 rounded-xl border border-border bg-muted/20 hover:border-accent/30 transition-colors flex items-center justify-between gap-3"
+                          className="p-3 sm:p-3.5 rounded-[5px] border border-border bg-muted/20 hover:border-accent/30 transition-colors flex items-center justify-between gap-3"
                         >
                           <div className="min-w-0">
                             <p className="text-xs sm:text-sm font-bold text-foreground truncate">{curr.title}</p>
                             <p className="text-[11px] text-muted-foreground mt-0.5">Atualizado em {dateFormatted}</p>
                           </div>
 
-                          <Button asChild size="sm" variant="outline" className="rounded-full text-xs font-bold shrink-0 h-8 px-3">
+                          <Button asChild size="sm" variant="outline" className="rounded-[5px] text-xs font-bold shrink-0 h-8 px-3">
                             <Link to="/curriculo" className="flex items-center gap-1">
                               Abrir <ExternalLink className="w-3 h-3 ml-0.5" />
                             </Link>
@@ -480,14 +480,14 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* Plano de Assinatura (Desktop: 5 colunas) */}
-            <div className="md:col-span-5 bg-card border border-border rounded-2xl shadow-sm p-5 sm:p-6 flex flex-col justify-between">
+            {/* Plano de Assinatura (Desktop: 5 colunas) com rounded-[5px] */}
+            <div className="md:col-span-5 bg-card border border-border rounded-[5px] shadow-sm p-5 sm:p-6 flex flex-col justify-between">
               <div>
                 <h2 className="text-base font-bold text-foreground mb-3">
                   Plano de Assinatura
                 </h2>
 
-                <div className="p-4 rounded-xl border border-border bg-muted/20 mb-4">
+                <div className="p-4 rounded-[5px] border border-border bg-muted/20 mb-4">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Assinatura Atual</span>
                   <p className="text-lg font-black text-foreground mt-0.5">Plano {planLabel}</p>
                   {planExpiryFormatted && currentPlan !== 'free' ? (
@@ -506,7 +506,7 @@ export default function ProfilePage() {
 
               <div className="flex flex-col gap-2 pt-2">
                 {currentPlan !== 'comandante' && (
-                  <Button asChild size="sm" className="rounded-full text-xs font-bold hover-yellow h-9 w-full">
+                  <Button asChild size="sm" className="rounded-[5px] text-xs font-bold hover-yellow h-9 w-full">
                     <Link to="/premium" className="flex items-center justify-center gap-1.5">
                       Fazer Upgrade do Plano <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
@@ -519,7 +519,7 @@ export default function ProfilePage() {
                     size="sm"
                     onClick={handleManageOrCancelSubscription}
                     disabled={portalLoading}
-                    className="rounded-full text-xs font-semibold text-destructive hover:text-destructive border-destructive/30 hover:bg-destructive/10 h-9 w-full"
+                    className="rounded-[5px] text-xs font-semibold text-destructive hover:text-destructive border-destructive/30 hover:bg-destructive/10 h-9 w-full"
                   >
                     {portalLoading ? (
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -547,10 +547,10 @@ export default function ProfilePage() {
       </main>
 
       {/* ═════════════════════════════════════════════════════════
-          MODAL DE EDIÇÃO DE PERFIL
+          MODAL DE EDIÇÃO DE PERFIL com rounded-[5px]
          ═════════════════════════════════════════════════════════ */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent className="sm:max-w-md rounded-2xl">
+        <DialogContent className="sm:max-w-md rounded-[5px]">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold">Editar Perfil</DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground">
@@ -570,7 +570,7 @@ export default function ProfilePage() {
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Seu nome completo"
                 style={{ fontSize: '16px' }}
-                className="rounded-xl h-10 text-sm"
+                className="rounded-[5px] h-10 text-sm"
               />
             </div>
 
@@ -590,7 +590,7 @@ export default function ProfilePage() {
                 onChange={(e) => setBio(e.target.value.slice(0, 200))}
                 placeholder="Ex: Estudante dedicado de aviação civil com foco na prova de piloto comercial..."
                 style={{ fontSize: '16px' }}
-                className="rounded-xl min-h-[85px] text-sm resize-none"
+                className="rounded-[5px] min-h-[85px] text-sm resize-none"
               />
             </div>
 
@@ -604,7 +604,7 @@ export default function ProfilePage() {
                 value={targetRole}
                 onChange={(e) => setTargetRole(e.target.value)}
                 style={{ fontSize: '16px' }}
-                className="w-full h-10 rounded-xl border border-input bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-accent"
+                className="w-full h-10 rounded-[5px] border border-input bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-accent"
               >
                 <option value="">Selecione sua meta</option>
                 {AVIATION_ROLES.map((role) => (
@@ -626,7 +626,7 @@ export default function ProfilePage() {
                 value={targetExamDate}
                 onChange={(e) => setTargetExamDate(e.target.value)}
                 style={{ fontSize: '16px' }}
-                className="rounded-xl h-10 text-sm"
+                className="rounded-[5px] h-10 text-sm"
               />
             </div>
 
@@ -635,14 +635,14 @@ export default function ProfilePage() {
                 type="button"
                 variant="ghost"
                 onClick={() => setIsEditModalOpen(false)}
-                className="rounded-full text-xs font-semibold"
+                className="rounded-[5px] text-xs font-semibold"
               >
                 Cancelar
               </Button>
               <Button
                 type="submit"
                 disabled={isSaving}
-                className="rounded-full text-xs font-bold px-5 bg-accent text-accent-foreground hover:bg-accent/90"
+                className="rounded-[5px] text-xs font-bold px-5 bg-accent text-accent-foreground hover:bg-accent/90"
               >
                 {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Salvar Alterações'}
               </Button>
