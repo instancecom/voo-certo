@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
@@ -25,6 +25,7 @@ import { usePlan } from '@/hooks/usePlan';
 import { AIDiagnosticModal } from '@/components/performance/AIDiagnosticModal';
 import { PlanGate } from '@/components/PlanGate';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { AVIATION_ROLES } from './ProfilePage';
 import { format, differenceInDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -51,6 +52,26 @@ export default function ProgressPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isDiagnosticOpen, setIsDiagnosticOpen] = useState(false);
   const [chartRange, setChartRange] = useState<'10' | '20' | 'all'>('10');
+  const [targetRole, setTargetRole] = useState<string>('');
+
+  useEffect(() => {
+    if (!user?.id) return;
+    try {
+      const stored = localStorage.getItem(`voecerto_user_prefs_${user.id}`);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed?.targetRole) {
+          setTargetRole(parsed.targetRole);
+        }
+      }
+    } catch {}
+  }, [user?.id]);
+
+  const targetRoleLabel = useMemo(() => {
+    if (!targetRole) return 'Aeronauta';
+    const found = AVIATION_ROLES.find(r => r.value === targetRole || r.label === targetRole);
+    return found ? found.label : targetRole;
+  }, [targetRole]);
 
   // Process data with enhanced safety
   const stats = useMemo(() => {
@@ -297,11 +318,15 @@ export default function ProgressPage() {
                     <div className="flex items-center justify-between relative z-10">
                       <div className="flex items-center gap-2">
                         <ShieldCheck className="w-4 h-4 text-accent" />
-                        <span className="text-[10px] font-bold tracking-widest uppercase text-accent">Credencial ANAC</span>
+                        <span className="text-[10px] font-bold tracking-widest uppercase text-accent">Estudante Voe Certo</span>
                       </div>
-                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-[4px] bg-white/10 text-white/90">
-                        {planLabel}
-                      </span>
+                      <Link
+                        to="/perfil"
+                        title="Defina ou altere sua meta no perfil"
+                        className="text-[10px] font-medium px-2 py-0.5 rounded-[4px] bg-white/10 text-white/90 hover:bg-white/20 transition-colors max-w-[170px] truncate"
+                      >
+                        {targetRoleLabel}
+                      </Link>
                     </div>
 
                     <div className="my-3 relative z-10">

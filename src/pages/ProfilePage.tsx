@@ -31,7 +31,7 @@ import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
-const AVIATION_ROLES = [
+export const AVIATION_ROLES = [
   { value: 'piloto_privado', label: 'Piloto Privado (PP)' },
   { value: 'piloto_comercial', label: 'Piloto Comercial (PC)' },
   { value: 'comissario_voo', label: 'Comissário de Voo (CMS)' },
