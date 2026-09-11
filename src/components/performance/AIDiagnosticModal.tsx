@@ -4,6 +4,7 @@ import {
   Sparkles, TrendingUp, TrendingDown,
   Clock, ArrowRight, Loader2, AlertCircle,
   ChevronDown, ChevronUp, Target, XCircle, CheckCircle2,
+  ShieldCheck, Brain, ArrowUpRight, Zap
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -30,18 +31,12 @@ interface DiagnosticResult {
   recommendation: { title: string; description: string; suggested_exam_type?: string };
 }
 
-/**
- * Função utilitária para limpar possíveis caracteres corrompidos (mojibake)
- * de dados salvos em cache ou vindos da API
- */
 function sanitizeMojibake(text?: string): string {
   if (!text) return '';
   return text
-    // Emojis corrompidos comuns
     .replace(/ðŸ[^\s]+/g, '')
     .replace(/âœ[^\s]+/g, '')
     .replace(/â[^\s]+/g, '')
-    // Letras acentuadas corrompidas comuns em UTF-8 mal interpretado
     .replace(/Ã¡/g, 'á')
     .replace(/Ã /g, 'à')
     .replace(/Ã¢/g, 'â')
@@ -65,69 +60,6 @@ function sanitizeMojibake(text?: string): string {
     .trim();
 }
 
-/* ------------------------------------------------------------------ */
-/* Accordion Card (mobile)                                            */
-/* ------------------------------------------------------------------ */
-function DiagnosticCard({
-  icon, title, description, topics, badge, borderClass, bgClass, tagClass, footer,
-}: {
-  icon: React.ReactNode; title: string; description: string; topics?: string[];
-  badge?: React.ReactNode; borderClass: string; bgClass: string; tagClass: string;
-  footer?: React.ReactNode;
-}) {
-  const [open, setOpen] = useState(false);
-  const cleanTitle = sanitizeMojibake(title);
-  const cleanDescription = sanitizeMojibake(description);
-
-  return (
-    <div className={`rounded-[5px] border-l-4 border border-border ${borderClass} ${bgClass} overflow-hidden transition-colors`}>
-      <button
-        type="button"
-        className="w-full flex items-center justify-between px-3.5 py-3 text-left gap-2 focus:outline-none"
-        onClick={() => setOpen((v) => !v)}
-      >
-        <div className="flex items-center gap-2 min-w-0 flex-1">
-          <span className="shrink-0">{icon}</span>
-          <span className="font-bold text-[13px] text-foreground truncate">{cleanTitle}</span>
-          {badge}
-        </div>
-        {open
-          ? <ChevronUp className="w-4 h-4 text-muted-foreground shrink-0" />
-          : <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />}
-      </button>
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            key="body"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.18 }}
-            className="overflow-hidden"
-          >
-            <div className="px-3.5 pb-3.5 space-y-2.5">
-              <p className="text-xs text-muted-foreground leading-relaxed">{cleanDescription}</p>
-              {topics && topics.length > 0 && (
-                <div className="flex flex-wrap gap-1">
-                  {topics.map((t, i) => (
-                    <Badge key={i} variant="outline" className={`text-[10px] font-semibold rounded-[5px] ${tagClass}`}>
-                      {sanitizeMojibake(t)}
-                    </Badge>
-                  ))}
-                </div>
-              )}
-              {footer && <div className="pt-1">{footer}</div>}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* Modal Principal                                                     */
-/* ------------------------------------------------------------------ */
 export function AIDiagnosticModal({
   isOpen, onClose, examResults = [], subcategories = [], exams = [], userCreatedAt, userEmail,
 }: AIDiagnosticModalProps) {
@@ -242,84 +174,87 @@ export function AIDiagnosticModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="w-[calc(100vw-1.5rem)] sm:max-w-lg max-h-[92vh] overflow-y-auto p-0 rounded-[5px] border-border bg-card shadow-2xl gap-0">
+      <DialogContent className="w-[calc(100vw-1.5rem)] sm:max-w-2xl max-h-[92vh] overflow-y-auto p-0 rounded-[5px] border-border bg-card shadow-2xl gap-0">
 
-        {/* ── Top Header Mike ─────────────────────────────────── */}
-        <div className="bg-primary text-primary-foreground px-4 py-3.5 sm:px-5 sm:py-4 flex items-center gap-3 border-b border-primary/20 shrink-0">
-          <div className="relative shrink-0">
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-[5px] overflow-hidden border-2 border-amber-400 shadow-md">
-              <img
-                src="/images/avatars/mike_character_analytic.png"
-                alt="Mike"
-                className="w-full h-full object-cover"
-              />
+        {/* ── Top Header Executivo no padrão escuro aeronáutico ── */}
+        <div className="bg-gradient-to-r from-[#091326] via-[#0f172a] to-[#1e293b] text-white px-5 py-4 sm:px-6 sm:py-5 flex items-center justify-between border-b border-border/40 relative overflow-hidden shrink-0">
+          <div className="absolute top-0 right-0 w-36 h-36 bg-[radial-gradient(circle_at_top_right,rgba(245,158,11,0.18),transparent_70%)] pointer-events-none" />
+
+          <div className="flex items-center gap-3.5 relative z-10 min-w-0">
+            {/* Avatar Mike */}
+            <div className="relative shrink-0">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-[5px] overflow-hidden border border-accent/40 shadow-sm bg-[#091326]">
+                <img
+                  src="/images/avatars/mike_character_analytic.png"
+                  alt="Mike"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="absolute -bottom-1 -right-1 bg-accent rounded-full p-0.5 border-2 border-[#0f172a]">
+                <Sparkles className="w-2.5 h-2.5 text-accent-foreground" />
+              </div>
             </div>
-            <div className="absolute -bottom-1 -right-1 bg-amber-500 rounded-full p-0.5 border-2 border-primary">
-              <Sparkles className="w-2.5 h-2.5 text-white" />
+
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <DialogTitle className="text-base sm:text-lg font-black tracking-tight text-white leading-tight">
+                  Diagnóstico com Mike
+                </DialogTitle>
+                <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-[3px] border border-accent/40 text-accent bg-accent/10 uppercase tracking-wider">
+                  IA
+                </span>
+              </div>
+              <DialogDescription className="text-xs text-white/70 mt-0.5 leading-snug truncate">
+                Análise preditiva e recomendações técnicas para a banca ANAC.
+              </DialogDescription>
             </div>
-          </div>
-          <div className="min-w-0 flex-1 pr-6">
-            <div className="flex items-center gap-2">
-              <DialogTitle className="text-sm sm:text-base font-black text-primary-foreground leading-tight">
-                Diagnóstico com Mike
-              </DialogTitle>
-              <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-300 bg-amber-400/10 rounded-[5px] shrink-0 font-bold px-1.5 py-0">
-                IA
-              </Badge>
-            </div>
-            <DialogDescription className="text-[11px] text-primary-foreground/70 mt-0.5 leading-snug">
-              Análise personalizada do seu histórico de simulados.
-            </DialogDescription>
           </div>
         </div>
 
-        {/* ── Corpo do Modal ──────────────────────────────────── */}
-        <div className="p-4 sm:p-5 space-y-4">
+        {/* ── Corpo do Modal ── */}
+        <div className="p-5 sm:p-6 space-y-5">
 
-          {/* Aviso de requisitos (Aparece SOMENTE se não atingido) */}
+          {/* Avisos de Requisitos / Cooldown */}
           {showWarning && (
-            <div className="flex items-start gap-2.5 p-3 rounded-[5px] bg-amber-500/10 border border-amber-500/25">
+            <div className="flex items-start gap-3 p-3.5 rounded-[5px] bg-amber-500/10 border border-amber-500/25">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
-              <p className="text-xs text-amber-900 dark:text-amber-300 leading-relaxed font-medium">
+              <p className="text-xs text-amber-900 dark:text-amber-200 leading-relaxed font-medium">
                 {!hasMinExams && !hasMinAccountAge
-                  ? 'Para ativar o diagnóstico, realize pelo menos 3 simulados e aguarde 7 dias de cadastro.'
+                  ? 'Para calibrar a inteligência do Mike, realize pelo menos 3 simulados e aguarde 7 dias de cadastro.'
                   : !hasMinExams
-                  ? `Você realizou ${totalCompletedExams} de 3 simulados necessários para o diagnóstico.`
+                  ? `Você realizou ${totalCompletedExams} de 3 simulados mínimos necessários para o diagnóstico.`
                   : 'Aguarde pelo menos 7 dias de cadastro na plataforma.'}
               </p>
             </div>
           )}
 
-          {/* Aviso de cooldown de 24h */}
           {isCooldownActive && diagnostic && (
-            <div className="flex items-start gap-2.5 p-3 rounded-[5px] bg-amber-500/10 border border-amber-500/25">
-              <Clock className="w-4 h-4 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
+            <div className="flex items-start gap-3 p-3.5 rounded-[5px] bg-sky-500/10 border border-sky-500/25">
+              <Clock className="w-4 h-4 shrink-0 mt-0.5 text-sky-600 dark:text-sky-400" />
               <div>
-                <p className="text-xs font-bold text-amber-900 dark:text-amber-300">
+                <p className="text-xs font-bold text-sky-900 dark:text-sky-200">
                   Próxima análise disponível em {remainingHours}h {remainingMinutes}min
                 </p>
-                <p className="text-[11px] text-amber-800/80 dark:text-amber-300/80 mt-0.5 leading-relaxed">
-                  O intervalo de 24h garante tempo para absorver as recomendações antes de uma nova análise.
+                <p className="text-[11px] text-sky-800/80 dark:text-sky-300/80 mt-0.5 leading-relaxed">
+                  O intervalo de 24h garante que você pratique as recomendações antes de uma nova avaliação.
                 </p>
               </div>
             </div>
           )}
 
-          {/* ── Seção Período + CTA ───────────────────────────── */}
-          <div className="space-y-3">
+          {/* Seção de Configuração: Período + Ação Principal */}
+          <div className="p-4 sm:p-4.5 rounded-[5px] bg-muted/20 border border-border/80 space-y-3.5">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-foreground uppercase tracking-wider">
-                Período de análise
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                Período de Análise
               </span>
-              {isCooldownActive && (
-                <span className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1">
-                  <Clock className="w-3 h-3" /> Intervalo 24h ativo
-                </span>
-              )}
+              <span className="text-[11px] text-muted-foreground font-medium">
+                {filteredResults.length} {filteredResults.length === 1 ? 'simulado encontrado' : 'simulados encontrados'}
+              </span>
             </div>
 
-            {/* Segmented Control Minimalista */}
-            <div className="grid grid-cols-3 gap-1.5 p-1 bg-muted/60 rounded-[5px] border border-border/70">
+            {/* Segmented Control Limpo */}
+            <div className="grid grid-cols-3 gap-1.5 p-1 bg-background rounded-[5px] border border-border">
               {PERIODS.map((p) => {
                 const isActive = selectedPeriod === p.value;
                 const isDisabled = isCooldownActive;
@@ -329,12 +264,12 @@ export function AIDiagnosticModal({
                     type="button"
                     disabled={isDisabled}
                     onClick={() => setSelectedPeriod(p.value)}
-                    className={`py-2 px-1 text-[11px] font-bold rounded-[4px] transition-all truncate text-center ${
+                    className={`py-2 px-2 text-xs font-bold rounded-[4px] transition-all text-center truncate ${
                       isActive
-                        ? 'bg-primary text-primary-foreground shadow-sm'
+                        ? 'bg-accent text-accent-foreground shadow-xs'
                         : isDisabled
                         ? 'text-muted-foreground/40 cursor-not-allowed'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-muted/80'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                     }`}
                   >
                     {p.label}
@@ -343,212 +278,171 @@ export function AIDiagnosticModal({
               })}
             </div>
 
-            {/* Botão de Ação Principal — Estilo Hero da Landing Page */}
+            {/* Botão de Solicitação do Diagnóstico */}
             <Button
               onClick={handleGenerateDiagnostic}
               disabled={!canRequest}
-              className={`w-full h-11 text-xs sm:text-sm font-bold gap-2 rounded-[5px] transition-all shadow-sm ${
+              className={`w-full h-11 text-xs sm:text-sm font-bold gap-2 rounded-[5px] transition-all shadow-xs ${
                 canRequest
-                  ? 'bg-primary hover:bg-primary/90 text-primary-foreground'
+                  ? 'bg-accent hover:bg-accent/90 text-accent-foreground'
                   : 'bg-muted text-muted-foreground border border-border cursor-not-allowed opacity-75'
               }`}
             >
               {isGenerating ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin text-amber-400" />
-                  <span>Mike analisando seu histórico...</span>
+                  <Loader2 className="w-4 h-4 animate-spin text-accent-foreground" />
+                  <span>Mike analisando seu padrão de respostas...</span>
                 </>
               ) : isCooldownActive ? (
                 <>
-                  <Clock className="w-4 h-4 text-amber-500" />
-                  <span>Próxima análise em {remainingHours}h {remainingMinutes}min</span>
+                  <Clock className="w-4 h-4" />
+                  <span>Nova análise em {remainingHours}h {remainingMinutes}min</span>
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-4 h-4 text-amber-400 fill-amber-400/20" />
+                  <Sparkles className="w-4 h-4" />
                   <span>Solicitar Diagnóstico com Mike</span>
                 </>
               )}
             </Button>
           </div>
 
-          {/* ── Resultado do Diagnóstico ─────────────────────── */}
+          {/* ── Resultado do Diagnóstico (Grid Moderno Executivo) ── */}
           {diagnostic && (
-            <div className="space-y-2.5 pt-2 border-t border-border">
-              <p className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-widest pt-1">
-                Seu Diagnóstico Atual
-              </p>
-
-              {/* Mobile: Accordion Colapsável */}
-              <div className="space-y-2 md:hidden">
-                <DiagnosticCard
-                  icon={<XCircle className="w-4 h-4 text-red-500 shrink-0" />}
-                  title={diagnostic.critical_point?.title || 'Ponto Crítico'}
-                  description={diagnostic.critical_point?.description || ''}
-                  topics={diagnostic.critical_point?.topics}
-                  borderClass="border-l-red-500"
-                  bgClass="bg-red-500/5"
-                  tagClass="border-red-500/30 text-red-600 dark:text-red-400"
-                />
-
-                <DiagnosticCard
-                  icon={<CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />}
-                  title={diagnostic.positive_point?.title || 'Ponto Positivo'}
-                  description={diagnostic.positive_point?.description || ''}
-                  topics={diagnostic.positive_point?.topics}
-                  borderClass="border-l-emerald-500"
-                  bgClass="bg-emerald-500/5"
-                  tagClass="border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
-                />
-
-                <DiagnosticCard
-                  icon={<TrendingUp className="w-4 h-4 text-primary shrink-0" />}
-                  title={diagnostic.trend?.title || 'Tendência de Evolução'}
-                  description={diagnostic.trend?.description || ''}
-                  badge={
-                    diagnostic.trend?.status === 'improving' ? (
-                      <Badge className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-[9px] gap-1 rounded-[5px] ml-auto py-0 font-bold">
-                        <TrendingUp className="w-2.5 h-2.5" /> Evoluindo
-                      </Badge>
-                    ) : diagnostic.trend?.status === 'declining' ? (
-                      <Badge className="bg-red-500/15 text-red-700 dark:text-red-300 border border-red-500/30 text-[9px] gap-1 rounded-[5px] ml-auto py-0 font-bold">
-                        <TrendingDown className="w-2.5 h-2.5" /> Atenção
-                      </Badge>
-                    ) : (
-                      <Badge variant="outline" className="text-[9px] rounded-[5px] ml-auto py-0 font-bold">
-                        Estável
-                      </Badge>
-                    )
-                  }
-                  borderClass="border-l-primary"
-                  bgClass="bg-primary/5"
-                  tagClass="border-primary/30 text-primary"
-                />
-
-                <DiagnosticCard
-                  icon={<Target className="w-4 h-4 text-amber-500 shrink-0" />}
-                  title={diagnostic.recommendation?.title || 'Recomendação de Estudos'}
-                  description={diagnostic.recommendation?.description || ''}
-                  borderClass="border-l-amber-500"
-                  bgClass="bg-amber-500/5"
-                  tagClass="border-amber-500/30 text-amber-700 dark:text-amber-300"
-                  footer={
-                    <Button
-                      size="sm"
-                      onClick={() => { onClose(); navigate('/simulados'); }}
-                      className="gap-2 font-bold text-xs bg-primary hover:bg-primary/90 text-primary-foreground rounded-[5px] w-full h-9"
-                    >
-                      <span>Ir para o Simulado Recomendado</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </Button>
-                  }
-                />
+            <div className="space-y-3 pt-2">
+              <div className="flex items-center justify-between pb-1 border-b border-border">
+                <span className="text-xs font-bold uppercase tracking-wider text-foreground">
+                  Diagnóstico Consolidado
+                </span>
+                <span className="text-[11px] text-muted-foreground font-medium">
+                  {lastGeneratedAt ? format(new Date(lastGeneratedAt), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR }) : 'Atualizado'}
+                </span>
               </div>
 
-              {/* Desktop: Grid 2x2 Elegante */}
-              <div className="hidden md:grid md:grid-cols-2 gap-2.5">
+              {/* Grid 2x2 Elegante e Moderno */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                
                 {/* 🔴 Ponto Crítico */}
-                <Card className="border-l-4 border-l-red-500 border-border bg-red-500/5 rounded-[5px] shadow-none">
-                  <CardContent className="p-3.5 space-y-2">
+                <div className="p-4 rounded-[5px] border border-red-200/80 dark:border-red-950/60 bg-red-500/5 flex flex-col justify-between space-y-2.5">
+                  <div className="space-y-1.5">
                     <div className="flex items-center gap-2">
-                      <XCircle className="w-4 h-4 text-red-500 shrink-0" />
-                      <h4 className="font-bold text-xs text-foreground">
+                      <div className="w-6 h-6 rounded-[4px] bg-red-500/10 text-red-600 flex items-center justify-center shrink-0">
+                        <XCircle className="w-3.5 h-3.5" />
+                      </div>
+                      <h4 className="font-bold text-xs text-foreground uppercase tracking-tight">
                         {sanitizeMojibake(diagnostic.critical_point?.title || 'Ponto Crítico')}
                       </h4>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">
                       {sanitizeMojibake(diagnostic.critical_point?.description)}
                     </p>
-                    {diagnostic.critical_point?.topics?.length > 0 && (
-                      <div className="flex flex-wrap gap-1 pt-1">
-                        {diagnostic.critical_point.topics.map((t, i) => (
-                          <Badge key={i} variant="outline" className="text-[10px] rounded-[5px] border-red-500/30 text-red-600 dark:text-red-400 font-medium">
-                            {sanitizeMojibake(t)}
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                  </div>
+
+                  {diagnostic.critical_point?.topics?.length > 0 && (
+                    <div className="flex flex-wrap gap-1 pt-1">
+                      {diagnostic.critical_point.topics.map((t, i) => (
+                        <span key={i} className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-[3px] bg-red-500/10 text-red-600 border border-red-500/20">
+                          {sanitizeMojibake(t)}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
                 {/* 🟢 Ponto Positivo */}
-                <Card className="border-l-4 border-l-emerald-500 border-border bg-emerald-500/5 rounded-[5px] shadow-none">
-                  <CardContent className="p-3.5 space-y-2">
+                <div className="p-4 rounded-[5px] border border-emerald-200/80 dark:border-emerald-950/60 bg-emerald-500/5 flex flex-col justify-between space-y-2.5">
+                  <div className="space-y-1.5">
                     <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                      <h4 className="font-bold text-xs text-foreground">
+                      <div className="w-6 h-6 rounded-[4px] bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                      </div>
+                      <h4 className="font-bold text-xs text-foreground uppercase tracking-tight">
                         {sanitizeMojibake(diagnostic.positive_point?.title || 'Ponto Positivo')}
                       </h4>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">
                       {sanitizeMojibake(diagnostic.positive_point?.description)}
                     </p>
-                    {diagnostic.positive_point?.topics?.length > 0 && (
-                      <div className="flex flex-wrap gap-1 pt-1">
-                        {diagnostic.positive_point.topics.map((t, i) => (
-                          <Badge key={i} variant="outline" className="text-[10px] rounded-[5px] border-emerald-500/30 text-emerald-600 dark:text-emerald-400 font-medium">
-                            {sanitizeMojibake(t)}
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                  </div>
 
-                {/* 🔵 Tendência */}
-                <Card className="border-l-4 border-l-primary border-border bg-primary/5 rounded-[5px] shadow-none">
-                  <CardContent className="p-3.5 space-y-2">
+                  {diagnostic.positive_point?.topics?.length > 0 && (
+                    <div className="flex flex-wrap gap-1 pt-1">
+                      {diagnostic.positive_point.topics.map((t, i) => (
+                        <span key={i} className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-[3px] bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                          {sanitizeMojibake(t)}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* 🔵 Tendência de Evolução */}
+                <div className="p-4 rounded-[5px] border border-border bg-card flex flex-col justify-between space-y-2.5">
+                  <div className="space-y-1.5">
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
-                        <TrendingUp className="w-4 h-4 text-primary shrink-0" />
-                        <h4 className="font-bold text-xs text-foreground">
-                          {sanitizeMojibake(diagnostic.trend?.title || 'Tendência')}
+                        <div className="w-6 h-6 rounded-[4px] bg-sky-500/10 text-sky-500 flex items-center justify-center shrink-0">
+                          <TrendingUp className="w-3.5 h-3.5" />
+                        </div>
+                        <h4 className="font-bold text-xs text-foreground uppercase tracking-tight">
+                          {sanitizeMojibake(diagnostic.trend?.title || 'Tendência de Evolução')}
                         </h4>
                       </div>
+
                       {diagnostic.trend?.status === 'improving' && (
-                        <Badge className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-[9px] gap-1 rounded-[5px] font-bold">
-                          <TrendingUp className="w-2.5 h-2.5" /> Evoluindo
-                        </Badge>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-[3px] bg-emerald-500/10 text-emerald-600 border border-emerald-500/30">
+                          Evoluindo
+                        </span>
                       )}
                       {diagnostic.trend?.status === 'declining' && (
-                        <Badge className="bg-red-500/15 text-red-700 dark:text-red-300 border border-red-500/30 text-[9px] gap-1 rounded-[5px] font-bold">
-                          <TrendingDown className="w-2.5 h-2.5" /> Atenção
-                        </Badge>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-[3px] bg-red-500/10 text-red-600 border border-red-500/30">
+                          Atenção
+                        </span>
+                      )}
+                      {diagnostic.trend?.status === 'stable' && (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-[3px] bg-muted text-muted-foreground border border-border">
+                          Estável
+                        </span>
                       )}
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">
                       {sanitizeMojibake(diagnostic.trend?.description)}
                     </p>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
 
-                {/* 🟡 Recomendação */}
-                <Card className="border-l-4 border-l-amber-500 border-border bg-amber-500/5 rounded-[5px] shadow-none">
-                  <CardContent className="p-3.5 space-y-2.5">
+                {/* 🟡 Recomendação de Próximo Passo */}
+                <div className="p-4 rounded-[5px] border border-amber-500/30 bg-amber-500/5 flex flex-col justify-between space-y-2.5">
+                  <div className="space-y-1.5">
                     <div className="flex items-center gap-2">
-                      <Target className="w-4 h-4 text-amber-500 shrink-0" />
-                      <h4 className="font-bold text-xs text-foreground">
+                      <div className="w-6 h-6 rounded-[4px] bg-amber-500/15 text-amber-600 flex items-center justify-center shrink-0">
+                        <Target className="w-3.5 h-3.5" />
+                      </div>
+                      <h4 className="font-bold text-xs text-foreground uppercase tracking-tight">
                         {sanitizeMojibake(diagnostic.recommendation?.title || 'Recomendação')}
                       </h4>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">
                       {sanitizeMojibake(diagnostic.recommendation?.description)}
                     </p>
-                    <div className="flex justify-end pt-1">
-                      <Button
-                        size="sm"
-                        onClick={() => { onClose(); navigate('/simulados'); }}
-                        className="gap-2 font-bold text-xs bg-primary hover:bg-primary/90 text-primary-foreground rounded-[5px] h-8 px-3"
-                      >
-                        <span>Ir para Simulado</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                  </div>
+
+                  <div className="pt-1">
+                    <Button
+                      size="sm"
+                      onClick={() => { onClose(); navigate('/simulados'); }}
+                      className="w-full h-8 text-xs font-bold gap-1.5 rounded-[5px] bg-accent text-accent-foreground hover:bg-accent/90 shadow-2xs"
+                    >
+                      <span>Ir para o Simulado Recomendado</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Button>
+                  </div>
+                </div>
+
               </div>
             </div>
           )}
+
         </div>
       </DialogContent>
     </Dialog>
