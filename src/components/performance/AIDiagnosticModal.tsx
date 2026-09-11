@@ -13,6 +13,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 interface AIDiagnosticModalProps {
   isOpen: boolean;
@@ -33,7 +35,7 @@ interface DiagnosticResult {
 
 function sanitizeMojibake(text?: string): string {
   if (!text) return '';
-  return text
+  return String(text)
     .replace(/ðŸ[^\s]+/g, '')
     .replace(/âœ[^\s]+/g, '')
     .replace(/â[^\s]+/g, '')
@@ -60,6 +62,17 @@ function sanitizeMojibake(text?: string): string {
     .trim();
 }
 
+function formatDateSafe(val: any, fmt: string, fallback = ''): string {
+  if (!val) return fallback;
+  try {
+    const d = new Date(val);
+    if (isNaN(d.getTime())) return fallback;
+    return format(d, fmt, { locale: ptBR });
+  } catch {
+    return fallback;
+  }
+}
+
 export function AIDiagnosticModal({
   isOpen, onClose, examResults = [], subcategories = [], exams = [], userCreatedAt, userEmail,
 }: AIDiagnosticModalProps) {
@@ -75,8 +88,16 @@ export function AIDiagnosticModal({
       const savedTime = localStorage.getItem('voecerto_ai_diagnostic_timestamp');
       if (savedData && savedTime) {
         const parsed = JSON.parse(savedData);
-        setDiagnostic(parsed);
-        setLastGeneratedAt(Number(savedTime));
+        if (parsed && typeof parsed === 'object') {
+          setDiagnostic(parsed);
+        }
+        let parsedTime = Number(savedTime);
+        if (isNaN(parsedTime)) {
+          parsedTime = new Date(savedTime).getTime();
+        }
+        if (!isNaN(parsedTime)) {
+          setLastGeneratedAt(parsedTime);
+        }
       }
     } catch (e) {
       console.warn('Erro ao carregar cache do diagnóstico:', e);
@@ -102,7 +123,7 @@ export function AIDiagnosticModal({
   const hasMinAccountAge = accountAgeDays >= 7 || isAdminUser;
 
   const now = Date.now();
-  const hoursSince = lastGeneratedAt ? (now - lastGeneratedAt) / (1000 * 60 * 60) : 999;
+  const hoursSince = lastGeneratedAt && !isNaN(lastGeneratedAt) ? (now - lastGeneratedAt) / (1000 * 60 * 60) : 999;
   const isCooldownActive = hoursSince < 24;
   const remainingHours = Math.max(0, Math.floor(24 - hoursSince));
   const remainingMinutes = Math.max(0, Math.floor((24 - hoursSince - remainingHours) * 60));
@@ -315,7 +336,7 @@ export function AIDiagnosticModal({
                   Diagnóstico Consolidado
                 </span>
                 <span className="text-[11px] text-muted-foreground font-medium">
-                  {lastGeneratedAt ? format(new Date(lastGeneratedAt), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR }) : 'Atualizado'}
+                  {lastGeneratedAt ? formatDateSafe(lastGeneratedAt, "dd/MM/yyyy 'às' HH:mm", 'Atualizado') : 'Atualizado'}
                 </span>
               </div>
 
@@ -338,11 +359,11 @@ export function AIDiagnosticModal({
                     </p>
                   </div>
 
-                  {diagnostic.critical_point?.topics?.length > 0 && (
+                  {Array.isArray(diagnostic.critical_point?.topics) && diagnostic.critical_point.topics.length > 0 && (
                     <div className="flex flex-wrap gap-1 pt-1">
                       {diagnostic.critical_point.topics.map((t, i) => (
                         <span key={i} className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-[3px] bg-red-500/10 text-red-600 border border-red-500/20">
-                          {sanitizeMojibake(t)}
+                          {sanitizeMojibake(String(t))}
                         </span>
                       ))}
                     </div>
@@ -365,11 +386,11 @@ export function AIDiagnosticModal({
                     </p>
                   </div>
 
-                  {diagnostic.positive_point?.topics?.length > 0 && (
+                  {Array.isArray(diagnostic.positive_point?.topics) && diagnostic.positive_point.topics.length > 0 && (
                     <div className="flex flex-wrap gap-1 pt-1">
                       {diagnostic.positive_point.topics.map((t, i) => (
                         <span key={i} className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-[3px] bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
-                          {sanitizeMojibake(t)}
+                          {sanitizeMojibake(String(t))}
                         </span>
                       ))}
                     </div>

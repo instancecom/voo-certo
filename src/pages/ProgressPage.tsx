@@ -24,8 +24,20 @@ import { useAuth } from '@/contexts/AuthContext';
 import { usePlan } from '@/hooks/usePlan';
 import { AIDiagnosticModal } from '@/components/performance/AIDiagnosticModal';
 import { PlanGate } from '@/components/PlanGate';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { format, differenceInDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+
+function formatDateSafe(val: any, fmt: string, fallback = '--'): string {
+  if (!val) return fallback;
+  try {
+    const d = new Date(val);
+    if (isNaN(d.getTime())) return fallback;
+    return format(d, fmt, { locale: ptBR });
+  } catch {
+    return fallback;
+  }
+}
 
 export default function ProgressPage() {
   const { user, profile, isLoading: authLoading } = useAuth();
@@ -121,10 +133,9 @@ export default function ProgressPage() {
 
       // Evolução temporal invertida para ordem cronológica
       const allEvolution = [...userResults].reverse().map((r) => {
-        const d = new Date(r.completed_at);
         return {
-          date: isNaN(d.getTime()) ? '--' : format(d, 'dd/MM'),
-          score: Number(r.score) || 0
+          date: formatDateSafe(r?.completed_at, 'dd/MM', '--'),
+          score: Number(r?.score) || 0
         };
       });
 
@@ -220,8 +231,9 @@ export default function ProgressPage() {
 
       <main className="flex-1 pt-20 sm:pt-24 pb-20">
         <div className="container mx-auto px-4 sm:px-6 max-w-6xl">
+          <ErrorBoundary fallbackTitle="Painel de Progresso">
 
-          {/* Top Bar com Título e Acionamento do Mike */}
+            {/* Top Bar com Título e Acionamento do Mike */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8 pb-4 border-b border-border">
             <div>
               <h1 className="text-xl sm:text-2xl font-black text-foreground tracking-tight flex items-center gap-2">
@@ -273,7 +285,7 @@ export default function ProgressPage() {
               {/* ──────────────────────────────────────────────────────────
                   COLUNA ESQUERDA (7 Colunas no Desktop)
                   ────────────────────────────────────────────────────────── */}
-              <div className="lg:col-span-7 space-y-6">
+              <div className="lg:col-span-7 min-w-0 space-y-6">
 
                 {/* Top Row: Card Executivo de Voo + 2 Mini Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
@@ -295,7 +307,7 @@ export default function ProgressPage() {
                     <div className="my-3 relative z-10">
                       <p className="text-[11px] text-white/60 uppercase tracking-wider">Aeronauta</p>
                       <p className="text-base font-black truncate text-white">
-                        {profile?.full_name || user.email?.split('@')[0]}
+                        {profile?.full_name || user?.email?.split('@')[0] || 'Aeronauta'}
                       </p>
                     </div>
 
@@ -351,16 +363,16 @@ export default function ProgressPage() {
                       <span>Pontos de Atenção (&lt;70%)</span>
                     </div>
                     <div className="space-y-3">
-                      {stats.weakPoints.length > 0 ? stats.weakPoints.map(wp => (
-                        <div key={wp.id} className="space-y-1.5">
+                      {stats.weakPoints && stats.weakPoints.length > 0 ? stats.weakPoints.map(wp => (
+                        <div key={wp?.id || Math.random()} className="space-y-1.5">
                           <div className="flex justify-between items-center text-xs">
-                            <span className="font-semibold text-foreground truncate max-w-[170px]">{wp.name}</span>
-                            <span className="font-bold text-destructive">{wp.avg}%</span>
+                            <span className="font-semibold text-foreground truncate max-w-[170px]">{wp?.name || 'Bloco'}</span>
+                            <span className="font-bold text-destructive">{wp?.avg || 0}%</span>
                           </div>
-                          <Progress value={wp.avg || 0} className="h-1.5 bg-destructive/15 [&>div]:bg-destructive rounded-[2px]" />
+                          <Progress value={wp?.avg || 0} className="h-1.5 bg-destructive/15 [&>div]:bg-destructive rounded-[2px]" />
                           <div className="flex justify-end pt-0.5">
                             <Link
-                              to={`/simulado-profissao/${wp.category_id}?modo=bloco&bloco_id=${wp.id}&nome_bloco=${encodeURIComponent(wp.name)}`}
+                              to={`/simulado-profissao/${wp?.category_id || ''}?modo=bloco&bloco_id=${wp?.id || ''}&nome_bloco=${encodeURIComponent(wp?.name || '')}`}
                               className="text-[10px] font-bold text-accent hover:underline flex items-center gap-0.5"
                             >
                               <Zap className="w-2.5 h-2.5 fill-current" /> Treinar Bloco
@@ -382,15 +394,15 @@ export default function ProgressPage() {
                       <span>Melhores Matérias (&ge;70%)</span>
                     </div>
                     <div className="space-y-3">
-                      {stats.strengths.length > 0 ? stats.strengths.map(s => (
-                        <div key={s.id} className="space-y-1.5">
+                      {stats.strengths && stats.strengths.length > 0 ? stats.strengths.map(s => (
+                        <div key={s?.id || Math.random()} className="space-y-1.5">
                           <div className="flex justify-between items-center text-xs">
-                            <span className="font-semibold text-foreground truncate max-w-[170px]">{s.name}</span>
-                            <span className="font-bold text-emerald-600 dark:text-emerald-400">{s.avg}%</span>
+                            <span className="font-semibold text-foreground truncate max-w-[170px]">{s?.name || 'Matéria'}</span>
+                            <span className="font-bold text-emerald-600 dark:text-emerald-400">{s?.avg || 0}%</span>
                           </div>
-                          <Progress value={s.avg || 0} className="h-1.5 bg-emerald-500/15 [&>div]:bg-emerald-500 rounded-[2px]" />
+                          <Progress value={s?.avg || 0} className="h-1.5 bg-emerald-500/15 [&>div]:bg-emerald-500 rounded-[2px]" />
                           <p className="text-[10px] text-muted-foreground text-right pt-0.5 font-medium">
-                            {s.count} simulados realizados
+                            {s?.count || 0} simulados realizados
                           </p>
                         </div>
                       )) : (
@@ -441,7 +453,7 @@ export default function ProgressPage() {
                   <div className="divide-y divide-border/60">
                     {(showAllHistory ? filteredHistory : filteredHistory.slice(0, 5)).map((result) => {
                       const exam = exams?.find(e => e.id === result.exam_id);
-                      const passed = result.score >= 70;
+                      const passed = (Number(result.score) || 0) >= 70;
 
                       return (
                         <div
@@ -455,7 +467,7 @@ export default function ProgressPage() {
                                 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
                                 : 'bg-destructive/10 text-destructive border-destructive/30'
                             }`}>
-                              {result.score}%
+                              {Number(result.score) || 0}%
                             </div>
 
                             <div className="min-w-0">
@@ -468,7 +480,7 @@ export default function ProgressPage() {
                                 </span>
                                 <span>•</span>
                                 <span>
-                                  {format(new Date(result.completed_at), "dd 'de' MMM, HH:mm", { locale: ptBR })}
+                                  {formatDateSafe(result.completed_at, "dd 'de' MMM, HH:mm", 'Data indisponível')}
                                 </span>
                               </div>
                             </div>
@@ -477,7 +489,7 @@ export default function ProgressPage() {
                           <div className="flex items-center gap-3 shrink-0">
                             <div className="hidden sm:block text-right">
                               <span className="text-[10px] text-muted-foreground uppercase font-bold block">Tempo</span>
-                              <span className="text-xs font-semibold text-foreground">{Math.round(result.time_spent / 60)} min</span>
+                              <span className="text-xs font-semibold text-foreground">{Math.round((Number(result.time_spent) || 0) / 60)} min</span>
                             </div>
 
                             <Button asChild size="sm" variant="outline" className="rounded-[5px] text-xs h-7 px-2.5">
@@ -514,7 +526,7 @@ export default function ProgressPage() {
                   COLUNA DIREITA (5 Colunas no Desktop — Painel Analítico)
                   Inspirado na coluna direita da imagem de referência
                   ────────────────────────────────────────────────────────── */}
-              <div className="lg:col-span-5 rounded-[5px] border border-border bg-card p-5 sm:p-6 shadow-sm space-y-6">
+              <div className="lg:col-span-5 min-w-0 rounded-[5px] border border-border bg-card p-5 sm:p-6 shadow-sm space-y-6">
 
                 {/* Topo do Painel Analítico: Média Geral com Filtro de Tempo */}
                 <div>
@@ -577,55 +589,61 @@ export default function ProgressPage() {
                     <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">Meta ANAC: 70%</span>
                   </div>
 
-                  <div className="h-[210px] w-full pt-2">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={displayedEvolutionData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
-                        <defs>
-                          <linearGradient id="scoreGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.35} />
-                            <stop offset="95%" stopColor="#F59E0B" stopOpacity={0.0} />
-                          </linearGradient>
-                        </defs>
-                        <XAxis
-                          dataKey="date"
-                          stroke="#888888"
-                          fontSize={10}
-                          tickLine={false}
-                          axisLine={false}
-                        />
-                        <YAxis
-                          domain={[0, 100]}
-                          stroke="#888888"
-                          fontSize={10}
-                          tickLine={false}
-                          axisLine={false}
-                          ticks={[0, 50, 70, 100]}
-                        />
-                        <ReferenceLine y={70} stroke="#10b981" strokeDasharray="3 3" />
-                        <Tooltip
-                          content={({ active, payload }) => {
-                            if (active && payload && payload.length) {
-                              const data = payload[0].payload;
-                              return (
-                                <div className="bg-popover text-popover-foreground text-xs p-2 rounded-[5px] shadow-md border border-border">
-                                  <p className="font-bold text-foreground">{data.score}% de acertos</p>
-                                  <p className="text-[10px] text-muted-foreground">{data.date}</p>
-                                </div>
-                              );
-                            }
-                            return null;
-                          }}
-                        />
-                        <Area
-                          type="monotone"
-                          dataKey="score"
-                          stroke="#F59E0B"
-                          strokeWidth={2.5}
-                          fillOpacity={1}
-                          fill="url(#scoreGradient)"
-                        />
-                      </AreaChart>
-                    </ResponsiveContainer>
+                  <div className="h-[210px] w-full pt-2 min-h-[210px]">
+                    {displayedEvolutionData && displayedEvolutionData.length > 0 ? (
+                      <ResponsiveContainer width="100%" height={210}>
+                        <AreaChart data={displayedEvolutionData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+                          <defs>
+                            <linearGradient id="scoreGradient" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.35} />
+                              <stop offset="95%" stopColor="#F59E0B" stopOpacity={0.0} />
+                            </linearGradient>
+                          </defs>
+                          <XAxis
+                            dataKey="date"
+                            stroke="#888888"
+                            fontSize={10}
+                            tickLine={false}
+                            axisLine={false}
+                          />
+                          <YAxis
+                            domain={[0, 100]}
+                            stroke="#888888"
+                            fontSize={10}
+                            tickLine={false}
+                            axisLine={false}
+                            ticks={[0, 50, 70, 100]}
+                          />
+                          <ReferenceLine y={70} stroke="#10b981" strokeDasharray="3 3" />
+                          <Tooltip
+                            content={({ active, payload }) => {
+                              if (active && payload && payload.length) {
+                                const data = payload[0].payload;
+                                return (
+                                  <div className="bg-popover text-popover-foreground text-xs p-2 rounded-[5px] shadow-md border border-border">
+                                    <p className="font-bold text-foreground">{data.score}% de acertos</p>
+                                    <p className="text-[10px] text-muted-foreground">{data.date}</p>
+                                  </div>
+                                );
+                              }
+                              return null;
+                            }}
+                          />
+                          <Area
+                            type="monotone"
+                            dataKey="score"
+                            stroke="#F59E0B"
+                            strokeWidth={2.5}
+                            fillOpacity={1}
+                            fill="url(#scoreGradient)"
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <div className="h-full flex items-center justify-center text-xs text-muted-foreground italic">
+                        Dados insuficientes para gerar a curva
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -639,33 +657,31 @@ export default function ProgressPage() {
                       {stats.anacReadiness}% Concluído
                     </p>
                     <p className="text-[11px] text-white/70 mt-1 leading-snug max-w-[180px]">
-                      {stats.masteredSubjectsCount} de {stats.subStats.length} matérias acima de 70%
+                      {stats.masteredSubjectsCount} de {stats.subStats?.length || 0} matérias acima de 70%
                     </p>
                   </div>
 
                   {/* Gráfico Donut / Radial Compacto */}
-                  <div className="w-18 h-18 sm:w-20 sm:h-20 shrink-0 relative flex items-center justify-center">
-                    <ResponsiveContainer width={80} height={80}>
-                      <PieChart>
-                        <Pie
-                          data={[
-                            { name: 'Pronto', value: stats.anacReadiness, color: '#F59E0B' },
-                            { name: 'Restante', value: Math.max(0, 100 - stats.anacReadiness), color: '#1e293b' }
-                          ]}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={26}
-                          outerRadius={36}
-                          startAngle={90}
-                          endAngle={-270}
-                          dataKey="value"
-                          stroke="none"
-                        >
-                          <Cell fill="#F59E0B" />
-                          <Cell fill="#1e293b" />
-                        </Pie>
-                      </PieChart>
-                    </ResponsiveContainer>
+                  <div className="w-20 h-20 shrink-0 relative flex items-center justify-center">
+                    <PieChart width={80} height={80}>
+                      <Pie
+                        data={[
+                          { name: 'Pronto', value: Number(stats.anacReadiness) || 0 },
+                          { name: 'Restante', value: Math.max(0, 100 - (Number(stats.anacReadiness) || 0)) }
+                        ]}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={26}
+                        outerRadius={36}
+                        startAngle={90}
+                        endAngle={-270}
+                        dataKey="value"
+                        stroke="none"
+                      >
+                        <Cell fill="#F59E0B" />
+                        <Cell fill="#1e293b" />
+                      </Pie>
+                    </PieChart>
                     <span className="absolute text-xs font-black text-white">
                       {stats.anacReadiness}%
                     </span>
@@ -691,6 +707,7 @@ export default function ProgressPage() {
             </div>
           )}
 
+          </ErrorBoundary>
         </div>
       </main>
 
