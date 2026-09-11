@@ -19,6 +19,16 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { BadgePreviewModal } from '@/components/badges/BadgePreviewModal';
 import { DynamicIcon } from '@/components/ui/dynamic-icon';
 import { getInsigniaFallback } from '@/hooks/useInsigniasFallback';
@@ -71,7 +81,7 @@ export default function ProfilePage() {
   const [targetExamDate, setTargetExamDate] = useState('');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [portalLoading, setPortalLoading] = useState(false);
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
 
   // Modal de preview da insígnia
   const [selectedBadge, setSelectedBadge] = useState<Insignia | null>(null);
@@ -186,23 +196,9 @@ export default function ProfilePage() {
     }
   };
 
-  // ── Gerenciar / Cancelar Assinatura via Portal Stripe ──
-  const handleManageOrCancelSubscription = async () => {
-    setPortalLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('customer-portal');
-      if (error) throw error;
-
-      if (data?.url) {
-        window.location.href = data.url;
-        return;
-      }
-      throw new Error('URL não retornada');
-    } catch {
-      toast.error('Para gerenciar ou cancelar sua assinatura, entre em contato com nosso suporte.');
-    } finally {
-      setPortalLoading(false);
-    }
+  // ── Cancelar Assinatura ──
+  const handleManageOrCancelSubscription = () => {
+    setShowCancelDialog(true);
   };
 
   const getInitials = () => {
@@ -518,14 +514,9 @@ export default function ProfilePage() {
                     variant="outline"
                     size="sm"
                     onClick={handleManageOrCancelSubscription}
-                    disabled={portalLoading}
                     className="rounded-[5px] text-xs font-semibold text-destructive hover:text-destructive border-destructive/30 hover:bg-destructive/10 h-9 w-full"
                   >
-                    {portalLoading ? (
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    ) : (
-                      'Cancelar ou gerenciar assinatura'
-                    )}
+                    Cancelar ou gerenciar assinatura
                   </Button>
                 )}
               </div>
@@ -665,6 +656,45 @@ export default function ProfilePage() {
           earnedAt={selectedEarnedAt}
         />
       )}
+      {/* Modal de Cancelamento de Assinatura */}
+      <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+        <AlertDialogContent className="rounded-[5px] max-w-sm">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-base font-bold">
+              Cancelar assinatura
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-sm text-muted-foreground leading-relaxed">
+              Para cancelar sua assinatura, entre em contato com nosso suporte. Nossa equipe processará o cancelamento em até 24 horas.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <div className="py-2">
+            <a
+              href="mailto:contato@voecerto.com.br?subject=Cancelamento%20de%20Assinatura"
+              className="block w-full text-center text-sm font-bold text-accent bg-accent/10 border border-accent/30 rounded-[5px] py-2.5 hover:bg-accent/20 transition-colors"
+            >
+              contato@voecerto.com.br
+            </a>
+            <p className="text-[11px] text-muted-foreground text-center mt-2">
+              Seu acesso permanece ativo até o fim do período pago.
+            </p>
+          </div>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-[5px] text-xs font-semibold h-9">
+              Voltar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              asChild
+              className="rounded-[5px] text-xs font-bold h-9 bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              <a href="mailto:contato@voecerto.com.br?subject=Cancelamento%20de%20Assinatura">
+                Enviar e-mail
+              </a>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Footer />
     </div>
