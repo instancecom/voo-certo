@@ -69,14 +69,15 @@ const TEMPLATES = [
 
 export default function CurriculumPage() {
   const { user } = useAuth();
-  const { canSaveCurriculum } = usePlan();
+  const { canSaveCurriculum, planLabel } = usePlan();
   const queryClient = useQueryClient();
   
   // Modes: 'dashboard' (Galeria em Lista) | 'chat' (Criador IA) | 'editor' (Edição Manual)
   const [mode, setMode] = useState<'dashboard' | 'chat' | 'editor'>('dashboard');
   const [data, setData] = useState<CurriculumData>(EMPTY_DATA);
   const [newSkill, setNewSkill] = useState('');
-  const [activeTab, setActiveTab] = useState('dados');
+  const [editorSection, setEditorSection] = useState<'dados' | 'resumo' | 'experiencia' | 'formacao' | 'certificados' | 'extras' | 'template'>('dados');
+  const [mobileEditorView, setMobileEditorView] = useState<'edit' | 'preview'>('edit');
   const [isEnhancingSection, setIsEnhancingSection] = useState<string | null>(null);
   
   // Modal de Pré-visualização na Galeria
@@ -560,6 +561,847 @@ export default function CurriculumPage() {
     );
   }
 
+  // MODO EDITOR TELA CHEIA (Estilo ChatGPT / Studio Workspace)
+  if (mode === 'editor') {
+    const activeTemplateObj = TEMPLATES.find(t => t.id === (data.template || 'ats').toLowerCase());
+
+    const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Aeronauta';
+    const initials = displayName
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((p: string) => p[0]?.toUpperCase())
+      .join('') || 'VC';
+
+    const SECTIONS = [
+      { id: 'dados', label: 'Dados Pessoais', icon: User, desc: 'Nome, contato e localização' },
+      { id: 'resumo', label: 'Resumo Profissional', icon: FileText, desc: 'Perfil e objetivo na aviação' },
+      { id: 'experiencia', label: 'Experiências', icon: Briefcase, count: data.experience?.length || 0, desc: 'Histórico profissional' },
+      { id: 'formacao', label: 'Formação Acadêmica', icon: GraduationCap, count: data.education?.length || 0, desc: 'Escolaridade e cursos' },
+      { id: 'certificados', label: 'Cursos & ANAC', icon: Award, count: data.certificates?.length || 0, desc: 'CCT, CMS e licenças' },
+      { id: 'extras', label: 'Idiomas & Habilidades', icon: Globe, count: (data.languages?.length || 0) + (data.skills?.length || 0), desc: 'Idiomas e competências' },
+      { id: 'template', label: 'Modelo de Currículo', icon: Layout, desc: 'Layout ATS, Geral ou Presencial' },
+    ];
+
+    const currentSectionIndex = SECTIONS.findIndex(s => s.id === editorSection);
+    const prevSection = currentSectionIndex > 0 ? SECTIONS[currentSectionIndex - 1] : null;
+    const nextSection = currentSectionIndex < SECTIONS.length - 1 ? SECTIONS[currentSectionIndex + 1] : null;
+
+    return (
+      <div className="flex flex-col h-[100dvh] w-screen bg-background overflow-hidden fixed inset-0 z-50 select-text overscroll-none">
+        {/* ── TOPBAR SUPERIOR ── */}
+        <header className="h-14 border-b border-border/80 px-3.5 sm:px-5 flex items-center justify-between shrink-0 bg-card/90 backdrop-blur-md z-20">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setMode('dashboard')}
+              className="h-8 px-2.5 gap-1.5 text-xs font-bold text-muted-foreground hover:text-foreground rounded-[5px]"
+            >
+              <ChevronLeft className="w-4 h-4 text-primary" />
+              <span className="hidden sm:inline">Galeria</span>
+            </Button>
+
+            <div className="h-4 w-px bg-border hidden sm:block" />
+
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="w-6 h-6 rounded-[4px] overflow-hidden border border-border bg-slate-900 shrink-0 hidden xs:block">
+                <img
+                  src="/images/avatars/mike_character_curiculum.png"
+                  alt="Mike"
+                  className="w-full h-full object-cover block"
+                />
+              </div>
+              <div className="min-w-0">
+                <h1 className="text-xs sm:text-sm font-black text-foreground truncate">
+                  {data.profession || data.full_name || 'Editar Currículo'}
+                </h1>
+                <p className="text-[10px] text-muted-foreground hidden sm:block truncate">
+                  Modelo: <span className="text-foreground font-semibold">{activeTemplateObj?.name || 'Digital / ATS'}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Ações Topbar */}
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Toggle Mobile (Editar vs Prévia) */}
+            <div className="flex items-center bg-muted/70 p-0.5 rounded-[5px] border border-border/80 lg:hidden">
+              <button
+                onClick={() => setMobileEditorView('edit')}
+                className={`px-2.5 py-1 text-xs font-bold rounded-[4px] transition-all flex items-center gap-1 ${
+                  mobileEditorView === 'edit'
+                    ? 'bg-card text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <Edit3 className="w-3.5 h-3.5" />
+                <span>Editar</span>
+              </button>
+              <button
+                onClick={() => setMobileEditorView('preview')}
+                className={`px-2.5 py-1 text-xs font-bold rounded-[4px] transition-all flex items-center gap-1 ${
+                  mobileEditorView === 'preview'
+                    ? 'bg-card text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <Eye className="w-3.5 h-3.5" />
+                <span>Prévia</span>
+              </button>
+            </div>
+
+            {user && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => saveMutation.mutate()}
+                disabled={saveMutation.isPending}
+                className="h-8 px-3 gap-1.5 font-bold text-xs rounded-[5px] border-border/80 hover:bg-muted"
+              >
+                {saveMutation.isPending ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Save className="w-3.5 h-3.5 text-primary" />
+                )}
+                <span className="hidden sm:inline">Salvar</span>
+              </Button>
+            )}
+
+            <Button
+              size="sm"
+              onClick={() => handleDownloadPDF()}
+              disabled={isDownloadingPDF}
+              className="h-8 px-3.5 gap-1.5 font-bold text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded-[5px] shadow-sm"
+            >
+              {isDownloadingPDF ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <Download className="w-3.5 h-3.5" />
+              )}
+              <span>Baixar PDF</span>
+            </Button>
+          </div>
+        </header>
+
+        {/* ── CORPO PRINCIPAL (SIDEBAR + WORKSPACE SPLIT) ── */}
+        <div className="flex flex-1 overflow-hidden h-[calc(100dvh-3.5rem)]">
+          
+          {/* ── SIDEBAR DESKTOP (ESTILO CHATGPT STUDIO) ── */}
+          <aside className="hidden md:flex flex-col w-64 border-r border-border/80 bg-muted/15 justify-between shrink-0 p-3 h-full">
+            <div className="space-y-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleStartNewCurriculum}
+                className="w-full justify-start gap-2 text-xs font-bold bg-card border-border/80 hover:bg-muted text-foreground rounded-[5px] h-9 shadow-sm"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                Novo com Mike IA
+              </Button>
+
+              <div className="space-y-1">
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider px-2 mb-1.5">
+                  Seções de Edição
+                </p>
+                {SECTIONS.map((sec) => {
+                  const Icon = sec.icon;
+                  const isSelected = editorSection === sec.id;
+
+                  return (
+                    <button
+                      key={sec.id}
+                      onClick={() => setEditorSection(sec.id as any)}
+                      className={`w-full flex items-center justify-between px-2.5 py-2 rounded-[5px] text-xs font-semibold transition-all ${
+                        isSelected
+                          ? 'bg-primary/10 text-primary font-bold shadow-xs'
+                          : 'text-foreground/75 hover:bg-muted/60 hover:text-foreground'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 truncate">
+                        <Icon className={`w-4 h-4 shrink-0 ${isSelected ? 'text-primary' : 'text-muted-foreground'}`} />
+                        <span className="truncate">{sec.label}</span>
+                      </div>
+                      {typeof sec.count === 'number' && sec.count > 0 && (
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${
+                          isSelected ? 'bg-primary text-primary-foreground font-bold' : 'bg-muted text-muted-foreground'
+                        }`}>
+                          {sec.count}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Perfil no rodapé da Sidebar */}
+            <div className="pt-3 border-t border-border/80 flex items-center gap-2.5 px-1">
+              <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
+                {initials}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-bold text-foreground truncate">{displayName}</p>
+                <p className="text-[10px] text-muted-foreground font-medium capitalize">
+                  Plano {planLabel || 'Gratuito'}
+                </p>
+              </div>
+            </div>
+          </aside>
+
+          {/* ── WORKSPACE SPLIT (EDITOR + PREVIEW) ── */}
+          <div className="flex-1 flex overflow-hidden">
+            
+            {/* ── PAINEL DE FORMULÁRIO / EDIÇÃO ── */}
+            <div className={`
+              flex-1 lg:max-w-xl xl:max-w-2xl overflow-y-auto p-4 sm:p-6 space-y-6 border-r border-border/70 bg-background
+              ${mobileEditorView === 'preview' ? 'hidden lg:block' : 'block'}
+            `}>
+              
+              {/* Menu horizontal no mobile */}
+              <div className="flex md:hidden items-center gap-1.5 overflow-x-auto pb-2 -mx-2 px-2 scrollbar-none">
+                {SECTIONS.map((sec) => (
+                  <button
+                    key={sec.id}
+                    onClick={() => setEditorSection(sec.id as any)}
+                    className={`px-3 py-1.5 rounded-[5px] text-xs font-bold whitespace-nowrap shrink-0 transition-all ${
+                      editorSection === sec.id
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-muted/60 text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    {sec.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* SEÇÃO: DADOS PESSOAIS */}
+              {editorSection === 'dados' && (
+                <div className="space-y-4">
+                  <div>
+                    <h2 className="text-base font-bold text-foreground flex items-center gap-2">
+                      <User className="w-4 h-4 text-primary" /> Dados Pessoais & Contato
+                    </h2>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Informações básicas de identificação e canais de contato com os recrutadores.
+                    </p>
+                  </div>
+
+                  <Card className="rounded-[5px] border-border/80 shadow-xs">
+                    <CardContent className="p-4 sm:p-5 space-y-4">
+                      <div>
+                        <Label className="text-xs font-bold">Nome Completo</Label>
+                        <Input
+                          value={data.full_name}
+                          onChange={(e) => updateField('full_name', e.target.value)}
+                          placeholder="Ex: Ana Maria Silva"
+                          className="mt-1 text-xs rounded-[5px]"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs font-bold">Cargo Desejado / Área de Atuação</Label>
+                        <Input
+                          value={data.profession}
+                          onChange={(e) => updateField('profession', e.target.value)}
+                          placeholder="Ex: Comissária de Bordo / ANAC CCT"
+                          className="mt-1 text-xs rounded-[5px]"
+                        />
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <Label className="text-xs font-bold">E-mail</Label>
+                          <Input
+                            value={data.email}
+                            onChange={(e) => updateField('email', e.target.value)}
+                            placeholder="seu.email@exemplo.com"
+                            className="mt-1 text-xs rounded-[5px]"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs font-bold">Telefone com DDD</Label>
+                          <Input
+                            value={data.phone}
+                            onChange={(e) => updateField('phone', e.target.value)}
+                            placeholder="(11) 98888-7777"
+                            className="mt-1 text-xs rounded-[5px]"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-xs font-bold">Cidade e Estado</Label>
+                        <Input
+                          value={data.city}
+                          onChange={(e) => updateField('city', e.target.value)}
+                          placeholder="Ex: São Paulo - SP"
+                          className="mt-1 text-xs rounded-[5px]"
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+
+              {/* SEÇÃO: RESUMO & PERFIL */}
+              {editorSection === 'resumo' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-base font-bold text-foreground flex items-center gap-2">
+                        <FileText className="w-4 h-4 text-primary" /> Resumo Profissional & Objetivo
+                      </h2>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Apresentação executiva rápida focada no perfil que as companhias aéreas buscam.
+                      </p>
+                    </div>
+
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      disabled={isEnhancingSection === 'summary'}
+                      onClick={() => handleEnhanceWithAI('Resumo Profissional', data.summary, (enhanced) => updateField('summary', enhanced))}
+                      className="h-8 px-3 text-xs text-primary hover:bg-primary/10 gap-1.5 font-bold rounded-[5px] border border-primary/20 shrink-0"
+                    >
+                      {isEnhancingSection === 'summary' ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                      )}
+                      <span>Melhorar com Mike IA</span>
+                    </Button>
+                  </div>
+
+                  <Card className="rounded-[5px] border-border/80 shadow-xs">
+                    <CardContent className="p-4 sm:p-5 space-y-3">
+                      <div>
+                        <Label className="text-xs font-bold">Texto do Resumo</Label>
+                        <Textarea
+                          rows={6}
+                          value={data.summary}
+                          onChange={(e) => updateField('summary', e.target.value)}
+                          placeholder="Ex: Profissional dedicado com foco em segurança de voo e excelência no atendimento..."
+                          className="mt-1.5 text-xs leading-relaxed rounded-[5px]"
+                        />
+                      </div>
+
+                      <div className="p-3 bg-muted/40 rounded-[5px] border border-border/60 text-[11px] text-muted-foreground space-y-1">
+                        <p className="font-bold text-foreground flex items-center gap-1.5">
+                          <Lightbulb className="w-3.5 h-3.5 text-amber-500" /> Dica de Ouro do Mike
+                        </p>
+                        <p>
+                          Destaque palavras-chave como <strong>Segurança Operacional</strong>, <strong>Banca ANAC</strong>, <strong>Atendimento Humanizado</strong> e <strong>Gestão de Recursos de Tripulação (CRM)</strong>.
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+
+              {/* SEÇÃO: EXPERIÊNCIA PROFISSIONAL */}
+              {editorSection === 'experiencia' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-base font-bold text-foreground flex items-center gap-2">
+                        <Briefcase className="w-4 h-4 text-primary" /> Experiência Profissional
+                      </h2>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Histórico de empresas, funções anteriores e realizações relevantes.
+                      </p>
+                    </div>
+
+                    <Button
+                      size="sm"
+                      onClick={addExperience}
+                      className="h-8 px-3 text-xs font-bold gap-1 rounded-[5px] shrink-0"
+                    >
+                      <Plus className="w-3.5 h-3.5" /> Adicionar
+                    </Button>
+                  </div>
+
+                  {data.experience.length === 0 ? (
+                    <div className="p-8 text-center border border-dashed border-border rounded-[5px] bg-muted/20 space-y-2">
+                      <Briefcase className="w-8 h-8 text-muted-foreground/40 mx-auto" />
+                      <p className="text-xs font-bold text-foreground">Nenhuma experiência cadastrada</p>
+                      <p className="text-[11px] text-muted-foreground">Adicione experiências anteriores ou clique no botão abaixo.</p>
+                      <Button size="sm" variant="outline" onClick={addExperience} className="mt-2 text-xs font-bold rounded-[5px]">
+                        <Plus className="w-3.5 h-3.5 mr-1" /> Adicionar Primeira Experiência
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-3.5">
+                      {data.experience.map((exp, idx) => (
+                        <Card key={idx} className="rounded-[5px] border-border/80 shadow-xs">
+                          <CardContent className="p-4 space-y-3">
+                            <div className="flex justify-between items-center pb-2 border-b border-border/60">
+                              <span className="text-xs font-bold text-primary flex items-center gap-1.5">
+                                <Briefcase className="w-3.5 h-3.5" /> Experiência #{idx + 1}
+                              </span>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeExperience(idx)}
+                                className="h-7 px-2 text-destructive hover:bg-destructive/10 rounded-[5px] text-xs font-semibold gap-1"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" /> Excluir
+                              </Button>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                              <div>
+                                <Label className="text-[10px] font-bold">Empresa</Label>
+                                <Input
+                                  value={exp.company}
+                                  onChange={(e) => updateExperience(idx, 'company', e.target.value)}
+                                  placeholder="Ex: Latam Airlines / Hotel Fasano"
+                                  className="text-xs h-8 rounded-[5px] mt-0.5"
+                                />
+                              </div>
+                              <div>
+                                <Label className="text-[10px] font-bold">Cargo / Função</Label>
+                                <Input
+                                  value={exp.role}
+                                  onChange={(e) => updateExperience(idx, 'role', e.target.value)}
+                                  placeholder="Ex: Atendente de Solo / Recepcionista"
+                                  className="text-xs h-8 rounded-[5px] mt-0.5"
+                                />
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                              <div>
+                                <Label className="text-[10px] font-bold">Período de Início</Label>
+                                <Input
+                                  value={exp.start}
+                                  onChange={(e) => updateExperience(idx, 'start', e.target.value)}
+                                  placeholder="Ex: Jan 2021"
+                                  className="text-xs h-8 rounded-[5px] mt-0.5"
+                                />
+                              </div>
+                              <div>
+                                <Label className="text-[10px] font-bold">Período de Término</Label>
+                                <Input
+                                  value={exp.end}
+                                  onChange={(e) => updateExperience(idx, 'end', e.target.value)}
+                                  placeholder="Ex: Dez 2023 ou Atual"
+                                  className="text-xs h-8 rounded-[5px] mt-0.5"
+                                />
+                              </div>
+                            </div>
+
+                            <div>
+                              <div className="flex items-center justify-between mb-1">
+                                <Label className="text-[10px] font-bold">Atividades e Conquistas</Label>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  disabled={isEnhancingSection === `exp_${idx}`}
+                                  onClick={() => handleEnhanceWithAI('Descrição da Experiência', exp.description, (enhanced) => updateExperience(idx, 'description', enhanced))}
+                                  className="h-6 px-2 text-[10px] text-primary hover:bg-primary/10 gap-1 font-bold rounded-[5px]"
+                                >
+                                  {isEnhancingSection === `exp_${idx}` ? (
+                                    <Loader2 className="w-3 h-3 animate-spin" />
+                                  ) : (
+                                    <Sparkles className="w-3 h-3 text-amber-500" />
+                                  )}
+                                  Refinar com IA
+                                </Button>
+                              </div>
+                              <Textarea
+                                rows={3}
+                                value={exp.description}
+                                onChange={(e) => updateExperience(idx, 'description', e.target.value)}
+                                placeholder="Descreva suas principais responsabilidades, atendimento a clientes, protocolos seguidos..."
+                                className="text-xs rounded-[5px]"
+                              />
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* SEÇÃO: FORMAÇÃO ACADÊMICA */}
+              {editorSection === 'formacao' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-base font-bold text-foreground flex items-center gap-2">
+                        <GraduationCap className="w-4 h-4 text-primary" /> Formação Acadêmica
+                      </h2>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Escolaridade regular, cursos técnicos ou graduação superior.
+                      </p>
+                    </div>
+
+                    <Button
+                      size="sm"
+                      onClick={addEducation}
+                      className="h-8 px-3 text-xs font-bold gap-1 rounded-[5px] shrink-0"
+                    >
+                      <Plus className="w-3.5 h-3.5" /> Adicionar
+                    </Button>
+                  </div>
+
+                  {data.education.length === 0 ? (
+                    <div className="p-8 text-center border border-dashed border-border rounded-[5px] bg-muted/20 space-y-2">
+                      <GraduationCap className="w-8 h-8 text-muted-foreground/40 mx-auto" />
+                      <p className="text-xs font-bold text-foreground">Nenhuma formação cadastrada</p>
+                      <p className="text-[11px] text-muted-foreground">Ex: Ensino Médio Completo, Ciências Aeronáuticas...</p>
+                      <Button size="sm" variant="outline" onClick={addEducation} className="mt-2 text-xs font-bold rounded-[5px]">
+                        <Plus className="w-3.5 h-3.5 mr-1" /> Adicionar Formação
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {data.education.map((edu, idx) => (
+                        <Card key={idx} className="rounded-[5px] border-border/80 shadow-xs">
+                          <CardContent className="p-4 space-y-3">
+                            <div className="flex justify-between items-center pb-2 border-b border-border/60">
+                              <span className="text-xs font-bold text-primary flex items-center gap-1.5">
+                                <GraduationCap className="w-3.5 h-3.5" /> Formação #{idx + 1}
+                              </span>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeEducation(idx)}
+                                className="h-7 px-2 text-destructive hover:bg-destructive/10 rounded-[5px] text-xs font-semibold gap-1"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" /> Excluir
+                              </Button>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                              <div>
+                                <Label className="text-[10px] font-bold">Curso / Grau</Label>
+                                <Input
+                                  value={edu.degree}
+                                  onChange={(e) => updateEducation(idx, 'degree', e.target.value)}
+                                  placeholder="Ex: Ensino Médio / Ciências Aeronáuticas"
+                                  className="text-xs h-8 rounded-[5px] mt-0.5"
+                                />
+                              </div>
+                              <div>
+                                <Label className="text-[10px] font-bold">Instituição de Ensino</Label>
+                                <Input
+                                  value={edu.institution}
+                                  onChange={(e) => updateEducation(idx, 'institution', e.target.value)}
+                                  placeholder="Ex: Escola Estadual / Anhembi Morumbi"
+                                  className="text-xs h-8 rounded-[5px] mt-0.5"
+                                />
+                              </div>
+                            </div>
+
+                            <div>
+                              <Label className="text-[10px] font-bold">Ano de Conclusão / Situação</Label>
+                              <Input
+                                value={edu.year}
+                                onChange={(e) => updateEducation(idx, 'year', e.target.value)}
+                                placeholder="Ex: Concluído em 2023 ou Cursando 4º Semestre"
+                                className="text-xs h-8 rounded-[5px] mt-0.5"
+                              />
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* SEÇÃO: CURSOS & CERTIFICAÇÕES ANAC */}
+              {editorSection === 'certificados' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-base font-bold text-foreground flex items-center gap-2">
+                        <Award className="w-4 h-4 text-primary" /> Cursos & Certificações ANAC
+                      </h2>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        CCT/CMS ANAC, cursos homologados, Primeiros Socorros e licenças aeronáuticas.
+                      </p>
+                    </div>
+
+                    <Button
+                      size="sm"
+                      onClick={addCertificate}
+                      className="h-8 px-3 text-xs font-bold gap-1 rounded-[5px] shrink-0"
+                    >
+                      <Plus className="w-3.5 h-3.5" /> Adicionar
+                    </Button>
+                  </div>
+
+                  {data.certificates.length === 0 ? (
+                    <div className="p-8 text-center border border-dashed border-border rounded-[5px] bg-muted/20 space-y-2">
+                      <Award className="w-8 h-8 text-muted-foreground/40 mx-auto" />
+                      <p className="text-xs font-bold text-foreground">Nenhuma certificação adicionada</p>
+                      <p className="text-[11px] text-muted-foreground">Ex: CCT ANAC Comissário de Voo, Curso de Sobrevivência na Selva...</p>
+                      <Button size="sm" variant="outline" onClick={addCertificate} className="mt-2 text-xs font-bold rounded-[5px]">
+                        <Plus className="w-3.5 h-3.5 mr-1" /> Adicionar Certificação
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {data.certificates.map((cert, idx) => (
+                        <Card key={idx} className="rounded-[5px] border-border/80 shadow-xs">
+                          <CardContent className="p-3.5 space-y-2.5">
+                            <div className="flex justify-between items-center pb-1.5 border-b border-border/60">
+                              <span className="text-xs font-bold text-primary flex items-center gap-1.5">
+                                <Award className="w-3.5 h-3.5" /> Certificação #{idx + 1}
+                              </span>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeCertificate(idx)}
+                                className="h-6 px-2 text-destructive hover:bg-destructive/10 rounded-[5px] text-xs font-semibold gap-1"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" /> Excluir
+                              </Button>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-12 gap-2">
+                              <div className="sm:col-span-6">
+                                <Label className="text-[10px] font-bold">Nome do Curso / Certificado</Label>
+                                <Input
+                                  value={cert.name}
+                                  onChange={(e) => updateCertificate(idx, 'name', e.target.value)}
+                                  placeholder="Ex: CCT ANAC Comissário(a)"
+                                  className="text-xs h-8 rounded-[5px] mt-0.5"
+                                />
+                              </div>
+                              <div className="sm:col-span-4">
+                                <Label className="text-[10px] font-bold">Órgão Emissor / Escola</Label>
+                                <Input
+                                  value={cert.issuer}
+                                  onChange={(e) => updateCertificate(idx, 'issuer', e.target.value)}
+                                  placeholder="Ex: ANAC / Escola de Aviação"
+                                  className="text-xs h-8 rounded-[5px] mt-0.5"
+                                />
+                              </div>
+                              <div className="sm:col-span-2">
+                                <Label className="text-[10px] font-bold">Ano / Vigência</Label>
+                                <Input
+                                  value={cert.year}
+                                  onChange={(e) => updateCertificate(idx, 'year', e.target.value)}
+                                  placeholder="Ex: 2024"
+                                  className="text-xs h-8 rounded-[5px] mt-0.5"
+                                />
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* SEÇÃO: IDIOMAS & COMPETÊNCIAS */}
+              {editorSection === 'extras' && (
+                <div className="space-y-5">
+                  {/* Idiomas */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h2 className="text-base font-bold text-foreground flex items-center gap-2">
+                          <Globe className="w-4 h-4 text-primary" /> Idiomas
+                        </h2>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          Idiomas com proficiência informada (Básico a Fluente / ICAO).
+                        </p>
+                      </div>
+
+                      <Button
+                        size="sm"
+                        onClick={addLanguage}
+                        className="h-8 px-3 text-xs font-bold gap-1 rounded-[5px] shrink-0"
+                      >
+                        <Plus className="w-3.5 h-3.5" /> Adicionar
+                      </Button>
+                    </div>
+
+                    {data.languages.length === 0 ? (
+                      <div className="p-5 text-center border border-dashed border-border rounded-[5px] bg-muted/20">
+                        <p className="text-xs text-muted-foreground">Nenhum idioma adicionado ainda.</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        {data.languages.map((lang, idx) => (
+                          <div key={idx} className="flex gap-2 items-center bg-card p-2 rounded-[5px] border border-border/80">
+                            <Input
+                              value={lang.name}
+                              onChange={(e) => updateLanguage(idx, 'name', e.target.value)}
+                              placeholder="Idioma (ex: Inglês, Espanhol)"
+                              className="text-xs h-8 flex-1 rounded-[5px]"
+                            />
+                            <Input
+                              value={lang.level}
+                              onChange={(e) => updateLanguage(idx, 'level', e.target.value)}
+                              placeholder="Nível (ex: Intermediário / ICAO 4)"
+                              className="text-xs h-8 flex-1 rounded-[5px]"
+                            />
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => removeLanguage(idx)}
+                              className="h-8 w-8 text-destructive hover:bg-destructive/10 rounded-[5px] shrink-0"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Competências */}
+                  <div className="space-y-3 pt-3 border-t border-border/70">
+                    <div>
+                      <h2 className="text-base font-bold text-foreground flex items-center gap-2">
+                        <Star className="w-4 h-4 text-primary" /> Competências & Habilidades
+                      </h2>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Habilidades comportamentais e técnicas valorizadas na aviação civil.
+                      </p>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <Input
+                        value={newSkill}
+                        onChange={(e) => setNewSkill(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && addSkill()}
+                        placeholder="Ex: Segurança Operacional, CRM, Atendimento VIP..."
+                        className="text-xs h-8 flex-1 rounded-[5px]"
+                      />
+                      <Button size="sm" onClick={addSkill} className="h-8 px-4 text-xs font-bold rounded-[5px]">
+                        Adicionar
+                      </Button>
+                    </div>
+
+                    {data.skills.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 p-3 bg-muted/20 border border-border/60 rounded-[5px]">
+                        {data.skills.map((skill, idx) => (
+                          <Badge key={idx} variant="secondary" className="gap-1.5 text-xs py-1 px-2.5 rounded-[5px]">
+                            {skill}
+                            <X className="w-3 h-3 cursor-pointer hover:text-destructive transition-colors" onClick={() => removeSkill(idx)} />
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* SEÇÃO: MODELO & TEMPLATE */}
+              {editorSection === 'template' && (
+                <div className="space-y-4">
+                  <div>
+                    <h2 className="text-base font-bold text-foreground flex items-center gap-2">
+                      <Layout className="w-4 h-4 text-primary" /> Escolha o Modelo de Currículo
+                    </h2>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Alterne entre os layouts aprovados conforme a modalidade de candidatura da vaga.
+                    </p>
+                  </div>
+
+                  <div className="space-y-3">
+                    {TEMPLATES.map((tmpl) => {
+                      const isSelected = (data.template || 'ats').toLowerCase() === tmpl.id;
+                      const isRecommended = data.recommended_template === tmpl.id;
+                      const Icon = tmpl.icon;
+
+                      return (
+                        <div
+                          key={tmpl.id}
+                          onClick={() => updateField('template', tmpl.id)}
+                          className={`
+                            cursor-pointer p-4 rounded-[5px] border-2 transition-all flex flex-col justify-between
+                            ${isSelected ? 'border-primary bg-primary/5 shadow-sm' : 'border-border/80 hover:border-primary/40 bg-card'}
+                          `}
+                        >
+                          <div>
+                            <div className="flex items-center justify-between mb-1.5">
+                              <span className="font-bold text-sm text-foreground flex items-center gap-2">
+                                <Icon className={`w-4 h-4 ${isSelected ? 'text-primary' : 'text-muted-foreground'}`} />
+                                {tmpl.name}
+                              </span>
+                              <Badge variant={isSelected ? 'default' : 'secondary'} className="text-[10px] font-bold rounded-[5px]">
+                                {tmpl.badge}
+                              </Badge>
+                            </div>
+                            <p className="text-xs text-muted-foreground leading-relaxed">{tmpl.desc}</p>
+                          </div>
+                          {isRecommended && (
+                            <div className="flex items-center gap-1.5 text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-[5px] border border-amber-500/20 mt-3 w-fit">
+                              <Sparkles className="w-3 h-3 shrink-0" /> Recomendado pela IA
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {data.recommendation_reason && (
+                    <div className="p-3.5 rounded-[5px] bg-primary/5 border border-primary/20 text-xs text-primary flex items-start gap-2">
+                      <Lightbulb className="w-4 h-4 shrink-0 mt-0.5" />
+                      <span><strong>Por que a IA escolheu este modelo:</strong> {data.recommendation_reason}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Navegação entre seções (Voltar / Avançar) */}
+              <div className="pt-4 border-t border-border/80 flex items-center justify-between">
+                {prevSection ? (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setEditorSection(prevSection.id as any)}
+                    className="text-xs font-semibold rounded-[5px] h-8 px-3"
+                  >
+                    ← {prevSection.label}
+                  </Button>
+                ) : <div />}
+
+                {nextSection && (
+                  <Button
+                    size="sm"
+                    onClick={() => setEditorSection(nextSection.id as any)}
+                    className="text-xs font-bold rounded-[5px] h-8 px-3.5 bg-muted hover:bg-muted/80 text-foreground border border-border"
+                  >
+                    {nextSection.label} →
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            {/* ── PAINEL DIREITO: PRÉVIA EM TEMPO REAL (A4) ── */}
+            <div className={`
+              flex-1 bg-muted/30 p-4 sm:p-6 overflow-y-auto flex flex-col items-center justify-start
+              ${mobileEditorView === 'edit' ? 'hidden lg:flex' : 'flex'}
+            `}>
+              <div className="w-full max-w-[210mm] space-y-3">
+                <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
+                  <span className="font-bold flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-success" />
+                    Visualização em Tempo Real ({activeTemplateObj?.name || 'Digital / ATS'})
+                  </span>
+                  <span className="font-mono text-[10px] hidden sm:inline">Formato A4 (210mm × 297mm)</span>
+                </div>
+
+                <div className="shadow-lg rounded-[2px] overflow-hidden border border-border/80 bg-white">
+                  <CurriculumPreview data={data} />
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background flex flex-col print:bg-white print:p-0">
       <div className="print:hidden">
@@ -721,307 +1563,6 @@ export default function CurriculumPage() {
                     })}
                   </div>
                 )}
-              </div>
-            )}
-
-
-            {/* ================================================================ */}
-            {/* MODO EDITOR                                                       */}
-            {/* ================================================================ */}
-            {mode === 'editor' && (
-              <div className="space-y-6">
-                {/* Barra de sub-fluxo do editor */}
-                <Card className="print:hidden border-border bg-card shadow-sm rounded-[5px]">
-                  <CardContent className="p-4 sm:p-6">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-                      <div className="flex items-center gap-3">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setMode('dashboard')}
-                          className="gap-2 font-bold text-xs text-muted-foreground hover:text-foreground rounded-[5px] h-8 px-3"
-                        >
-                          <ChevronLeft className="w-4 h-4 text-primary" />
-                          Galeria
-                        </Button>
-                        <div>
-                          <h3 className="font-bold text-base text-foreground flex items-center gap-2">
-                            <Layout className="w-5 h-5 text-primary" />
-                            Escolha o Modelo de Currículo
-                          </h3>
-                          <p className="text-xs text-muted-foreground mt-0.5">
-                            Alterne entre os modelos otimizados conforme o tipo de vaga.
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        {user && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => saveMutation.mutate()}
-                            disabled={saveMutation.isPending}
-                            className="gap-2 font-bold text-xs rounded-[5px]"
-                          >
-                            {saveMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                            Salvar
-                          </Button>
-                        )}
-                        <Button
-                          size="sm"
-                          onClick={handleDownloadPDF}
-                          className="gap-2 font-bold text-xs bg-primary text-primary-foreground hover:bg-primary/90 rounded-[5px]"
-                        >
-                          <Download className="w-4 h-4" />
-                          Baixar PDF
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* Grid dos 3 Modelos */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                      {TEMPLATES.map((tmpl) => {
-                        const isSelected = (data.template || 'ats').toLowerCase() === tmpl.id;
-                        const isRecommended = data.recommended_template === tmpl.id;
-                        const Icon = tmpl.icon;
-
-                        return (
-                          <div
-                            key={tmpl.id}
-                            onClick={() => updateField('template', tmpl.id)}
-                            className={`
-                              cursor-pointer p-4 rounded-[5px] border-2 transition-all relative flex flex-col justify-between
-                              ${isSelected ? 'border-primary bg-primary/5 shadow-md' : 'border-border hover:border-primary/40 bg-muted/20'}
-                            `}
-                          >
-                            <div>
-                              <div className="flex items-center justify-between mb-2">
-                                <span className="font-bold text-sm text-foreground flex items-center gap-2">
-                                  <Icon className={`w-4 h-4 ${isSelected ? 'text-primary' : 'text-muted-foreground'}`} />
-                                  {tmpl.name}
-                                </span>
-                                <Badge variant={isSelected ? 'default' : 'secondary'} className="text-[10px] font-bold rounded-[5px]">
-                                  {tmpl.badge}
-                                </Badge>
-                              </div>
-                              <p className="text-xs text-muted-foreground leading-relaxed mb-3">{tmpl.desc}</p>
-                            </div>
-                            {isRecommended && (
-                              <div className="flex items-center gap-1.5 text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-[5px] border border-amber-500/20 mt-2">
-                                <Sparkles className="w-3 h-3 shrink-0" /> Recomendado pela IA
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-
-                    {data.recommendation_reason && (
-                      <div className="mt-4 p-3 rounded-[5px] bg-primary/5 border border-primary/20 text-xs text-primary flex items-start gap-2">
-                        <Lightbulb className="w-4 h-4 shrink-0 mt-0.5" />
-                        <span><strong>Por que a IA escolheu este modelo:</strong> {data.recommendation_reason}</span>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-
-                {/* Split Screen: Form + Preview */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                  <div className="print:hidden lg:col-span-5 space-y-6">
-                    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                      <TabsList className="grid grid-cols-4 w-full bg-muted/60">
-                        <TabsTrigger value="dados" className="text-xs font-bold">Dados</TabsTrigger>
-                        <TabsTrigger value="experiencia" className="text-xs font-bold">Experiência</TabsTrigger>
-                        <TabsTrigger value="formacao" className="text-xs font-bold">Formação</TabsTrigger>
-                        <TabsTrigger value="extras" className="text-xs font-bold">Extras</TabsTrigger>
-                      </TabsList>
-
-                      <TabsContent value="dados" className="space-y-4 mt-4">
-                        <Card className="rounded-[5px]">
-                          <CardHeader className="pb-3">
-                            <CardTitle className="text-sm font-bold flex items-center gap-2">
-                              <User className="w-4 h-4 text-primary" /> Dados Pessoais & Objetivo
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent className="space-y-4">
-                            <div>
-                              <Label className="text-xs font-bold">Nome Completo</Label>
-                              <Input value={data.full_name} onChange={(e) => updateField('full_name', e.target.value)} placeholder="Ex: Ana Maria Silva" className="mt-1 text-xs rounded-[5px]" />
-                            </div>
-                            <div>
-                              <Label className="text-xs font-bold">Cargo Desejado / Área</Label>
-                              <Input value={data.profession} onChange={(e) => updateField('profession', e.target.value)} placeholder="Ex: Comissária de Bordo / ANAC CCT" className="mt-1 text-xs rounded-[5px]" />
-                            </div>
-                            <div className="grid grid-cols-2 gap-2">
-                              <div>
-                                <Label className="text-xs font-bold">E-mail</Label>
-                                <Input value={data.email} onChange={(e) => updateField('email', e.target.value)} placeholder="seu.email@exemplo.com" className="mt-1 text-xs rounded-[5px]" />
-                              </div>
-                              <div>
-                                <Label className="text-xs font-bold">Telefone</Label>
-                                <Input value={data.phone} onChange={(e) => updateField('phone', e.target.value)} placeholder="(11) 98888-7777" className="mt-1 text-xs rounded-[5px]" />
-                              </div>
-                            </div>
-                            <div>
-                              <Label className="text-xs font-bold">Cidade e Estado</Label>
-                              <Input value={data.city} onChange={(e) => updateField('city', e.target.value)} placeholder="Ex: São Paulo - SP" className="mt-1 text-xs rounded-[5px]" />
-                            </div>
-                            <div>
-                              <div className="flex items-center justify-between mb-1">
-                                <Label className="text-xs font-bold">Resumo / Perfil Profissional</Label>
-                                <Button variant="ghost" size="sm" disabled={isEnhancingSection === 'summary'} onClick={() => handleEnhanceWithAI('Resumo Profissional', data.summary, (enhanced) => updateField('summary', enhanced))} className="h-6 px-2 text-[10px] text-primary hover:bg-primary/10 gap-1 font-bold rounded-[5px]">
-                                  {isEnhancingSection === 'summary' ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3 text-amber-500" />}
-                                  Melhorar com IA
-                                </Button>
-                              </div>
-                              <Textarea rows={4} value={data.summary} onChange={(e) => updateField('summary', e.target.value)} placeholder="Breve resumo com suas qualificações..." className="text-xs leading-relaxed rounded-[5px]" />
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </TabsContent>
-
-                      <TabsContent value="experiencia" className="space-y-4 mt-4">
-                        <Card className="rounded-[5px]">
-                          <CardHeader className="pb-3 flex flex-row items-center justify-between">
-                            <CardTitle className="text-sm font-bold flex items-center gap-2">
-                              <Briefcase className="w-4 h-4 text-primary" /> Histórico Profissional
-                            </CardTitle>
-                            <Button size="sm" variant="outline" onClick={addExperience} className="h-7 text-xs font-bold gap-1 rounded-[5px]">
-                              <Plus className="w-3.5 h-3.5" /> Adicionar
-                            </Button>
-                          </CardHeader>
-                          <CardContent className="space-y-4">
-                            {data.experience.length === 0 ? (
-                              <p className="text-xs text-muted-foreground text-center py-4">Nenhuma experiência adicionada.</p>
-                            ) : (
-                              data.experience.map((exp, idx) => (
-                                <div key={idx} className="p-3 border border-border rounded-[5px] bg-muted/20 space-y-3 relative">
-                                  <div className="flex justify-between items-center">
-                                    <span className="text-xs font-bold text-primary">Experiência #{idx + 1}</span>
-                                    <Button variant="ghost" size="icon" onClick={() => removeExperience(idx)} className="h-6 w-6 text-destructive rounded-[5px]"><Trash2 className="w-3.5 h-3.5" /></Button>
-                                  </div>
-                                  <div className="grid grid-cols-2 gap-2">
-                                    <div><Label className="text-[10px] font-bold">Empresa</Label><Input value={exp.company} onChange={(e) => updateExperience(idx, 'company', e.target.value)} placeholder="Ex: Latam" className="text-xs h-8 rounded-[5px]" /></div>
-                                    <div><Label className="text-[10px] font-bold">Cargo</Label><Input value={exp.role} onChange={(e) => updateExperience(idx, 'role', e.target.value)} placeholder="Ex: Atendente de Solo" className="text-xs h-8 rounded-[5px]" /></div>
-                                  </div>
-                                  <div className="grid grid-cols-2 gap-2">
-                                    <div><Label className="text-[10px] font-bold">Início</Label><Input value={exp.start} onChange={(e) => updateExperience(idx, 'start', e.target.value)} placeholder="Ex: 2021" className="text-xs h-8 rounded-[5px]" /></div>
-                                    <div><Label className="text-[10px] font-bold">Fim</Label><Input value={exp.end} onChange={(e) => updateExperience(idx, 'end', e.target.value)} placeholder="Ex: 2023 ou Atual" className="text-xs h-8 rounded-[5px]" /></div>
-                                  </div>
-                                  <div>
-                                    <div className="flex items-center justify-between mb-1">
-                                      <Label className="text-[10px] font-bold">Atividades e Conquistas</Label>
-                                      <Button variant="ghost" size="sm" disabled={isEnhancingSection === `exp_${idx}`} onClick={() => handleEnhanceWithAI('Descrição da Experiência', exp.description, (enhanced) => updateExperience(idx, 'description', enhanced))} className="h-5 px-1.5 text-[9px] text-primary hover:bg-primary/10 gap-1 font-bold rounded-[5px]">
-                                        {isEnhancingSection === `exp_${idx}` ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3 text-amber-500" />} Refinar com IA
-                                      </Button>
-                                    </div>
-                                    <Textarea rows={2} value={exp.description} onChange={(e) => updateExperience(idx, 'description', e.target.value)} placeholder="Descrição das responsabilidades..." className="text-xs rounded-[5px]" />
-                                  </div>
-                                </div>
-                              ))
-                            )}
-                          </CardContent>
-                        </Card>
-                      </TabsContent>
-
-                      <TabsContent value="formacao" className="space-y-4 mt-4">
-                        <Card className="rounded-[5px]">
-                          <CardHeader className="pb-3 flex flex-row items-center justify-between">
-                            <CardTitle className="text-sm font-bold flex items-center gap-2">
-                              <GraduationCap className="w-4 h-4 text-primary" /> Formação Acadêmica
-                            </CardTitle>
-                            <Button size="sm" variant="outline" onClick={addEducation} className="h-7 text-xs font-bold gap-1 rounded-[5px]"><Plus className="w-3.5 h-3.5" /> Adicionar</Button>
-                          </CardHeader>
-                          <CardContent className="space-y-3">
-                            {data.education.map((edu, idx) => (
-                              <div key={idx} className="p-3 border border-border rounded-[5px] bg-muted/20 space-y-2 relative">
-                                <div className="flex justify-between items-center">
-                                  <span className="text-xs font-bold text-primary">Formação #{idx + 1}</span>
-                                  <Button variant="ghost" size="icon" onClick={() => removeEducation(idx)} className="h-6 w-6 text-destructive rounded-[5px]"><Trash2 className="w-3.5 h-3.5" /></Button>
-                                </div>
-                                <div className="grid grid-cols-2 gap-2">
-                                  <div><Label className="text-[10px] font-bold">Curso / Grau</Label><Input value={edu.degree} onChange={(e) => updateEducation(idx, 'degree', e.target.value)} placeholder="Ex: Aviação Civil" className="text-xs h-8 rounded-[5px]" /></div>
-                                  <div><Label className="text-[10px] font-bold">Instituição</Label><Input value={edu.institution} onChange={(e) => updateEducation(idx, 'institution', e.target.value)} placeholder="Ex: Anhembi Morumbi" className="text-xs h-8 rounded-[5px]" /></div>
-                                </div>
-                                <div><Label className="text-[10px] font-bold">Ano de Conclusão</Label><Input value={edu.year} onChange={(e) => updateEducation(idx, 'year', e.target.value)} placeholder="Ex: 2023" className="text-xs h-8 rounded-[5px]" /></div>
-                              </div>
-                            ))}
-                          </CardContent>
-                        </Card>
-                      </TabsContent>
-
-                      <TabsContent value="extras" className="space-y-4 mt-4">
-                        <Card className="rounded-[5px]">
-                          <CardHeader className="pb-3 flex flex-row items-center justify-between">
-                            <CardTitle className="text-sm font-bold flex items-center gap-2"><Award className="w-4 h-4 text-primary" /> Cursos & Certificações ANAC</CardTitle>
-                            <Button size="sm" variant="outline" onClick={addCertificate} className="h-7 text-xs font-bold gap-1 rounded-[5px]"><Plus className="w-3.5 h-3.5" /> Adicionar</Button>
-                          </CardHeader>
-                          <CardContent className="space-y-2">
-                            {data.certificates.map((cert, idx) => (
-                              <div key={idx} className="p-2 border border-border rounded-[5px] bg-muted/20 grid grid-cols-12 gap-2 items-center">
-                                <div className="col-span-5"><Input value={cert.name} onChange={(e) => updateCertificate(idx, 'name', e.target.value)} placeholder="Ex: CCT ANAC Comissário" className="text-xs h-7 rounded-[5px]" /></div>
-                                <div className="col-span-4"><Input value={cert.issuer} onChange={(e) => updateCertificate(idx, 'issuer', e.target.value)} placeholder="Órgão/Escola" className="text-xs h-7 rounded-[5px]" /></div>
-                                <div className="col-span-2"><Input value={cert.year} onChange={(e) => updateCertificate(idx, 'year', e.target.value)} placeholder="Ano" className="text-xs h-7 rounded-[5px]" /></div>
-                                <div className="col-span-1 text-right"><Button variant="ghost" size="icon" onClick={() => removeCertificate(idx)} className="h-6 w-6 text-destructive rounded-[5px]"><Trash2 className="w-3 h-3" /></Button></div>
-                              </div>
-                            ))}
-                          </CardContent>
-                        </Card>
-
-                        <Card className="rounded-[5px]">
-                          <CardHeader className="pb-3 flex flex-row items-center justify-between">
-                            <CardTitle className="text-sm font-bold flex items-center gap-2"><Globe className="w-4 h-4 text-primary" /> Idiomas</CardTitle>
-                            <Button size="sm" variant="outline" onClick={addLanguage} className="h-7 text-xs font-bold gap-1 rounded-[5px]"><Plus className="w-3.5 h-3.5" /> Adicionar</Button>
-                          </CardHeader>
-                          <CardContent className="space-y-2">
-                            {data.languages.map((lang, idx) => (
-                              <div key={idx} className="flex gap-2 items-center">
-                                <Input value={lang.name} onChange={(e) => updateLanguage(idx, 'name', e.target.value)} placeholder="Idioma (ex: Inglês)" className="text-xs h-8 flex-1 rounded-[5px]" />
-                                <Input value={lang.level} onChange={(e) => updateLanguage(idx, 'level', e.target.value)} placeholder="Nível (ex: Avançado)" className="text-xs h-8 flex-1 rounded-[5px]" />
-                                <Button variant="ghost" size="icon" onClick={() => removeLanguage(idx)} className="h-8 w-8 text-destructive rounded-[5px]"><Trash2 className="w-3.5 h-3.5" /></Button>
-                              </div>
-                            ))}
-                          </CardContent>
-                        </Card>
-
-                        <Card className="rounded-[5px]">
-                          <CardHeader className="pb-3">
-                            <CardTitle className="text-sm font-bold flex items-center gap-2"><Star className="w-4 h-4 text-primary" /> Competências & Habilidades</CardTitle>
-                          </CardHeader>
-                          <CardContent className="space-y-3">
-                            <div className="flex gap-2">
-                              <Input value={newSkill} onChange={(e) => setNewSkill(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && addSkill()} placeholder="Ex: Gestão de Crises, CRM..." className="text-xs h-8 flex-1 rounded-[5px]" />
-                              <Button size="sm" onClick={addSkill} className="h-8 text-xs font-bold rounded-[5px]">Adicionar</Button>
-                            </div>
-                            <div className="flex flex-wrap gap-1.5">
-                              {data.skills.map((skill, idx) => (
-                                <Badge key={idx} variant="secondary" className="gap-1 text-xs rounded-[5px]">
-                                  {skill}
-                                  <X className="w-3 h-3 cursor-pointer hover:text-destructive" onClick={() => removeSkill(idx)} />
-                                </Badge>
-                              ))}
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </TabsContent>
-                    </Tabs>
-                  </div>
-
-                  {/* Preview */}
-                  <div className="lg:col-span-7 print:col-span-12">
-                    <div className="sticky top-20">
-                      <div className="print:hidden mb-3 flex items-center justify-between">
-                        <span className="text-xs font-bold text-muted-foreground flex items-center gap-1.5">
-                          <CheckCircle2 className="w-4 h-4 text-success" />
-                          Visualização em Tempo Real ({TEMPLATES.find(t => t.id === (data.template || 'ats').toLowerCase())?.name})
-                        </span>
-                        <span className="text-[10px] text-muted-foreground font-mono">Formato A4 (210mm × 297mm)</span>
-                      </div>
-                      <CurriculumPreview data={data} />
-                    </div>
-                  </div>
-                </div>
               </div>
             )}
           </>
