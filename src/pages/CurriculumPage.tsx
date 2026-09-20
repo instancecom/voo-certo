@@ -589,9 +589,12 @@ export default function CurriculumPage() {
 
     return (
       <div className="flex flex-col h-[100dvh] w-screen bg-background overflow-hidden fixed inset-0 z-50 select-text overscroll-none">
+        
         {/* ── TOPBAR SUPERIOR ── */}
-        <header className="h-14 border-b border-border/80 px-3.5 sm:px-5 flex items-center justify-between shrink-0 bg-card/90 backdrop-blur-md z-20">
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+        <header className="h-14 border-b border-border/80 px-3.5 sm:px-5 flex items-center justify-between shrink-0 bg-card/95 backdrop-blur-md z-20">
+          
+          {/* DESKTOP HEADER */}
+          <div className="hidden lg:flex items-center gap-3 min-w-0">
             <Button
               variant="ghost"
               size="sm"
@@ -599,13 +602,13 @@ export default function CurriculumPage() {
               className="h-8 px-2.5 gap-1.5 text-xs font-bold text-muted-foreground hover:text-foreground rounded-[5px]"
             >
               <ChevronLeft className="w-4 h-4 text-primary" />
-              <span className="hidden sm:inline">Galeria</span>
+              <span>Galeria</span>
             </Button>
 
-            <div className="h-4 w-px bg-border hidden sm:block" />
+            <div className="h-4 w-px bg-border" />
 
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-6 h-6 rounded-[4px] overflow-hidden border border-border bg-slate-900 shrink-0 hidden xs:block">
+              <div className="w-6 h-6 rounded-[4px] overflow-hidden border border-border bg-slate-900 shrink-0">
                 <img
                   src="/images/avatars/mike_character_curiculum.png"
                   alt="Mike"
@@ -613,44 +616,60 @@ export default function CurriculumPage() {
                 />
               </div>
               <div className="min-w-0">
-                <h1 className="text-xs sm:text-sm font-black text-foreground truncate">
+                <h1 className="text-sm font-black text-foreground truncate">
                   {data.profession || data.full_name || 'Editar Currículo'}
                 </h1>
-                <p className="text-[10px] text-muted-foreground hidden sm:block truncate">
+                <p className="text-[10px] text-muted-foreground truncate">
                   Modelo: <span className="text-foreground font-semibold">{activeTemplateObj?.name || 'Digital / ATS'}</span>
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Ações Topbar */}
-          <div className="flex items-center gap-2 shrink-0">
-            {/* Toggle Mobile (Editar vs Prévia) */}
-            <div className="flex items-center bg-muted/70 p-0.5 rounded-[5px] border border-border/80 lg:hidden">
-              <button
-                onClick={() => setMobileEditorView('edit')}
-                className={`px-2.5 py-1 text-xs font-bold rounded-[4px] transition-all flex items-center gap-1 ${
-                  mobileEditorView === 'edit'
-                    ? 'bg-card text-foreground shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                <Edit3 className="w-3.5 h-3.5" />
-                <span>Editar</span>
-              </button>
-              <button
-                onClick={() => setMobileEditorView('preview')}
-                className={`px-2.5 py-1 text-xs font-bold rounded-[4px] transition-all flex items-center gap-1 ${
-                  mobileEditorView === 'preview'
-                    ? 'bg-card text-foreground shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                <Eye className="w-3.5 h-3.5" />
-                <span>Prévia</span>
-              </button>
+          {/* MOBILE HEADER (ULTRA MINIMALISTA) */}
+          <div className="flex lg:hidden items-center justify-between w-full">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setMode('dashboard')}
+              className="h-8 px-2 gap-1 text-xs font-bold text-muted-foreground hover:text-foreground rounded-[5px]"
+            >
+              <ChevronLeft className="w-4 h-4 text-primary" />
+              <span>Galeria</span>
+            </Button>
+
+            <div className="text-center min-w-0 px-2 flex-1">
+              <span className="text-xs font-black text-foreground block truncate">
+                {mobileEditorView === 'preview' 
+                  ? 'Prévia do PDF' 
+                  : `${currentSectionIndex + 1}/7 • ${SECTIONS[currentSectionIndex].label}`}
+              </span>
             </div>
 
+            <Button
+              variant={mobileEditorView === 'preview' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setMobileEditorView(mobileEditorView === 'preview' ? 'edit' : 'preview')}
+              className={`h-8 px-3 text-xs font-bold rounded-[5px] gap-1 shrink-0 ${
+                mobileEditorView === 'preview'
+                  ? 'bg-[#0f172a] text-white hover:bg-slate-800'
+                  : 'border-border text-foreground hover:bg-muted'
+              }`}
+            >
+              {mobileEditorView === 'preview' ? (
+                <>
+                  <Edit3 className="w-3.5 h-3.5" /> Editar
+                </>
+              ) : (
+                <>
+                  <Eye className="w-3.5 h-3.5" /> Prévia
+                </>
+              )}
+            </Button>
+          </div>
+
+          {/* DESKTOP ACTIONS */}
+          <div className="hidden lg:flex items-center gap-2 shrink-0">
             {user && (
               <Button
                 variant="outline"
@@ -664,7 +683,7 @@ export default function CurriculumPage() {
                 ) : (
                   <Save className="w-3.5 h-3.5 text-primary" />
                 )}
-                <span className="hidden sm:inline">Salvar</span>
+                <span>Salvar</span>
               </Button>
             )}
 
@@ -683,6 +702,30 @@ export default function CurriculumPage() {
             </Button>
           </div>
         </header>
+
+        {/* ── BARRA FINA DE PROGRESSO NO MOBILE (Passos 1 a 7) ── */}
+        {mobileEditorView === 'edit' && (
+          <div className="flex lg:hidden items-center gap-1.5 px-4 py-2 border-b border-border/60 bg-muted/20 shrink-0">
+            {SECTIONS.map((sec, idx) => {
+              const isDone = idx < currentSectionIndex;
+              const isCurrent = idx === currentSectionIndex;
+              return (
+                <button
+                  key={sec.id}
+                  onClick={() => setEditorSection(sec.id as any)}
+                  className={`h-1.5 flex-1 rounded-full transition-all ${
+                    isCurrent
+                      ? 'bg-primary'
+                      : isDone
+                      ? 'bg-primary/40'
+                      : 'bg-muted-foreground/20'
+                  }`}
+                  title={sec.label}
+                />
+              );
+            })}
+          </div>
+        )}
 
         {/* ── CORPO PRINCIPAL (SIDEBAR + WORKSPACE SPLIT) ── */}
         <div className="flex flex-1 overflow-hidden h-[calc(100dvh-3.5rem)]">
@@ -754,26 +797,9 @@ export default function CurriculumPage() {
             
             {/* ── PAINEL DE FORMULÁRIO / EDIÇÃO ── */}
             <div className={`
-              flex-1 lg:max-w-xl xl:max-w-2xl overflow-y-auto p-4 sm:p-6 space-y-6 border-r border-border/70 bg-background
+              flex-1 lg:max-w-xl xl:max-w-2xl overflow-y-auto p-4 sm:p-6 space-y-6 border-r border-border/70 bg-background pb-24 lg:pb-6
               ${mobileEditorView === 'preview' ? 'hidden lg:block' : 'block'}
             `}>
-              
-              {/* Menu horizontal no mobile */}
-              <div className="flex md:hidden items-center gap-1.5 overflow-x-auto pb-2 -mx-2 px-2 scrollbar-none">
-                {SECTIONS.map((sec) => (
-                  <button
-                    key={sec.id}
-                    onClick={() => setEditorSection(sec.id as any)}
-                    className={`px-3 py-1.5 rounded-[5px] text-xs font-bold whitespace-nowrap shrink-0 transition-all ${
-                      editorSection === sec.id
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-muted/60 text-muted-foreground hover:text-foreground'
-                    }`}
-                  >
-                    {sec.label}
-                  </button>
-                ))}
-              </div>
 
               {/* SEÇÃO: DADOS PESSOAIS */}
               {editorSection === 'dados' && (
@@ -844,42 +870,41 @@ export default function CurriculumPage() {
               {/* SEÇÃO: RESUMO & PERFIL */}
               {editorSection === 'resumo' && (
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h2 className="text-base font-bold text-foreground flex items-center gap-2">
-                        <FileText className="w-4 h-4 text-primary" /> Resumo Profissional & Objetivo
-                      </h2>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        Apresentação executiva rápida focada no perfil que as companhias aéreas buscam.
-                      </p>
-                    </div>
-
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      disabled={isEnhancingSection === 'summary'}
-                      onClick={() => handleEnhanceWithAI('Resumo Profissional', data.summary, (enhanced) => updateField('summary', enhanced))}
-                      className="h-8 px-3 text-xs text-primary hover:bg-primary/10 gap-1.5 font-bold rounded-[5px] border border-primary/20 shrink-0"
-                    >
-                      {isEnhancingSection === 'summary' ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      ) : (
-                        <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                      )}
-                      <span>Melhorar com Mike IA</span>
-                    </Button>
+                  <div>
+                    <h2 className="text-base font-bold text-foreground flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-primary" /> Resumo Profissional & Objetivo
+                    </h2>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Apresentação executiva rápida focada no perfil que as companhias aéreas buscam.
+                    </p>
                   </div>
 
                   <Card className="rounded-[5px] border-border/80 shadow-xs">
                     <CardContent className="p-4 sm:p-5 space-y-3">
                       <div>
-                        <Label className="text-xs font-bold">Texto do Resumo</Label>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <Label className="text-xs font-bold">Texto do Resumo</Label>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            disabled={isEnhancingSection === 'summary'}
+                            onClick={() => handleEnhanceWithAI('Resumo Profissional', data.summary, (enhanced) => updateField('summary', enhanced))}
+                            className="h-7 px-2.5 text-xs text-primary hover:bg-primary/10 gap-1 font-bold rounded-[5px] border border-primary/20"
+                          >
+                            {isEnhancingSection === 'summary' ? (
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            ) : (
+                              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                            )}
+                            <span>Melhorar com Mike IA</span>
+                          </Button>
+                        </div>
                         <Textarea
                           rows={6}
                           value={data.summary}
                           onChange={(e) => updateField('summary', e.target.value)}
                           placeholder="Ex: Profissional dedicado com foco em segurança de voo e excelência no atendimento..."
-                          className="mt-1.5 text-xs leading-relaxed rounded-[5px]"
+                          className="text-xs leading-relaxed rounded-[5px]"
                         />
                       </div>
 
@@ -999,9 +1024,9 @@ export default function CurriculumPage() {
                                   className="h-6 px-2 text-[10px] text-primary hover:bg-primary/10 gap-1 font-bold rounded-[5px]"
                                 >
                                   {isEnhancingSection === `exp_${idx}` ? (
-                                    <Loader2 className="w-3 h-3 animate-spin" />
+                                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
                                   ) : (
-                                    <Sparkles className="w-3 h-3 text-amber-500" />
+                                    <Sparkles className="w-3.5 h-3.5 text-amber-500" />
                                   )}
                                   Refinar com IA
                                 </Button>
@@ -1351,8 +1376,8 @@ export default function CurriculumPage() {
                 </div>
               )}
 
-              {/* Navegação entre seções (Voltar / Avançar) */}
-              <div className="pt-4 border-t border-border/80 flex items-center justify-between">
+              {/* Navegação entre seções DESKTOP (Voltar / Avançar) */}
+              <div className="hidden lg:flex pt-4 border-t border-border/80 items-center justify-between">
                 {prevSection ? (
                   <Button
                     variant="ghost"
@@ -1378,7 +1403,7 @@ export default function CurriculumPage() {
 
             {/* ── PAINEL DIREITO: PRÉVIA EM TEMPO REAL (A4) ── */}
             <div className={`
-              flex-1 bg-muted/30 p-4 sm:p-6 overflow-y-auto flex flex-col items-center justify-start
+              flex-1 bg-muted/30 p-4 sm:p-6 overflow-y-auto flex flex-col items-center justify-start pb-24 lg:pb-6
               ${mobileEditorView === 'edit' ? 'hidden lg:flex' : 'flex'}
             `}>
               <div className="w-full max-w-[210mm] space-y-3">
@@ -1398,6 +1423,76 @@ export default function CurriculumPage() {
 
           </div>
         </div>
+
+        {/* ── BARRA FIXA DE AÇÃO NO MOBILE (RODAPÉ) ── */}
+        <div className="flex lg:hidden items-center justify-between p-3 border-t border-border bg-card/95 backdrop-blur-md shrink-0 gap-2 z-20">
+          {mobileEditorView === 'edit' ? (
+            <>
+              <Button
+                variant="ghost"
+                size="sm"
+                disabled={currentSectionIndex === 0}
+                onClick={() => prevSection && setEditorSection(prevSection.id as any)}
+                className="text-xs font-semibold rounded-[5px] h-9 px-3 disabled:opacity-30"
+              >
+                ← Anterior
+              </Button>
+
+              {user && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => saveMutation.mutate()}
+                  disabled={saveMutation.isPending}
+                  className="text-xs font-bold rounded-[5px] h-9 px-3 border-border hover:bg-muted"
+                >
+                  {saveMutation.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5 text-primary" />}
+                  <span className="hidden xs:inline">Salvar</span>
+                </Button>
+              )}
+
+              {nextSection ? (
+                <Button
+                  size="sm"
+                  onClick={() => setEditorSection(nextSection.id as any)}
+                  className="text-xs font-bold rounded-[5px] h-9 px-4 bg-primary text-primary-foreground hover:bg-primary/90"
+                >
+                  Próximo →
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  onClick={() => setMobileEditorView('preview')}
+                  className="text-xs font-bold rounded-[5px] h-9 px-4 bg-primary text-primary-foreground hover:bg-primary/90"
+                >
+                  Ver Prévia →
+                </Button>
+              )}
+            </>
+          ) : (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setMobileEditorView('edit')}
+                className="text-xs font-bold rounded-[5px] h-9 px-3 border-border"
+              >
+                ← Voltar a Editar
+              </Button>
+
+              <Button
+                size="sm"
+                onClick={() => handleDownloadPDF()}
+                disabled={isDownloadingPDF}
+                className="text-xs font-bold rounded-[5px] h-9 px-4 bg-primary text-primary-foreground hover:bg-primary/90 flex-1 ml-2"
+              >
+                {isDownloadingPDF ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" /> : <Download className="w-3.5 h-3.5 mr-1" />}
+                Baixar PDF
+              </Button>
+            </>
+          )}
+        </div>
+
       </div>
     );
   }
