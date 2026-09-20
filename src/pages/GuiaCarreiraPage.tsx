@@ -25,17 +25,19 @@ import {
 
 
 const getGuideCategory = (guide: any) => {
-  if (guide?.category) return guide.category;
+  const explicitCat = (guide?.category || '').toLowerCase().trim();
+  if (['comissaria', 'piloto', 'mecanico'].includes(explicitCat)) {
+    return explicitCat;
+  }
   
-  const title = guide?.title || '';
-  const t = title.toLowerCase();
-  if (t.includes('comissaria') || t.includes('comissário') || t.includes('comissario') || t.includes('bordo')) {
+  const text = `${guide?.title || ''} ${guide?.description || ''}`.toLowerCase();
+  if (text.includes('comissar') || text.includes('bordo') || text.includes('aeromoça') || text.includes('cms')) {
     return 'comissaria';
   }
-  if (t.includes('piloto') || t.includes('pp') || t.includes('pc') || t.includes('voar')) {
+  if (text.includes('pilot') || text.includes(' pp') || text.includes(' pc') || text.includes('pla') || text.includes('voar') || text.includes('aviador') || text.includes('privado') || text.includes('comercial')) {
     return 'piloto';
   }
-  if (t.includes('mecanico') || t.includes('mecânico') || t.includes('manutenção') || t.includes('manutencao')) {
+  if (text.includes('mecanic') || text.includes('mecânic') || text.includes('manuten') || text.includes('mma') || text.includes('oficina')) {
     return 'mecanico';
   }
   return 'geral';
@@ -118,7 +120,7 @@ function CareerGuideRow({ title, icon, guides, navigate }: CareerGuideRowProps) 
         {showLeftArrow && (
           <button
             onClick={() => scroll('left')}
-            className="hidden md:flex absolute -left-3 top-[40%] -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-background/90 backdrop-blur-md border border-border/85 shadow-lg items-center justify-center text-muted-foreground hover:text-primary hover:bg-background transition-all hover:scale-110 opacity-0 group-hover/slider:opacity-100"
+            className="hidden md:flex absolute -left-3 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-background/95 backdrop-blur-md border border-border shadow-md items-center justify-center text-muted-foreground hover:text-primary hover:bg-background transition-all hover:scale-110 opacity-0 group-hover/slider:opacity-100"
             aria-label="Scroll left"
           >
             <ChevronLeft className="w-5 h-5" />
@@ -129,7 +131,7 @@ function CareerGuideRow({ title, icon, guides, navigate }: CareerGuideRowProps) 
         {showRightArrow && (
           <button
             onClick={() => scroll('right')}
-            className="hidden md:flex absolute -right-3 top-[40%] -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-background/90 backdrop-blur-md border border-border/85 shadow-lg items-center justify-center text-muted-foreground hover:text-primary hover:bg-background transition-all hover:scale-110 opacity-0 group-hover/slider:opacity-100"
+            className="hidden md:flex absolute -right-3 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-background/95 backdrop-blur-md border border-border shadow-md items-center justify-center text-muted-foreground hover:text-primary hover:bg-background transition-all hover:scale-110 opacity-0 group-hover/slider:opacity-100"
             aria-label="Scroll right"
           >
             <ChevronRight className="w-5 h-5" />
@@ -139,7 +141,7 @@ function CareerGuideRow({ title, icon, guides, navigate }: CareerGuideRowProps) 
         {/* Scrollable Row */}
         <div
           ref={sliderRef}
-          className="flex gap-5 overflow-x-auto scrollbar-none scroll-smooth pb-4 -mx-4 px-4"
+          className="flex gap-5 overflow-x-auto scrollbar-none scroll-smooth py-4 px-4 -mx-4 -my-2"
         >
           {guides.map((guide, index) => {
             const category = getGuideCategory(guide);
@@ -150,11 +152,11 @@ function CareerGuideRow({ title, icon, guides, navigate }: CareerGuideRowProps) 
                 initial={{ opacity: 0, x: 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.06, duration: 0.4 }}
-                className="flex-none w-[240px] sm:w-[270px] md:w-[310px]"
+                transition={{ delay: index * 0.05, duration: 0.35 }}
+                className="flex-none w-[240px] sm:w-[270px] md:w-[310px] p-1"
               >
                 <div
-                  className="p-5 md:p-6 rounded-[5px] bg-card border border-border hover:border-primary/30 hover:shadow-xl transition-all h-full flex flex-col group/card relative overflow-hidden cursor-pointer"
+                  className="p-5 md:p-6 rounded-[5px] bg-card border border-border shadow-sm hover:border-primary/40 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full flex flex-col group/card relative overflow-hidden cursor-pointer"
                   onClick={() => navigate(`/guia-carreira/${guide.id}`)}
                 >
                   {/* Decorative bg icon */}
@@ -503,7 +505,7 @@ export default function GuiaCarreiraPage() {
                     {(selectedCategory === 'todos' || selectedCategory === 'comissaria') && (
                       <CareerGuideRow
                         title="Comissários de Bordo"
-                        icon={<Plane className="w-5 h-5 -rotate-45 text-accent" />}
+                        icon={<Plane className="w-5 h-5 -rotate-45 text-primary" />}
                         guides={comissariaGuides}
                         navigate={navigate}
                       />
@@ -512,7 +514,7 @@ export default function GuiaCarreiraPage() {
                     {(selectedCategory === 'todos' || selectedCategory === 'piloto') && (
                       <CareerGuideRow
                         title="Pilotos"
-                        icon={<Plane className="w-5 h-5 -rotate-45 text-accent" />}
+                        icon={<Plane className="w-5 h-5 -rotate-45 text-primary" />}
                         guides={pilotoGuides}
                         navigate={navigate}
                       />
@@ -521,7 +523,7 @@ export default function GuiaCarreiraPage() {
                     {(selectedCategory === 'todos' || selectedCategory === 'mecanico') && (
                       <CareerGuideRow
                         title="Mecânicos de Voo"
-                        icon={<Wrench className="w-5 h-5 text-accent" />}
+                        icon={<Wrench className="w-5 h-5 text-primary" />}
                         guides={mecanicoGuides}
                         navigate={navigate}
                       />
@@ -530,7 +532,7 @@ export default function GuiaCarreiraPage() {
                     {(selectedCategory === 'todos' || selectedCategory === 'geral') && (
                       <CareerGuideRow
                         title="Geral / Dicas de Carreira"
-                        icon={<BookOpen className="w-5 h-5 text-accent" />}
+                        icon={<BookOpen className="w-5 h-5 text-primary" />}
                         guides={geralGuides}
                         navigate={navigate}
                       />
