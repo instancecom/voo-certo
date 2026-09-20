@@ -395,26 +395,57 @@ export default function CurriculumPage() {
 
   const [isDownloadingPDF, setIsDownloadingPDF] = useState(false);
 
-  // Baixar arquivo PDF real diretamente (sem tela de impressora do navegador)
+  // Baixar arquivo PDF real diretamente (sem distorção ou compressão no mobile)
   const handleDownloadPDF = async (targetCurriculum?: CurriculumData) => {
     const currentData = targetCurriculum || previewModalCurriculum || data;
     const elementId = previewModalCurriculum ? 'curriculum-preview-modal-element' : 'curriculum-content';
-    const element = document.getElementById(elementId) || document.getElementById('curriculum-content');
+    const sourceElement = document.getElementById(elementId) || document.getElementById('curriculum-content');
 
-    if (!element) {
+    if (!sourceElement) {
       toast.error('Elemento do currículo não localizado para exportação.');
       return;
     }
 
     setIsDownloadingPDF(true);
-    toast.info('Gerando seu arquivo PDF...');
+    toast.info('Gerando arquivo PDF em alta definição...');
+
+    // Cria um container invisível com largura FIXA A4 padrão (794px = 210mm)
+    // Isso impede que telas menores de mobile espremam as fontes ou quebrem o espaçamento das letras
+    const offscreenContainer = document.createElement('div');
+    offscreenContainer.style.position = 'fixed';
+    offscreenContainer.style.left = '-9999px';
+    offscreenContainer.style.top = '0';
+    offscreenContainer.style.width = '794px';
+    offscreenContainer.style.minHeight = '1123px';
+    offscreenContainer.style.backgroundColor = '#ffffff';
+    offscreenContainer.style.zIndex = '-9999';
+    offscreenContainer.style.letterSpacing = 'normal';
+    offscreenContainer.style.wordSpacing = 'normal';
+
+    const clone = sourceElement.cloneNode(true) as HTMLElement;
+    clone.style.width = '794px';
+    clone.style.maxWidth = '794px';
+    clone.style.minHeight = '1123px';
+    clone.style.margin = '0';
+    clone.style.boxShadow = 'none';
+    clone.style.border = 'none';
+    clone.style.borderRadius = '0';
+    clone.style.transform = 'none';
+
+    offscreenContainer.appendChild(clone);
+    document.body.appendChild(offscreenContainer);
 
     try {
-      const canvas = await html2canvas(element, {
-        scale: 2,
+      // Pequena pausa para garantir renderização das fontes no DOM clonado
+      await new Promise(resolve => setTimeout(resolve, 150));
+
+      const canvas = await html2canvas(clone, {
+        scale: 2.5,
         useCORS: true,
         logging: false,
         backgroundColor: '#ffffff',
+        width: 794,
+        windowWidth: 794,
       });
 
       const imgData = canvas.toDataURL('image/jpeg', 0.98);
@@ -434,12 +465,26 @@ export default function CurriculumPage() {
       const professionPart = (currentData.profession || 'Voe_Certo').replace(/[^a-zA-Z0-9_-]/g, '_');
       const filename = `Curriculo_${namePart}_${professionPart}.pdf`;
 
-      pdf.save(filename);
+      // Download compatível com iOS Safari, Android e Desktop
+      const pdfBlob = pdf.output('blob');
+      const blobUrl = URL.createObjectURL(pdfBlob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
+
       toast.success('Download do arquivo PDF concluído com sucesso!');
     } catch (err: any) {
       console.error('Erro ao gerar PDF:', err);
+      toast.error('Não foi possível gerar o PDF diretamente. Abrindo impressão...');
       window.print();
     } finally {
+      if (document.body.contains(offscreenContainer)) {
+        document.body.removeChild(offscreenContainer);
+      }
       setIsDownloadingPDF(false);
     }
   };
