@@ -18,7 +18,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel, SelectSeparator } from '@/components/ui/select';
 import { toast } from 'sonner';
 import {
   Loader2, Plus, Trash2, Save, ArrowLeft, Edit, ChevronDown, ChevronUp, X, BookOpen, Layers, GraduationCap,
@@ -400,37 +400,70 @@ function GuideStepsEditor({ guideId, onBack }: { guideId: string; onBack: () => 
             </div>
             <Select onValueChange={addSimulado}>
               <SelectTrigger className="max-w-md"><SelectValue placeholder="Adicionar simulado..." /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">Selecione...</SelectItem>
-                {simuladoOptions?.map(o => {
-                  const isCategory = o.type === 'category';
-                  const prefix = isCategory ? 'category' : 'subcategory';
-                  const icon = isCategory ? '📚' : '📋';
-                  const name = isCategory ? o.name : `${o.parentName} - ${o.name}`;
-                  
-                  return (
-                    <React.Fragment key={o.id}>
-                      <SelectItem value={`${prefix}:${o.id}`} disabled={editingStep.simulado_ids.includes(o.id)}>
-                        {icon} {name}
-                      </SelectItem>
-                      {o.activeModes?.includes('banca_anac') && (
-                        <SelectItem value={`${prefix}:${o.id}:banca_anac`} disabled={editingStep.simulado_ids.includes(`${o.id}:banca_anac`)}>
-                          {icon} {name} (Modo Banca)
-                        </SelectItem>
-                      )}
-                      {o.activeModes?.includes('livre') && (
-                        <SelectItem value={`${prefix}:${o.id}:livre`} disabled={editingStep.simulado_ids.includes(`${o.id}:livre`)}>
-                          {icon} {name} (Modo Livre)
-                        </SelectItem>
-                      )}
-                      {isCategory && o.activeModes?.includes('bloco') && (
-                        <SelectItem value={`${prefix}:${o.id}:bloco`} disabled={editingStep.simulado_ids.includes(`${o.id}:bloco`)}>
-                          {icon} {name} (Modo Bloco)
-                        </SelectItem>
-                      )}
-                    </React.Fragment>
-                  );
-                })}
+              <SelectContent className="max-h-80">
+                <SelectItem value="none">Selecione um simulado ou bloco...</SelectItem>
+                
+                {/* Grupos de Categorias / Simulados Completos */}
+                {simuladoOptions?.some(o => o.type === 'category') && (
+                  <SelectGroup>
+                    <SelectLabel className="text-xs font-bold text-primary uppercase tracking-wider">📚 Simulados Completos por Carreira</SelectLabel>
+                    {simuladoOptions
+                      .filter(o => o.type === 'category')
+                      .map(o => (
+                        <React.Fragment key={o.id}>
+                          <SelectItem value={`category:${o.id}`} disabled={editingStep.simulado_ids.includes(o.id)}>
+                            {o.name} (Padrão)
+                          </SelectItem>
+                          {o.activeModes?.includes('banca_anac') && (
+                            <SelectItem value={`category:${o.id}:banca_anac`} disabled={editingStep.simulado_ids.includes(`${o.id}:banca_anac`)}>
+                              {o.name} (Modo Banca ANAC)
+                            </SelectItem>
+                          )}
+                          {o.activeModes?.includes('livre') && (
+                            <SelectItem value={`category:${o.id}:livre`} disabled={editingStep.simulado_ids.includes(`${o.id}:livre`)}>
+                              {o.name} (Modo Livre)
+                            </SelectItem>
+                          )}
+                          {o.activeModes?.includes('bloco') && (
+                            <SelectItem value={`category:${o.id}:bloco`} disabled={editingStep.simulado_ids.includes(`${o.id}:bloco`)}>
+                              {o.name} (Todos os Blocos)
+                            </SelectItem>
+                          )}
+                        </React.Fragment>
+                      ))}
+                  </SelectGroup>
+                )}
+
+                <SelectSeparator />
+
+                {/* Grupos de Subcategorias / Blocos Específicos */}
+                {simuladoOptions?.some(o => o.type === 'subcategory') && (
+                  <SelectGroup>
+                    <SelectLabel className="text-xs font-bold text-amber-500 uppercase tracking-wider">📋 Blocos & Matérias Específicas</SelectLabel>
+                    {simuladoOptions
+                      .filter(o => o.type === 'subcategory')
+                      .map(o => {
+                        const fullName = o.parentName ? `${o.parentName} → ${o.name}` : o.name;
+                        return (
+                          <React.Fragment key={o.id}>
+                            <SelectItem value={`subcategory:${o.id}`} disabled={editingStep.simulado_ids.includes(o.id)}>
+                              {fullName}
+                            </SelectItem>
+                            {o.activeModes?.includes('banca_anac') && (
+                              <SelectItem value={`subcategory:${o.id}:banca_anac`} disabled={editingStep.simulado_ids.includes(`${o.id}:banca_anac`)}>
+                                {fullName} (Modo Banca)
+                              </SelectItem>
+                            )}
+                            {o.activeModes?.includes('livre') && (
+                              <SelectItem value={`subcategory:${o.id}:livre`} disabled={editingStep.simulado_ids.includes(`${o.id}:livre`)}>
+                                {fullName} (Modo Livre)
+                              </SelectItem>
+                            )}
+                          </React.Fragment>
+                        );
+                      })}
+                  </SelectGroup>
+                )}
               </SelectContent>
             </Select>
           </div>
