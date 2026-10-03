@@ -51,6 +51,17 @@ export default function GuiaCarreiraDetailPage() {
   // Modal para detalhar a etapa ao clicar no Pin
   const [selectedStepModal, setSelectedStepModal] = useState<{ step: any; index: number } | null>(null);
 
+  // Modal para conversão/login se o usuário não autenticado tentar fazer check
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  const handleToggleStep = (stepId: string, currentCompleted: boolean) => {
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+    toggleProgress.mutate({ stepId, guideId: guideId!, completed: !currentCompleted });
+  };
+
   const completedStepIds = new Set((progress || []).filter(p => p.completed).map(p => p.step_id));
   const totalSteps = guide?.steps?.length || 0;
   const completedCount = totalSteps > 0 ? guide!.steps!.filter(s => completedStepIds.has(s.id)).length : 0;
@@ -432,7 +443,7 @@ export default function GuiaCarreiraDetailPage() {
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex items-center gap-3">
                           <div
-                            onClick={() => toggleProgress.mutate({ stepId: step.id, guideId: guideId!, completed: !isCompleted })}
+                            onClick={() => handleToggleStep(step.id, isCompleted)}
                             className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm cursor-pointer transition-transform hover:scale-105 shrink-0 ${
                               isCompleted ? 'bg-success text-white' : isCurrent ? 'bg-amber-500 text-white' : 'bg-primary text-white'
                             }`}
@@ -448,7 +459,7 @@ export default function GuiaCarreiraDetailPage() {
                         <Button
                           variant={isCompleted ? 'outline' : 'default'}
                           size="sm"
-                          onClick={() => toggleProgress.mutate({ stepId: step.id, guideId: guideId!, completed: !isCompleted })}
+                          onClick={() => handleToggleStep(step.id, isCompleted)}
                           className="gap-1.5 text-xs font-bold rounded-[5px] shrink-0"
                         >
                           {isCompleted ? <CheckCircle2 className="w-4 h-4 text-success" /> : <Check className="w-4 h-4" />}
@@ -588,8 +599,8 @@ export default function GuiaCarreiraDetailPage() {
                     variant={completedStepIds.has(selectedStepModal.step.id) ? 'outline' : 'default'}
                     onClick={() => {
                       const isComp = completedStepIds.has(selectedStepModal.step.id);
-                      toggleProgress.mutate({ stepId: selectedStepModal.step.id, guideId: guideId!, completed: !isComp });
                       setSelectedStepModal(null);
+                      handleToggleStep(selectedStepModal.step.id, isComp);
                     }}
                     className="gap-2 font-bold text-xs rounded-[5px]"
                   >
@@ -600,6 +611,53 @@ export default function GuiaCarreiraDetailPage() {
               </div>
             </>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* =================================================================== */}
+      {/* MODAL DE CONVERSÃO / LOGIN PARA CHECK DE ETAPA                      */}
+      {/* =================================================================== */}
+      <Dialog open={showAuthModal} onOpenChange={setShowAuthModal}>
+        <DialogContent className="max-w-md rounded-[8px] p-0 overflow-hidden border-none shadow-2xl bg-card">
+          <div className="bg-primary p-8 text-primary-foreground relative">
+            <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+              <Plane className="w-28 h-28 rotate-12" />
+            </div>
+            <div className="w-14 h-14 rounded-[8px] bg-white/10 backdrop-blur-sm flex items-center justify-center mb-5 border border-white/20">
+              <CheckCircle2 className="w-7 h-7 text-amber-400" />
+            </div>
+            <h3 className="text-2xl font-black mb-2 tracking-tight">Salve seu Progresso na Rota</h3>
+            <p className="text-primary-foreground/80 text-sm font-medium leading-relaxed">
+              Crie sua conta gratuita em segundos para marcar etapas concluídas, acompanhar sua rota de carreira e salvar todo o seu avanço.
+            </p>
+          </div>
+          <div className="p-6 sm:p-8 space-y-4 bg-card">
+            <div className="space-y-3">
+              <Button 
+                variant="hero" 
+                className="w-full h-12 rounded-[6px] font-bold text-sm shadow-md hover-yellow" 
+                onClick={() => navigate('/auth?mode=signup')}
+              >
+                Criar conta gratuita <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+              <Button 
+                variant="outline" 
+                className="w-full h-11 rounded-[6px] font-bold text-xs border-border/70 hover:bg-muted" 
+                onClick={() => setShowAuthModal(false)}
+              >
+                Continuar apenas visualizando
+              </Button>
+            </div>
+            <p className="text-xs text-center text-muted-foreground font-medium pt-2">
+              Já possui uma conta?{' '}
+              <button 
+                className="text-primary font-bold hover:underline" 
+                onClick={() => navigate('/auth?mode=login')}
+              >
+                Fazer Login
+              </button>
+            </p>
+          </div>
         </DialogContent>
       </Dialog>
 
