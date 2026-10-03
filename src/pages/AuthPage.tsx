@@ -115,52 +115,54 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="min-h-[100dvh] bg-background flex flex-col lg:flex-row">
       {/* Left Side - Form */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-card/10">
+      <div className="flex-1 flex flex-col justify-center items-center px-4 py-8 sm:px-6 md:px-8 lg:px-12 bg-card/10 overflow-y-auto">
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="w-full max-w-md p-8 bg-card border border-border rounded-[5px] shadow-sm"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="w-full max-w-[420px] my-auto p-6 sm:p-8 bg-card border border-border rounded-[8px] shadow-sm"
         >
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-10 text-[10px] uppercase font-bold tracking-widest"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Voltar ao início
-          </Link>
+          <div className="flex items-center justify-between mb-6">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors text-[11px] uppercase font-bold tracking-wider"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              Voltar ao início
+            </Link>
 
-          <div className="flex items-center gap-3 mb-10">
-            {branding.logo_url ? (
-              <img
-                src={getDriveImageUrl(branding.logo_url) || ''}
-                alt={branding.site_name}
-                className="h-10 w-auto object-contain"
-              />
-            ) : (
-              <>
-                <div className="p-2.5 bg-primary/5 rounded-[5px]">
-                  <Plane className="w-6 h-6 text-primary" />
+            <div className="flex items-center gap-2">
+              {branding.logo_url ? (
+                <img
+                  src={getDriveImageUrl(branding.logo_url) || ''}
+                  alt={branding.site_name}
+                  className="h-7 w-auto object-contain"
+                />
+              ) : (
+                <div className="p-1.5 bg-primary/5 rounded-[5px]">
+                  <Plane className="w-4 h-4 text-primary" />
                 </div>
-                <span className="text-xl font-black text-foreground tracking-tight">{branding.site_name || 'Voe Certo'}</span>
-              </>
-            )}
+              )}
+            </div>
           </div>
 
-          <h1 className="text-3xl font-black text-foreground mb-2 tracking-tight">
-            {isLogin ? 'Bem-vindo de volta!' : 'Crie sua conta de elite'}
-          </h1>
-          <p className="text-muted-foreground mb-10 font-medium">
-            {isLogin
-              ? 'Entre para continuar seu treinamento técnico'
-              : 'Comece sua jornada para a aprovação padrão ANAC'}
-          </p>
+          <div className="mb-6">
+            <h1 className="text-2xl sm:text-3xl font-black text-foreground mb-1.5 tracking-tight">
+              {isLogin ? 'Bem-vindo de volta!' : 'Crie sua conta'}
+            </h1>
+            <p className="text-xs sm:text-sm text-muted-foreground font-medium leading-relaxed">
+              {isLogin
+                ? 'Entre para continuar seu treinamento técnico'
+                : 'Comece sua jornada para a aprovação padrão ANAC'}
+            </p>
+          </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
-              <div className="space-y-2">
-                <Label htmlFor="fullName" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Nome completo</Label>
+              <div className="space-y-1.5">
+                <Label htmlFor="fullName" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Nome completo</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
@@ -169,15 +171,15 @@ export default function AuthPage() {
                     placeholder="Nome e Sobrenome"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="pl-10 h-11 rounded-[5px] border-border/50 font-medium"
+                    className="pl-9 h-10 sm:h-11 rounded-[6px] border-border/60 font-medium text-sm"
                     required={!isLogin}
                   />
                 </div>
               </div>
             )}
 
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Endereço de Email</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Endereço de Email</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
@@ -186,14 +188,14 @@ export default function AuthPage() {
                   placeholder="seu@profissional.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 h-11 rounded-[5px] border-border/50 font-medium"
+                  className="pl-9 h-10 sm:h-11 rounded-[6px] border-border/60 font-medium text-sm"
                   required
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Senha de Acesso</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="password" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Senha de Acesso</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
@@ -202,14 +204,14 @@ export default function AuthPage() {
                   placeholder="Mínimo 6 caracteres"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 pr-10 h-11 rounded-[5px] border-border/50 font-medium"
+                  className="pl-9 pr-10 h-10 sm:h-11 rounded-[6px] border-border/60 font-medium text-sm"
                   required
                   minLength={6}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors p-1"
                 >
                   {showPassword ? (
                     <EyeOff className="w-4 h-4" />
@@ -224,11 +226,11 @@ export default function AuthPage() {
               type="submit"
               variant="hero"
               size="lg"
-              className="w-full h-12 rounded-[5px] font-bold text-sm hover-yellow"
+              className="w-full h-11 sm:h-12 rounded-[6px] font-bold text-sm hover-yellow shadow-md mt-2"
               disabled={isLoading}
             >
               {isLoading ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
+                <Loader2 className="w-4 h-4 animate-spin" />
               ) : isLogin ? (
                 'Fazer Login'
               ) : (
@@ -237,8 +239,8 @@ export default function AuthPage() {
             </Button>
           </form>
 
-          <div className="mt-8 pt-8 border-t border-border/50 text-center">
-            <p className="text-sm text-muted-foreground font-medium">
+          <div className="mt-6 pt-5 border-t border-border/60 text-center">
+            <p className="text-xs sm:text-sm text-muted-foreground font-medium">
               {isLogin ? 'Novo por aqui?' : 'Já possui registro?'}
               <button
                 onClick={() => setIsLogin(!isLogin)}
@@ -249,8 +251,8 @@ export default function AuthPage() {
             </p>
           </div>
 
-          <div className="mt-8 flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-30">
-             <ShieldCheck className="w-4 h-4" />
+          <div className="mt-4 flex items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">
+             <ShieldCheck className="w-3.5 h-3.5" />
              Proteção SSL 256 bits
           </div>
         </motion.div>
