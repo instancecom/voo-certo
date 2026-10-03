@@ -105,7 +105,7 @@ export function Header() {
   const primaryNavItems = [
     { to: '/simulados', label: 'Simulados', icon: BookOpen, prefetch: prefetchCategories },
     { to: '/guia-carreira', label: 'Guia de Carreira', icon: GraduationCap, prefetch: prefetchCareerGuides, feature: 'career_guide' as const },
-    { to: '/curriculo', label: 'Currículo IA', badge: 'IA', icon: FileText, feature: 'curriculum' as const },
+    { to: '/curriculo', label: 'Currículo IA', icon: FileText, feature: 'curriculum' as const },
     { to: '/meu-progresso', label: 'Desempenho', icon: TrendingUp, authOnly: true, feature: 'progress' as const },
     { to: '/microcursos', label: 'Microcursos', icon: Sparkles, prefetch: prefetchMicrocourses, feature: 'microcourses' as const },
   ];
@@ -262,7 +262,7 @@ export function Header() {
                           >
                             <div className="flex items-center gap-2.5">
                               <Crown className="w-4 h-4 text-amber-500" />
-                              <span>Minha Assinatura</span>
+                              <span>Assinatura</span>
                             </div>
                             <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-[4px] bg-primary/10 text-primary">
                               {planName}
