@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { NotificationBell } from './notifications/NotificationBell';
 import { useBranding } from '@/contexts/BrandingContext';
+import { usePlan } from '@/hooks/usePlan';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -27,6 +28,7 @@ export function Header() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, profile, isAdmin, signOut, isLoading: authLoading } = useAuth();
+  const { currentPlan } = usePlan();
   const { settings: branding, isLoading: brandingLoading } = useBranding();
   const isLoading = authLoading || brandingLoading;
   const queryClient = useQueryClient();
@@ -99,18 +101,13 @@ export function Header() {
     navigate('/');
   };
 
-  // Itens de navegação principal — o que fica visível na barra
+  // Itens de navegação principal — visíveis na barra superior e no topo do mobile
   const primaryNavItems = [
     { to: '/simulados', label: 'Simulados', icon: BookOpen, prefetch: prefetchCategories },
     { to: '/guia-carreira', label: 'Guia de Carreira', icon: GraduationCap, prefetch: prefetchCareerGuides, feature: 'career_guide' as const },
+    { to: '/curriculo', label: 'Currículo IA', badge: 'IA', icon: FileText, feature: 'curriculum' as const },
+    { to: '/meu-progresso', label: 'Desempenho', icon: TrendingUp, authOnly: true, feature: 'progress' as const },
     { to: '/microcursos', label: 'Microcursos', icon: Sparkles, prefetch: prefetchMicrocourses, feature: 'microcourses' as const },
-    { to: '/meu-progresso', label: 'Progresso', icon: TrendingUp, authOnly: true, feature: 'progress' as const },
-  ];
-
-  // Itens que ficam no dropdown do perfil do usuário
-  const profileDropdownItems = [
-    { to: '/curriculo', label: 'Currículo com IA', icon: FileText, authOnly: true, feature: 'curriculum' as const },
-    { to: '/conquistas', label: 'Conquistas', icon: Award, authOnly: true, feature: 'achievements' as const },
   ];
 
   const filteredPrimaryItems = primaryNavItems.filter(item => {
@@ -119,23 +116,15 @@ export function Header() {
     return true;
   });
 
-  const filteredProfileItems = profileDropdownItems.filter(item => {
-    if (!user) return false;
-    if (item.feature && branding.features && branding.features[item.feature] === false) return false;
-    return true;
-  });
-
-  // Itens para menu mobile — une tudo em sequência lógica
-  const allMobileItems = [
-    ...primaryNavItems,
-    ...profileDropdownItems,
-  ].filter(item => {
-    if (item.authOnly && !user) return false;
-    if (item.feature && branding.features && branding.features[item.feature] === false) return false;
-    return true;
-  });
-
   const isTransparent = isHome && !isScrolled;
+
+  const planName = currentPlan === 'comandante' 
+    ? 'Comandante' 
+    : currentPlan === 'tripulante' 
+      ? 'Tripulante' 
+      : currentPlan === 'solo' 
+        ? 'Solo' 
+        : 'Gratuito';
 
   return (
     <header
@@ -172,24 +161,32 @@ export function Header() {
             </Link>
           </div>
 
-          {/* Desktop Navigation — apenas itens primários */}
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex flex-none items-center justify-center gap-6">
-            {filteredPrimaryItems.map(item => (
-              <Link
-                key={item.to}
-                to={item.to}
-                className={`text-sm font-medium transition-colors hover:text-accent ${
-                  location.pathname === item.to
-                    ? 'text-accent font-semibold'
-                    : isTransparent
-                      ? 'text-white/95'
-                      : 'text-muted-foreground'
-                }`}
-                onMouseEnter={item.prefetch}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {filteredPrimaryItems.map(item => {
+              const isActive = location.pathname === item.to;
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className={`text-sm font-medium transition-colors hover:text-accent flex items-center gap-1.5 ${
+                    isActive
+                      ? 'text-accent font-semibold'
+                      : isTransparent
+                        ? 'text-white/95'
+                        : 'text-muted-foreground'
+                  }`}
+                  onMouseEnter={item.prefetch}
+                >
+                  <span>{item.label}</span>
+                  {item.badge && (
+                    <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded-[4px] bg-amber-400/20 text-amber-500 border border-amber-400/30 tracking-wider">
+                      {item.badge}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Ações do usuário */}
@@ -201,7 +198,7 @@ export function Header() {
                 <>
                   <NotificationBell className={isTransparent ? 'text-white hover:bg-white/10' : ''} />
 
-                  {/* Dropdown de perfil — rico com todas as opções de conta */}
+                  {/* Dropdown de perfil — Focado em Conta, Assinatura e Gestão */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
@@ -226,14 +223,14 @@ export function Header() {
                       </Button>
                     </DropdownMenuTrigger>
 
-                    <DropdownMenuContent align="end" className="w-60 rounded-[5px] p-0 overflow-hidden">
+                    <DropdownMenuContent align="end" className="w-64 rounded-[5px] p-0 overflow-hidden shadow-xl border-border">
                       {/* Cabeçalho do perfil */}
                       <div className="px-4 py-3 bg-muted/40 border-b border-border">
                         <div className="flex items-center gap-3">
                           <span className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-sm font-black text-white shrink-0">
                             {getInitials()}
                           </span>
-                          <div className="min-w-0">
+                          <div className="min-w-0 flex-1">
                             <p className="text-sm font-semibold truncate text-foreground">
                               {profile?.full_name || user.email?.split('@')[0]}
                             </p>
@@ -242,12 +239,12 @@ export function Header() {
                         </div>
                       </div>
 
-                      {/* Meu Perfil */}
-                      <div className="py-1 border-b border-border">
+                      {/* Conta, Assinatura e Conquistas */}
+                      <div className="py-1">
                         <DropdownMenuItem asChild>
                           <Link
                             to="/perfil"
-                            className={`flex items-center gap-2.5 px-4 py-2 cursor-pointer ${
+                            className={`flex items-center gap-2.5 px-4 py-2 cursor-pointer font-medium ${
                               location.pathname === '/perfil' ? 'text-accent font-semibold' : ''
                             }`}
                           >
@@ -255,26 +252,35 @@ export function Header() {
                             <span>Meu Perfil</span>
                           </Link>
                         </DropdownMenuItem>
-                      </div>
 
-                      {/* Ferramentas pessoais */}
-                      <div className="py-1">
-                        {filteredProfileItems.map(item => {
-                          const Icon = item.icon;
-                          return (
-                            <DropdownMenuItem key={item.to} asChild>
-                              <Link
-                                to={item.to}
-                                className={`flex items-center gap-2.5 px-4 py-2 cursor-pointer ${
-                                  location.pathname === item.to ? 'text-accent font-semibold' : ''
-                                }`}
-                              >
-                                <Icon className="w-4 h-4 text-muted-foreground" />
-                                <span>{item.label}</span>
-                              </Link>
-                            </DropdownMenuItem>
-                          );
-                        })}
+                        <DropdownMenuItem asChild>
+                          <Link
+                            to="/premium"
+                            className={`flex items-center justify-between px-4 py-2 cursor-pointer font-medium ${
+                              location.pathname === '/premium' ? 'text-accent font-semibold' : ''
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <Crown className="w-4 h-4 text-amber-500" />
+                              <span>Minha Assinatura</span>
+                            </div>
+                            <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-[4px] bg-primary/10 text-primary">
+                              {planName}
+                            </span>
+                          </Link>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem asChild>
+                          <Link
+                            to="/conquistas"
+                            className={`flex items-center gap-2.5 px-4 py-2 cursor-pointer font-medium ${
+                              location.pathname === '/conquistas' ? 'text-accent font-semibold' : ''
+                            }`}
+                          >
+                            <Award className="w-4 h-4 text-muted-foreground" />
+                            <span>Conquistas & Insígnias</span>
+                          </Link>
+                        </DropdownMenuItem>
                       </div>
 
                       {/* Admin — só visível para admins */}
@@ -283,7 +289,7 @@ export function Header() {
                           <DropdownMenuSeparator />
                           <div className="py-1">
                             <DropdownMenuItem asChild>
-                              <Link to="/admin" className="flex items-center gap-2.5 px-4 py-2 cursor-pointer">
+                              <Link to="/admin" className="flex items-center gap-2.5 px-4 py-2 cursor-pointer font-medium">
                                 <LayoutDashboard className="w-4 h-4 text-muted-foreground" />
                                 <span>Painel Admin</span>
                               </Link>
@@ -298,7 +304,7 @@ export function Header() {
                       <div className="py-1">
                         <DropdownMenuItem
                           onClick={handleSignOut}
-                          className="flex items-center gap-2.5 px-4 py-2 text-destructive focus:text-destructive cursor-pointer"
+                          className="flex items-center gap-2.5 px-4 py-2 text-destructive focus:text-destructive cursor-pointer font-medium"
                         >
                           <LogOut className="w-4 h-4" />
                           <span>Sair da conta</span>
@@ -344,87 +350,122 @@ export function Header() {
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden bg-white border-b border-border overflow-hidden"
           >
-            <div className="container mx-auto px-4 py-4 space-y-1">
+            <div className="container mx-auto px-4 py-4 space-y-3">
 
               {/* Perfil do usuário no topo do menu mobile */}
               {user && (
-                <div className="flex items-center gap-3 p-3 mb-2 bg-muted/40 rounded-lg border border-border/60">
-                  <span className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-sm font-black text-white shrink-0">
-                    {getInitials()}
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold truncate">
-                      {profile?.full_name || user.email?.split('@')[0]}
-                    </p>
-                    <p className="text-[11px] text-muted-foreground truncate">{user.email}</p>
+                <div className="p-3 bg-muted/40 rounded-[8px] border border-border/60">
+                  <div className="flex items-center justify-between gap-3 mb-2.5">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <span className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-sm font-black text-white shrink-0">
+                        {getInitials()}
+                      </span>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold truncate text-foreground">
+                          {profile?.full_name || user.email?.split('@')[0]}
+                        </p>
+                        <p className="text-[11px] text-muted-foreground truncate">{user.email}</p>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-[4px] bg-primary/10 text-primary shrink-0">
+                      {planName}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border/50">
+                    <Link
+                      to="/perfil"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-[5px] bg-card border border-border text-xs font-semibold text-foreground hover:bg-muted"
+                    >
+                      <User className="w-3.5 h-3.5 text-muted-foreground" />
+                      Meu Perfil
+                    </Link>
+                    <Link
+                      to="/premium"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-[5px] bg-card border border-border text-xs font-semibold text-foreground hover:bg-muted"
+                    >
+                      <Crown className="w-3.5 h-3.5 text-amber-500" />
+                      Assinatura
+                    </Link>
                   </div>
                 </div>
               )}
 
-              {/* Meu Perfil — link direto no mobile */}
-              {user && (
-                <Link
-                  to="/perfil"
-                  onClick={() => setIsMenuOpen(false)}
-                  className={`flex items-center gap-3 p-3 rounded-lg text-sm font-medium transition-colors ${
-                    location.pathname === '/perfil'
-                      ? 'bg-accent/10 text-accent'
-                      : 'text-muted-foreground hover:bg-muted'
-                  }`}
-                >
-                  <User className="w-5 h-5" />
-                  Meu Perfil
-                </Link>
-              )}
+              {/* Itens de navegação principais no mobile */}
+              <div className="space-y-1">
+                {filteredPrimaryItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = location.pathname === item.to;
+                  return (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      onClick={() => setIsMenuOpen(false)}
+                      className={`flex items-center justify-between p-3 rounded-[6px] text-sm font-medium transition-colors ${
+                        isActive
+                          ? 'bg-primary/10 text-primary font-bold'
+                          : 'text-foreground/80 hover:bg-muted'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Icon className={`w-4 h-4 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
+                        <span>{item.label}</span>
+                      </div>
+                      {item.badge && (
+                        <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded-[4px] bg-amber-400/20 text-amber-500 border border-amber-400/30 tracking-wider">
+                          {item.badge}
+                        </span>
+                      )}
+                    </Link>
+                  );
+                })}
 
-              {/* Todos os itens de navegação em ordem lógica */}
-              {allMobileItems.map((item) => {
-                const Icon = item.icon;
-                return (
+                {/* Conquistas no mobile */}
+                {user && (
                   <Link
-                    key={item.to}
-                    to={item.to}
+                    to="/conquistas"
                     onClick={() => setIsMenuOpen(false)}
-                    className={`flex items-center gap-3 p-3 rounded-lg text-sm font-medium transition-colors ${
-                      location.pathname === item.to
-                        ? 'bg-accent/10 text-accent'
-                        : 'text-muted-foreground hover:bg-muted'
+                    className={`flex items-center gap-3 p-3 rounded-[6px] text-sm font-medium transition-colors ${
+                      location.pathname === '/conquistas'
+                        ? 'bg-primary/10 text-primary font-bold'
+                        : 'text-foreground/80 hover:bg-muted'
                     }`}
                   >
-                    <Icon className="w-5 h-5" />
-                    {item.label}
+                    <Award className="w-4 h-4 text-muted-foreground" />
+                    <span>Conquistas & Insígnias</span>
                   </Link>
-                );
-              })}
+                )}
+              </div>
 
-              <DropdownMenuSeparator className="my-2" />
-
+              {/* Ações inferiores no mobile */}
               {user ? (
-                <>
+                <div className="pt-2 border-t border-border space-y-1">
                   {isAdmin && (
                     <Link
                       to="/admin"
                       onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center gap-3 p-3 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted"
+                      className="flex items-center gap-3 p-3 rounded-[6px] text-sm font-medium text-muted-foreground hover:bg-muted"
                     >
-                      <LayoutDashboard className="w-5 h-5" />
+                      <LayoutDashboard className="w-4 h-4" />
                       Painel Admin
                     </Link>
                   )}
                   <button
                     onClick={handleSignOut}
-                    className="flex items-center gap-3 p-3 w-full rounded-lg text-sm font-medium text-destructive hover:bg-destructive/5"
+                    className="flex items-center gap-3 p-3 w-full rounded-[6px] text-sm font-medium text-destructive hover:bg-destructive/5"
                   >
-                    <LogOut className="w-5 h-5" />
+                    <LogOut className="w-4 h-4" />
                     Sair da conta
                   </button>
-                </>
+                </div>
               ) : (
-                <div className="grid grid-cols-2 gap-2 pt-2">
+                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border">
                   <Button variant="outline" size="sm" asChild onClick={() => setIsMenuOpen(false)}>
                     <Link to="/auth?mode=login">Entrar</Link>
                   </Button>
-                  <Button size="sm" asChild onClick={() => setIsMenuOpen(false)}>
+                  <Button size="sm" asChild onClick={() => setIsMenuOpen(false)} className="hover-yellow font-bold">
                     <Link to="/auth?mode=signup">Cadastrar</Link>
                   </Button>
                 </div>
