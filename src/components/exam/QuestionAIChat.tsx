@@ -246,24 +246,18 @@ export function QuestionAIChat({
                 {messages.map((msg, i) => (
                   <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                     {msg.role === 'assistant' ? (
-                      <div className="flex gap-2 max-w-[88%]">
-                        <div className="w-7 h-7 rounded-[5px] overflow-hidden shrink-0 border border-primary/40 mt-1 shadow-sm">
-                          <img src="/images/avatars/Mike_character.png" alt="Mike" className="w-full h-full object-cover block" />
-                        </div>
-                        <div className="bg-card border border-primary/20 px-3 py-2.5 rounded-[8px] rounded-tl-sm text-xs text-foreground shadow-sm">
-                          <div className="flex items-center gap-1 mb-1">
-                            <span className="text-[11px] text-primary font-bold">Mike</span>
-                            {msg.cached && (
-                              <Badge variant="secondary" className="text-[9px] px-1.5 py-0 h-3.5 bg-muted text-muted-foreground font-normal gap-0.5 border-none">
-                                <Clock className="w-2 h-2" /> cache
-                              </Badge>
-                            )}
+                      <div className="w-full text-xs leading-relaxed text-foreground py-1">
+                        {msg.cached && (
+                          <div className="inline-flex items-center gap-1 mb-1">
+                            <Badge variant="secondary" className="text-[9px] px-1.5 py-0 h-3.5 bg-muted text-muted-foreground font-normal gap-0.5 border-none">
+                              <Clock className="w-2 h-2" /> cache
+                            </Badge>
                           </div>
-                          <p className="leading-relaxed whitespace-pre-wrap">{msg.content}</p>
-                        </div>
+                        )}
+                        <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
                       </div>
                     ) : (
-                      <div className="max-w-[85%] px-3 py-2.5 rounded-[8px] rounded-tr-sm text-xs bg-primary text-primary-foreground shadow-sm">
+                      <div className="max-w-[85%] px-3.5 py-2.5 rounded-[10px] rounded-tr-xs text-xs bg-primary text-primary-foreground shadow-sm">
                         <p className="leading-relaxed whitespace-pre-wrap">{msg.content}</p>
                       </div>
                     )}
@@ -271,16 +265,9 @@ export function QuestionAIChat({
                 ))}
 
                 {isLoading && (
-                  <div className="flex justify-start">
-                    <div className="flex gap-2 max-w-[85%]">
-                      <div className="w-7 h-7 rounded-[5px] overflow-hidden shrink-0 border border-primary/40 mt-1 animate-pulse">
-                        <img src="/images/avatars/Mike_character.png" alt="Mike" className="w-full h-full object-cover block" />
-                      </div>
-                      <div className="bg-card border border-border/50 rounded-[8px] rounded-tl-sm px-3 py-2.5 flex items-center gap-2 shadow-sm text-xs font-semibold text-primary">
-                        <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />
-                        <span>Mike analisando sua dúvida...</span>
-                      </div>
-                    </div>
+                  <div className="flex items-center gap-2 py-1 text-xs text-muted-foreground">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+                    <span>Mike está respondendo...</span>
                   </div>
                 )}
 
