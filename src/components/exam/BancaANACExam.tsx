@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Clock, ChevronRight, ChevronLeft, Flag, AlertTriangle,
+  Clock, ChevronRight, ChevronLeft, AlertTriangle,
   Clipboard, LogOut, CheckCircle2, LayoutGrid,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -460,16 +460,6 @@ function BancaExamInner({
             >
               <LayoutGrid className="w-4 h-4 text-accent" />
               <span className="font-mono">{currentQuestionIndex + 1}/{blockQuestions.length}</span>
-            </Button>
-
-            {/* Centro Desktop: Marcar para revisão */}
-            <Button
-              variant="ghost"
-              onClick={() => toast.info('Questão marcada para revisão!')}
-              className="h-11 px-4 rounded-[6px] font-bold text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground gap-2 hidden lg:flex"
-            >
-              <Flag className="w-4 h-4" />
-              <span>Marcar para Revisão</span>
             </Button>
 
             {/* Direita: Próxima / Finalizar */}

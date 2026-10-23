@@ -44,6 +44,7 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
   const [showAnswer, setShowAnswer] = useState(false);
   const [showFinishDialog, setShowFinishDialog] = useState(false);
   const [showNavModal, setShowNavModal] = useState(false);
+  const [markedForReview, setMarkedForReview] = useState<Record<string, boolean>>({});
   const [startTime] = useState(Date.now());
 
   const activeBubbleRef = useRef<HTMLButtonElement | null>(null);
@@ -73,6 +74,20 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
   const isCorrect = selectedAnswer === currentQuestion?.shuffledCorrectAnswer;
   const progress = ((currentQuestionIndex + 1) / shuffledQuestions.length) * 100;
   const answeredCount = Object.keys(answers).length;
+  const isCurrentMarked = currentQuestion ? !!markedForReview[currentQuestion.id] : false;
+  const markedReviewCount = Object.values(markedForReview).filter(Boolean).length;
+
+  const toggleMarkForReview = () => {
+    if (!currentQuestion) return;
+    const qId = currentQuestion.id;
+    const isMarked = !markedForReview[qId];
+    setMarkedForReview(prev => ({ ...prev, [qId]: isMarked }));
+    if (isMarked) {
+      toast.info(`Questão ${currentQuestionIndex + 1} marcada para revisão`);
+    } else {
+      toast.success(`Questão ${currentQuestionIndex + 1} desmarcada da revisão`);
+    }
+  };
   const optionLetters = ['A', 'B', 'C', 'D', 'E'];
 
   const submitAnswer = (questionId: string, answer: number) => {
@@ -209,6 +224,11 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
                     <div className="flex justify-between items-center text-[10px] sm:text-xs font-black tracking-wider">
                       <span className="text-muted-foreground uppercase">
                         QUESTÃO {currentQuestionIndex + 1} DE {shuffledQuestions.length}
+                        {isCurrentMarked && (
+                          <span className="inline-flex items-center gap-1 text-[10px] bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded-full font-bold normal-case ml-2">
+                            <Flag className="w-3 h-3 fill-amber-500 text-amber-500" /> Para Revisão
+                          </span>
+                        )}
                       </span>
                       <span className="text-accent font-mono">
                         {Math.round(progress)}%
@@ -396,14 +416,18 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
               <h3 className="text-xs font-black text-foreground uppercase tracking-widest">NAVEGADOR</h3>
 
               {/* Legenda */}
-              <div className="flex items-center justify-between gap-2 text-[11px] font-bold text-muted-foreground pb-2 border-b border-border/60">
+              <div className="grid grid-cols-2 gap-2 text-[11px] font-bold text-muted-foreground pb-2 border-b border-border/60">
                 <span className="flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-slate-800 dark:bg-slate-200"></span>
                   Respondida
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-accent"></span>
                   Atual
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                  Para revisão
                 </span>
                 <span className="flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-muted border border-border"></span>
@@ -416,21 +440,29 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
                 {shuffledQuestions.map((q: ShuffledQuestion, index: number) => {
                   const isAns = answers[q.id] !== undefined;
                   const isCur = index === currentQuestionIndex;
+                  const isRev = !!markedForReview[q.id];
 
                   let bubbleStyle = 'bg-muted/60 text-muted-foreground border-border hover:bg-muted';
                   if (isCur) {
                     bubbleStyle = 'bg-accent text-accent-foreground font-black ring-2 ring-accent/30 border-accent';
                   } else if (isAns) {
-                    bubbleStyle = 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900 border-slate-800';
+                    bubbleStyle = isRev
+                      ? 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900 border-amber-500/80 ring-1 ring-amber-500/50'
+                      : 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900 border-slate-800';
+                  } else if (isRev) {
+                    bubbleStyle = 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/60 font-black';
                   }
 
                   return (
                     <button
                       key={q.id}
                       onClick={() => goToQuestion(index)}
-                      className={`h-9 rounded-[6px] text-xs font-bold transition-all border flex items-center justify-center ${bubbleStyle}`}
+                      className={`relative h-9 rounded-[6px] text-xs font-bold transition-all border flex items-center justify-center ${bubbleStyle}`}
                     >
                       {index + 1}
+                      {isRev && (
+                        <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-500 rounded-full border-2 border-card shadow-sm animate-pulse" />
+                      )}
                     </button>
                   );
                 })}
@@ -457,24 +489,43 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
               <span>Anterior</span>
             </Button>
 
-            {/* Centro Mobile: Botão para abrir Navegador Modal */}
-            <Button
-              variant="outline"
-              onClick={() => setShowNavModal(true)}
-              className="h-10 px-3 rounded-[6px] font-bold text-xs uppercase tracking-wider gap-1.5 border-border lg:hidden"
-            >
-              <LayoutGrid className="w-4 h-4 text-accent" />
-              <span className="font-mono">{currentQuestionIndex + 1}/{shuffledQuestions.length}</span>
-            </Button>
+            {/* Centro Mobile: Botão para abrir Navegador Modal e Marcar Revisão */}
+            <div className="flex items-center gap-1.5 lg:hidden">
+              <Button
+                variant="outline"
+                onClick={() => setShowNavModal(true)}
+                className="h-10 px-3 rounded-[6px] font-bold text-xs uppercase tracking-wider gap-1.5 border-border"
+              >
+                <LayoutGrid className="w-4 h-4 text-accent" />
+                <span className="font-mono">{currentQuestionIndex + 1}/{shuffledQuestions.length}</span>
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={toggleMarkForReview}
+                className={`h-10 w-10 rounded-[6px] transition-all border ${
+                  isCurrentMarked
+                    ? 'text-amber-500 bg-amber-500/15 border-amber-500/50'
+                    : 'text-muted-foreground border-border hover:bg-muted'
+                }`}
+                title={isCurrentMarked ? 'Desmarcar revisão' : 'Marcar para revisão'}
+              >
+                <Flag className={`w-4 h-4 ${isCurrentMarked ? 'fill-amber-500 text-amber-500' : ''}`} />
+              </Button>
+            </div>
 
-            {/* Centro Desktop: Marcar para revisão */}
+            {/* Centro Desktop: Marcar para revisão (Toggle Interativo) */}
             <Button
               variant="ghost"
-              onClick={() => toast.info('Questão marcada para revisão!')}
-              className="h-11 px-4 rounded-[6px] font-bold text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground gap-2 hidden lg:flex"
+              onClick={toggleMarkForReview}
+              className={`h-11 px-4 rounded-[6px] font-bold text-xs uppercase tracking-wider gap-2 hidden lg:flex transition-all ${
+                isCurrentMarked
+                  ? 'text-amber-600 dark:text-amber-400 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+              }`}
             >
-              <Flag className="w-4 h-4" />
-              <span>Marcar para Revisão</span>
+              <Flag className={`w-4 h-4 transition-transform ${isCurrentMarked ? 'fill-amber-500 text-amber-500 scale-110' : ''}`} />
+              <span>{isCurrentMarked ? 'Marcada para Revisão' : 'Marcar para Revisão'}</span>
             </Button>
 
             {/* Direita: Próxima / Finalizar */}
@@ -515,14 +566,18 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
           </DialogHeader>
 
           {/* Legenda */}
-          <div className="flex items-center justify-between gap-2 text-[11px] font-bold text-muted-foreground py-2 border-y border-border/60 mt-2">
+          <div className="grid grid-cols-2 gap-2 text-[11px] font-bold text-muted-foreground py-2 border-y border-border/60 mt-2">
             <span className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-slate-800 dark:bg-slate-200"></span>
               Respondida
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+              <span className="w-2.5 h-2.5 rounded-full bg-accent"></span>
               Atual
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+              Para revisão
             </span>
             <span className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-muted border border-border"></span>
@@ -535,12 +590,17 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
             {shuffledQuestions.map((q: ShuffledQuestion, index: number) => {
               const isAns = answers[q.id] !== undefined;
               const isCur = index === currentQuestionIndex;
+              const isRev = !!markedForReview[q.id];
 
               let bubbleStyle = 'bg-muted/60 text-muted-foreground border-border hover:bg-muted';
               if (isCur) {
                 bubbleStyle = 'bg-accent text-accent-foreground font-black ring-2 ring-accent/30 border-accent';
               } else if (isAns) {
-                bubbleStyle = 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900 border-slate-800';
+                bubbleStyle = isRev
+                  ? 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900 border-amber-500/80 ring-1 ring-amber-500/50'
+                  : 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900 border-slate-800';
+              } else if (isRev) {
+                bubbleStyle = 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/60 font-black';
               }
 
               return (
@@ -550,9 +610,12 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
                     goToQuestion(index);
                     setShowNavModal(false);
                   }}
-                  className={`h-10 rounded-[6px] text-xs font-bold transition-all border flex items-center justify-center ${bubbleStyle}`}
+                  className={`relative h-10 rounded-[6px] text-xs font-bold transition-all border flex items-center justify-center ${bubbleStyle}`}
                 >
                   {index + 1}
+                  {isRev && (
+                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-500 rounded-full border-2 border-card shadow-sm animate-pulse" />
+                  )}
                 </button>
               );
             })}
@@ -590,7 +653,34 @@ export function BlockExam({ questions, blockName, questionLimit, onFinish, onExi
               )}
             </DialogDescription>
           </DialogHeader>
+          {markedReviewCount > 0 && (
+            <div className="mt-3 p-3 rounded-[6px] bg-amber-500/10 border border-amber-500/25 text-left flex items-start gap-2.5">
+              <Flag className="w-4 h-4 text-amber-500 fill-amber-500 shrink-0 mt-0.5" />
+              <div className="text-xs">
+                <p className="font-bold text-amber-600 dark:text-amber-400">
+                  {markedReviewCount} {markedReviewCount === 1 ? 'questão marcada' : 'questões marcadas'} para revisão
+                </p>
+                <p className="text-muted-foreground mt-0.5">
+                  Deseja revisar antes de concluir definitivamente?
+                </p>
+              </div>
+            </div>
+          )}
           <div className="flex flex-col gap-2 mt-6">
+            {markedReviewCount > 0 && (
+              <Button
+                variant="outline"
+                className="w-full h-11 rounded-[5px] font-bold border-amber-500/40 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 gap-2"
+                onClick={() => {
+                  setShowFinishDialog(false);
+                  const firstIdx = shuffledQuestions.findIndex(q => markedForReview[q.id]);
+                  if (firstIdx !== -1) goToQuestion(firstIdx);
+                }}
+              >
+                <Flag className="w-4 h-4 fill-amber-500" />
+                Revisar Questões Marcadas
+              </Button>
+            )}
             <Button className="w-full h-11 rounded-[5px] font-black bg-accent hover:bg-accent/90 text-accent-foreground" onClick={handleFinish}>
               Ver Meu Resultado
             </Button>
