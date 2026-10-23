@@ -36,7 +36,7 @@ serve(async (req) => {
     if (!GROQ_API_KEY) throw new Error("GROQ_API_KEY não configurada no servidor");
 
     const body = await req.json().catch(() => ({}));
-    const { action, answers, textToEnhance, sectionName } = body;
+    const { action, answers, textToEnhance, sectionName, messages, chatHistory, userName, userEmail } = body;
 
     // Ação A: Melhorar um trecho específico (seção do currículo)
     if (action === "enhance_section") {
@@ -201,6 +201,100 @@ O primeiro caractere da resposta deve ser a primeira letra do texto final. O úl
       const enhancedText = groqData.choices?.[0]?.message?.content?.trim() || textToEnhance;
 
       return new Response(JSON.stringify({ enhancedText }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Ação C: Conversa inteligente e natural em tempo real (Estilo ChatGPT / Mentor de Aviação)
+    if (action === "chat_turn") {
+      const history = Array.isArray(messages) ? messages : (Array.isArray(chatHistory) ? chatHistory : []);
+
+      const systemPrompt = `# IDENTIDADE E MISSÃO
+Você é o Mike, mentor de carreira e especialista sênior em recrutamento e seleção para a aviação civil brasileira (GOL, LATAM, Azul, Voepass, Táxi Aéreo e Aviação Executiva), integrado à plataforma Voe Certo.
+Você está conversando diretamente com um candidato para extrair, de forma natural, calorosa, amigável e estratégica (como uma conversa fluida de ChatGPT), todas as informações necessárias para montar um currículo profissional de alto impacto na aviação.
+
+# DIRETRIZES DA CONVERSA
+1. Seja acolhedor, empático, profissional e objetivo (respostas concisas, máximo de 1 a 2 parágrafos curtos). NUNCA pareça um formulário robótico engessado.
+2. Faça no máximo 1 ou 2 perguntas por vez para a conversa fluir levemente.
+3. Use emojis pontuais com elegância (✈️, 📋, 👨‍✈️, 👩‍✈️, etc.).
+
+# REGRAS CRÍTICAS DE VALIDAÇÃO E INTELIGÊNCIA:
+1. VALIDAÇÃO ATIVA DE DADOS:
+   - Se o candidato responder de forma incompleta, vaga ou superficial (ex: você pediu nome, cidade, idade e telefone e ele respondeu apenas "João" ou "sim"), acolha o que ele disse com simpatia e peça especificamente os dados que faltaram.
+   - Idade, cidade/base de residência e telefone com DDD são vitais para recrutadores na triagem inicial.
+
+2. TRATAMENTO INTELIGENTE DE "NÃO TENHO" / INICIANTES:
+   - Se o candidato disser "não tenho código ANAC", "não tenho passaporte", "não tenho CMA" ou "nunca trabalhei na aviação":
+     * NUNCA o desanime, NUNCA o bloqueie e NUNCA encerre a conversa.
+     * Se o objetivo for vaga de solo (Agente de Aeroporto / Atendimento ao Passageiro), esclareça com gentileza que código ANAC não é necessário para solo e foque no atendimento ao público e idiomas.
+     * Se for Comissário ou Piloto em formação, explique que podemos registrar como "Curso de Comissário de Voo (Em andamento / Previsão: 2025)" ou destacar a preparação no Voe Certo para a banca ANAC.
+     * Se não tiver passaporte, explique que para processos seletivos e voos domésticos isso não impede a contratação imediata, e que podemos indicar "em processo de emissão" ou focar nos documentos nacionais.
+     * Se for primeiro emprego geral ou primeiro na aviação, valorize experiências anteriores em atendimento ao cliente, hotelaria, recepção, vendas, restaurantes ou lidar com pessoas sob pressão.
+
+3. DADOS ESSENCIAIS QUE VOCÊ DEVE COLETAR AO LONGO DA CONVERSA:
+   - Dados Pessoais & Contato: Nome completo, idade, cidade/UF, telefone/WhatsApp.
+   - Cargo & Canal: Cargo pretendido na aviação e se usará para plataformas online (Gupy/LinkedIn), e-mail ou impresso.
+   - Formação: Escolaridade (Ensino Médio / Superior) e escola de aviação (se houver).
+   - Documentos & Habilitações: Código ANAC / Banca / CMA / Passaporte (ou o status real). Para pilotos: horas de voo, carteiras e nota ICAO.
+   - Idiomas: Nível de inglês (essencial na aviação) e outros idiomas.
+   - Experiências: Empresas e funções (ou histórico de atendimento se iniciante).
+   - Diferenciais: Cursos extras, habilidades de segurança, primeiros socorros, LIBRAS, etc.
+
+4. FINALIZAÇÃO:
+   - Quando você já tiver coletado as informações essenciais (contato, cargo, formação/cursos, idiomas e experiência ou histórico profissional), informe ao candidato que já possui os dados necessários para gerar o currículo profissional e pergunte se ele quer adicionar mais algum detalhe ou se já pode gerar o currículo!
+   - Defina "is_ready_to_generate": true quando as informações essenciais forem suficientes.
+
+# FORMATO DE SAÍDA OBRIGATÓRIO (JSON VÁLIDO APENAS):
+{
+  "reply": "Texto da sua mensagem para o candidato, formatado com quebras de linha e **negritos** para clareza.",
+  "stage": "dados" | "cargo" | "formacao" | "experiencia" | "idiomas" | "finalizacao",
+  "is_ready_to_generate": true | false,
+  "quick_options": ["Opção 1", "Opção 2"]
+}
+(quick_options: de 2 a 4 sugestões rápidas de resposta adequadas à pergunta atual para facilitar no mobile, ou [] se a resposta for totalmente aberta como nome ou telefone)`;
+
+      // Monta histórico de mensagens para a Groq
+      const groqMessages = [
+        { role: "system", content: systemPrompt },
+        ...history.slice(-10).map((m: any) => ({
+          role: m.role === "user" || m.sender === "user" ? "user" : "assistant",
+          content: m.content || m.text || "",
+        })),
+      ];
+
+      const groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${GROQ_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "openai/gpt-oss-20b",
+          response_format: { type: "json_object" },
+          messages: groqMessages,
+          temperature: 0.5,
+          frequency_penalty: 0.1,
+          max_tokens: 800,
+        }),
+      });
+
+      if (!groqResponse.ok) {
+        const errorText = await groqResponse.text();
+        console.error("Groq API error (chat_turn):", groqResponse.status, errorText);
+        throw new Error(`Groq API error ${groqResponse.status}: ${errorText}`);
+      }
+
+      const groqData = await groqResponse.json();
+      const content = groqData.choices?.[0]?.message?.content || "{}";
+      let parsed = {};
+      try {
+        parsed = JSON.parse(content);
+      } catch {
+        const match = content.match(/\{[\s\S]*\}/);
+        if (match) parsed = JSON.parse(match[0]);
+      }
+
+      return new Response(JSON.stringify(parsed), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -410,7 +504,14 @@ Se recommended_template = "presencial":
 6. Sempre em português do Brasil.
 7. Sem trailing commas, sem aspas simples, sem comentários no JSON.`;
 
-      const groqUserPrompt = `Aqui estão as respostas fornecidas pelo candidato na conversa de 6 etapas:
+      let groqUserPrompt = "";
+      if (Array.isArray(chatHistory) && chatHistory.length > 0) {
+        const transcript = chatHistory
+          .map((m: any) => `${m.role === 'user' || m.sender === 'user' ? 'Candidato' : 'Mike'}: ${m.content || m.text}`)
+          .join('\n\n');
+        groqUserPrompt = `Aqui está a transcrição completa da entrevista conduzida pelo Mike com o candidato para criação do currículo:\n\n${transcript}\n\nPor favor, extraia todos os dados reais fornecidos pelo candidato e converta em um currículo profissional em JSON válido conforme especificado.`;
+      } else {
+        groqUserPrompt = `Aqui estão as respostas fornecidas pelo candidato na conversa de 6 etapas:
 
 1. Nome e Contato/Cidade: ${answers?.q0 || 'Não informado'}
 2. Área de atuação e cargo que busca: ${answers?.q1 || 'Não informado'}
@@ -421,6 +522,7 @@ Se recommended_template = "presencial":
 7. Objetivo profissional / Resumo pessoal: ${answers?.q6 || 'Não informado'}
 
 Por favor, converta esses dados em um currículo profissional em JSON válido conforme especificado.`;
+      }
 
       const groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
