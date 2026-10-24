@@ -51,9 +51,16 @@ export function CurriculumChatAssistant({
   const getFormattedTime = () =>
     new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
+  const initialQuickOptions = [
+    'Comissário(a) de Voo',
+    'Piloto Comercial / Privado',
+    'Agente de Aeroporto / Atendimento',
+    'Mecânico de Aeronaves'
+  ];
+
   const initialAIMessage: Message = {
     sender: 'ai',
-    text: `Olá${userName ? `, **${userName}**` : ''}! Sou o Mike, seu mentor de carreira do Voe Certo. ✈️\n\nVou te guiar na criação de um currículo profissional de alto impacto para a aviação civil, estruturado sob medida para os recrutadores da Azul, LATAM, GOL e aviação executiva.\n\nPara começarmos com o pé direito, qual é o seu **nome completo**, sua **idade**, **cidade/estado** onde reside e seu **telefone com DDD**?`,
+    text: `Olá${userName ? `, **${userName}**` : ''}! Sou o Mike, seu mentor de carreira do Voe Certo. ✈️\n\nVou te guiar na criação de um currículo profissional de alto impacto para a aviação civil.\n\nPara começarmos com o pé direito, qual é o **cargo ou área que você pretende atuar** na aviação? (Ex: Comissário(a) de Voo, Piloto Comercial, Agente de Aeroporto...)`,
     timestamp: getFormattedTime(),
   };
 
@@ -61,9 +68,9 @@ export function CurriculumChatAssistant({
   const [inputText, setInputText] = useState('');
   const [isLoadingMike, setIsLoadingMike] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [currentStage, setCurrentStage] = useState<string>('dados');
+  const [currentStage, setCurrentStage] = useState<string>('cargo');
   const [completedStages, setCompletedStages] = useState<string[]>([]);
-  const [quickOptions, setQuickOptions] = useState<string[]>([]);
+  const [quickOptions, setQuickOptions] = useState<string[]>(initialQuickOptions);
   const [isReadyToGenerate, setIsReadyToGenerate] = useState(false);
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -101,14 +108,14 @@ export function CurriculumChatAssistant({
     setMessages([
       {
         sender: 'ai',
-        text: `Olá${userName ? `, **${userName}**` : ''}! Sou o Mike, seu mentor de carreira do Voe Certo. ✈️\n\nVamos recomeçar do zero! Para estruturarmos seu currículo profissional, qual é o seu **nome completo**, sua **idade**, **cidade/estado** onde reside e seu **telefone com DDD**?`,
+        text: `Olá${userName ? `, **${userName}**` : ''}! Sou o Mike, seu mentor de carreira do Voe Certo. ✈️\n\nVamos recomeçar do zero! Para começarmos, qual é o **cargo ou área que você pretende atuar** na aviação?\n\nVocê pode clicar nas sugestões abaixo ou responder livremente.`,
         timestamp: getFormattedTime(),
       },
     ]);
     setInputText('');
-    setCurrentStage('dados');
+    setCurrentStage('cargo');
     setCompletedStages([]);
-    setQuickOptions([]);
+    setQuickOptions(initialQuickOptions);
     setIsReadyToGenerate(false);
   };
 
@@ -144,10 +151,12 @@ export function CurriculumChatAssistant({
 
       if (error) throw error;
 
-      if (data?.reply) {
+      const replyText = data?.reply || data?.response || data?.message || data?.resposta || data?.text || (typeof data === 'string' ? data : '');
+
+      if (replyText) {
         const aiResponse: Message = {
           sender: 'ai',
-          text: data.reply,
+          text: replyText,
           timestamp: getFormattedTime(),
         };
 
@@ -160,6 +169,8 @@ export function CurriculumChatAssistant({
 
         if (Array.isArray(data.quick_options) && data.quick_options.length > 0) {
           setQuickOptions(data.quick_options);
+        } else {
+          setQuickOptions([]);
         }
 
         if (data.is_ready_to_generate) {
