@@ -2,6 +2,7 @@ import { PageTransition } from '@/components/PageTransition';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { HeroSection } from '@/components/landing/HeroSection';
+import { FeaturesTicker } from '@/components/landing/FeaturesTicker';
 import { JourneySection } from '@/components/landing/JourneySection';
 import { MentorCards } from '@/components/landing/MentorCards';
 import { PlatformPreview } from '@/components/landing/PlatformPreview';
@@ -107,6 +108,9 @@ export default function Index() {
 
         {/* 2. Hero Section */}
         <HeroSection />
+
+        {/* 2.1 Tarja Animada de Recursos (Ticker) */}
+        <FeaturesTicker />
 
         {/* 3. Journey (Estude, Evolua, Conquiste) */}
         <JourneySection />
