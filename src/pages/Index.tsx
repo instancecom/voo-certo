@@ -6,7 +6,7 @@ import { FeaturesTicker } from '@/components/landing/FeaturesTicker';
 import { AboutPlatformSection } from '@/components/landing/AboutPlatformSection';
 import { ExamModesSection } from '@/components/landing/ExamModesSection';
 import { DashboardPreviewSection } from '@/components/landing/DashboardPreviewSection';
-import { MentorCards } from '@/components/landing/MentorCards';
+import { MikeAssistantSection } from '@/components/landing/MikeAssistantSection';
 
 import { LinkedInBadgeSection } from '@/components/landing/LinkedInBadgeSection';
 import { TestimonialsSection } from '@/components/landing/TestimonialsSection';
@@ -120,7 +120,7 @@ export default function Index() {
         <DashboardPreviewSection />
 
         {/* 4. Assistente Mike */}
-        <MentorCards />
+        <MikeAssistantSection />
 
 
         
