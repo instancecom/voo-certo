@@ -4,6 +4,7 @@ import { Footer } from '@/components/Footer';
 import { HeroSection } from '@/components/landing/HeroSection';
 import { FeaturesTicker } from '@/components/landing/FeaturesTicker';
 import { AboutPlatformSection } from '@/components/landing/AboutPlatformSection';
+import { ExamModesSection } from '@/components/landing/ExamModesSection';
 import { MentorCards } from '@/components/landing/MentorCards';
 import { PlatformPreview } from '@/components/landing/PlatformPreview';
 import { LinkedInBadgeSection } from '@/components/landing/LinkedInBadgeSection';
@@ -114,6 +115,7 @@ export default function Index() {
 
         {/* 3. Sobre a Plataforma (Tudo para dar seu próximo passo) */}
         <AboutPlatformSection />
+        <ExamModesSection />
 
         {/* 4. Assistente Mike */}
         <MentorCards />
