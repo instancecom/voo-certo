@@ -3,7 +3,7 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { HeroSection } from '@/components/landing/HeroSection';
 import { FeaturesTicker } from '@/components/landing/FeaturesTicker';
-import { JourneySection } from '@/components/landing/JourneySection';
+import { AboutPlatformSection } from '@/components/landing/AboutPlatformSection';
 import { MentorCards } from '@/components/landing/MentorCards';
 import { PlatformPreview } from '@/components/landing/PlatformPreview';
 import { LinkedInBadgeSection } from '@/components/landing/LinkedInBadgeSection';
@@ -112,8 +112,8 @@ export default function Index() {
         {/* 2.1 Tarja Animada de Recursos (Ticker) */}
         <FeaturesTicker />
 
-        {/* 3. Journey (Estude, Evolua, Conquiste) */}
-        <JourneySection />
+        {/* 3. Sobre a Plataforma (Tudo para dar seu próximo passo) */}
+        <AboutPlatformSection />
 
         {/* 4. Assistente Mike */}
         <MentorCards />
