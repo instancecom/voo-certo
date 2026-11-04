@@ -3,14 +3,14 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { HeroSection } from '@/components/landing/HeroSection';
 import { FeaturesTicker } from '@/components/landing/FeaturesTicker';
-import { AboutPlatformSection } from '@/components/landing/AboutPlatformSection';
+
 import { ExamModesSection } from '@/components/landing/ExamModesSection';
 import { DashboardPreviewSection } from '@/components/landing/DashboardPreviewSection';
 import { MikeAssistantSection } from '@/components/landing/MikeAssistantSection';
 import { InsigniasSection } from '@/components/landing/InsigniasSection';
 
-import { LinkedInBadgeSection } from '@/components/landing/LinkedInBadgeSection';
-import { TestimonialsSection } from '@/components/landing/TestimonialsSection';
+
+
 import { PricingCards } from '@/components/landing/PricingCards';
 import { FAQSection } from '@/components/landing/FAQSection';
 import { CTASection } from '@/components/landing/CTASection';
@@ -115,8 +115,8 @@ export default function Index() {
         {/* 2.1 Tarja Animada de Recursos (Ticker) */}
         <FeaturesTicker />
 
-        {/* 3. Sobre a Plataforma (Tudo para dar seu próximo passo) */}
-        <AboutPlatformSection />
+        {/* 3. Modos de Simulado */}
+        
         <ExamModesSection />
         <DashboardPreviewSection />
 
@@ -127,11 +127,11 @@ export default function Index() {
 
         
 
-        {/* 6. Selo de Aprovação LinkedIn */}
-        <LinkedInBadgeSection />
+        
+        
 
-        {/* 7. Depoimentos / Histórias Reais */}
-        <TestimonialsSection />
+        
+        
 
         {/* 8. Planos & Preços */}
         <PricingCards plans={PLANS} />
