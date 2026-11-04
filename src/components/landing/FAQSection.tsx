@@ -48,7 +48,7 @@ export function FAQSection() {
   return (
     <section 
       id="faq"
-      className="py-20 md:py-32 bg-white dark:bg-[#071328] relative overflow-hidden border-b border-border/60"
+      className="py-12 md:py-20 bg-white dark:bg-[#071328] relative overflow-hidden"
     >
       {/* Luz ambiente de fundo */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-blue-500/5 dark:bg-blue-400/5 rounded-full blur-3xl pointer-events-none" />
@@ -61,18 +61,16 @@ export function FAQSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center max-w-3xl mx-auto mb-14 sm:mb-18"
+          className="text-center max-w-3xl mx-auto mb-10 sm:mb-14"
         >
           {/* Balão de interrogação com linhas douradas */}
           <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-12 h-0.5 bg-amber-400/70 rounded-full" />
             <div className="relative flex items-center justify-center">
               <MessageSquare className="w-8 h-8 text-amber-500 fill-amber-400/10 stroke-[2.2]" />
               <span className="absolute inset-0 flex items-center justify-center text-amber-500 font-black text-sm pb-1">
                 ?
               </span>
             </div>
-            <div className="w-12 h-0.5 bg-amber-400/70 rounded-full" />
           </div>
 
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#071328] dark:text-white tracking-tight leading-tight mb-4">

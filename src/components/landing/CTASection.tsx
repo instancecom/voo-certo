@@ -10,7 +10,7 @@ export const CTASection = () => {
   const { user } = useAuth();
 
   return (
-    <section className="py-24 md:py-36 relative overflow-hidden" style={{ background: 'var(--gradient-hero)' }}>
+    <section className="py-16 md:py-24 relative overflow-hidden" style={{ background: 'var(--gradient-hero)' }}>
       {/* Background Image Overlay */}
       <div className="absolute inset-0 opacity-15">
         <img

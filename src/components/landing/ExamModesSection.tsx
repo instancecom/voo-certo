@@ -100,15 +100,8 @@ export function ExamModesSection() {
   return (
     <section 
       id="modos-simulado"
-      className="py-20 md:py-32 bg-white dark:bg-[#071328] relative overflow-hidden border-b border-border/60"
+      className="py-12 md:py-20 bg-white dark:bg-[#071328] relative overflow-hidden"
     >
-      {/* Detalhe de aviãozinho com linha pontilhada no topo */}
-      <div className="absolute top-8 left-1/2 -translate-x-1/2 flex items-center gap-3 opacity-60 pointer-events-none">
-        <div className="w-16 h-px bg-slate-300 dark:bg-slate-700" />
-        <span className="text-amber-500 text-sm">✈️</span>
-        <div className="w-16 h-px bg-slate-300 dark:bg-slate-700" />
-      </div>
-
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* ── CABEÇALHO DA SEÇÃO ── */}
@@ -116,7 +109,7 @@ export function ExamModesSection() {
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center max-w-2xl mx-auto mb-14 sm:mb-18"
+          className="text-center max-w-2xl mx-auto mb-10 sm:mb-14"
         >
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#071328] dark:text-white tracking-tight leading-tight mb-4">
             Escolha seu jeito de treinar.

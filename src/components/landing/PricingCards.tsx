@@ -24,24 +24,12 @@ export function PricingCards({ plans }: PricingCardsProps) {
   return (
     <section 
       id="planos"
-      className="py-20 md:py-32 bg-gradient-to-b from-white via-slate-50/50 to-white dark:from-[#071328] dark:via-[#091a36] dark:to-[#071328] relative overflow-hidden border-b border-border/60"
+      className="py-12 md:py-20 bg-gradient-to-b from-white via-slate-50/50 to-white dark:from-[#071328] dark:via-[#091a36] dark:to-[#071328] relative overflow-hidden"
     >
       {/* Luz ambiente de fundo */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-amber-400/5 dark:bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Aviãozinho decorativo no canto superior direito com rota pontilhada amarela */}
-      <div className="hidden lg:flex items-center absolute top-12 right-12 xl:right-24 pointer-events-none opacity-90">
-        <svg width="140" height="70" viewBox="0 0 140 70" fill="none">
-          <path 
-            d="M 10,55 Q 60,45 115,18" 
-            stroke="#eab308" 
-            strokeWidth="2" 
-            strokeDasharray="4 4" 
-            fill="none" 
-          />
-        </svg>
-        <span className="text-[#071328] dark:text-amber-400 text-2xl -ml-2 -mt-10 transform rotate-12 inline-block">✈️</span>
-      </div>
+      
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
@@ -51,13 +39,11 @@ export function PricingCards({ plans }: PricingCardsProps) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center max-w-3xl mx-auto mb-16 sm:mb-20"
+          className="text-center max-w-3xl mx-auto mb-10 sm:mb-14"
         >
           {/* Coroa dourada com linhas horizontais */}
           <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-12 h-0.5 bg-amber-400/70 rounded-full" />
-            <Crown className="w-6 h-6 text-amber-500" />
-            <div className="w-12 h-0.5 bg-amber-400/70 rounded-full" />
+            <Crown className="w-7 h-7 text-amber-500" />
           </div>
 
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#071328] dark:text-white tracking-tight leading-tight mb-4">

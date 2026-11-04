@@ -33,7 +33,7 @@ export function MikeAssistantSection() {
   return (
     <section 
       id="mike-assistente"
-      className="py-16 md:py-24 bg-white dark:bg-[#071328] relative overflow-hidden"
+      className="py-10 md:py-16 bg-white dark:bg-[#071328] relative overflow-hidden"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         

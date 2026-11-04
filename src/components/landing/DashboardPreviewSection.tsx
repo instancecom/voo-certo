@@ -8,7 +8,7 @@ export function DashboardPreviewSection() {
   return (
     <section 
       id="painel-desempenho"
-      className="py-20 md:py-32 bg-gradient-to-b from-white via-[#f4f8ff] to-white dark:from-[#071328] dark:via-[#091a36] dark:to-[#071328] relative overflow-hidden border-b border-border/60"
+      className="py-12 md:py-20 bg-gradient-to-b from-white via-[#f4f8ff] to-white dark:from-[#071328] dark:via-[#091a36] dark:to-[#071328] relative overflow-hidden"
     >
       {/* Elementos decorativos de fundo (nuvens/iluminação suave) */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[450px] bg-blue-400/10 dark:bg-blue-600/10 rounded-full blur-3xl pointer-events-none -z-0" />
@@ -21,21 +21,8 @@ export function DashboardPreviewSection() {
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center max-w-3xl mx-auto mb-16 sm:mb-20 relative"
+          className="text-center max-w-3xl mx-auto mb-10 sm:mb-14 relative"
         >
-          {/* Aviãozinho decorativo com trilha pontilhada no topo à direita */}
-          <div className="hidden md:flex items-center absolute -top-8 -right-8 lg:-right-16 pointer-events-none opacity-85">
-            <svg width="140" height="70" viewBox="0 0 140 70" fill="none" className="text-blue-400 dark:text-blue-400">
-              <path 
-                d="M 10,60 Q 60,50 110,18" 
-                stroke="currentColor" 
-                strokeWidth="2" 
-                strokeDasharray="4 4" 
-                fill="none" 
-              />
-            </svg>
-            <span className="text-blue-500 text-2xl -ml-2 -mt-10 transform rotate-12 inline-block">✈️</span>
-          </div>
 
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#071328] dark:text-white tracking-tight leading-tight mb-4">
             <span className="relative inline-block">
