@@ -7,6 +7,7 @@ import { FeaturesTicker } from '@/components/landing/FeaturesTicker';
 import { ExamModesSection } from '@/components/landing/ExamModesSection';
 import { DashboardPreviewSection } from '@/components/landing/DashboardPreviewSection';
 import { MikeAssistantSection } from '@/components/landing/MikeAssistantSection';
+import { CareerGuidesSection } from '@/components/landing/CareerGuidesSection';
 import { InsigniasSection } from '@/components/landing/InsigniasSection';
 import { TestimonialsSection } from '@/components/landing/TestimonialsSection';
 
@@ -123,6 +124,9 @@ export default function Index() {
 
         {/* 4. Assistente Mike */}
         <MikeAssistantSection />
+        {/* 4.1 Guias de Carreira */}
+        <CareerGuidesSection />
+
         <InsigniasSection />
 
         {/* 5. Depoimentos (Provas Reais) */}
