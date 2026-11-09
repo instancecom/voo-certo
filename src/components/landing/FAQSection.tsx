@@ -95,10 +95,10 @@ export function FAQSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.35, delay: idx * 0.05 }}
-                className={`overflow-hidden transition-all duration-300 border ${
+                className={`overflow-hidden rounded-2xl border transition-colors duration-200 ${
                   isOpen
-                    ? 'rounded-[20px] bg-slate-50/90 dark:bg-[#0b1730] border-blue-200 dark:border-blue-900 shadow-md'
-                    : 'rounded-full bg-white dark:bg-[#09162e] border-slate-200/90 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-xs hover:shadow-sm'
+                    ? 'bg-slate-50/90 dark:bg-[#0b1730] border-blue-200 dark:border-blue-900 shadow-md'
+                    : 'bg-white dark:bg-[#09162e] border-slate-200/90 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-xs hover:shadow-sm'
                 }`}
               >
                 <button
@@ -121,13 +121,27 @@ export function FAQSection() {
                   </div>
                 </button>
 
-                <AnimatePresence>
+                <AnimatePresence initial={false}>
                   {isOpen && (
                     <motion.div
+                      key="content"
                       initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25, ease: 'easeInOut' }}
+                      animate={{ 
+                        height: 'auto', 
+                        opacity: 1,
+                        transition: {
+                          height: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
+                          opacity: { duration: 0.25, delay: 0.05 }
+                        }
+                      }}
+                      exit={{ 
+                        height: 0, 
+                        opacity: 0,
+                        transition: {
+                          height: { duration: 0.2, ease: [0.16, 1, 0.3, 1] },
+                          opacity: { duration: 0.15 }
+                        }
+                      }}
                     >
                       <div className="px-6 sm:px-8 pb-5 pt-1 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal border-t border-slate-200/60 dark:border-slate-800/80">
                         {faq.a}
