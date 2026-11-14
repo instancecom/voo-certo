@@ -1,217 +1,235 @@
+import React, { useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Linkedin } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface InsigniaItem {
   id: string;
   name: string;
-  mobileName: string;
   image: string;
+  fallbackImage?: string;
   pillColor: string;
-  glowColor: string;
-  description: string;
-  mobileDescription: string;
-  isSpecialLinkedIn?: boolean;
+  descriptionWeb: string;
+  descriptionMobile: string;
 }
 
 const INSIGNIAS: InsigniaItem[] = [
   {
     id: 'bronze',
     name: 'BRONZE',
-    mobileName: 'BRONZE',
     image: '/images/landing/insignia-bronze.png',
-    pillColor: 'bg-[#93522b] text-white',
-    glowColor: 'hover:shadow-amber-900/15',
-    description: 'Você começou bem! Essa insígnia é o primeiro passo da sua jornada.',
-    mobileDescription: 'Seu primeiro passo.',
+    pillColor: 'bg-[#a3521e] text-white',
+    descriptionWeb: 'Você começou bem! Essa insígnia é o primeiro passo da sua jornada.',
+    descriptionMobile: 'Você começou bem! Essa insígnia é o primeiro passo.',
   },
   {
     id: 'prata',
     name: 'PRATA',
-    mobileName: 'PRATA',
     image: '/images/landing/insignia-prata.png',
-    pillColor: 'bg-[#6b7c96] text-white',
-    glowColor: 'hover:shadow-slate-500/15',
-    description: 'Você já está evoluindo! Continua assim, o seu esforço está dando resultado.',
-    mobileDescription: 'Você está evoluindo.',
+    pillColor: 'bg-[#627385] text-white',
+    descriptionWeb: 'Você já está evoluindo! Continue assim, o seu esforço está dando resultado.',
+    descriptionMobile: 'Você já está evoluindo!',
   },
   {
     id: 'ouro',
     name: 'OURO',
-    mobileName: 'OURO',
     image: '/images/landing/insignia-ouro.png',
-    pillColor: 'bg-[#d99400] text-white',
-    glowColor: 'hover:shadow-yellow-500/20',
-    description: 'Você está entre os melhores! Sua dedicação te coloca em outro nível.',
-    mobileDescription: 'Mais perto do seu objetivo.',
+    pillColor: 'bg-[#f59e0b] text-white',
+    descriptionWeb: 'Você está entre os melhores! Sua dedicação te colocou em outro nível.',
+    descriptionMobile: 'Você está entre os melhores!',
   },
   {
-    id: 'platina',
-    name: 'PLATINA',
-    mobileName: 'DIAMANTE',
-    image: '/images/landing/insignia-platina.png',
-    pillColor: 'bg-[#0088ff] text-white',
-    glowColor: 'hover:shadow-cyan-500/25',
-    description: 'Você chegou longe! Essa é a prova de que todo seu esforço vale a pena.',
-    mobileDescription: 'Excelência em cada etapa.',
-    isSpecialLinkedIn: true,
+    id: 'diamante',
+    name: 'DIAMANTE',
+    image: '/images/landing/insignia-diamante.png',
+    fallbackImage: '/images/landing/insignia-platina.png',
+    pillColor: 'bg-[#0080ff] text-white',
+    descriptionWeb: 'Você chegou longe! Reconhecimento oficial da sua aprovação.',
+    descriptionMobile: 'Você chegou longe!',
   },
 ];
 
 export function InsigniasSection() {
-  return (
-    <section 
-      id="insignias"
-      className="py-12 md:py-20 bg-white dark:bg-[#071328] relative overflow-hidden"
-    >
-      {/* Elementos sutis de fundo */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-amber-400/5 dark:bg-amber-400/5 rounded-full blur-3xl pointer-events-none" />
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+  const handleScroll = (direction: 'left' | 'right') => {
+    if (!scrollContainerRef.current) return;
+    const scrollAmount = 300;
+    scrollContainerRef.current.scrollBy({
+      left: direction === 'left' ? -scrollAmount : scrollAmount,
+      behavior: 'smooth',
+    });
+  };
+
+  return (
+    <section
+      id="insignias"
+      className="py-16 md:py-24 bg-white dark:bg-[#071328] relative overflow-hidden"
+    >
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* ══════════════════════════════════════════════════════════════
+            1. VERSÃO DESKTOP (lg:grid)
+            Coluna da esquerda com títulos + CTA; Coluna da direita com
+            carrossel horizontal e efeito de corte (peek) na borda
+           ══════════════════════════════════════════════════════════════ */}
+        <div className="hidden lg:grid lg:grid-cols-12 lg:gap-10 xl:gap-14 items-center">
+          {/* Coluna Esquerda: Textos e Botão */}
+          <div className="lg:col-span-5 pr-2">
+            <h2 className="text-3xl xl:text-4xl 2xl:text-[42px] font-black tracking-tight leading-[1.15] text-[#08234a] dark:text-white">
+              Conquiste suas <br />
+              <span className="text-[#0066ff]">insígnias</span> de progresso.
+            </h2>
+
+            <p className="mt-5 text-base xl:text-lg text-slate-600 dark:text-slate-300 font-normal leading-relaxed">
+              Quanto mais você estuda e evolui, mais perto fica dos seus sonhos. As Insígnias são o seu reconhecimento por cada conquista.
+            </p>
+
+            <div className="mt-8 flex items-center gap-3">
+              <Link
+                to="/conquistas"
+                className="inline-flex items-center gap-2.5 px-6 py-3.5 bg-[#0066ff] hover:bg-[#0055d4] text-white font-medium text-sm rounded-[5px] shadow-sm hover:shadow transition-all group"
+              >
+                <span>Ver todas as insígnias</span>
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+
+              {/* Botões sutis de navegação do carrossel */}
+              <div className="flex items-center gap-2 ml-1">
+                <button
+                  type="button"
+                  onClick={() => handleScroll('left')}
+                  className="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-300 transition-colors shadow-xs"
+                  aria-label="Rolar insígnias para esquerda"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleScroll('right')}
+                  className="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-300 transition-colors shadow-xs"
+                  aria-label="Rolar insígnias para direita"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Coluna Direita: Carrossel de Cards com overflow e peek effect */}
+          <div className="lg:col-span-7 min-w-0 relative">
+            <div
+              ref={scrollContainerRef}
+              className="flex gap-5 xl:gap-6 overflow-x-auto scrollbar-none py-4 px-1 -mr-4 sm:-mr-8 lg:-mr-12 scroll-smooth"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {INSIGNIAS.map((badge, idx) => (
+                <motion.div
+                  key={badge.id}
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.35, delay: idx * 0.08 }}
+                  whileHover={{ y: -4 }}
+                  className="w-[250px] xl:w-[265px] shrink-0 bg-white dark:bg-[#0a1b33] border border-slate-100 dark:border-slate-800/80 rounded-[20px] p-6 flex flex-col items-center text-center shadow-[0_4px_24px_rgba(8,35,74,0.05)] hover:shadow-[0_8px_30px_rgba(8,35,74,0.09)] transition-all duration-300"
+                >
+                  {/* Ilustração da Insígnia */}
+                  <div className="w-32 h-32 xl:w-36 xl:h-36 flex items-center justify-center mb-4 relative">
+                    <img
+                      src={badge.image}
+                      alt={`Insígnia ${badge.name}`}
+                      className="w-full h-full object-contain drop-shadow-md select-none"
+                      onError={(e) => {
+                        if (badge.fallbackImage) {
+                          e.currentTarget.src = badge.fallbackImage;
+                        }
+                      }}
+                    />
+                  </div>
+
+                  {/* Tag / Pill de Nível */}
+                  <span className={`inline-block px-5 py-1 rounded-full text-[11px] font-black uppercase tracking-wider mb-3.5 shadow-xs ${badge.pillColor}`}>
+                    {badge.name}
+                  </span>
+
+                  {/* Descrição */}
+                  <p className="text-xs xl:text-sm text-slate-600 dark:text-slate-300 font-normal leading-relaxed">
+                    {badge.descriptionWeb}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
 
         {/* ══════════════════════════════════════════════════════════════
-            1. VERSÃO MOBILE (EXIBIDA APENAS EM TELAS MENORES: lg:hidden)
-            Layout em Grid 2x2 com cards compactos conforme referência
+            2. VERSÃO MOBILE (block lg:hidden)
+            Título centralizado, carrossel horizontal de cards compactos
+            e botão CTA abaixo centralizado
            ══════════════════════════════════════════════════════════════ */}
-        <div className="block lg:hidden max-w-md mx-auto">
+        <div className="block lg:hidden">
           {/* Cabeçalho Mobile */}
-          <div className="text-center mb-8">
-            <div className="flex items-center justify-center mb-2.5">
-              <span className="text-amber-500 text-2xl">🏆</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-[#071328] dark:text-white tracking-tight leading-tight mb-2">
+          <div className="text-center mb-7 px-2">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight text-[#08234a] dark:text-white">
               Conquiste suas <br />
-              <span className="text-amber-500 dark:text-amber-400">insígnias de progresso.</span>
+              <span className="text-[#0066ff]">insígnias</span> de progresso.
             </h2>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-normal leading-relaxed max-w-xs mx-auto">
-              Cada conquista reconhece sua evolução na plataforma.
+            <p className="mt-2.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-normal leading-relaxed max-w-xs mx-auto">
+              Quanto mais você estuda e evolui, mais perto fica dos seus sonhos.
             </p>
           </div>
 
-          {/* Grid 2x2 das Insígnias */}
-          <div className="grid grid-cols-2 gap-3 sm:gap-4">
+          {/* Carrossel Horizontal Mobile */}
+          <div
+            className="flex gap-3 overflow-x-auto scrollbar-none px-4 pb-3 -mx-4 snap-x snap-mandatory"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
             {INSIGNIAS.map((badge, idx) => (
               <motion.div
                 key={badge.id}
                 initial={{ opacity: 0, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.35, delay: idx * 0.05 }}
-                className="bg-white dark:bg-card border border-slate-200/80 dark:border-border rounded-[18px] p-3.5 sm:p-4 flex flex-col items-center text-center shadow-xs"
+                transition={{ duration: 0.3, delay: idx * 0.05 }}
+                className="w-[155px] sm:w-[170px] shrink-0 snap-center bg-white dark:bg-[#0a1b33] border border-slate-100 dark:border-slate-800 rounded-[18px] p-4 flex flex-col items-center text-center shadow-[0_2px_14px_rgba(8,35,74,0.04)]"
               >
-                {/* Medalha 3D */}
+                {/* Imagem da Insígnia */}
                 <div className="w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center mb-2.5 relative">
                   <img
                     src={badge.image}
-                    alt={`Insígnia ${badge.mobileName}`}
-                    className="w-full h-full object-contain drop-shadow-md select-none"
+                    alt={`Insígnia ${badge.name}`}
+                    className="w-full h-full object-contain drop-shadow-sm select-none"
                     onError={(e) => {
-                      if (badge.id === 'platina') {
-                        e.currentTarget.src = '/images/isg_aprovado_anac.png';
+                      if (badge.fallbackImage) {
+                        e.currentTarget.src = badge.fallbackImage;
                       }
                     }}
                   />
                 </div>
 
                 {/* Tag / Pill do Nível */}
-                <span className={`inline-block px-3 py-0.5 rounded-full text-[10px] font-black tracking-wider shadow-xs mb-1.5 ${badge.pillColor}`}>
-                  {badge.mobileName}
+                <span className={`inline-block px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider mb-2 shadow-xs ${badge.pillColor}`}>
+                  {badge.name}
                 </span>
 
-                {/* Descrição curta */}
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-tight">
-                  {badge.mobileDescription}
+                {/* Descrição Curta */}
+                <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium leading-snug">
+                  {badge.descriptionMobile}
                 </p>
               </motion.div>
             ))}
           </div>
-        </div>
 
-        {/* ══════════════════════════════════════════════════════════════
-            2. VERSÃO DESKTOP (EXIBIDA APENAS EM TELAS GRANDES: hidden lg:block)
-            Mantida exatamente como estava originalmente
-           ══════════════════════════════════════════════════════════════ */}
-        <div className="hidden lg:block">
-          {/* Cabeçalho Desktop */}
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-center max-w-3xl mx-auto mb-10 sm:mb-14"
-          >
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <span className="text-amber-500 text-3xl">🏆</span>
-            </div>
-
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#071328] dark:text-white tracking-tight leading-tight mb-4">
-              Conquiste suas{' '}
-              <span className="text-amber-500 dark:text-amber-400">insígnias de progresso.</span>
-            </h2>
-
-            <p className="text-base sm:text-lg text-slate-500 dark:text-slate-400 font-normal leading-relaxed max-w-2xl mx-auto">
-              Quanto mais você estuda e evolui, mais perto fica dos seus sonhos.
-              <br className="hidden sm:inline" /> As insígnias são o seu reconhecimento por cada conquista.
-            </p>
-          </motion.div>
-
-          {/* Grid de 4 Colunas das Insígnias Desktop */}
-          <div className="grid grid-cols-4 gap-6 max-w-6xl mx-auto items-stretch">
-            {INSIGNIAS.map((badge, idx) => (
-              <motion.div
-                key={badge.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: idx * 0.1 }}
-                whileHover={{ y: -6 }}
-                className={`flex flex-col items-center text-center p-6 rounded-[16px] bg-slate-50/60 dark:bg-card/40 border border-slate-100 dark:border-border/60 transition-all ${badge.glowColor} group`}
-              >
-                {/* Medalha 3D */}
-                <div className="w-32 h-32 sm:w-36 sm:h-36 flex items-center justify-center mb-5 relative">
-                  <motion.img
-                    src={badge.image}
-                    alt={`Insígnia ${badge.name}`}
-                    className="w-full h-full object-contain drop-shadow-lg group-hover:scale-105 transition-transform duration-300 select-none"
-                    animate={{ y: [0, -4, 0] }}
-                    transition={{ 
-                      repeat: Infinity, 
-                      duration: 3.5 + idx * 0.4, 
-                      ease: "easeInOut" 
-                    }}
-                    onError={(e) => {
-                      if (badge.id === 'platina') {
-                        e.currentTarget.src = '/images/isg_aprovado_anac.png';
-                      }
-                    }}
-                  />
-                </div>
-
-                {/* Tag / Pill do Nível */}
-                <div className="mb-4">
-                  <span className={`inline-flex items-center gap-1.5 px-6 py-1.5 rounded-full text-xs font-black tracking-widest shadow-xs ${badge.pillColor}`}>
-                    {badge.name}
-                    {badge.isSpecialLinkedIn && (
-                      <Linkedin className="w-3.5 h-3.5 fill-current ml-0.5" />
-                    )}
-                  </span>
-                </div>
-
-                {/* Descrição breve */}
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-normal leading-relaxed max-w-[220px]">
-                  {badge.description}
-                </p>
-
-                {/* Destaque especial para Platina/LinkedIn */}
-                {badge.isSpecialLinkedIn && (
-                  <div className="mt-4 pt-3 border-t border-slate-200/80 dark:border-border/60 w-full flex items-center justify-center gap-1.5 text-[11px] font-bold text-blue-600 dark:text-cyan-400">
-                    <span>🎖️ Selo Oficial ANAC LinkedIn</span>
-                  </div>
-                )}
-              </motion.div>
-            ))}
+          {/* Botão CTA Centralizado */}
+          <div className="mt-7 flex justify-center px-4">
+            <Link
+              to="/conquistas"
+              className="inline-flex items-center justify-center gap-2 px-7 py-3 bg-[#0066ff] hover:bg-[#0055d4] active:scale-[0.98] text-white font-medium text-sm rounded-[5px] shadow-sm transition-all"
+            >
+              <span>Ver todas as insígnias</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
         </div>
-
       </div>
     </section>
   );

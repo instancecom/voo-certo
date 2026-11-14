@@ -128,10 +128,12 @@ export default function Index() {
 
         {/* 4. Assistente Mike */}
         <MikeAssistantSection />
-        {/* 4.1 Guias de Carreira */}
-        <CareerGuidesSection />
 
+        {/* 4.1 Insígnias de Progresso */}
         <InsigniasSection />
+
+        {/* 4.2 Guias de Carreira */}
+        <CareerGuidesSection />
 
         {/* 5. Depoimentos (Provas Reais) */}
         <TestimonialsSection />
