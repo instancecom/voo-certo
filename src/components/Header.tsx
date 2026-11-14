@@ -101,6 +101,15 @@ export function Header() {
     navigate('/');
   };
 
+  // Itens da Landing Page (quando na home)
+  const homeNavItems = [
+    { to: '/', label: 'Início', isHomeItem: true },
+    { to: '/guia-carreira', label: 'Carreiras' },
+    { to: '/simulados', label: 'Simulados' },
+    { to: '/guia-carreira', label: 'Guias' },
+    { to: '#plataforma', label: 'Sobre', isAnchor: true },
+  ];
+
   // Itens de navegação principal — visíveis na barra superior e no topo do mobile
   const primaryNavItems = [
     { to: '/simulados', label: 'Simulados', icon: BookOpen, prefetch: prefetchCategories },
@@ -150,9 +159,9 @@ export function Header() {
                 />
               ) : (
                 <>
-                  <Plane className="w-8 h-8 md:w-9 md:h-9 text-accent" />
+                  <Plane className="w-8 h-8 md:w-9 md:h-9 text-[#08234a] dark:text-accent" />
                   <span className={`text-xl md:text-2xl font-bold tracking-tight ${
-                    isTransparent ? 'text-white' : 'text-foreground'
+                    isTransparent ? 'text-[#08234a] dark:text-white' : 'text-foreground'
                   }`}>
                     {branding.site_name}
                   </span>
@@ -162,31 +171,64 @@ export function Header() {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex flex-none items-center justify-center gap-6">
-            {filteredPrimaryItems.map(item => {
-              const isActive = location.pathname === item.to;
-              return (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  className={`text-sm font-medium transition-colors hover:text-accent flex items-center gap-1.5 ${
-                    isActive
-                      ? 'text-accent font-semibold'
-                      : isTransparent
-                        ? 'text-white/95'
+          <nav className="hidden md:flex flex-none items-center justify-center gap-1.5 lg:gap-3">
+            {isHome ? (
+              homeNavItems.map(item => {
+                const isActive = item.label === 'Início';
+                return item.isAnchor ? (
+                  <a
+                    key={item.label}
+                    href={item.to}
+                    className={`text-sm font-medium transition-colors px-3 py-1.5 rounded-[5px] ${
+                      isTransparent
+                        ? 'text-[#08234a]/80 hover:text-[#08234a] dark:text-white/80 dark:hover:text-white'
+                        : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    {item.label}
+                  </a>
+                ) : (
+                  <Link
+                    key={item.label}
+                    to={item.to}
+                    className={`text-sm transition-all px-3 py-1 rounded-[5px] ${
+                      isActive
+                        ? isTransparent
+                          ? 'bg-white/85 dark:bg-white/10 text-[#08234a] dark:text-white font-semibold shadow-xs border border-slate-200/90 dark:border-white/15'
+                          : 'bg-muted text-foreground font-semibold shadow-xs'
+                        : isTransparent
+                          ? 'text-[#08234a]/80 hover:text-[#08234a] dark:text-white/80 dark:hover:text-white font-medium'
+                          : 'text-muted-foreground hover:text-foreground font-medium'
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })
+            ) : (
+              filteredPrimaryItems.map(item => {
+                const isActive = location.pathname === item.to;
+                return (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    className={`text-sm font-medium transition-colors hover:text-accent flex items-center gap-1.5 px-3 py-1 rounded-[5px] ${
+                      isActive
+                        ? 'text-accent font-semibold'
                         : 'text-muted-foreground'
-                  }`}
-                  onMouseEnter={item.prefetch}
-                >
-                  <span>{item.label}</span>
-                  {item.badge && (
-                    <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded-[4px] bg-amber-400/20 text-amber-500 border border-amber-400/30 tracking-wider">
-                      {item.badge}
-                    </span>
-                  )}
-                </Link>
-              );
-            })}
+                    }`}
+                    onMouseEnter={item.prefetch}
+                  >
+                    <span>{item.label}</span>
+                    {item.badge && (
+                      <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded-[5px] bg-amber-400/20 text-amber-500 border border-amber-400/30 tracking-wider">
+                        {item.badge}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })
+            )}
           </nav>
 
           {/* Ações do usuário */}
@@ -315,26 +357,38 @@ export function Header() {
                 </>
               ) : (
                 <>
-                  <Button variant="ghost" size="sm" asChild className={isTransparent ? 'text-white hover:bg-white/10' : ''}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    asChild
+                    className={`rounded-[5px] font-bold text-sm px-5 h-9 shadow-xs transition-all ${
+                      isTransparent
+                        ? 'bg-white hover:bg-white/95 text-[#08234a] border-slate-200/90'
+                        : 'bg-white hover:bg-slate-50 text-foreground border-border'
+                    }`}
+                  >
                     <Link to="/auth?mode=login">Entrar</Link>
                   </Button>
-                  <Button size="sm" asChild className="rounded-[5px] shadow-sm font-semibold hover-yellow">
-                    <Link to="/auth?mode=signup">Começar Agora</Link>
-                  </Button>
+                  {!isHome && (
+                    <Button size="sm" asChild className="rounded-[5px] shadow-sm font-semibold hover-yellow">
+                      <Link to="/auth?mode=signup">Começar Agora</Link>
+                    </Button>
+                  )}
                 </>
               )}
             </div>
 
             {/* Mobile — sino + hamburguer */}
             <div className="flex items-center gap-2 md:hidden">
-              {user && <NotificationBell className={isTransparent ? 'text-white hover:bg-white/10' : ''} />}
+              {user && <NotificationBell className={isTransparent ? 'text-[#08234a] dark:text-white hover:bg-black/5' : ''} />}
               <Button
                 variant="ghost"
                 size="icon"
-                className={`h-9 w-9 p-0 ${isTransparent ? 'text-white hover:bg-white/10' : ''}`}
+                className={`h-9 w-9 p-0 rounded-[5px] ${isTransparent ? 'text-[#08234a] dark:text-white hover:bg-black/5' : ''}`}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
+                aria-label="Menu de navegação"
               >
-                {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5 stroke-[2.2]" />}
               </Button>
             </div>
           </div>
@@ -462,10 +516,10 @@ export function Header() {
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border">
-                  <Button variant="outline" size="sm" asChild onClick={() => setIsMenuOpen(false)}>
+                  <Button variant="outline" size="sm" asChild onClick={() => setIsMenuOpen(false)} className="rounded-[5px]">
                     <Link to="/auth?mode=login">Entrar</Link>
                   </Button>
-                  <Button size="sm" asChild onClick={() => setIsMenuOpen(false)} className="hover-yellow font-bold">
+                  <Button size="sm" asChild onClick={() => setIsMenuOpen(false)} className="rounded-[5px] hover-yellow font-bold">
                     <Link to="/auth?mode=signup">Cadastrar</Link>
                   </Button>
                 </div>
