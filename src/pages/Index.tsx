@@ -118,6 +118,9 @@ export default function Index() {
         {/* 2.1 Tarja Animada de Recursos (Ticker) */}
         <NextStepSection />
 
+        {/* Tarja de Recursos Animada */}
+        <FeaturesTicker />
+
         {/* 3. Modos de Simulado */}
         
         <ExamModesSection />
