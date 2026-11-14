@@ -2,6 +2,7 @@ import { PageTransition } from '@/components/PageTransition';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { HeroSection } from '@/components/landing/HeroSection';
+import { NextStepSection } from '@/components/landing/NextStepSection';
 import { FeaturesTicker } from '@/components/landing/FeaturesTicker';
 
 import { ExamModesSection } from '@/components/landing/ExamModesSection';
@@ -115,7 +116,7 @@ export default function Index() {
         <HeroSection />
 
         {/* 2.1 Tarja Animada de Recursos (Ticker) */}
-        <FeaturesTicker />
+        <NextStepSection />
 
         {/* 3. Modos de Simulado */}
         
