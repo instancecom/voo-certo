@@ -1,536 +1,69 @@
 import { motion } from 'framer-motion';
-import { 
-  FileText, TrendingUp, Sparkles, Home, BookOpen, 
-  User, Bell, ChevronDown, ArrowRight
-} from 'lucide-react';
-
-// Subcomponente do Dashboard Real compartilhado entre Desktop e Mobile
-function PlatformDashboardMockup() {
-  return (
-    <div className="rounded-[16px] sm:rounded-[20px] bg-white dark:bg-[#071328] border border-blue-100/90 dark:border-blue-900/50 shadow-2xl shadow-blue-900/15 overflow-hidden ring-1 ring-black/5">
-      {/* Topbar do Dashboard (Azul Escuro Real da Plataforma) */}
-      <div className="bg-[#0a234e] text-white px-3 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between border-b border-[#12336c]">
-        <div className="flex items-center gap-2 sm:gap-2.5">
-          {/* Escudo Logo Voe Certo */}
-          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-[5px] bg-amber-400/20 border border-amber-400/40 flex items-center justify-center text-amber-400">
-            <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-amber-400" viewBox="0 0 24 24">
-              <path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3zm1 14.5h-2v-2h2v2zm0-4h-2V7h2v5.5z"/>
-            </svg>
-          </div>
-          <span className="font-black text-xs sm:text-base tracking-tight text-white">
-            Voe Certo
-          </span>
-        </div>
-
-        <div className="flex items-center gap-2.5 sm:gap-3">
-          <button type="button" aria-label="Notificações" className="text-slate-300 hover:text-white transition-colors relative">
-            <Bell className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            <span className="w-1.5 h-1.5 bg-amber-400 rounded-full absolute top-0 right-0" />
-          </button>
-          {/* Avatar do Mike */}
-          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-blue-300/40 bg-blue-100 dark:bg-slate-700 flex items-center justify-center overflow-hidden">
-            <img 
-              src="/images/avatars/Mike_character.png" 
-              alt="Mike" 
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                (e.currentTarget as HTMLElement).style.display = 'none';
-              }} 
-            />
-            <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-900 dark:text-blue-200" />
-          </div>
-        </div>
-      </div>
-
-      {/* Corpo do Dashboard: Mini Sidebar + Área Central */}
-      <div className="flex flex-col sm:flex-row bg-[#f8fbff] dark:bg-[#071328]">
-        
-        {/* Mini Sidebar Esquerda */}
-        <div className="w-full sm:w-36 shrink-0 bg-white dark:bg-[#091a38] border-b sm:border-b-0 sm:border-r border-slate-200/80 dark:border-slate-800 p-2 sm:p-3 flex sm:flex-col gap-1 overflow-x-auto sm:overflow-visible">
-          <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-[5px] bg-[#2563eb] text-white text-[11px] sm:text-xs font-bold shadow-xs">
-            <Home className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
-            <span>Dashboard</span>
-          </div>
-
-          <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-[5px] text-slate-600 dark:text-slate-400 text-[11px] sm:text-xs font-medium hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors">
-            <FileText className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
-            <span>Simulados</span>
-          </div>
-
-          <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-[5px] text-slate-600 dark:text-slate-400 text-[11px] sm:text-xs font-medium hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors">
-            <BookOpen className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
-            <span>Guias</span>
-          </div>
-
-          <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-[5px] text-slate-600 dark:text-slate-400 text-[11px] sm:text-xs font-medium hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors">
-            <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 text-blue-500" />
-            <span>IA</span>
-          </div>
-
-          <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-[5px] text-slate-600 dark:text-slate-400 text-[11px] sm:text-xs font-medium hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors">
-            <User className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
-            <span>Perfil</span>
-          </div>
-        </div>
-
-        {/* Área Principal de Conteúdo do Dashboard */}
-        <div className="flex-1 p-3 sm:p-5 space-y-3 sm:space-y-4">
-          
-          {/* Boas-vindas */}
-          <div>
-            <h4 className="text-sm sm:text-lg font-black text-[#071328] dark:text-white leading-tight">
-              Olá, Mike!
-            </h4>
-            <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">
-              Seu progresso até aqui está incrível!
-            </p>
-          </div>
-
-          {/* Linha 1: Gráfico Circular + Gráfico de Linha */}
-          <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 sm:gap-3.5">
-            
-            {/* Desempenho Geral (Circular Donut 78%) */}
-            <div className="sm:col-span-5 bg-white dark:bg-card border border-slate-200/90 dark:border-border rounded-[8px] p-2.5 sm:p-3.5 flex flex-col items-center justify-center text-center shadow-xs">
-              <div className="relative w-20 h-20 sm:w-24 sm:h-24 my-1">
-                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                  {/* Círculo fundo */}
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    stroke="currentColor"
-                    strokeWidth="8"
-                    className="text-slate-100 dark:text-slate-800"
-                    fill="none"
-                  />
-                  {/* Círculo progresso azul */}
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    stroke="#2563eb"
-                    strokeWidth="8"
-                    strokeDasharray={251.2}
-                    strokeDashoffset={251.2 * (1 - 0.78)}
-                    strokeLinecap="round"
-                    fill="none"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-xl sm:text-2xl font-black text-[#071328] dark:text-white">
-                    78%
-                  </span>
-                </div>
-              </div>
-              <span className="text-[11px] sm:text-xs font-bold text-slate-600 dark:text-slate-300">
-                Desempenho Geral
-              </span>
-            </div>
-
-            {/* Evolução do Desempenho (Line Chart) */}
-            <div className="sm:col-span-7 bg-white dark:bg-card border border-slate-200/90 dark:border-border rounded-[8px] p-2.5 sm:p-3.5 shadow-xs flex flex-col justify-between">
-              <div className="flex items-center justify-between mb-1.5 sm:mb-2">
-                <span className="text-[11px] sm:text-xs font-bold text-slate-700 dark:text-slate-200">
-                  Evolução do Desempenho
-                </span>
-                <span className="text-[9px] sm:text-[10px] font-medium text-slate-400 border border-slate-200 dark:border-slate-700 px-1.5 py-0.5 rounded-[4px] flex items-center gap-0.5">
-                  Últimos 30 dias <ChevronDown className="w-2.5 h-2.5" />
-                </span>
-              </div>
-
-              {/* Gráfico SVG com Linha e Gradiente */}
-              <div className="relative h-20 sm:h-24 w-full pt-1">
-                {/* Badge +12% sobre o pico */}
-                <div className="absolute top-0 sm:top-1 right-6 sm:right-8 bg-blue-600 text-white text-[8px] sm:text-[9px] font-black px-1.5 py-0.5 rounded-full shadow-xs">
-                  +12%
-                </div>
-
-                <svg className="w-full h-full overflow-visible" viewBox="0 0 200 80" preserveAspectRatio="none">
-                  <defs>
-                    <linearGradient id="blueAreaGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.35" />
-                      <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.0" />
-                    </linearGradient>
-                  </defs>
-
-                  {/* Área sombreada */}
-                  <path
-                    d="M 10,65 Q 40,65 60,50 T 110,55 T 150,30 T 190,20 L 190,75 L 10,75 Z"
-                    fill="url(#blueAreaGrad)"
-                  />
-
-                  {/* Linha da curva */}
-                  <path
-                    d="M 10,65 Q 40,65 60,50 T 110,55 T 150,30 T 190,20"
-                    fill="none"
-                    stroke="#2563eb"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                  />
-
-                  {/* Pontos nos meses */}
-                  {[
-                    { cx: 10, cy: 65 },
-                    { cx: 48, cy: 55 },
-                    { cx: 85, cy: 52 },
-                    { cx: 120, cy: 45 },
-                    { cx: 155, cy: 30 },
-                    { cx: 190, cy: 20 },
-                  ].map((pt, i) => (
-                    <circle key={i} cx={pt.cx} cy={pt.cy} r="3" fill="#ffffff" stroke="#2563eb" strokeWidth="2" />
-                  ))}
-                </svg>
-              </div>
-
-              {/* Meses do eixo X */}
-              <div className="flex justify-between text-[8px] sm:text-[9px] text-slate-400 font-medium px-1 pt-1 border-t border-slate-100 dark:border-slate-800">
-                <span>Jan</span>
-                <span>Fev</span>
-                <span>Mar</span>
-                <span>Abr</span>
-                <span>Mai</span>
-                <span>Jun</span>
-              </div>
-            </div>
-
-          </div>
-
-          {/* Linha 2: 3 Cards de Métricas Inferiores */}
-          <div className="grid grid-cols-3 gap-1.5 sm:gap-3">
-            
-            {/* Simulados */}
-            <div className="bg-white dark:bg-card border border-slate-200/90 dark:border-border rounded-[8px] p-2 sm:p-2.5 shadow-xs">
-              <div className="flex items-center gap-1 sm:gap-1.5 text-slate-500 dark:text-slate-400 mb-0.5 sm:mb-1">
-                <FileText className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-blue-500" />
-                <span className="text-[9px] sm:text-[10px] font-bold truncate">Simulados</span>
-              </div>
-              <div className="flex items-baseline justify-between mb-1 sm:mb-1.5">
-                <span className="text-xs sm:text-base font-black text-[#071328] dark:text-white">82%</span>
-                <span className="text-[8px] sm:text-[10px] font-bold text-emerald-600 dark:text-emerald-400">▲ +5%</span>
-              </div>
-              <div className="w-full bg-slate-100 dark:bg-slate-800 h-1 sm:h-1.5 rounded-full overflow-hidden">
-                <div className="w-[82%] bg-blue-600 h-full rounded-full" />
-              </div>
-            </div>
-
-            {/* Guias */}
-            <div className="bg-white dark:bg-card border border-slate-200/90 dark:border-border rounded-[8px] p-2 sm:p-2.5 shadow-xs">
-              <div className="flex items-center gap-1 sm:gap-1.5 text-slate-500 dark:text-slate-400 mb-0.5 sm:mb-1">
-                <BookOpen className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-blue-500" />
-                <span className="text-[9px] sm:text-[10px] font-bold truncate">Guias</span>
-              </div>
-              <div className="flex items-baseline justify-between mb-1 sm:mb-1.5">
-                <span className="text-xs sm:text-base font-black text-[#071328] dark:text-white">76%</span>
-                <span className="text-[8px] sm:text-[10px] font-bold text-emerald-600 dark:text-emerald-400">▲ +8%</span>
-              </div>
-              <div className="w-full bg-slate-100 dark:bg-slate-800 h-1 sm:h-1.5 rounded-full overflow-hidden">
-                <div className="w-[76%] bg-blue-600 h-full rounded-full" />
-              </div>
-            </div>
-
-            {/* Currículo */}
-            <div className="bg-white dark:bg-card border border-slate-200/90 dark:border-border rounded-[8px] p-2 sm:p-2.5 shadow-xs">
-              <div className="flex items-center gap-1 sm:gap-1.5 text-slate-500 dark:text-slate-400 mb-0.5 sm:mb-1">
-                <FileText className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-blue-500" />
-                <span className="text-[9px] sm:text-[10px] font-bold truncate">Currículo</span>
-              </div>
-              <div className="flex items-baseline justify-between mb-1 sm:mb-1.5">
-                <span className="text-xs sm:text-base font-black text-[#071328] dark:text-white">69%</span>
-                <span className="text-[8px] sm:text-[10px] font-bold text-emerald-600 dark:text-emerald-400">▲ +4%</span>
-              </div>
-              <div className="w-full bg-slate-100 dark:bg-slate-800 h-1 sm:h-1.5 rounded-full overflow-hidden">
-                <div className="w-[69%] bg-blue-600 h-full rounded-full" />
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-    </div>
-  );
-}
 
 export function DashboardPreviewSection() {
   return (
     <section 
-      id="painel-desempenho"
-      className="py-12 md:py-20 bg-gradient-to-b from-white via-[#f4f8ff] to-white dark:from-[#071328] dark:via-[#091a36] dark:to-[#071328] relative overflow-hidden"
+      id="dashboard"
+      className="pt-16 sm:pt-20 md:pt-28 pb-0 bg-white dark:bg-[#071328] relative overflow-hidden"
     >
-      {/* Elementos decorativos de fundo (nuvens/iluminação suave) */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[450px] bg-blue-400/10 dark:bg-blue-600/10 rounded-full blur-3xl pointer-events-none -z-0" />
-      <div className="absolute -bottom-10 right-10 w-96 h-96 bg-indigo-300/10 rounded-full blur-3xl pointer-events-none -z-0" />
-
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* ── CABEÇALHO DA SEÇÃO ── */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center max-w-3xl mx-auto mb-8 sm:mb-14 relative"
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-3xl mx-auto mb-10 sm:mb-14"
         >
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#071328] dark:text-white tracking-tight leading-tight mb-3 sm:mb-4">
-            <span className="relative inline-block">
-              <span className="relative z-10">Acompanhe seu progresso</span>
-              {/* Marca-texto azul suave */}
-              <span className="absolute inset-x-0 bottom-1.5 h-3 sm:h-4 bg-blue-200/60 dark:bg-blue-500/25 -rotate-1 rounded-sm -z-0" />
-            </span>{' '}
+          {/* Título Principal */}
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-black tracking-tight leading-[1.08] text-[#08234a] dark:text-white mb-3 sm:mb-4">
+            Acompanhe seu progresso <br />
             com o Painel de Desempenho.
           </h2>
 
-          <p className="text-sm sm:text-base md:text-lg text-slate-600 dark:text-slate-300 font-normal leading-relaxed max-w-2xl mx-auto">
-            Entenda onde você está, o que já evoluiu e o que ainda precisa melhorar. Tudo de forma simples e visual.
-          </p>
+          {/* Subtítulo com traço sutil de voo */}
+          <div className="relative inline-block max-w-xl mx-auto">
+            <p className="text-xs sm:text-base text-slate-500 dark:text-slate-400 font-normal leading-relaxed">
+              Entenda onde você está, o que já evoluiu e o que ainda precisa melhorar. <br className="hidden sm:inline" />
+              Tudo de forma simples e visual.
+            </p>
+
+            {/* Linha curva suave decorativa na direita */}
+            <svg
+              className="hidden sm:block absolute -right-8 top-4 w-12 h-6 text-sky-400/80 pointer-events-none"
+              viewBox="0 0 50 25"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M 2,18 C 20,22 38,12 48,2"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
         </motion.div>
 
-        {/* ══════════════════════════════════════════════════════════════
-            1. VERSÃO MOBILE (EXIBIDA APENAS EM TELAS MENORES: lg:hidden)
-            Layout com Mockup no topo e lista vertical de cards limpos abaixo
-           ══════════════════════════════════════════════════════════════ */}
-        <div className="block lg:hidden max-w-md mx-auto space-y-6">
-          
-          {/* Mockup do Dashboard no Mobile */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4 }}
-          >
-            <PlatformDashboardMockup />
-          </motion.div>
-
-          {/* Lista de 3 Cards Verticais Conforme o Print de Referência */}
-          <div className="space-y-3 pt-2">
-            
-            {/* 1. Simulados */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3 }}
-              className="bg-white dark:bg-card border border-slate-200/80 dark:border-border rounded-[20px] p-4 flex items-center justify-between shadow-xs hover:shadow-sm transition-all"
-            >
-              <div className="flex items-center gap-3.5 min-w-0">
-                <div className="w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-500 dark:text-blue-400 border border-blue-100 dark:border-blue-900 flex items-center justify-center shrink-0">
-                  <FileText className="w-5 h-5" />
-                </div>
-                <div className="min-w-0">
-                  <h3 className="font-bold text-sm sm:text-base text-[#071328] dark:text-white leading-tight mb-0.5">
-                    Simulados
-                  </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-snug">
-                    Veja seu desempenho em tempo real.
-                  </p>
-                </div>
-              </div>
-              <ArrowRight className="w-4 h-4 text-blue-500 shrink-0 ml-2" />
-            </motion.div>
-
-            {/* 2. Guias */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3, delay: 0.08 }}
-              className="bg-white dark:bg-card border border-slate-200/80 dark:border-border rounded-[20px] p-4 flex items-center justify-between shadow-xs hover:shadow-sm transition-all"
-            >
-              <div className="flex items-center gap-3.5 min-w-0">
-                <div className="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-500 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900 flex items-center justify-center shrink-0">
-                  <BookOpen className="w-5 h-5" />
-                </div>
-                <div className="min-w-0">
-                  <h3 className="font-bold text-sm sm:text-base text-[#071328] dark:text-white leading-tight mb-0.5">
-                    Guias
-                  </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-snug">
-                    Acompanhe seu progresso nos guias da sua jornada.
-                  </p>
-                </div>
-              </div>
-              <ArrowRight className="w-4 h-4 text-blue-500 shrink-0 ml-2" />
-            </motion.div>
-
-            {/* 3. Inteligência Artificial */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3, delay: 0.16 }}
-              className="bg-white dark:bg-card border border-slate-200/80 dark:border-border rounded-[20px] p-4 flex items-center justify-between shadow-xs hover:shadow-sm transition-all"
-            >
-              <div className="flex items-center gap-3.5 min-w-0">
-                <div className="w-12 h-12 rounded-full bg-purple-50 dark:bg-purple-950/60 text-purple-500 dark:text-purple-400 border border-purple-100 dark:border-purple-900 flex items-center justify-center shrink-0">
-                  <Sparkles className="w-5 h-5" />
-                </div>
-                <div className="min-w-0">
-                  <h3 className="font-bold text-sm sm:text-base text-[#071328] dark:text-white leading-tight mb-0.5">
-                    Inteligência Artificial
-                  </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-snug">
-                    Receba orientações personalizadas e tire suas dúvidas com a nossa IA.
-                  </p>
-                </div>
-              </div>
-              <ArrowRight className="w-4 h-4 text-blue-500 shrink-0 ml-2" />
-            </motion.div>
-
+        {/* ── MOCKUP DO DASHBOARD (tela_dashboard.png) ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 25 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="max-w-5xl mx-auto"
+        >
+          {/* Moldura elegante com topo arredondado */}
+          <div className="rounded-t-[20px] sm:rounded-t-[32px] md:rounded-t-[40px] bg-white dark:bg-[#071938] border-t border-x border-slate-200/90 dark:border-slate-800 shadow-2xl shadow-blue-900/10 p-2 sm:p-4 md:p-5 pb-0 overflow-hidden ring-1 ring-black/5">
+            <img
+              src="/images/landing/tela_dashboard.png"
+              alt="Painel de Progresso e Desempenho - Voe Certo"
+              className="w-full h-auto object-cover object-top rounded-t-[14px] sm:rounded-t-[22px] md:rounded-t-[28px] select-none pointer-events-none"
+              loading="lazy"
+            />
           </div>
-
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════════
-            2. VERSÃO DESKTOP (EXIBIDA APENAS EM TELAS GRANDES: hidden lg:block)
-            Mantida rigorosamente idêntica ao design web original
-           ══════════════════════════════════════════════════════════════ */}
-        <div className="hidden lg:block relative max-w-6xl mx-auto">
-          <div className="grid grid-cols-12 gap-8 items-center relative">
-
-            {/* ── COLUNA ESQUERDA: CARDS 1 E 3 (3 cols no desktop) ── */}
-            <div className="col-span-3 flex flex-col gap-6 sm:gap-8 relative z-20">
-              
-              {/* CARD 1: SIMULADOS */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                animate={{ y: [0, -6, 0] }}
-                transition={{
-                  y: { repeat: Infinity, duration: 4.5, ease: "easeInOut" },
-                  opacity: { duration: 0.4 }
-                }}
-                className="relative backdrop-blur-xl bg-white/80 dark:bg-[#0c1f44]/80 border border-white/90 dark:border-blue-400/25 shadow-xl shadow-blue-500/10 rounded-[14px] p-5 sm:p-6 transition-transform hover:scale-[1.02]"
-              >
-                <div className="absolute -top-3.5 -left-2.5 w-7 h-7 rounded-full bg-blue-600 text-white font-black text-xs flex items-center justify-center shadow-md shadow-blue-600/30">
-                  1
-                </div>
-
-                <div className="w-10 h-10 rounded-[8px] bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-3.5 border border-blue-100 dark:border-blue-800">
-                  <FileText className="w-5 h-5" />
-                </div>
-
-                <h3 className="text-base sm:text-lg font-black text-[#071328] dark:text-white tracking-tight mb-1.5">
-                  Simulados
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
-                  Treine com questões reais e veja seu desempenho em tempo real.
-                </p>
-
-                <div className="absolute -right-9 top-1/2 -translate-y-1/2 pointer-events-none text-blue-400 dark:text-blue-400">
-                  <svg width="34" height="24" viewBox="0 0 34 24" fill="none">
-                    <path 
-                      d="M 2,12 C 14,8 22,12 28,12" 
-                      stroke="currentColor" 
-                      strokeWidth="2" 
-                      strokeDasharray="3 3" 
-                    />
-                    <path d="M 26,8 L 32,12 L 26,16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
-                </div>
-              </motion.div>
-
-              {/* CARD 3: INTELIGÊNCIA ARTIFICIAL */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                animate={{ y: [0, -5, 0] }}
-                transition={{
-                  y: { repeat: Infinity, duration: 5, ease: "easeInOut", delay: 0.8 },
-                  opacity: { duration: 0.4 }
-                }}
-                className="relative backdrop-blur-xl bg-white/80 dark:bg-[#0c1f44]/80 border border-white/90 dark:border-blue-400/25 shadow-xl shadow-blue-500/10 rounded-[14px] p-5 sm:p-6 transition-transform hover:scale-[1.02]"
-              >
-                <div className="absolute -top-3.5 -left-2.5 w-7 h-7 rounded-full bg-blue-600 text-white font-black text-xs flex items-center justify-center shadow-md shadow-blue-600/30">
-                  3
-                </div>
-
-                <div className="w-10 h-10 rounded-[8px] bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-3.5 border border-blue-100 dark:border-blue-800">
-                  <Sparkles className="w-5 h-5" />
-                </div>
-
-                <h3 className="text-base sm:text-lg font-black text-[#071328] dark:text-white tracking-tight mb-1.5">
-                  Inteligência Artificial
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
-                  Receba orientações personalizadas e tire suas dúvidas com a nossa IA.
-                </p>
-
-                <div className="absolute -right-9 top-1/2 -translate-y-1/2 pointer-events-none text-blue-400 dark:text-blue-400">
-                  <svg width="34" height="24" viewBox="0 0 34 24" fill="none">
-                    <path 
-                      d="M 2,12 C 14,8 22,12 28,12" 
-                      stroke="currentColor" 
-                      strokeWidth="2" 
-                      strokeDasharray="3 3" 
-                    />
-                    <path d="M 26,8 L 32,12 L 26,16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
-                </div>
-              </motion.div>
-
-            </div>
-
-            {/* ── CENTRO: DASHBOARD REAL DA PLATAFORMA (6 cols no desktop) ── */}
-            <div className="col-span-6 relative z-10">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.96 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                <PlatformDashboardMockup />
-              </motion.div>
-            </div>
-
-            {/* ── COLUNA DIREITA: CARD 2 SEU PROGRESSO (3 cols no desktop) ── */}
-            <div className="col-span-3 flex flex-col justify-center relative z-20">
-              
-              {/* CARD 2: SEU PROGRESSO */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                animate={{ y: [0, -6, 0] }}
-                transition={{
-                  y: { repeat: Infinity, duration: 4.8, ease: "easeInOut", delay: 0.4 },
-                  opacity: { duration: 0.4 }
-                }}
-                className="relative backdrop-blur-xl bg-white/80 dark:bg-[#0c1f44]/80 border border-white/90 dark:border-blue-400/25 shadow-xl shadow-blue-500/10 rounded-[14px] p-5 sm:p-6 transition-transform hover:scale-[1.02]"
-              >
-                <div className="absolute -top-3.5 -left-2.5 w-7 h-7 rounded-full bg-blue-600 text-white font-black text-xs flex items-center justify-center shadow-md shadow-blue-600/30">
-                  2
-                </div>
-
-                <div className="absolute -left-9 top-1/2 -translate-y-1/2 pointer-events-none text-blue-400 dark:text-blue-400">
-                  <svg width="34" height="24" viewBox="0 0 34 24" fill="none">
-                    <path 
-                      d="M 32,12 C 20,8 12,12 6,12" 
-                      stroke="currentColor" 
-                      strokeWidth="2" 
-                      strokeDasharray="3 3" 
-                    />
-                    <path d="M 8,8 L 2,12 L 8,16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
-                </div>
-
-                <div className="w-10 h-10 rounded-[8px] bg-amber-50 dark:bg-amber-950/40 text-amber-500 flex items-center justify-center mb-3.5 border border-amber-100 dark:border-amber-900/50">
-                  <TrendingUp className="w-5 h-5 text-blue-600" />
-                </div>
-
-                <h3 className="text-base sm:text-lg font-black text-[#071328] dark:text-white tracking-tight mb-1.5">
-                  Seu progresso
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
-                  Acompanhe sua evolução, veja seus pontos fortes e foque no que importa.
-                </p>
-              </motion.div>
-
-            </div>
-
-          </div>
-        </div>
+        </motion.div>
 
       </div>
     </section>
