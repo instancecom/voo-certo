@@ -11,170 +11,185 @@ export const HeroSection = () => {
   return (
     <section
       id="inicio"
-      className="relative bg-white dark:bg-[#071328] pt-20 md:pt-24 pb-4 sm:pb-6 overflow-visible"
+      className="relative bg-white dark:bg-[#071328] pt-20 md:pt-24 pb-8 sm:pb-10 overflow-visible"
     >
       {/* ══════════════════════════════════════════════════════════════
           1. VERSÃO DESKTOP (EXIBIDA APENAS EM lg:block)
-          Card mais esticado horizontalmente e mais fino na vertical,
-          com proporção widescreen elegante conforme referência.
+          Banner ultra-esticado (w-[96%] max-w-[1740px]) e fino (h-[440px]-h-[470px]).
+          Pílula de rolagem posicionada exatamente METADE sobre o banner
+          e METADE sobre a seção de baixo sem sofrer corte de overflow!
          ══════════════════════════════════════════════════════════════ */}
-      <div className="hidden lg:block container mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
-        <div className="mx-auto max-w-[1520px] rounded-[30px] xl:rounded-[36px] overflow-hidden relative shadow-2xl h-[460px] xl:h-[490px] 2xl:h-[510px] flex items-center">
+      <div className="hidden lg:block w-full px-3 sm:px-6 lg:px-8">
+        <div className="relative mx-auto w-[96%] max-w-[1740px]">
           
-          {/* Imagem de Fundo (Banner da Aviação) */}
-          <img
-            src="/images/landing/hero-bg.jpg"
-            alt="Voe Certo - Preparação para Carreiras na Aviação"
-            className="absolute inset-0 w-full h-full object-cover object-[center_36%] select-none"
-            loading="eager"
-            decoding="async"
-          />
+          {/* Card do Banner com cantos arredondados e overflow-hidden para a imagem */}
+          <div className="w-full rounded-[28px] xl:rounded-[36px] overflow-hidden relative shadow-2xl h-[430px] xl:h-[460px] 2xl:h-[480px] flex items-center">
+            {/* Imagem de Fundo (Banner da Aviação) */}
+            <img
+              src="/images/landing/hero-bg.jpg"
+              alt="Voe Certo - Preparação para Carreiras na Aviação"
+              className="absolute inset-0 w-full h-full object-cover object-[center_36%] select-none"
+              loading="eager"
+              decoding="async"
+            />
 
-          {/* Gradiente sutil para garantir legibilidade dos textos brancos */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/25 to-transparent pointer-events-none" />
+            {/* Gradiente sutil para garantir legibilidade dos textos brancos */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/25 to-transparent pointer-events-none" />
 
-          {/* Conteúdo à Esquerda */}
-          <motion.div
-            initial={{ opacity: 0, x: -25 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.65, ease: 'easeOut' }}
-            className="relative z-10 px-10 xl:px-14 py-8 max-w-xl text-left"
-          >
-            {/* Título Principal */}
-            <h1 className="text-4xl xl:text-5xl 2xl:text-[54px] font-black text-white leading-[1.08] tracking-tight mb-3 drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)]">
-              Seu próximo <br />
-              destino é a <br />
-              <span className="text-[#38bdf8]">aviação.</span>
-            </h1>
+            {/* Conteúdo à Esquerda */}
+            <motion.div
+              initial={{ opacity: 0, x: -25 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.65, ease: 'easeOut' }}
+              className="relative z-10 px-10 xl:px-16 py-8 max-w-xl text-left"
+            >
+              {/* Título Principal */}
+              <h1 className="text-4xl xl:text-5xl 2xl:text-[54px] font-black text-white leading-[1.08] tracking-tight mb-3 drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)]">
+                Seu próximo <br />
+                destino é a <br />
+                <span className="text-[#38bdf8]">aviação.</span>
+              </h1>
 
-            {/* Subtítulo */}
-            <p className="text-sm xl:text-base text-white/95 font-medium leading-relaxed max-w-sm mb-6 drop-shadow-[0_1px_6px_rgba(0,0,0,0.35)]">
-              Prepare-se com simulados e guias de carreira.
-            </p>
+              {/* Subtítulo */}
+              <p className="text-sm xl:text-base text-white/95 font-medium leading-relaxed max-w-sm mb-6 drop-shadow-[0_1px_6px_rgba(0,0,0,0.35)]">
+                Prepare-se com simulados e guias de carreira.
+              </p>
 
-            {/* Botões de Ação */}
-            <div className="flex items-center gap-3.5">
-              {/* Botão Principal: Começar agora */}
-              <Link
-                to={user ? '/simulados' : '/auth?mode=signup'}
-                className="inline-flex items-center gap-2 px-7 py-3 bg-white hover:bg-slate-50 text-[#08234a] font-bold text-sm rounded-full shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all group"
+              {/* Botões de Ação */}
+              <div className="flex items-center gap-3.5">
+                {/* Botão Principal: Começar agora */}
+                <Link
+                  to={user ? '/simulados' : '/auth?mode=signup'}
+                  className="inline-flex items-center gap-2 px-7 py-3 bg-white hover:bg-slate-50 text-[#08234a] font-bold text-sm rounded-full shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all group"
+                >
+                  <span>Começar agora</span>
+                  <ChevronRight className="w-4 h-4 text-[#08234a] transition-transform group-hover:translate-x-1" />
+                </Link>
+
+                {/* Botão Play / Apresentação */}
+                <button
+                  type="button"
+                  onClick={() => setIsVideoModalOpen(true)}
+                  className="w-11 h-11 rounded-full border border-white/70 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-all group cursor-pointer"
+                  aria-label="Assistir apresentação"
+                >
+                  <Play className="w-4 h-4 fill-white text-white ml-0.5" />
+                </button>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Pílula: Exatamente 50% sobre o banner e 50% na seção de baixo */}
+          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 z-30">
+            <a
+              href="#proximo-passo"
+              className="w-8 h-12 rounded-full border-2 border-white dark:border-slate-800 bg-white dark:bg-slate-900 shadow-lg flex items-center justify-center text-[#0066ff] hover:scale-110 active:scale-95 transition-transform cursor-pointer"
+              aria-label="Rolar para próxima seção"
+            >
+              <motion.div
+                animate={{ y: [0, 4, 0] }}
+                transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
               >
-                <span>Começar agora</span>
-                <ChevronRight className="w-4 h-4 text-[#08234a] transition-transform group-hover:translate-x-1" />
-              </Link>
-
-              {/* Botão Play / Apresentação */}
-              <button
-                type="button"
-                onClick={() => setIsVideoModalOpen(true)}
-                className="w-11 h-11 rounded-full border border-white/70 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-all group cursor-pointer"
-                aria-label="Assistir apresentação"
-              >
-                <Play className="w-4 h-4 fill-white text-white ml-0.5" />
-              </button>
-            </div>
-          </motion.div>
+                <ChevronDown className="w-4 h-4 text-[#0066ff] stroke-[2.5]" />
+              </motion.div>
+            </a>
+          </div>
 
         </div>
       </div>
 
       {/* ══════════════════════════════════════════════════════════════
           2. VERSÃO MOBILE (EXIBIDA APENAS EM lg:hidden)
-          Card compacto e elegante com proporções refinadas.
+          Card compacto e elegante com proporções refinadas e pílula
+          metade no banner e metade na seção de baixo.
          ══════════════════════════════════════════════════════════════ */}
       <div className="block lg:hidden px-3 sm:px-5">
-        <div className="rounded-[24px] sm:rounded-[28px] overflow-hidden relative shadow-xl min-h-[480px] sm:min-h-[520px] flex flex-col justify-between py-8 px-5 sm:px-7">
+        <div className="relative mx-auto w-full max-w-md">
           
-          {/* Imagem de Fundo (Banner Mobile) */}
-          <img
-            src="/images/landing/hero-bg.jpg"
-            alt="Voe Certo - Preparação para Carreiras na Aviação"
-            className="absolute inset-0 w-full h-full object-cover object-[70%_center] select-none"
-            loading="eager"
-            decoding="async"
-          />
+          {/* Card Mobile */}
+          <div className="rounded-[24px] sm:rounded-[28px] overflow-hidden relative shadow-xl min-h-[460px] sm:min-h-[500px] flex flex-col justify-between py-8 px-5 sm:px-7">
+            {/* Imagem de Fundo (Banner Mobile) */}
+            <img
+              src="/images/landing/hero-bg.jpg"
+              alt="Voe Certo - Preparação para Carreiras na Aviação"
+              className="absolute inset-0 w-full h-full object-cover object-[70%_center] select-none"
+              loading="eager"
+              decoding="async"
+            />
 
-          {/* Gradiente para contraste */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/15 to-black/50 pointer-events-none" />
+            {/* Gradiente para contraste */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/15 to-black/50 pointer-events-none" />
 
-          {/* Espaçador Superior */}
-          <div className="h-4 sm:h-8" />
+            {/* Espaçador Superior */}
+            <div className="h-4 sm:h-8" />
 
-          {/* Bloco Central de Textos e CTAs */}
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55 }}
-            className="relative z-10 text-center max-w-sm mx-auto w-full my-auto"
-          >
-            {/* Título Principal Centralizado */}
-            <h1 className="text-[32px] sm:text-4xl font-black text-white leading-[1.08] tracking-tight mb-2.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
-              Seu próximo <br />
-              destino é a <br />
-              <span className="text-[#38bdf8]">aviação.</span>
-            </h1>
+            {/* Bloco Central de Textos e CTAs */}
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55 }}
+              className="relative z-10 text-center max-w-sm mx-auto w-full my-auto"
+            >
+              {/* Título Principal Centralizado */}
+              <h1 className="text-[32px] sm:text-4xl font-black text-white leading-[1.08] tracking-tight mb-2.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+                Seu próximo <br />
+                destino é a <br />
+                <span className="text-[#38bdf8]">aviação.</span>
+              </h1>
 
-            {/* Subtítulo Centralizado */}
-            <p className="text-xs sm:text-sm text-white/95 font-medium leading-relaxed max-w-[250px] sm:max-w-xs mx-auto mb-5 drop-shadow-[0_1px_6px_rgba(0,0,0,0.4)]">
-              Prepare-se com simulados <br className="sm:hidden" /> e guias de carreira.
-            </p>
+              {/* Subtítulo Centralizado */}
+              <p className="text-xs sm:text-sm text-white/95 font-medium leading-relaxed max-w-[250px] sm:max-w-xs mx-auto mb-5 drop-shadow-[0_1px_6px_rgba(0,0,0,0.4)]">
+                Prepare-se com simulados <br className="sm:hidden" /> e guias de carreira.
+              </p>
 
-            {/* Botões Centralizados */}
-            <div className="flex items-center justify-center gap-3">
-              {/* Botão Começar agora */}
-              <Link
-                to={user ? '/simulados' : '/auth?mode=signup'}
-                className="inline-flex items-center gap-1.5 px-6 py-2.5 bg-white hover:bg-slate-50 text-[#08234a] font-bold text-xs sm:text-sm rounded-full shadow-md active:scale-95 transition-all"
+              {/* Botões Centralizados */}
+              <div className="flex items-center justify-center gap-3">
+                {/* Botão Começar agora */}
+                <Link
+                  to={user ? '/simulados' : '/auth?mode=signup'}
+                  className="inline-flex items-center gap-1.5 px-6 py-2.5 bg-white hover:bg-slate-50 text-[#08234a] font-bold text-xs sm:text-sm rounded-full shadow-md active:scale-95 transition-all"
+                >
+                  <span>Começar agora</span>
+                  <ChevronRight className="w-4 h-4 text-[#08234a]" />
+                </Link>
+
+                {/* Botão Play */}
+                <button
+                  type="button"
+                  onClick={() => setIsVideoModalOpen(true)}
+                  className="w-10 h-10 rounded-full border border-white/70 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white flex items-center justify-center shadow-md active:scale-95 transition-all cursor-pointer"
+                  aria-label="Assistir apresentação"
+                >
+                  <Play className="w-3.5 h-3.5 fill-white text-white ml-0.5" />
+                </button>
+              </div>
+            </motion.div>
+
+            {/* Espaçador Inferior */}
+            <div className="h-2" />
+          </div>
+
+          {/* Pílula Mobile: 50% no banner e 50% na seção abaixo */}
+          <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 z-30">
+            <a
+              href="#proximo-passo"
+              className="w-7 h-10 rounded-full border-2 border-white dark:border-slate-800 bg-white dark:bg-slate-900 shadow-md flex items-center justify-center text-[#0066ff] hover:scale-105 active:scale-95 transition-transform cursor-pointer"
+              aria-label="Rolar para próxima seção"
+            >
+              <motion.div
+                animate={{ y: [0, 3, 0] }}
+                transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
               >
-                <span>Começar agora</span>
-                <ChevronRight className="w-4 h-4 text-[#08234a]" />
-              </Link>
-
-              {/* Botão Play */}
-              <button
-                type="button"
-                onClick={() => setIsVideoModalOpen(true)}
-                className="w-10 h-10 rounded-full border border-white/70 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white flex items-center justify-center shadow-md active:scale-95 transition-all cursor-pointer"
-                aria-label="Assistir apresentação"
-              >
-                <Play className="w-3.5 h-3.5 fill-white text-white ml-0.5" />
-              </button>
-            </div>
-          </motion.div>
-
-          {/* Espaçador Inferior */}
-          <div className="h-2" />
+                <ChevronDown className="w-3.5 h-3.5 text-[#0066ff] stroke-[2.5]" />
+              </motion.div>
+            </a>
+          </div>
 
         </div>
       </div>
 
       {/* ══════════════════════════════════════════════════════════════
-          3. ÍCONE DE "ARRASTE PARA BAIXO" ENTRE O BANNER E A PRÓXIMA SEÇÃO
-          Posicionado livremente entre as seções com pílula e linha conectora
-         ══════════════════════════════════════════════════════════════ */}
-      <div className="flex flex-col items-center justify-center pt-6 sm:pt-8 pb-1 relative z-20">
-        <a
-          href="#proximo-passo"
-          className="group flex flex-col items-center gap-2 cursor-pointer transition-transform hover:scale-105"
-          aria-label="Rolar para próxima seção"
-        >
-          {/* Pílula com o ícone de seta para baixo */}
-          <div className="w-8 h-12 rounded-full border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm flex items-center justify-center group-hover:border-[#0066ff] group-hover:shadow transition-all">
-            <motion.div
-              animate={{ y: [0, 4, 0] }}
-              transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
-            >
-              <ChevronDown className="w-4 h-4 text-[#0066ff] stroke-[2.5]" />
-            </motion.div>
-          </div>
-
-          {/* Linha vertical conectora descendo para a próxima seção */}
-          <div className="w-[1.5px] h-6 sm:h-8 bg-gradient-to-b from-slate-300 to-transparent dark:from-slate-700 pointer-events-none" />
-        </a>
-      </div>
-
-      {/* ══════════════════════════════════════════════════════════════
-          4. MODAL DE VÍDEO / APRESENTAÇÃO DA PLATAFORMA
+          3. MODAL DE VÍDEO / APRESENTAÇÃO DA PLATAFORMA
          ══════════════════════════════════════════════════════════════ */}
       <AnimatePresence>
         {isVideoModalOpen && (
