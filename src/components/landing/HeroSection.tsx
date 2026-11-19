@@ -23,7 +23,7 @@ export const HeroSection = () => {
         <div className="relative mx-auto w-full max-w-[1880px]">
           
           {/* Card do Banner com cantos arredondados e overflow-hidden para a imagem */}
-          <div className="w-full rounded-[28px] xl:rounded-[36px] overflow-hidden relative shadow-2xl h-[430px] xl:h-[460px] 2xl:h-[480px] flex items-center">
+          <div className="w-full rounded-[28px] xl:rounded-[36px] overflow-hidden relative shadow-2xl h-[510px] xl:h-[550px] 2xl:h-[580px] flex items-center">
             {/* Imagem de Fundo (Banner da Aviação) */}
             <img
               src="/images/landing/hero-bg.jpg"
@@ -107,7 +107,7 @@ export const HeroSection = () => {
         <div className="relative mx-auto w-full max-w-lg">
           
           {/* Card Mobile */}
-          <div className="rounded-[24px] sm:rounded-[28px] overflow-hidden relative shadow-xl min-h-[460px] sm:min-h-[500px] flex flex-col justify-between py-8 px-5 sm:px-7">
+          <div className="rounded-[24px] sm:rounded-[28px] overflow-hidden relative shadow-xl min-h-[520px] sm:min-h-[560px] flex flex-col justify-between py-10 px-5 sm:px-7">
             {/* Imagem de Fundo (Banner Mobile) */}
             <img
               src="/images/landing/hero-bg.jpg"
