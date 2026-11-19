@@ -103,11 +103,10 @@ export function Header() {
 
   // Itens da Landing Page (quando na home)
   const homeNavItems = [
-    { to: '/', label: 'Início', isHomeItem: true },
-    { to: '/guia-carreira', label: 'Carreiras' },
     { to: '/simulados', label: 'Simulados' },
     { to: '/guia-carreira', label: 'Guias' },
-    { to: '#plataforma', label: 'Sobre', isAnchor: true },
+    { to: '/curriculo', label: 'Currículo' },
+    { to: '/meu-progresso', label: 'Desempenho' },
   ];
 
   // Itens de navegação principal — visíveis na barra superior e no topo do mobile
@@ -137,10 +136,10 @@ export function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 border-b ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
         isTransparent
-          ? 'bg-transparent border-transparent'
-          : 'bg-white/95 backdrop-blur-md border-border/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)]'
+          ? 'bg-white/90 backdrop-blur-md border-b border-slate-100/60'
+          : 'bg-white/95 backdrop-blur-md border-b border-border/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)]'
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6">
@@ -171,40 +170,17 @@ export function Header() {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex flex-none items-center justify-center gap-1.5 lg:gap-3">
+          <nav className="hidden md:flex flex-none items-center justify-center gap-2 lg:gap-4">
             {isHome ? (
-              homeNavItems.map(item => {
-                const isActive = item.label === 'Início';
-                return item.isAnchor ? (
-                  <a
-                    key={item.label}
-                    href={item.to}
-                    className={`text-sm font-medium transition-colors px-3 py-1.5 rounded-[5px] ${
-                      isTransparent
-                        ? 'text-[#08234a]/80 hover:text-[#08234a] dark:text-white/80 dark:hover:text-white'
-                        : 'text-muted-foreground hover:text-foreground'
-                    }`}
-                  >
-                    {item.label}
-                  </a>
-                ) : (
-                  <Link
-                    key={item.label}
-                    to={item.to}
-                    className={`text-sm transition-all px-3 py-1 rounded-[5px] ${
-                      isActive
-                        ? isTransparent
-                          ? 'bg-white/85 dark:bg-white/10 text-[#08234a] dark:text-white font-semibold shadow-xs border border-slate-200/90 dark:border-white/15'
-                          : 'bg-muted text-foreground font-semibold shadow-xs'
-                        : isTransparent
-                          ? 'text-[#08234a]/80 hover:text-[#08234a] dark:text-white/80 dark:hover:text-white font-medium'
-                          : 'text-muted-foreground hover:text-foreground font-medium'
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })
+              homeNavItems.map(item => (
+                <Link
+                  key={item.label}
+                  to={item.to}
+                  className="text-sm font-semibold transition-colors px-3 py-1.5 rounded-[5px] text-black hover:text-[#0066ff] dark:text-white dark:hover:text-[#38bdf8]"
+                >
+                  {item.label}
+                </Link>
+              ))
             ) : (
               filteredPrimaryItems.map(item => {
                 const isActive = location.pathname === item.to;
@@ -380,15 +356,19 @@ export function Header() {
 
             {/* Mobile — sino + hamburguer */}
             <div className="flex items-center gap-2 md:hidden">
-              {user && <NotificationBell className={isTransparent ? 'text-[#08234a] dark:text-white hover:bg-black/5' : ''} />}
+              {user && <NotificationBell className="text-black dark:text-white hover:bg-black/5" />}
               <Button
                 variant="ghost"
                 size="icon"
-                className={`h-9 w-9 p-0 rounded-[5px] ${isTransparent ? 'text-[#08234a] dark:text-white hover:bg-black/5' : ''}`}
+                className="h-9 w-9 p-0 rounded-[5px] text-black dark:text-white hover:bg-black/5"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 aria-label="Menu de navegação"
               >
-                {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5 stroke-[2.2]" />}
+                {isMenuOpen ? (
+                  <X className="w-6 h-6 text-black dark:text-white stroke-[2.3]" />
+                ) : (
+                  <Menu className="w-6 h-6 text-black dark:text-white stroke-[2.3]" />
+                )}
               </Button>
             </div>
           </div>
