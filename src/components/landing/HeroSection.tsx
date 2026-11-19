@@ -19,8 +19,8 @@ export const HeroSection = () => {
           Pílula de rolagem posicionada exatamente METADE sobre o banner
           e METADE sobre a seção de baixo sem sofrer corte de overflow!
          ══════════════════════════════════════════════════════════════ */}
-      <div className="hidden lg:block w-full px-3 sm:px-6 lg:px-8">
-        <div className="relative mx-auto w-[96%] max-w-[1740px]">
+      <div className="hidden lg:block w-full px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8">
+        <div className="relative mx-auto w-full max-w-[1880px]">
           
           {/* Card do Banner com cantos arredondados e overflow-hidden para a imagem */}
           <div className="w-full rounded-[28px] xl:rounded-[36px] overflow-hidden relative shadow-2xl h-[430px] xl:h-[460px] 2xl:h-[480px] flex items-center">
@@ -103,8 +103,8 @@ export const HeroSection = () => {
           Card compacto e elegante com proporções refinadas e pílula
           metade no banner e metade na seção de baixo.
          ══════════════════════════════════════════════════════════════ */}
-      <div className="block lg:hidden px-3 sm:px-5">
-        <div className="relative mx-auto w-full max-w-md">
+      <div className="block lg:hidden px-2 sm:px-3">
+        <div className="relative mx-auto w-full max-w-lg">
           
           {/* Card Mobile */}
           <div className="rounded-[24px] sm:rounded-[28px] overflow-hidden relative shadow-xl min-h-[460px] sm:min-h-[500px] flex flex-col justify-between py-8 px-5 sm:px-7">
