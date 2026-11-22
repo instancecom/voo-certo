@@ -25,6 +25,7 @@ import { usePlan } from '@/hooks/usePlan';
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [logoError, setLogoError] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, profile, isAdmin, signOut, isLoading: authLoading } = useAuth();
@@ -148,20 +149,19 @@ export function Header() {
           {/* Logo */}
           <div className="flex-1 flex items-center justify-start">
             <Link to="/" className="flex items-center gap-2 group">
-              {branding.logo_url ? (
+              {branding.logo_url && !logoError ? (
                 <img
                   src={getDriveImageUrl(branding.logo_url) || ''}
                   alt={branding.site_name}
                   loading="eager"
                   decoding="async"
+                  onError={() => setLogoError(true)}
                   className="h-10 md:h-12 w-auto object-contain transition-transform group-hover:scale-105"
                 />
               ) : (
                 <>
                   <Plane className="w-8 h-8 md:w-9 md:h-9 text-[#08234a] dark:text-accent" />
-                  <span className={`text-xl md:text-2xl font-bold tracking-tight ${
-                    isTransparent ? 'text-[#08234a] dark:text-white' : 'text-foreground'
-                  }`}>
+                  <span className="text-xl md:text-2xl font-bold tracking-tight text-[#08234a] dark:text-white">
                     {branding.site_name}
                   </span>
                 </>

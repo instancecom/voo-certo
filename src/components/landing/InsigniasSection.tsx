@@ -119,8 +119,12 @@ export function InsigniasSection() {
           <div className="lg:col-span-7 min-w-0 relative">
             <div
               ref={scrollContainerRef}
-              className="flex gap-5 xl:gap-6 overflow-x-auto scrollbar-none py-4 px-1 -mr-4 sm:-mr-8 lg:-mr-12 scroll-smooth"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              className="flex gap-5 xl:gap-6 overflow-x-auto overflow-y-hidden touch-pan-x overscroll-x-contain scrollbar-none py-4 px-1 -mr-4 sm:-mr-8 lg:-mr-12 scroll-smooth items-stretch"
+              style={{ 
+                scrollbarWidth: 'none', 
+                msOverflowStyle: 'none',
+                touchAction: 'pan-x'
+              }}
             >
               {INSIGNIAS.map((badge, idx) => (
                 <motion.div
@@ -180,8 +184,13 @@ export function InsigniasSection() {
 
           {/* Carrossel Horizontal Mobile */}
           <div
-            className="flex gap-3 overflow-x-auto scrollbar-none px-4 pb-3 -mx-4 snap-x snap-mandatory"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            className="flex gap-3 overflow-x-auto overflow-y-hidden touch-pan-x overscroll-x-contain scrollbar-none px-4 py-2.5 -mx-4 snap-x snap-mandatory items-stretch"
+            style={{ 
+              scrollbarWidth: 'none', 
+              msOverflowStyle: 'none',
+              WebkitOverflowScrolling: 'touch',
+              touchAction: 'pan-x'
+            }}
           >
             {INSIGNIAS.map((badge, idx) => (
               <motion.div
