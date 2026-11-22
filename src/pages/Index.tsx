@@ -10,7 +10,6 @@ import { DashboardPreviewSection } from '@/components/landing/DashboardPreviewSe
 import { MikeAssistantSection } from '@/components/landing/MikeAssistantSection';
 import { CareerGuidesSection } from '@/components/landing/CareerGuidesSection';
 import { InsigniasSection } from '@/components/landing/InsigniasSection';
-import { TestimonialsSection } from '@/components/landing/TestimonialsSection';
 
 
 
@@ -134,9 +133,6 @@ export default function Index() {
 
         {/* 4.2 Guias de Carreira */}
         <CareerGuidesSection />
-
-        {/* 5. Depoimentos (Provas Reais) */}
-        <TestimonialsSection />
 
 
         
