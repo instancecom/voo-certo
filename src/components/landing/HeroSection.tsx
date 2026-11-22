@@ -100,45 +100,45 @@ export const HeroSection = () => {
 
       {/* ══════════════════════════════════════════════════════════════
           2. VERSÃO MOBILE (EXIBIDA APENAS EM lg:hidden)
-          Card compacto e elegante com proporções refinadas e pílula
-          metade no banner e metade na seção de baixo.
+          Card mais esticado verticalmente conforme referência,
+          com copy (título e subtítulo) ampliada e botões destacados.
          ══════════════════════════════════════════════════════════════ */}
-      <div className="block lg:hidden px-2 sm:px-3">
-        <div className="relative mx-auto w-full max-w-lg">
+      <div className="block lg:hidden px-2.5 sm:px-4">
+        <div className="relative mx-auto w-full max-w-md">
           
-          {/* Card Mobile */}
-          <div className="rounded-[24px] sm:rounded-[28px] overflow-hidden relative shadow-xl min-h-[520px] sm:min-h-[560px] flex flex-col justify-between py-10 px-5 sm:px-7">
+          {/* Card Mobile - Esticado verticalmente */}
+          <div className="rounded-[26px] sm:rounded-[32px] overflow-hidden relative shadow-xl h-[76vh] min-h-[580px] sm:min-h-[640px] max-h-[700px] flex flex-col justify-between pt-10 pb-14 px-5 sm:px-7">
             {/* Imagem de Fundo (Banner Mobile) */}
             <img
               src="/images/landing/hero-bg.jpg"
               alt="Voe Certo - Preparação para Carreiras na Aviação"
-              className="absolute inset-0 w-full h-full object-cover object-[70%_center] select-none"
+              className="absolute inset-0 w-full h-full object-cover object-[72%_center] select-none"
               loading="eager"
               decoding="async"
             />
 
             {/* Gradiente para contraste */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/15 to-black/50 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/15 to-black/55 pointer-events-none" />
 
-            {/* Espaçador Superior */}
-            <div className="h-4 sm:h-8" />
+            {/* Espaçador Superior para o avião aparecer com destaque */}
+            <div className="h-6 sm:h-12" />
 
-            {/* Bloco Central de Textos e CTAs */}
+            {/* Bloco Central de Textos e CTAs (Copy ampliada) */}
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55 }}
               className="relative z-10 text-center max-w-sm mx-auto w-full my-auto"
             >
-              {/* Título Principal Centralizado */}
-              <h1 className="text-[32px] sm:text-4xl font-black text-white leading-[1.08] tracking-tight mb-2.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+              {/* Título Principal Centralizado e Maior */}
+              <h1 className="text-[36px] sm:text-[42px] font-black text-white leading-[1.05] tracking-tight mb-3.5 drop-shadow-[0_2px_12px_rgba(0,0,0,0.55)]">
                 Seu próximo <br />
                 destino é a <br />
                 <span className="text-[#38bdf8]">aviação.</span>
               </h1>
 
-              {/* Subtítulo Centralizado */}
-              <p className="text-xs sm:text-sm text-white/95 font-medium leading-relaxed max-w-[250px] sm:max-w-xs mx-auto mb-5 drop-shadow-[0_1px_6px_rgba(0,0,0,0.4)]">
+              {/* Subtítulo Centralizado e Maior */}
+              <p className="text-sm sm:text-base text-white/95 font-medium leading-relaxed max-w-[280px] sm:max-w-xs mx-auto mb-6 drop-shadow-[0_1px_6px_rgba(0,0,0,0.45)]">
                 Prepare-se com simulados <br className="sm:hidden" /> e guias de carreira.
               </p>
 
@@ -147,7 +147,7 @@ export const HeroSection = () => {
                 {/* Botão Começar agora */}
                 <Link
                   to={user ? '/simulados' : '/auth?mode=signup'}
-                  className="inline-flex items-center gap-1.5 px-6 py-2.5 bg-white hover:bg-slate-50 text-[#08234a] font-bold text-xs sm:text-sm rounded-full shadow-md active:scale-95 transition-all"
+                  className="inline-flex items-center gap-2 px-7 py-3 bg-white hover:bg-slate-50 text-[#08234a] font-bold text-sm sm:text-base rounded-full shadow-lg active:scale-95 transition-all"
                 >
                   <span>Começar agora</span>
                   <ChevronRight className="w-4 h-4 text-[#08234a]" />
@@ -157,16 +157,16 @@ export const HeroSection = () => {
                 <button
                   type="button"
                   onClick={() => setIsVideoModalOpen(true)}
-                  className="w-10 h-10 rounded-full border border-white/70 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white flex items-center justify-center shadow-md active:scale-95 transition-all cursor-pointer"
+                  className="w-12 h-12 rounded-full border border-white/70 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white flex items-center justify-center shadow-lg active:scale-95 transition-all cursor-pointer"
                   aria-label="Assistir apresentação"
                 >
-                  <Play className="w-3.5 h-3.5 fill-white text-white ml-0.5" />
+                  <Play className="w-4 h-4 fill-white text-white ml-0.5" />
                 </button>
               </div>
             </motion.div>
 
-            {/* Espaçador Inferior */}
-            <div className="h-2" />
+            {/* Espaçador Inferior para o piloto no mirante */}
+            <div className="h-6" />
           </div>
 
           {/* Pílula Mobile: 50% no banner e 50% na seção abaixo */}
