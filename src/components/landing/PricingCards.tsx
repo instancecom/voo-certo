@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Send, Crown, Gem, Check, ArrowRight, ShieldCheck, Lock, Headphones } from 'lucide-react';
+import { Send, Crown, Gem, Plane, Check, ArrowRight, ShieldCheck, Lock, Headphones } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export interface Plan {
@@ -27,7 +27,7 @@ export function PricingCards({ plans }: PricingCardsProps) {
       className="py-12 md:py-20 bg-gradient-to-b from-white via-slate-50/50 to-white dark:from-[#071328] dark:via-[#091a36] dark:to-[#071328] relative overflow-hidden"
     >
       {/* Luz ambiente de fundo */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-amber-400/5 dark:bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-blue-500/5 dark:bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
@@ -41,12 +41,12 @@ export function PricingCards({ plans }: PricingCardsProps) {
         >
           {/* Coroa dourada no topo */}
           <div className="flex items-center justify-center gap-3 mb-3">
-            <Crown className="w-7 h-7 text-amber-500" />
+            <Plane className="w-7 h-7 text-[#0066ff]" />
           </div>
 
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#071328] dark:text-white tracking-tight leading-tight mb-3 sm:mb-4">
             Escolha o plano ideal <br />
-            <span className="text-amber-500 dark:text-amber-400">para a sua jornada.</span>
+            <span className="text-[#0066ff] dark:text-[#38bdf8]">para a sua jornada.</span>
           </h2>
 
           <p className="text-xs sm:text-base md:text-lg text-slate-500 dark:text-slate-400 font-normal leading-relaxed max-w-lg sm:max-w-2xl mx-auto">
@@ -69,11 +69,11 @@ export function PricingCards({ plans }: PricingCardsProps) {
                 : Gem;
 
             const iconBg = plan.id === 'tripulante'
-              ? 'bg-amber-50 text-amber-500 border border-amber-200/80'
+              ? 'bg-blue-50 text-[#0066ff] border border-blue-100'
               : 'bg-blue-50 text-blue-500 border border-blue-100';
 
             const checkColor = isCenter
-              ? 'text-amber-500'
+              ? 'text-[#0066ff]'
               : 'text-blue-500';
 
             const cleanPrice = plan.price.replace('R$', '').trim();
@@ -93,13 +93,13 @@ export function PricingCards({ plans }: PricingCardsProps) {
                 <div
                   className={`rounded-[22px] bg-white dark:bg-[#0b1730] p-5 transition-all shadow-xs ${
                     isCenter
-                      ? 'border-2 border-amber-400 dark:border-amber-400 shadow-lg shadow-amber-500/10'
+                      ? 'border-2 border-[#0066ff] dark:border-[#0066ff] shadow-lg shadow-blue-500/10'
                       : 'border border-slate-200/90 dark:border-slate-800'
                   }`}
                 >
                   {/* Badge de Destaque no topo esquerdo do card selecionado */}
                   {isCenter && (
-                    <div className="absolute -top-2.5 left-5 bg-amber-400 text-slate-950 text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-xs flex items-center gap-1">
+                    <div className="absolute -top-2.5 left-5 bg-[#0066ff] text-white text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-xs flex items-center gap-1">
                       <span>★</span> MAIS ESCOLHIDO
                     </div>
                   )}
@@ -165,7 +165,7 @@ export function PricingCards({ plans }: PricingCardsProps) {
                       asChild
                       className={`w-full h-11 font-bold text-xs tracking-wide transition-all rounded-[5px] flex items-center justify-center gap-1.5 ${
                         isCenter
-                          ? 'bg-amber-400 hover:bg-amber-500 text-slate-950 shadow-md shadow-amber-400/20'
+                          ? 'bg-[#0066ff] hover:bg-blue-700 text-white shadow-md shadow-blue-500/20'
                           : 'bg-transparent hover:bg-blue-50 text-blue-600 dark:text-blue-400 border border-blue-400/80 dark:border-blue-600'
                       }`}
                     >
@@ -235,11 +235,11 @@ export function PricingCards({ plans }: PricingCardsProps) {
                   : Gem;
 
               const iconBg = plan.id === 'tripulante'
-                ? 'bg-amber-100/70 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400 border border-amber-200/80 dark:border-amber-800/60'
+                ? 'bg-blue-50 text-[#0066ff] dark:bg-blue-950/60 dark:text-blue-400 border border-blue-100 dark:border-blue-900/60'
                 : 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 border border-blue-100 dark:border-blue-900/60';
 
               const checkColor = isCenter
-                ? 'text-amber-500 dark:text-amber-400'
+                ? 'text-[#0066ff] dark:text-[#38bdf8]'
                 : 'text-blue-600 dark:text-blue-400';
 
               const cleanPrice = plan.price.replace('R$', '').trim();
@@ -259,13 +259,13 @@ export function PricingCards({ plans }: PricingCardsProps) {
                   <div
                     className={`w-full flex flex-col justify-between rounded-[20px] transition-all duration-300 relative bg-white dark:bg-[#0b1730] p-6 sm:p-8 ${
                       isCenter
-                        ? 'border-2 border-amber-400 dark:border-amber-500 shadow-2xl shadow-amber-500/10 -translate-y-1 lg:-translate-y-2 ring-1 ring-amber-400/20'
+                        ? 'border-2 border-[#0066ff] dark:border-[#0066ff] shadow-2xl shadow-blue-500/10 -translate-y-1 lg:-translate-y-2 ring-1 ring-blue-500/20'
                         : 'border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none hover:border-slate-300 dark:hover:border-slate-700'
                     }`}
                   >
                     {/* Badge de Destaque no topo do card central (★ MAIS ESCOLHIDO) */}
                     {isCenter && (
-                      <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#071d44] text-amber-400 text-[10px] font-black px-4 py-1 uppercase tracking-wider rounded-full shadow-md flex items-center gap-1.5 border border-amber-400/30">
+                      <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#0066ff] text-white text-[10px] font-black px-4 py-1 uppercase tracking-wider rounded-full shadow-md flex items-center gap-1.5 ">
                         <span>★</span> MAIS ESCOLHIDO
                       </div>
                     )}
@@ -324,7 +324,7 @@ export function PricingCards({ plans }: PricingCardsProps) {
                         asChild
                         className={`w-full h-12 font-bold text-sm tracking-wide transition-all rounded-[5px] flex items-center justify-center gap-2 ${
                           isCenter
-                            ? 'bg-amber-400 hover:bg-amber-500 text-slate-950 shadow-md shadow-amber-400/20'
+                            ? 'bg-[#0066ff] hover:bg-blue-700 text-white shadow-md shadow-blue-500/20'
                             : 'bg-blue-50 hover:bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:hover:bg-blue-900/60 dark:text-blue-300 border border-blue-200/70 dark:border-blue-900'
                         }`}
                       >
