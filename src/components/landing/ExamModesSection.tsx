@@ -43,39 +43,19 @@ export function ExamModesSection() {
       id="modos"
       className="py-16 sm:py-20 md:py-28 bg-white dark:bg-[#071328] relative overflow-hidden"
     >
-      {/* ── NUVEM AZUL 1 (CANTO SUPERIOR DIREITO - ANIMAÇÃO DE ENTRADA NO SCROLL) ── */}
-      <motion.div
-        initial={{ opacity: 0, x: 110, y: -15 }}
-        whileInView={{ opacity: 0.9, x: 0, y: 0 }}
-        viewport={{ once: true, amount: 0.15 }}
-        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-        className="absolute -top-6 -right-12 sm:-right-8 w-48 sm:w-64 md:w-80 lg:w-96 pointer-events-none select-none z-0"
-      >
-        <motion.img
-          src="/images/landing/nuvem_azul.png"
-          alt="Nuvem decorativa azul"
-          className="w-full h-auto object-contain"
-          animate={{ y: [0, -6, 0] }}
-          transition={{ repeat: Infinity, duration: 4.5, ease: 'easeInOut' }}
-        />
-      </motion.div>
+      {/* ── NUVEM AZUL 1 (CANTO SUPERIOR DIREITO) ── */}
+      <img
+        src="/images/landing/nuvem_azul.png"
+        alt="Nuvem decorativa azul"
+        className="absolute -top-6 -right-12 sm:-right-8 w-48 sm:w-64 md:w-80 lg:w-96 pointer-events-none select-none opacity-90 z-0"
+      />
 
-      {/* ── NUVEM AZUL 2 (CANTO INFERIOR ESQUERDO - ANIMAÇÃO DE ENTRADA NO SCROLL) ── */}
-      <motion.div
-        initial={{ opacity: 0, x: -110, y: 15 }}
-        whileInView={{ opacity: 0.9, x: 0, y: 0 }}
-        viewport={{ once: true, amount: 0.15 }}
-        transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-        className="absolute -bottom-10 -left-12 sm:-left-8 w-48 sm:w-64 md:w-80 lg:w-96 pointer-events-none select-none z-0"
-      >
-        <motion.img
-          src="/images/landing/nuvem_azul.png"
-          alt="Nuvem decorativa azul"
-          className="w-full h-auto object-contain"
-          animate={{ y: [0, 6, 0] }}
-          transition={{ repeat: Infinity, duration: 5, ease: 'easeInOut', delay: 0.5 }}
-        />
-      </motion.div>
+      {/* ── NUVEM AZUL 2 (CANTO INFERIOR ESQUERDO) ── */}
+      <img
+        src="/images/landing/nuvem_azul.png"
+        alt="Nuvem decorativa azul"
+        className="absolute -bottom-10 -left-12 sm:-left-8 w-48 sm:w-64 md:w-80 lg:w-96 pointer-events-none select-none opacity-90 z-0"
+      />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
