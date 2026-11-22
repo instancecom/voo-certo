@@ -23,7 +23,7 @@ export const HeroSection = () => {
         <div className="relative mx-auto w-full max-w-[1880px]">
           
           {/* Card do Banner com cantos arredondados e overflow-hidden para a imagem */}
-          <div className="w-full rounded-[28px] xl:rounded-[36px] overflow-hidden relative shadow-2xl h-[510px] xl:h-[550px] 2xl:h-[580px] flex items-center">
+          <div className="w-full rounded-[28px] xl:rounded-[36px] overflow-hidden relative shadow-2xl h-[530px] xl:h-[570px] 2xl:h-[600px] flex items-center">
             {/* Imagem de Fundo (Banner da Aviação) */}
             <img
               src="/images/landing/hero-bg.jpg"
@@ -41,26 +41,26 @@ export const HeroSection = () => {
               initial={{ opacity: 0, x: -25 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.65, ease: 'easeOut' }}
-              className="relative z-10 px-10 xl:px-16 py-8 max-w-xl text-left"
+              className="relative z-10 px-10 xl:px-16 py-8 max-w-2xl xl:max-w-3xl text-left"
             >
-              {/* Título Principal */}
-              <h1 className="text-4xl xl:text-5xl 2xl:text-[54px] font-black text-white leading-[1.08] tracking-tight mb-3 drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)]">
+              {/* Título Principal Ampliado */}
+              <h1 className="text-5xl lg:text-6xl xl:text-7xl 2xl:text-[76px] font-black text-white leading-[1.02] tracking-tight mb-4 drop-shadow-[0_2px_14px_rgba(0,0,0,0.5)]">
                 Seu próximo <br />
                 destino é a <br />
                 <span className="text-[#38bdf8]">aviação.</span>
               </h1>
 
-              {/* Subtítulo */}
-              <p className="text-sm xl:text-base text-white/95 font-medium leading-relaxed max-w-sm mb-6 drop-shadow-[0_1px_6px_rgba(0,0,0,0.35)]">
+              {/* Subtítulo Ampliado */}
+              <p className="text-base lg:text-lg xl:text-xl text-white/95 font-medium leading-relaxed max-w-lg mb-8 drop-shadow-[0_1px_6px_rgba(0,0,0,0.4)]">
                 Prepare-se com simulados e guias de carreira.
               </p>
 
               {/* Botões de Ação */}
-              <div className="flex items-center gap-3.5">
+              <div className="flex items-center gap-4">
                 {/* Botão Principal: Começar agora */}
                 <Link
                   to={user ? '/simulados' : '/auth?mode=signup'}
-                  className="inline-flex items-center gap-2 px-7 py-3 bg-white hover:bg-slate-50 text-[#08234a] font-bold text-sm rounded-full shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all group"
+                  className="inline-flex items-center gap-2 px-8 py-3.5 bg-white hover:bg-slate-50 text-[#08234a] font-bold text-sm lg:text-base rounded-full shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all group"
                 >
                   <span>Começar agora</span>
                   <ChevronRight className="w-4 h-4 text-[#08234a] transition-transform group-hover:translate-x-1" />
@@ -70,7 +70,7 @@ export const HeroSection = () => {
                 <button
                   type="button"
                   onClick={() => setIsVideoModalOpen(true)}
-                  className="w-11 h-11 rounded-full border border-white/70 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-all group cursor-pointer"
+                  className="w-12 h-12 rounded-full border border-white/70 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-all group cursor-pointer"
                   aria-label="Assistir apresentação"
                 >
                   <Play className="w-4 h-4 fill-white text-white ml-0.5" />

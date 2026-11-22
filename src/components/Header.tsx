@@ -214,30 +214,29 @@ export function Header() {
             <div className="hidden md:flex items-center gap-3 justify-end">
               {user ? (
                 <>
-                  <NotificationBell className={isTransparent ? 'text-white hover:bg-white/10' : ''} />
+                  <NotificationBell className="w-9 h-9 rounded-full border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 text-[#08234a] dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 shadow-xs flex items-center justify-center transition-all" />
 
                   {/* Dropdown de perfil — Focado em Conta, Assinatura e Gestão */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
-                        variant="outline"
+                        variant="ghost"
                         size="sm"
-                        className={`h-9 flex items-center gap-2 rounded-[5px] font-semibold pr-2.5 pl-1.5 ${
-                          isTransparent
-                            ? 'bg-white/10 text-white border-white/20 hover:bg-white/20 hover:text-white'
-                            : 'hover-yellow border-border'
-                        }`}
+                        className="h-9 flex items-center gap-1.5 rounded-full pl-1 pr-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-[#08234a] dark:text-white transition-all cursor-pointer"
                       >
-                        {/* Avatar com iniciais */}
-                        <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 ${
-                          isTransparent ? 'bg-white/20 text-white' : 'bg-primary text-white'
-                        }`}>
-                          {getInitials()}
-                        </span>
-                        <span className="max-w-[100px] truncate text-sm">
-                          {profile?.full_name?.split(' ')[0] || user.email?.split('@')[0]}
-                        </span>
-                        <ChevronDown className="w-3.5 h-3.5 opacity-60 shrink-0" />
+                        {/* Avatar */}
+                        {profile?.avatar_url ? (
+                          <img
+                            src={getDriveImageUrl(profile.avatar_url) || ''}
+                            alt="Avatar"
+                            className="w-7 h-7 rounded-full object-cover border border-slate-200 dark:border-slate-700 shadow-xs"
+                          />
+                        ) : (
+                          <span className="w-7 h-7 rounded-full bg-[#0066ff] text-white flex items-center justify-center text-[10px] font-black shrink-0 shadow-xs">
+                            {getInitials()}
+                          </span>
+                        )}
+                        <ChevronDown className="w-3.5 h-3.5 text-[#08234a] dark:text-slate-300 opacity-75 shrink-0" />
                       </Button>
                     </DropdownMenuTrigger>
 
