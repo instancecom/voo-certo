@@ -26,6 +26,7 @@ export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [logoError, setLogoError] = useState(false);
+  const [logoRetry, setLogoRetry] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, profile, isAdmin, signOut, isLoading: authLoading } = useAuth();
@@ -87,6 +88,11 @@ export function Header() {
       },
     });
   };
+
+  useEffect(() => {
+    setLogoError(false);
+    setLogoRetry(0);
+  }, [branding.logo_url]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -151,11 +157,19 @@ export function Header() {
             <Link to="/" className="flex items-center gap-2 group">
               {branding.logo_url && !logoError ? (
                 <img
+                  key={`${branding.logo_url}-${logoRetry}`}
                   src={getDriveImageUrl(branding.logo_url) || ''}
                   alt={branding.site_name}
                   loading="eager"
                   decoding="async"
-                  onError={() => setLogoError(true)}
+                  referrerPolicy="no-referrer"
+                  onError={() => {
+                    if (logoRetry < 2) {
+                      setTimeout(() => setLogoRetry((r) => r + 1), 500);
+                    } else {
+                      setLogoError(true);
+                    }
+                  }}
                   className="h-10 md:h-12 w-auto object-contain transition-transform group-hover:scale-105"
                 />
               ) : (
