@@ -172,7 +172,7 @@ export function MicrocourseLanding({ course, modules, getLessons }: MicrocourseL
                       onClick={() => navigate('/premium')}
                       className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-bold text-lg h-14 rounded-[5px] shadow-lg shadow-accent/20 group"
                     >
-                      Assinar Plano Tripulante
+                      Assinar Plano Completo
                       <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                     </Button>
                     <p className="text-[11px] text-center text-muted-foreground">

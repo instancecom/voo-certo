@@ -332,7 +332,7 @@ export default function SimuladosPage() {
           </div>
         </section>
 
-        {currentPlan !== 'comandante' && (
+        {currentPlan !== 'completo' && (
           <section className="py-20">
             <div className="container mx-auto px-4 text-center">
                <div className="p-12 rounded-[5px] bg-primary text-primary-foreground relative overflow-hidden group">

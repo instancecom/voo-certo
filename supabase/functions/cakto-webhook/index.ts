@@ -74,15 +74,8 @@ serve(async (req) => {
       );
     }
 
-    // 4. Determinar o plano comprado
-    let targetPlan = "tripulante";
-    if (offerName.includes("comandante")) {
-      targetPlan = "comandante";
-    } else if (offerName.includes("solo")) {
-      targetPlan = "solo";
-    } else if (offerName.includes("tripulante")) {
-      targetPlan = "tripulante";
-    }
+    // 4. Determinar o plano comprado (plano único: completo)
+    const targetPlan = "completo";
 
     // 5. Tratar Ciclo de Vida da Assinatura
     // APROVAÇÃO / RENOVAÇÃO / COMPRA

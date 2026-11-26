@@ -9,17 +9,13 @@ const corsHeaders = {
 // Plan limits for AI questions PER QUESTION
 const PLAN_LIMITS_PER_QUESTION: Record<string, number> = {
   free: 0,
-  solo: 0,
-  tripulante: 5,
-  comandante: 15,
+  completo: 10,
 };
 
 // Daily safety cap to prevent system abuse
 const DAILY_SAFETY_LIMIT: Record<string, number> = {
   free: 0,
-  solo: 0,
-  tripulante: 30, // Max 30 questions per day
-  comandante: 100, // Max 100 questions per day
+  completo: 80, // Max 80 questions per day
 };
 
 serve(async (req) => {

@@ -32,9 +32,7 @@ interface Coupon {
 }
 
 const DEFAULT_PLANS: Plan[] = [
-  { id: 'solo', name: 'Solo', price: 'R$ 19,90/mês', checkoutUrl: 'https://pay.cakto.com.br/659x89z_1012189' },
-  { id: 'tripulante', name: 'Tripulante', price: 'R$ 39,90/mês', checkoutUrl: 'https://pay.cakto.com.br/o2twp3f_1012195' },
-  { id: 'comandante', name: 'Comandante', price: 'R$ 79,90/mês', checkoutUrl: 'https://pay.cakto.com.br/4wat335_1012197' },
+  { id: 'completo', name: 'Completo', price: 'R$ 29,90/mês', checkoutUrl: 'https://pay.cakto.com.br/o2twp3f_1012195' },
 ];
 
 export function PlansAndCouponsManager() {

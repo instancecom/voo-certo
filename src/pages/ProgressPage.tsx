@@ -237,7 +237,7 @@ export default function ProgressPage() {
       <div className="min-h-screen bg-background">
         <Header />
         <main className="pt-32 pb-20 container mx-auto px-4 max-w-lg">
-          <PlanGate requiredPlan="tripulante" feature="Ver Progresso Detalhado">
+          <PlanGate requiredPlan="completo" feature="Ver Progresso Detalhado">
             <div />
           </PlanGate>
         </main>

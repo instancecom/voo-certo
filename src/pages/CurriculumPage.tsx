@@ -51,20 +51,6 @@ const TEMPLATES = [
     badge: 'Compatível com Gupy/LinkedIn',
     desc: 'Coluna única ultra-limpa, sem gráficos ou tabelas. Leitura 100% perfeita para robôs de triagem automática de RH.' 
   },
-  { 
-    id: 'geral', 
-    name: 'Profissional Geral', 
-    icon: Briefcase, 
-    badge: 'Ideal para E-mail',
-    desc: 'Visual corporativo refinado com cabeçalho azul marinho. Excelente para enviar em PDF como anexo de e-mail.' 
-  },
-  { 
-    id: 'presencial', 
-    name: 'Presencial (Papel)', 
-    icon: Shield, 
-    badge: 'Alto Impacto Visual',
-    desc: 'Design de alto contraste com foco visual marcante, pensado especificamente para leitura presencial em folha impressa.' 
-  },
 ];
 
 export default function CurriculumPage() {
@@ -76,7 +62,7 @@ export default function CurriculumPage() {
   const [mode, setMode] = useState<'dashboard' | 'chat' | 'editor'>('dashboard');
   const [data, setData] = useState<CurriculumData>(EMPTY_DATA);
   const [newSkill, setNewSkill] = useState('');
-  const [editorSection, setEditorSection] = useState<'dados' | 'resumo' | 'experiencia' | 'formacao' | 'certificados' | 'extras' | 'template'>('dados');
+  const [editorSection, setEditorSection] = useState<'dados' | 'resumo' | 'experiencia' | 'formacao' | 'certificados' | 'extras'>('dados');
   const [mobileEditorView, setMobileEditorView] = useState<'edit' | 'preview'>('edit');
   const [isEnhancingSection, setIsEnhancingSection] = useState<string | null>(null);
   
@@ -625,7 +611,6 @@ export default function CurriculumPage() {
       { id: 'formacao', label: 'Formação Acadêmica', icon: GraduationCap, count: data.education?.length || 0, desc: 'Escolaridade e cursos' },
       { id: 'certificados', label: 'Cursos & ANAC', icon: Award, count: data.certificates?.length || 0, desc: 'CCT, CMS e licenças' },
       { id: 'extras', label: 'Idiomas & Habilidades', icon: Globe, count: (data.languages?.length || 0) + (data.skills?.length || 0), desc: 'Idiomas e competências' },
-      { id: 'template', label: 'Modelo de Currículo', icon: Layout, desc: 'Layout ATS, Geral ou Presencial' },
     ];
 
     const currentSectionIndex = SECTIONS.findIndex(s => s.id === editorSection);
@@ -1360,64 +1345,6 @@ export default function CurriculumPage() {
                       </div>
                     )}
                   </div>
-                </div>
-              )}
-
-              {/* SEÇÃO: MODELO & TEMPLATE */}
-              {editorSection === 'template' && (
-                <div className="space-y-4">
-                  <div>
-                    <h2 className="text-base font-bold text-foreground flex items-center gap-2">
-                      <Layout className="w-4 h-4 text-primary" /> Escolha o Modelo de Currículo
-                    </h2>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      Alterne entre os layouts aprovados conforme a modalidade de candidatura da vaga.
-                    </p>
-                  </div>
-
-                  <div className="space-y-3">
-                    {TEMPLATES.map((tmpl) => {
-                      const isSelected = (data.template || 'ats').toLowerCase() === tmpl.id;
-                      const isRecommended = data.recommended_template === tmpl.id;
-                      const Icon = tmpl.icon;
-
-                      return (
-                        <div
-                          key={tmpl.id}
-                          onClick={() => updateField('template', tmpl.id)}
-                          className={`
-                            cursor-pointer p-4 rounded-[5px] border-2 transition-all flex flex-col justify-between
-                            ${isSelected ? 'border-primary bg-primary/5 shadow-sm' : 'border-border/80 hover:border-primary/40 bg-card'}
-                          `}
-                        >
-                          <div>
-                            <div className="flex items-center justify-between mb-1.5">
-                              <span className="font-bold text-sm text-foreground flex items-center gap-2">
-                                <Icon className={`w-4 h-4 ${isSelected ? 'text-primary' : 'text-muted-foreground'}`} />
-                                {tmpl.name}
-                              </span>
-                              <Badge variant={isSelected ? 'default' : 'secondary'} className="text-[10px] font-bold rounded-[5px]">
-                                {tmpl.badge}
-                              </Badge>
-                            </div>
-                            <p className="text-xs text-muted-foreground leading-relaxed">{tmpl.desc}</p>
-                          </div>
-                          {isRecommended && (
-                            <div className="flex items-center gap-1.5 text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-[5px] border border-amber-500/20 mt-3 w-fit">
-                              <Sparkles className="w-3 h-3 shrink-0" /> Recomendado pela IA
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {data.recommendation_reason && (
-                    <div className="p-3.5 rounded-[5px] bg-primary/5 border border-primary/20 text-xs text-primary flex items-start gap-2">
-                      <Lightbulb className="w-4 h-4 shrink-0 mt-0.5" />
-                      <span><strong>Por que a IA escolheu este modelo:</strong> {data.recommendation_reason}</span>
-                    </div>
-                  )}
                 </div>
               )}
 

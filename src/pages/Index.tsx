@@ -16,69 +16,30 @@ import { InsigniasSection } from '@/components/landing/InsigniasSection';
 import { PricingCards } from '@/components/landing/PricingCards';
 import { FAQSection } from '@/components/landing/FAQSection';
 import { CTASection } from '@/components/landing/CTASection';
-import { Plane, Zap, Crown } from 'lucide-react';
+import { Crown } from 'lucide-react';
 
 const PLANS = [
   {
-    id: 'solo',
-    name: 'Solo',
-    price: 'R$ 19,90',
+    id: 'completo',
+    name: 'Completo',
+    price: 'R$ 29,90',
     period: '/mês',
-    icon: Plane,
-    description: 'Ideal para quem está iniciando os estudos teóricos',
+    icon: Crown,
+    description: 'Acesso total a todas as ferramentas para acelerar sua aprovação',
     features: [
-      'Modo Livre e Bloco ilimitados',
+      'Modo Livre com IA',
       'Modo Banca oficial ANAC ilimitado',
-      'Chat IA com Mike (2 msgs/questão)',
-      'Guia de Carreiras completo da aviação',
-      'Histórico e métricas de desempenho',
-      'Conquistas: Medalhas Bronze e Prata',
-      '🎖️ Selo "Aprovado ANAC" (LinkedIn)',
-      'Gerador de Currículo IA (1 currículo)',
-    ],
-    highlight: false,
-    popular: false,
-    checkoutLink: '/premium?plan=solo',
-  },
-  {
-    id: 'tripulante',
-    name: 'Tripulante',
-    price: 'R$ 39,90',
-    period: '/mês',
-    icon: Zap,
-    description: 'O melhor custo-benefício para acelerar sua aprovação',
-    features: [
-      'Tudo do plano Solo',
-      'Chat IA com Mike (5 msgs/questão)',
+      'Modo Bloco liberado',
+      'Chat IA com Mike (10 msgs/questão, até 80/dia)',
       'Diagnóstico de Desempenho com Mike',
-      'Conquistas: Bronze, Prata e Ouro',
-      '🎖️ Selo "Aprovado ANAC" (LinkedIn)',
-      'Gerador de Currículo IA (até 3 currículos)',
-      'Suporte prioritário da equipe',
+      'Progresso completo e histórico',
+      'Conquistas até o nível Platina',
+      'Selo "Aprovado ANAC" (LinkedIn)',
+      'Gerador de Currículo IA ilimitado (modelo ATS/Digital)',
     ],
     highlight: true,
     popular: true,
-    checkoutLink: '/premium?plan=tripulante',
-  },
-  {
-    id: 'comandante',
-    name: 'Comandante',
-    price: 'R$ 79,90',
-    period: '/mês',
-    icon: Crown,
-    description: 'A preparação definitiva para garantir sua vaga no mercado',
-    features: [
-      'Tudo do plano Tripulante',
-      'Chat IA Turbo com Mike (15 msgs/questão)',
-      'Diagnóstico com Mike ilimitado',
-      'Todas as Conquistas: Bronze, Prata, Ouro e Platina',
-      '🎖️ Selo "Aprovado ANAC" (LinkedIn)',
-      'Gerador de Currículo IA (galeria ilimitada)',
-      'Acesso antecipado a novos módulos',
-    ],
-    highlight: false,
-    popular: false,
-    checkoutLink: '/premium?plan=comandante',
+    checkoutLink: '/premium?plan=completo',
   },
 ];
 

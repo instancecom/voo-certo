@@ -375,7 +375,7 @@ export function BadgePreviewModal({ open, onOpenChange, insignia, earnedAt, appr
                 >
                   <div className="flex items-center gap-2 text-yellow-500/80 bg-yellow-500/10 px-4 py-2 rounded-[5px] border border-yellow-500/20">
                     <Lock size={14} />
-                    <span className="text-xs font-bold uppercase tracking-widest">Requisito: Plano {insignia.plano_minimo || 'Tripulante'}</span>
+                    <span className="text-xs font-bold uppercase tracking-widest">Requisito: Plano {insignia.plano_minimo || 'Completo'}</span>
                   </div>
                   <Button 
                     className="bg-white text-black hover:bg-[#F5F7F9] font-black uppercase text-xs tracking-widest px-8 h-12 rounded-[5px] shadow-2xl"

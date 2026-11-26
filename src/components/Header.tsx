@@ -133,13 +133,7 @@ export function Header() {
 
   const isTransparent = isHome && !isScrolled;
 
-  const planName = currentPlan === 'comandante' 
-    ? 'Comandante' 
-    : currentPlan === 'tripulante' 
-      ? 'Tripulante' 
-      : currentPlan === 'solo' 
-        ? 'Solo' 
-        : 'Gratuito';
+  const planName = currentPlan === 'completo' ? 'Completo' : 'Gratuito';
 
   return (
     <header

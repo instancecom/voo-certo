@@ -19,30 +19,22 @@ export interface UserStat {
 
 export const PLAN_COLORS: Record<string, string> = {
   Gratuito: 'hsl(var(--muted-foreground))',
-  Solo: 'hsl(210, 80%, 55%)',
-  Tripulante: 'hsl(var(--primary))',
-  Comandante: 'hsl(var(--accent))',
+  Completo: 'hsl(var(--primary))',
 };
 
 export const PLAN_BADGE: Record<string, string> = {
   free: 'bg-muted text-muted-foreground',
-  solo: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
-  tripulante: 'bg-primary/10 text-primary',
-  comandante: 'bg-accent/10 text-accent',
+  completo: 'bg-primary/10 text-primary',
 };
 
 export const PLAN_LABEL: Record<string, string> = {
   free: 'Gratuito',
-  solo: 'Solo',
-  tripulante: 'Tripulante',
-  comandante: 'Comandante',
+  completo: 'Completo',
 };
 
 export const PLAN_PRICE: Record<string, number> = {
   free: 0,
-  solo: 19.90,
-  tripulante: 39.90,
-  comandante: 79.90,
+  completo: 29.90,
 };
 
 const DEFAULT_STATS = {
@@ -208,9 +200,7 @@ export function useAdminStats(
     
     const plansDistribution = [
       { name: 'Gratuito', value: nonAdminProfiles.filter(p => !p.plan_type || p.plan_type === 'free').length, color: PLAN_COLORS['Gratuito'] },
-      { name: 'Solo', value: nonAdminProfiles.filter(p => p.plan_type === 'solo').length, color: PLAN_COLORS['Solo'] },
-      { name: 'Tripulante', value: nonAdminProfiles.filter(p => p.plan_type === 'tripulante').length, color: PLAN_COLORS['Tripulante'] },
-      { name: 'Comandante', value: nonAdminProfiles.filter(p => p.plan_type === 'comandante').length, color: PLAN_COLORS['Comandante'] },
+      { name: 'Completo', value: nonAdminProfiles.filter(p => p.plan_type === 'completo').length, color: PLAN_COLORS['Completo'] },
     ];
 
     const totalRevenue = nonAdminProfiles.reduce((acc, p) => acc + (PLAN_PRICE[p.plan_type || 'free'] || 0), 0);

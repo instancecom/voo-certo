@@ -240,7 +240,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const hasActivePlan = (() => {
     if (!profile) return false;
-    const validPlans = ['solo', 'tripulante', 'comandante'];
+    const validPlans = ['completo'];
     if (!validPlans.includes(profile.plan_type)) return false;
     if (profile.plan_expires_at && new Date(profile.plan_expires_at) < new Date()) return false;
     return true;

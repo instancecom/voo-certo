@@ -224,7 +224,7 @@ export default function ProfessionExamPage() {
         <Header />
         <main className="pt-24 pb-12">
           <div className="container mx-auto px-4 max-w-lg">
-            <PlanGate requiredPlan="solo" feature="Simulados">
+            <PlanGate requiredPlan="completo" feature="Simulados">
               <div />
             </PlanGate>
           </div>

@@ -14,7 +14,7 @@ const FAQS: FAQItem[] = [
   },
   {
     q: 'Como funciona o plano de assinatura?',
-    a: 'Você escolhe o plano que melhor atende o seu momento (Solo, Tripulante ou Comandante). O acesso a todas as ferramentas contratadas é liberado imediatamente, permitindo que você estude no seu próprio ritmo pelo computador, tablet ou celular.',
+    a: 'Você pode começar gratuitamente e, quando quiser acelerar sua preparação, assinar o Plano Completo. O acesso a todas as ferramentas é liberado imediatamente, permitindo que você estude no seu próprio ritmo pelo computador, tablet ou celular.',
   },
   {
     q: 'Quais são os métodos de pagamento?',

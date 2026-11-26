@@ -494,14 +494,14 @@ export default function ProfilePage() {
                 </div>
 
                 <p className="text-xs text-muted-foreground leading-relaxed mb-4">
-                  {currentPlan === 'comandante'
-                    ? 'Você possui o plano mais avançado da plataforma, com IA Turbo e diagnósticos ilimitados.'
+                  {currentPlan === 'completo'
+                    ? 'Você possui o Plano Completo, com acesso total à IA do Mike, diagnósticos, conquistas e currículo ATS.'
                     : 'Acesse simulações completas, explicações técnicas do Mike e gerador de currículos.'}
                 </p>
               </div>
 
               <div className="flex flex-col gap-2 pt-2">
-                {currentPlan !== 'comandante' && (
+                {currentPlan !== 'completo' && (
                   <Button asChild size="sm" className="rounded-[5px] text-xs font-bold hover-yellow h-9 w-full">
                     <Link to="/premium" className="flex items-center justify-center gap-1.5">
                       Fazer Upgrade do Plano <ArrowRight className="w-3.5 h-3.5" />

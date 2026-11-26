@@ -61,8 +61,8 @@ serve(async (req: any) => {
 
       case 'plan_activated':
       case 'plan_confirmation':
-        subject = `Decolagem Autorizada! 🚀 Seu plano ${planName || 'Tripulante'} foi ativado com sucesso`
-        htmlContent = getPlanConfirmationEmailHtml(userName, planName || 'Tripulante')
+        subject = `Decolagem Autorizada! 🚀 Seu plano ${planName || 'Completo'} foi ativado com sucesso`
+        htmlContent = getPlanConfirmationEmailHtml(userName, planName || 'Completo')
         break
 
       case 'inactive_reminder':

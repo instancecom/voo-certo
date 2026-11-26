@@ -15,64 +15,27 @@ import { toast } from 'sonner';
 
 const PLANS = [
   {
-    id: 'solo',
-    name: 'Solo',
-    price: 19.90,
-    priceLabel: 'R$ 19,90',
-    priceId: 'price_1T2s0K5IdjxdYZGcfJIVoMGL',
-    icon: Plane,
-    description: 'Ideal para quem está iniciando os estudos',
-    features: [
-      'Modo Livre e Bloco ilimitados',
-      'Modo Banca ilimitado',
-      'Chat IA com Mike (2 msgs/questão)',
-      'Guia de Carreiras completo',
-      'Progresso e histórico completos',
-      'Conquistas: Bronze e Prata',
-      '🎖️ Selo "Aprovado ANAC" (LinkedIn)',
-      'Currículo com IA (1 currículo salvo)',
-    ],
-    color: 'bg-card border-border',
-    buttonVariant: 'outline' as const,
-  },
-  {
-    id: 'tripulante',
-    name: 'Tripulante',
-    price: 39.90,
-    priceLabel: 'R$ 39,90',
-    priceId: 'price_1T2s125IdjxdYZGcbdnPSAWj',
-    icon: Zap,
-    description: 'O melhor custo-benefício para sua aprovação',
+    id: 'completo',
+    name: 'Completo',
+    price: 29.90,
+    priceLabel: 'R$ 29,90',
+    priceId: 'completo',
+    icon: Crown,
+    description: 'Acesso total a todas as ferramentas para sua aprovação',
     popular: true,
     features: [
-      'Tudo do plano Solo',
-      'Chat IA com Mike (5 msgs/questão)',
-      'Diagnóstico com Mike (IA de desempenho)',
-      'Conquistas: Bronze, Prata e Ouro',
-      '🎖️ Selo "Aprovado ANAC" (LinkedIn)',
-      'Currículo com IA (até 3 currículos)',
+      'Modo Livre com IA',
+      'Modo Banca ilimitado',
+      'Modo Bloco liberado',
+      'Chat IA com Mike (10 msgs/questão, até 80/dia)',
+      'Diagnóstico de Desempenho com Mike',
+      'Progresso completo e histórico',
+      'Conquistas até o nível Platina',
+      'Selo "Aprovado ANAC" (LinkedIn)',
+      'Currículo com IA ilimitado (modelo ATS/Digital)',
     ],
-    color: 'bg-primary/5 border-primary/20',
+    color: 'bg-card border-primary',
     buttonVariant: 'default' as const,
-  },
-  {
-    id: 'comandante',
-    name: 'Comandante',
-    price: 79.90,
-    priceLabel: 'R$ 79,90',
-    priceId: 'price_1T2s1m5IdjxdYZGcxahBdOM0',
-    icon: Crown,
-    description: 'A preparação definitiva para garantir sua vaga',
-    features: [
-      'Tudo do plano Tripulante',
-      'Chat IA Turbo com Mike (15 msgs/questão)',
-      'Diagnóstico com Mike ilimitado',
-      'Todas as Conquistas: Bronze, Prata, Ouro e Platina',
-      '🎖️ Selo "Aprovado ANAC" (LinkedIn)',
-      'Currículo com IA (galeria ilimitada)',
-    ],
-    color: 'bg-accent/5 border-accent/20',
-    buttonVariant: 'hero' as const,
   },
 ];
 
@@ -100,7 +63,7 @@ export default function PremiumPage() {
     }
     // Pré-seleciona o plano vindo da landing page via ?plan=
     const planParam = searchParams.get('plan');
-    if (planParam && ['solo', 'tripulante', 'comandante'].includes(planParam)) {
+    if (planParam && ['completo'].includes(planParam)) {
       setHighlightedPlan(planParam);
       // Scroll suave até o card do plano após renderização
       setTimeout(() => {
@@ -264,7 +227,7 @@ export default function PremiumPage() {
 
 
           {/* Plans Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch">
+          <div className="max-w-md mx-auto">
             {PLANS.map((plan, index) => {
               const Icon = plan.icon;
               const isCurrent = currentPlan === plan.id;

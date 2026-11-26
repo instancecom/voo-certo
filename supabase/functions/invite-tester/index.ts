@@ -75,7 +75,7 @@ serve(async (req) => {
           .update({
             is_premium: true,
             premium_expires_at: expiresAt,
-            plan_type: "tripulante",
+            plan_type: "completo",
             is_tester: true
           })
           .eq("email", formattedEmail);

@@ -105,11 +105,11 @@ export default function MicrocoursesPage() {
   const completedIds = new Set((progress || []).filter((p: any) => p.completed).map((p: any) => p.microcourse_id));
   const displayCourses = courses || [];
 
-  const isComandante = currentPlan === 'comandante';
+  const isCompleto = currentPlan === 'completo';
 
   const filtered = displayCourses.filter(c => {
-    // Priority logic: if it has a future release_date, only comandante sees it
-    if (c.release_date && new Date(c.release_date) > new Date() && !isComandante) {
+    // Priority logic: if it has a future release_date, only completo sees it
+    if (c.release_date && new Date(c.release_date) > new Date() && !isCompleto) {
       return false;
     }
 

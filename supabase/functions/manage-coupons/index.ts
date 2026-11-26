@@ -34,9 +34,7 @@ serve(async (req) => {
     // Ação 0: Buscar preços ao vivo dos planos no checkout da Cakto
     if (action === "get_plans") {
       const planLinks = [
-        { id: "solo", name: "Solo", url: "https://pay.cakto.com.br/659x89z_1012189", defaultPrice: "R$ 19,90/mês" },
-        { id: "tripulante", name: "Tripulante", url: "https://pay.cakto.com.br/o2twp3f_1012195", defaultPrice: "R$ 39,90/mês" },
-        { id: "comandante", name: "Comandante", url: "https://pay.cakto.com.br/4wat335_1012197", defaultPrice: "R$ 79,90/mês" }
+        { id: "completo", name: "Completo", url: "https://pay.cakto.com.br/o2twp3f_1012195", defaultPrice: "R$ 29,90/mês" }
       ];
 
       const livePlans = await Promise.all(planLinks.map(async (plan) => {

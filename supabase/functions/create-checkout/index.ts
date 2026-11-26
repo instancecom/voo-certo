@@ -6,11 +6,9 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// URLs reais da Cakto para cada plano do Voe Certo
+// URL oficial da Cakto para o plano Completo do Voe Certo
 const DEFAULT_CAKTO_URLS: Record<string, string> = {
-  solo: "https://pay.cakto.com.br/659x89z_1012189",
-  tripulante: "https://pay.cakto.com.br/o2twp3f_1012195",
-  comandante: "https://pay.cakto.com.br/4wat335_1012197",
+  completo: "https://pay.cakto.com.br/o2twp3f_1012195",
 };
 
 serve(async (req) => {
@@ -37,22 +35,11 @@ serve(async (req) => {
     const body = await req.json().catch(() => ({}));
     const { planId, priceId, couponCode } = body;
     
-    // Mapeamento preciso do plano (solo, tripulante, comandante)
-    let targetPlan = (planId || "").toLowerCase().trim();
-
-    if (!targetPlan || !DEFAULT_CAKTO_URLS[targetPlan]) {
-      const p = (priceId || "").toLowerCase();
-      if (p.includes("solo") || p.includes("1t2s0k")) {
-        targetPlan = "solo";
-      } else if (p.includes("comandante") || p.includes("1t2s1m")) {
-        targetPlan = "comandante";
-      } else {
-        targetPlan = "tripulante";
-      }
-    }
+    // Plano único pago: completo
+    const targetPlan = "completo";
 
     // 1. Busca URL customizada no ambiente ou usa a URL oficial mapeada
-    let baseUrl = Deno.env.get(`CAKTO_CHECKOUT_${targetPlan.toUpperCase()}`) || DEFAULT_CAKTO_URLS[targetPlan] || DEFAULT_CAKTO_URLS.tripulante;
+    let baseUrl = Deno.env.get("CAKTO_CHECKOUT_COMPLETO") || DEFAULT_CAKTO_URLS.completo;
 
     if (body.customCheckoutUrl) {
       baseUrl = body.customCheckoutUrl;

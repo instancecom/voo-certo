@@ -130,7 +130,7 @@ export function getWelcomeEmailHtml(name: string): string {
 /**
  * MODELO 2: CONFIRMAÇÃO DE ASSINATURA DO PLANO (Plan Activated Confirmation)
  */
-export function getPlanConfirmationEmailHtml(name: string, planName: string = 'Tripulante'): string {
+export function getPlanConfirmationEmailHtml(name: string, planName: string = 'Completo'): string {
   const title = `Decolagem Autorizada! 🚀`;
   const subtitle = "CONFIRMAÇÃO DE ASSINATURA";
 

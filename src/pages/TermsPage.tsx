@@ -62,7 +62,7 @@ export default function TermsPage() {
               <h2 className="text-foreground font-bold text-lg">3. Contas e Uso de Planos</h2>
               <ul className="list-disc pl-5 space-y-2">
                 <li>Você é responsável por manter a confidencialidade da sua senha e conta.</li>
-                <li>O acesso às funcionalidades de simulados avançados e assistente de IA depende do plano contratado (Tripulante ou Comandante).</li>
+                <li>O acesso às funcionalidades de simulados avançados e assistente de IA depende do plano contratado (Plano Completo).</li>
                 <li>É vedado o compartilhamento de credenciais de acesso com terceiros.</li>
               </ul>
             </section>

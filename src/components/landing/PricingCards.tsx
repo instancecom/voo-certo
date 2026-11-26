@@ -62,19 +62,11 @@ export function PricingCards({ plans }: PricingCardsProps) {
           {plans.map((plan, idx) => {
             const isCenter = plan.highlight || plan.popular;
 
-            const PlanIcon = plan.id === 'solo' 
-              ? Send 
-              : plan.id === 'tripulante' 
-                ? Crown 
-                : Gem;
+            const PlanIcon = plan.icon || Crown;
 
-            const iconBg = plan.id === 'tripulante'
-              ? 'bg-blue-50 text-[#0066ff] border border-blue-100'
-              : 'bg-blue-50 text-blue-500 border border-blue-100';
+            const iconBg = 'bg-blue-50 text-[#0066ff] border border-blue-100';
 
-            const checkColor = isCenter
-              ? 'text-[#0066ff]'
-              : 'text-blue-500';
+            const checkColor = 'text-[#0066ff]';
 
             const cleanPrice = plan.price.replace('R$', '').trim();
             const [reais, centavos] = cleanPrice.includes(',') 
@@ -118,11 +110,7 @@ export function PricingCards({ plans }: PricingCardsProps) {
                           Plano {plan.name}
                         </h3>
                         <p className="text-[11px] text-slate-500 dark:text-slate-400 font-normal leading-tight mt-0.5">
-                          {plan.id === 'solo' 
-                            ? 'O essencial para começar sua jornada.' 
-                            : plan.id === 'tripulante' 
-                              ? 'Tudo o que você precisa para ir mais longe.' 
-                              : 'A experiência completa para quem quer se destacar.'}
+                          {plan.description}
                         </p>
                       </div>
                     </div>
@@ -224,23 +212,15 @@ export function PricingCards({ plans }: PricingCardsProps) {
             Mantida exatamente como estava originalmente
            ══════════════════════════════════════════════════════════════ */}
         <div className="hidden lg:block">
-          <div className="grid grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch">
+          <div className={plans.length === 1 ? 'max-w-md mx-auto' : 'grid grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch'}>
             {plans.map((plan, idx) => {
               const isCenter = plan.highlight || plan.popular;
 
-              const PlanIcon = plan.id === 'solo' 
-                ? Send 
-                : plan.id === 'tripulante' 
-                  ? Crown 
-                  : Gem;
+              const PlanIcon = plan.icon || Crown;
 
-              const iconBg = plan.id === 'tripulante'
-                ? 'bg-blue-50 text-[#0066ff] dark:bg-blue-950/60 dark:text-blue-400 border border-blue-100 dark:border-blue-900/60'
-                : 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 border border-blue-100 dark:border-blue-900/60';
+              const iconBg = 'bg-blue-50 text-[#0066ff] dark:bg-blue-950/60 dark:text-blue-400 border border-blue-100 dark:border-blue-900/60';
 
-              const checkColor = isCenter
-                ? 'text-[#0066ff] dark:text-[#38bdf8]'
-                : 'text-blue-600 dark:text-blue-400';
+              const checkColor = 'text-[#0066ff] dark:text-[#38bdf8]';
 
               const cleanPrice = plan.price.replace('R$', '').trim();
               const [reais, centavos] = cleanPrice.includes(',') 
